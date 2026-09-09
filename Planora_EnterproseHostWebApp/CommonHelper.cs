@@ -1322,5 +1322,121 @@ namespace Planora_EnterproseHostWebApp
             return response;
         }
         #endregion
+
+        #region HostEvents
+        public SalesAndRevenueResp GetSalesAndRevenue(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetSalesAndRevenue?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<SalesAndRevenueResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public SalesAndRevenueByEventResp GetSalesAndRevenueByEvent(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetSalesAndRevenueByEvent?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<SalesAndRevenueByEventResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public SalesAndRevenueByDaysResp GetSalesAndRevenueByDays(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetSalesAndRevenueByDays?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<SalesAndRevenueByDaysResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public EventRefundsResp GetEventRefunds(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new EventRefundsReq
+            {
+                UserId = userId,
+                EventId = eventId,
+                hashValue = hashValue,
+            };
+            string url = SERVICE_URL + "/Ent_GetEventRefunds";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<EventRefundsResp>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        #endregion
+
+        #region profile/settings
+        public EnterpriseResp GetEnterprise(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEnterprise?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EnterpriseResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public Response UpdateEnterprise(long userId, string userName, string companyName,
+    string joinedOn, string email, string phoneNo, string website, string settlementCurrency)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new UpdateEnterpriseReq
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                UserName = userName,
+                CompanyName = companyName,
+                JoinedOn = joinedOn,
+                Email = email,
+                PhoneNo = phoneNo,
+                Website = website,
+                SettlementCurrency = settlementCurrency,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateEnterprise";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        #endregion
+
+        #region MyPlan
+        public EnterprisePlanDashResp GetEnterprisePlanDash(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEnterprisePlanDash?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EnterprisePlanDashResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        #endregion
     }
 }
