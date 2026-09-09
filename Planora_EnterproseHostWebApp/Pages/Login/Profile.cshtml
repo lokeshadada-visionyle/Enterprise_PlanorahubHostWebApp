@@ -12,6 +12,19 @@
         <div>
             <h1 class="page__title">Settings</h1>
             <p class="page__subtitle">Account, organization, and payout preferences</p>
+
+            @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+            {
+                <div class="alert alert-success mb-4" role="alert">
+                    @Model.SuccessMessage
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.ApiError))
+            {
+                <div class="alert alert-danger mb-4" role="alert">
+                    @Model.ApiError
+                </div>
+            }
         </div>
     </div>
 
@@ -81,16 +94,16 @@
             </div>
         </nav>
 
-        <form action="settings.html" method="get">
+        <form method="post">
             <div data-section-panel="profile">
                 <section class="panel" aria-labelledby="profile-title">
                     <div class="panel__body">
                         <div class="identity">
                             <span class="identity__avatar" aria-hidden="true">KA</span>
                             <div>
-                                <h2 class="identity__name" id="profile-title">Kofi Asante</h2>
-                                <p class="identity__role">Owner &middot; TechSphere Corp</p>
-                                <p class="identity__since">Joined March 2024</p>
+                                <h2 class="identity__name" id="profile-title">@Model.Enterprise.UserName</h2>
+                                <p class="identity__role">Owner &middot; @Model.Enterprise.CompanyName</p>
+                                <p class="identity__since">Joined @Model.Enterprise.JoinedOn</p>
                                 <label class="btn btn--outline btn--sm" for="avatar-upload">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Change Photo
                                 </label>
@@ -102,18 +115,18 @@
                         <div class="formgrid formgrid--2">
                             <div class="form__field">
                                 <label class="field__label" for="full-name">Full Name</label>
-                                <input class="field__input" id="full-name" name="full-name" type="text" value="Kofi Asante">
+                                <input class="field__input" id="full-name" name="full-name" type="text" value="@Model.Enterprise.UserName">
                             </div>
                             <div class="form__field">
                                 <label class="field__label" for="work-email">Work Email</label>
-                                <input class="field__input" id="work-email" name="work-email" type="email" value="kofi@techsphere.io">
+                                <input class="field__input" id="work-email" name="work-email" type="email" value="@Model.Enterprise.Email">
                             </div>
                         </div>
 
                         <div class="formgrid formgrid--2 u-mt-5">
                             <div class="form__field">
                                 <label class="field__label" for="phone">Phone</label>
-                                <input class="field__input" id="phone" name="phone" type="tel" value="+234 812 345 6789">
+                                <input class="field__input" id="phone" name="phone" type="tel" value="@Model.Enterprise.PhoneNo">
                             </div>
                             <div class="form__field">
                                 <label class="field__label" for="job-title">Job Title</label>
@@ -142,7 +155,7 @@
                         <div class="formgrid">
                             <div class="form__field">
                                 <label class="field__label" for="org-name">Organization Name</label>
-                                <input class="field__input" id="org-name" name="org-name" type="text" value="TechSphere Corp">
+                                <input class="field__input" id="org-name" name="org-name" type="text" value="@Model.Enterprise.CompanyName">
                             </div>
                         </div>
 
@@ -171,7 +184,7 @@
                         <div class="formgrid u-mt-5">
                             <div class="form__field">
                                 <label class="field__label" for="website">Website</label>
-                                <input class="field__input" id="website" name="website" type="url" value="https://techsphere.io">
+                                <input class="field__input" id="website" name="website" type="url" value="@Model.Enterprise.Website">
                             </div>
                         </div>
 
@@ -179,10 +192,11 @@
                             <div class="form__field">
                                 <label class="field__label" for="settlement">Settlement Currency</label>
                                 <select class="field__select" id="settlement" name="settlement">
-                                    <option>NGN &middot; Nigerian Naira</option>
+                                    <option selected>@Model.Enterprise.SettlementCurrency</option>
+                                    @* <option>NGN &middot; Nigerian Naira</option>
                                     <option>USD &middot; US Dollar</option>
                                     <option>GHS &middot; Ghanaian Cedi</option>
-                                    <option>GBP &middot; Pound Sterling</option>
+                                    <option>GBP &middot; Pound Sterling</option> *@
                                 </select>
                                 <span class="field__hint">Locked after first payout</span>
                             </div>

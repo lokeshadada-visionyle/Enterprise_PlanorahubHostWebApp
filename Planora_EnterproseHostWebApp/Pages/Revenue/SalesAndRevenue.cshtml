@@ -33,24 +33,32 @@
         </div>
     </div>
 
+
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="alert alert-danger mb-4" role="alert">
+            @Model.ApiError
+        </div>
+    }
+
     <section class="reportstats u-mb-6" aria-label="Revenue totals">
         <span class="reportstat">
-            <span class="reportstat__value">&#8358;127.05M</span>
+            <span class="reportstat__value">&#8358;@Model.SalesData.GrossRev</span>
             <span class="reportstat__label">Gross collected</span>
-            <span class="reportstat__note">Across 4 ticketed events</span>
+            <span class="reportstat__note">Across @Model.SalesData.TotalEventsForGrossRev ticketed event@(Model.SalesData.TotalEventsForGrossRev == 1 ? "" : "s")</span>
         </span>
         <span class="reportstat">
-            <span class="reportstat__value">&minus;&#8358;450K</span>
+            <span class="reportstat__value">&minus;&#8358;@Model.SalesData.Refunded</span>
             <span class="reportstat__label">Refunded</span>
-            <span class="reportstat__note">12 refunds, 3 cancellations</span>
+            <span class="reportstat__note">@Model.SalesData.TotalRefunds refund@(Model.SalesData.TotalRefunds == 1 ? "" : "s"), @Model.SalesData.TotalCancelled cancellation@(Model.SalesData.TotalCancelled == 1 ? "" : "s")</span>
         </span>
         <span class="reportstat">
-            <span class="reportstat__value">&minus;&#8358;2.54M</span>
-            <span class="reportstat__label">Commission at 2%</span>
+            <span class="reportstat__value">&minus;&#8358;@Model.SalesData.Commission</span>
+            <span class="reportstat__label">Commission at @Model.SalesData.CommissionPer</span>
             <span class="reportstat__note">Billed monthly in arrears</span>
         </span>
         <span class="reportstat">
-            <span class="reportstat__value">&#8358;124.06M</span>
+            <span class="reportstat__value">&#8358;@Model.SalesData.NetToHost</span>
             <span class="reportstat__label">Net to your account</span>
             <span class="reportstat__note">Settled plus escrow</span>
         </span>
@@ -95,138 +103,49 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><span class="cellstack__name">Tech Summit Africa 2025</span></td>
-                            <td><span class="badge badge--live">Live</span></td>
-                            <td>847 / 1,000</td>
-                            <td><span class="u-nowrap">&#8358;127,050,000</span></td>
-                            <td><span class="u-nowrap">&minus;&#8358;450,000</span></td>
-                            <td><span class="u-nowrap">&#8358;2,541,000</span></td>
-                            <td><b><span class="u-nowrap">&#8358;124,059,000</span></b></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="event-hub.html">
-                                        <span class="u-visually-hidden">Open hub for Tech Summit Africa 2025</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
-                                    </a>
-                                    <button class="iconbtn" type="button"
-                                            data-action="Revenue statement for Tech Summit Africa 2025 downloaded">
-                                        <span class="u-visually-hidden">Statement for Tech Summit Africa 2025</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="cellstack__name">Afrobeat Night Lagos</span></td>
-                            <td><span class="badge badge--paused">Upcoming</span></td>
-                            <td>322 / 500</td>
-                            <td><span class="u-nowrap">&#8358;16,100,000</span></td>
-                            <td><span class="u-nowrap">&mdash;</span></td>
-                            <td><span class="u-nowrap">&#8358;322,000</span></td>
-                            <td><b><span class="u-nowrap">&#8358;15,778,000</span></b></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="event-hub.html">
-                                        <span class="u-visually-hidden">Open hub for Afrobeat Night Lagos</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
-                                    </a>
-                                    <button class="iconbtn" type="button"
-                                            data-action="Revenue statement for Afrobeat Night Lagos downloaded">
-                                        <span class="u-visually-hidden">Statement for Afrobeat Night Lagos</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="cellstack__name">Enterprise Leadership Forum</span></td>
-                            <td><span class="badge badge--nodot badge--role">Completed</span></td>
-                            <td>312 / 312</td>
-                            <td><span class="u-nowrap">&#8358;78,000,000</span></td>
-                            <td><span class="u-nowrap">&mdash;</span></td>
-                            <td><span class="u-nowrap">&#8358;1,560,000</span></td>
-                            <td><b><span class="u-nowrap">&#8358;76,440,000</span></b></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="event-hub.html">
-                                        <span class="u-visually-hidden">Open hub for Enterprise Leadership Forum</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
-                                    </a>
-                                    <button class="iconbtn" type="button"
-                                            data-action="Revenue statement for Enterprise Leadership Forum downloaded">
-                                        <span class="u-visually-hidden">Statement for Enterprise Leadership Forum</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="cellstack__name">HR Innovation Summit</span></td>
-                            <td><span class="badge badge--nodot badge--role">Completed</span></td>
-                            <td>450 / 450</td>
-                            <td><span class="u-nowrap">&#8358;56,250,000</span></td>
-                            <td><span class="u-nowrap">&minus;&#8358;250,000</span></td>
-                            <td><span class="u-nowrap">&#8358;1,120,000</span></td>
-                            <td><b><span class="u-nowrap">&#8358;54,880,000</span></b></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="event-hub.html">
-                                        <span class="u-visually-hidden">Open hub for HR Innovation Summit</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
-                                    </a>
-                                    <button class="iconbtn" type="button"
-                                            data-action="Revenue statement for HR Innovation Summit downloaded">
-                                        <span class="u-visually-hidden">Statement for HR Innovation Summit</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="cellstack__name">Startup Pitch Night</span></td>
-                            <td><span class="badge badge--paused">Upcoming</span></td>
-                            <td>88 / 200</td>
-                            <td><span class="u-nowrap">&#8358;4,400,000</span></td>
-                            <td><span class="u-nowrap">&mdash;</span></td>
-                            <td><span class="u-nowrap">&#8358;88,000</span></td>
-                            <td><b><span class="u-nowrap">&#8358;4,312,000</span></b></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="event-hub.html">
-                                        <span class="u-visually-hidden">Open hub for Startup Pitch Night</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
-                                    </a>
-                                    <button class="iconbtn" type="button"
-                                            data-action="Revenue statement for Startup Pitch Night downloaded">
-                                        <span class="u-visually-hidden">Statement for Startup Pitch Night</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="cellstack__name">Lagos Tech Meetup</span></td>
-                            <td><span class="badge badge--out">Cancelled</span></td>
-                            <td>0 / 150</td>
-                            <td><span class="u-nowrap">&#8358;0</span></td>
-                            <td><span class="u-nowrap">&minus;&#8358;1,200,000</span></td>
-                            <td><span class="u-nowrap">&mdash;</span></td>
-                            <td><b><span class="u-nowrap">&#8358;0</span></b></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="event-hub.html">
-                                        <span class="u-visually-hidden">Open hub for Lagos Tech Meetup</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
-                                    </a>
-                                    <button class="iconbtn" type="button"
-                                            data-action="Revenue statement for Lagos Tech Meetup downloaded">
-                                        <span class="u-visually-hidden">Statement for Lagos Tech Meetup</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @if (Model.SalesData.Events != null && Model.SalesData.Events.Any())
+                        {
+                            @foreach (var ev in Model.SalesData.Events)
+                            {
+                                string badgeCss = (ev.EventStatus ?? "").ToLower() switch
+                                {
+                                    "live" => "badge--live",
+                                    "upcoming" => "badge--paused",
+                                    "completed" => "badge--nodot badge--role",
+                                    "cancelled" => "badge--out",
+                                    _ => "badge--default"
+                                };
+
+                                <tr data-status="@ev.EventStatus">
+                                    <td><span class="cellstack__name">@ev.EventName</span></td>
+                                    <td><span class="badge @badgeCss">@ev.EventStatus</span></td>
+                                    <td>@ev.SoldTickets / @ev.TotalTickets</td>
+                                    <td><span class="u-nowrap">&#8358;@ev.GrossRev</span></td>
+                                    <td><span class="u-nowrap">@(string.IsNullOrEmpty(ev.Refunds) || ev.Refunds == "0" ? "\u2014" : "\u2212\u20A6" + ev.Refunds)</span></td>
+                                    <td><span class="u-nowrap">@(string.IsNullOrEmpty(ev.Commission) || ev.Commission == "0" ? "\u2014" : "\u20A6" + ev.Commission)</span></td>
+                                    <td><b><span class="u-nowrap">&#8358;@ev.NetToHost</span></b></td>
+                                    <td>
+                                        <div class="rowactions">
+                                            <a class="iconbtn" asp-page="/Events/EventHub" asp-route-eventId="@ev.EventId">
+                                                <span class="u-visually-hidden">Open hub for @ev.EventName</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                            </a>
+                                            <button class="iconbtn" type="button"
+                                                    data-action="Revenue statement for @ev.EventName downloaded">
+                                                <span class="u-visually-hidden">Statement for @ev.EventName</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (string.IsNullOrEmpty(Model.ApiError))
+                        {
+                            <tr>
+                                <td colspan="8" class="u-muted">No ticketed events yet.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -239,23 +158,22 @@
 
     <div class="hubhead u-mt-6">
         <div class="hubhead__body">
-            <h2 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg> Tech Summit Africa 2025</h2>
+            <h2 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg> @(Model.SalesData.Events.FirstOrDefault(e => e.EventId == Model.EventId)?.EventName ?? "Select an event")</h2>
             <p class="hubhead__text">
                 The breakdown behind one event &mdash; switch event to see another
             </p>
         </div>
         <div class="hubhead__actions">
-            <div class="toolbar__field">
+            <form method="get" class="toolbar__field">
                 <label class="u-visually-hidden" for="sales-event">Event</label>
-                <select class="field__select" id="sales-event" name="sales-event"
-                        data-action="Breakdown reloaded for the selected event">
-                    <option>Tech Summit Africa 2025</option>
-                    <option>Afrobeat Night Lagos</option>
-                    <option>Enterprise Leadership Forum</option>
-                    <option>HR Innovation Summit</option>
+                <select class="field__select" id="sales-event" name="EventId" onchange="this.form.submit()">
+                    @foreach (var ev in Model.SalesData.Events)
+                    {
+                        <option value="@ev.EventId" selected="@(ev.EventId == Model.EventId)">@ev.EventName</option>
+                    }
                 </select>
-            </div>
-            <a class="btn btn--outline btn--sm" href="event-hub.html">Open Event Hub</a>
+            </form>
+            <a class="btn btn--outline btn--sm" asp-page="/Events/EventHub" asp-route-eventId="@Model.EventId">Open Event Hub</a>
         </div>
     </div>
 
@@ -280,50 +198,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">Early Bird</th>
-                                <td>200 <span class="cellsub">/ 200</span></td>
-                                <td><span class="u-nowrap">&#8358;1,000,000</span></td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="11"></span>
-                                    </span>
-                                    <span class="reportbar__label">11%</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Standard</th>
-                                <td>547 <span class="cellsub">/ 500</span></td>
-                                <td><span class="u-nowrap">&#8358;5,470,000</span></td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="56"></span>
-                                    </span>
-                                    <span class="reportbar__label">56%</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">VIP</th>
-                                <td>100 <span class="cellsub">/ 100</span></td>
-                                <td><span class="u-nowrap">&#8358;2,500,000</span></td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="25"></span>
-                                    </span>
-                                    <span class="reportbar__label">25%</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Add-ons</th>
-                                <td>210 <span class="cellsub">/ &mdash;</span></td>
-                                <td><span class="u-nowrap">&#8358;855,000</span></td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="8"></span>
-                                    </span>
-                                    <span class="reportbar__label">8%</span>
-                                </td>
-                            </tr>
+                            @if (Model.EventSalesData.TicketTypesRev != null && Model.EventSalesData.TicketTypesRev.Any())
+                            {
+                                @foreach (var tier in Model.EventSalesData.TicketTypesRev)
+                                {
+                                    <tr>
+                                        <th scope="row">@tier.TypeName</th>
+                                        <td>@tier.SoldTickets <span class="cellsub">/ @tier.TotalTickets</span></td>
+                                        <td><span class="u-nowrap">&#8358;@tier.GrossRev</span></td>
+                                        <td>
+                                            <span class="reportbar">
+                                                <span class="reportbar__fill" data-fill="@tier.SharePer?.Replace("%", "").Trim()"></span>
+                                            </span>
+                                            <span class="reportbar__label">@tier.SharePer</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="u-muted">No ticket tier data for this event.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -341,23 +238,23 @@
                 <div class="reportsplits">
                     <span class="reportsplit">
                         <span class="reportsplit__name">Card</span>
-                        <span class="reportsplit__value">&#8358;6,940,000</span>
-                        <span class="reportsplit__meta">681 payments &middot; 76%</span>
+                        <span class="reportsplit__value">&#8358;@Model.EventSalesData.CardRev</span>
+                        <span class="reportsplit__meta">@Model.EventSalesData.CardPayments payments &middot; @Model.EventSalesData.CardPer</span>
                     </span>
                     <span class="reportsplit">
                         <span class="reportsplit__name">Bank transfer</span>
-                        <span class="reportsplit__value">&#8358;2,180,000</span>
-                        <span class="reportsplit__meta">142 payments &middot; 16%</span>
+                        <span class="reportsplit__value">&#8358;@Model.EventSalesData.BankTransferRev</span>
+                        <span class="reportsplit__meta">@Model.EventSalesData.BankTransferPayments payments &middot; @Model.EventSalesData.BankTransferPer</span>
                     </span>
                     <span class="reportsplit">
                         <span class="reportsplit__name">USSD</span>
-                        <span class="reportsplit__value">&#8358;520,000</span>
-                        <span class="reportsplit__meta">48 payments &middot; 5%</span>
+                        <span class="reportsplit__value">&#8358;@Model.EventSalesData.UUSDRev</span>
+                        <span class="reportsplit__meta">@Model.EventSalesData.UUSDPayments payments &middot; @Model.EventSalesData.UUSDPer</span>
                     </span>
                     <span class="reportsplit">
                         <span class="reportsplit__name">Complimentary</span>
-                        <span class="reportsplit__value">&#8358;0</span>
-                        <span class="reportsplit__meta">22 payments &middot; 3%</span>
+                        <span class="reportsplit__value">&#8358;@Model.EventSalesData.ComplimentaryRev</span>
+                        <span class="reportsplit__meta">@Model.EventSalesData.ComplimentoryPayments payments &middot; @Model.EventSalesData.ComplimentoryPer</span>
                     </span>
                 </div>
 
@@ -409,36 +306,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Day 1</td>
-                            <th scope="row">Morning Keynote</th>
-                            <td>412</td>
-                            <td><span class="u-nowrap">&#8358;4,120,000</span></td>
-                        </tr>
-                        <tr>
-                            <td>Day 1</td>
-                            <th scope="row">Fintech Panel</th>
-                            <td>180</td>
-                            <td><span class="u-nowrap">&#8358;1,800,000</span></td>
-                        </tr>
-                        <tr>
-                            <td>Day 1</td>
-                            <th scope="row">Breakout 1</th>
-                            <td>60</td>
-                            <td><span class="u-nowrap">&#8358;600,000</span></td>
-                        </tr>
-                        <tr>
-                            <td>Day 2</td>
-                            <th scope="row">Design Sprint</th>
-                            <td>260</td>
-                            <td><span class="u-nowrap">&#8358;2,600,000</span></td>
-                        </tr>
-                        <tr>
-                            <td>Day 2</td>
-                            <th scope="row">Investor Clinic</th>
-                            <td>61</td>
-                            <td><span class="u-nowrap">&#8358;1,525,000</span></td>
-                        </tr>
+                        @if (Model.EventDaysData.EventDays != null && Model.EventDaysData.EventDays.Any())
+                        {
+                            @foreach (var slot in Model.EventDaysData.EventDays)
+                            {
+                                <tr>
+                                    <td>@slot.DayName</td>
+                                    <th scope="row">@slot.SlotName</th>
+                                    <td>@slot.SoldTickets</td>
+                                    <td><span class="u-nowrap">&#8358;@slot.GrossRev</span></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="u-muted">No day/slot data for this event.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -476,70 +361,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><span class="order__ref">RF-2081</span></td>
-                            <td><span class="cellstack__name">Chidi Okonkwo</span></td>
-                            <td class="u-muted">Tech Summit Africa 2025</td>
-                            <td><span class="u-nowrap">&minus;&#8358;10,000</span></td>
-                            <td>Guest cancelled</td>
-                            <td><span class="badge badge--live">Settled</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="receipt.html?ref=RF-2081">
-                                        <span class="u-visually-hidden">Receipt for RF-2081</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="order__ref">RF-2080</span></td>
-                            <td><span class="cellstack__name">Halima Yusuf</span></td>
-                            <td class="u-muted">Tech Summit Africa 2025</td>
-                            <td><span class="u-nowrap">&minus;&#8358;25,000</span></td>
-                            <td>Duplicate purchase</td>
-                            <td><span class="badge badge--live">Settled</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="receipt.html?ref=RF-2080">
-                                        <span class="u-visually-hidden">Receipt for RF-2080</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="order__ref">RF-2079</span></td>
-                            <td><span class="cellstack__name">Emeka Nwosu</span></td>
-                            <td class="u-muted">HR Innovation Summit</td>
-                            <td><span class="u-nowrap">&minus;&#8358;125,000</span></td>
-                            <td>Date cancelled by host</td>
-                            <td><span class="badge badge--live">Settled</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="receipt.html?ref=RF-2079">
-                                        <span class="u-visually-hidden">Receipt for RF-2079</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="order__ref">RF-2078</span></td>
-                            <td><span class="cellstack__name">Zainab Sule</span></td>
-                            <td class="u-muted">Lagos Tech Meetup</td>
-                            <td><span class="u-nowrap">&minus;&#8358;1,200,000</span></td>
-                            <td>Event cancelled by host</td>
-                            <td><span class="badge badge--paused">Processing</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <a class="iconbtn" href="receipt.html?ref=RF-2078">
-                                        <span class="u-visually-hidden">Receipt for RF-2078</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                        @if (Model.EventRefundsData.Refunds != null && Model.EventRefundsData.Refunds.Any())
+                        {
+                            @foreach (var rf in Model.EventRefundsData.Refunds)
+                            {
+                                string refundBadgeCss = (rf.Status ?? "").ToLower() switch
+                                {
+                                    "settled" => "badge--live",
+                                    "processing" => "badge--paused",
+                                    _ => "badge--default"
+                                };
+
+                                <tr>
+                                    <td><span class="order__ref">@rf.Reference</span></td>
+                                    <td><span class="cellstack__name">@rf.GuestName</span></td>
+                                    <td class="u-muted">@rf.EventName</td>
+                                    <td><span class="u-nowrap">\u2212&#8358;@rf.Revenue</span></td>
+                                    <td>@rf.Reason</td>
+                                    <td><span class="badge @refundBadgeCss">@rf.Status</span></td>
+                                    <td>
+                                        <div class="rowactions">
+                                            <a class="iconbtn" href="receipt.html?ref=@rf.Reference">
+                                                <span class="u-visually-hidden">Receipt for @rf.Reference</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="u-muted">No refunds for this event.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
