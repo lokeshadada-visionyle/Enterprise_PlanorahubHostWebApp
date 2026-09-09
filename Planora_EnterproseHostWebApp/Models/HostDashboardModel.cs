@@ -1,4 +1,6 @@
-﻿namespace Planora_EnterproseHostWebApp.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Planora_EnterproseHostWebApp.Models
 {
     public class HostDashboardResp
     {
@@ -269,5 +271,211 @@
         public bool IsAvailable { get; set; }
         public bool IsReserved { get; set; }
         public bool IsCheckIn { get; set; }
+    }
+    public class EventHubFoodMenuResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public List<EventHubMenuItems> MenuItems { get; set; }
+    }
+    public class EventHubMenuItems
+    {
+        public int MenuItemId { get; set; }
+        public string ItemName { get; set; }
+        public string Category { get; set; }
+        public int MaxServes { get; set; }
+        public bool IsAvailable { get; set; }
+    }
+    public class EventHubFoodReadyToOrderreq
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public int SLotId { get; set; }
+        public bool Ready { get; set; }
+    }
+    public class EventHubServingLogResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int TotalServes { get; set; }
+        public int TotalRefused { get; set; }
+        public int ItemsOutOfStock { get; set; }
+        public List<Servings> Servings { get; set; }
+    }
+    public class Servings
+    {
+        public int GuestId { get; set; }
+        public string GuestName { get; set; }
+        public string Time { get; set; }
+        public string ItemName { get; set; }
+        public string Counter { get; set; }
+        public string ServedBy { get; set; }
+        public string Status { get; set; }
+    }
+    public class EventHubVendorResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public List<Vendors> Vendors { get; set; } = new List<Vendors>();
+    }
+    public class Vendors
+    {
+        public int VendorId { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Pin { get; set; }
+        public List<string> AssignedSlots { get; set; } = new List<string>();
+        public int StaffCount { get; set; }
+        public List<Staff> Staff { get; set; } = new List<Staff>();
+    }
+    public class Staff
+    {
+        public int StaffId { get; set; }
+        public string StaffName { get; set; }
+        public string Zone { get; set; }
+        public string PhoneNo { get; set; }
+        public string Pin { get; set; }
+        public List<string> AssignedSlots { get; set; } = new List<string>();
+    }
+    public class Request
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public int VendorId { get; set; }
+    }
+    public class AddVendorRequest
+    {
+        public int UserId { get; set; }
+        public int EventId { get; set; }
+        public string Name { get; set; }
+        public string PhoneNo { get; set; }
+        public string Role { get; set; }
+        public int? VendorId { get; set; }
+        public string Pin { get; set; }
+        public int TicketTypeId { get; set; }
+        public bool WholeEvent { get; set; }
+        public List<int> SlotIds { get; set; } = new List<int>();
+        public string hashValue { get; set; }
+    }
+    public class EditVendorRequest
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int VendorId { get; set; }
+        public int EventId { get; set; }
+        public string VendorName { get; set; }
+        public string PhoneNo { get; set; }
+        public string Pin { get; set; }
+        public bool WholeEvent { get; set; }
+        public List<int> SlotIds { get; set; } = new List<int>();
+    }
+    public class EventResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public int EventId { get; set; }
+        public string CoverImage { get; set; } = string.Empty;
+        public string EventName { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
+        public string Venue { get; set; } = string.Empty;
+        public List<string> TicketTypes { get; set; } = new List<string>();
+    }
+    public class EventHubPollResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<Poll> Polls { get; set; } = new List<Poll>();
+    }
+    public class Poll
+    {
+        public int PollId { get; set; }
+        public string PollStatus { get; set; } = string.Empty;
+        public string GuestEmail { get; set; } = string.Empty;
+        public string Question { get; set; } = string.Empty;
+        public List<Option> Options { get; set; } = new List<Option>();
+    }
+    public class Option
+    {
+        public int OptionId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Percentage { get; set; } = string.Empty;
+    }
+    public class AddPollRequest
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; } = string.Empty;
+        public int EventId { get; set; }
+        public int SlotId { get; set; }
+        public string Question { get; set; } = string.Empty;
+        public List<string> Options { get; set; } = new List<string>();
+        public string VisibleTo { get; set; } = string.Empty;
+    }
+    public class EventHubBroadcastResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<Broadcast> Broadcasts { get; set; } = new List<Broadcast>();
+    }
+    public class Broadcast
+    {
+        public string Message { get; set; } = string.Empty;
+        public List<string> Channels { get; set; } = new List<string>();
+        public string SentAgo { get; set; } = string.Empty;
+        public int Sent { get; set; }
+        public int Opened { get; set; }
+    }
+    public class EventHubSalesResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public string GrossRevenue { get; set; }
+        public int TotalTickets { get; set; }
+        public int TicketsSold { get; set; }
+        public string AddOnRev { get; set; }
+        public string Refunds { get; set; }
+        public List<SalesTicketType> TicketTypes { get; set; } = new List<SalesTicketType>();
+    }
+    public class SalesTicketType
+    {
+        public string TypeName { get; set; }
+        public int TotalTickets { get; set; }
+        public int SoldTickets { get; set; }
+        public string Revenue { get; set; }
+    }
+    public class EventHubInsightResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int TotalCheckins { get; set; }
+        public int Registered { get; set; }
+        public int AttendancePer { get; set; }
+        public string BusiestTime { get; set; }
+        public int TotalScans { get; set; }
+        public int TotalPolls { get; set; }
+        public int TotalVotes { get; set; }
+        public string AvgRating { get; set; }
+        public int AddonSalesCount { get; set; }
+        public string AddonRevenue { get; set; }
+    }
+    public class EventHubPollAnalyticsResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int TotalPolls { get; set; }
+        public int TotalResponses { get; set; }
+        public string VotesPer { get; set; }
+        public string AvgRating { get; set; }
+        public List<EventHubSummaryPoll> Polls { get; set; } = new List<EventHubSummaryPoll>();
+    }
+    public class EventHubSummaryPoll
+    {
+        public string Question { get; set; }
+        public int TotalResponses { get; set; }
+        public string TopAnswer { get; set; }
+        public string TopAnswerPer { get; set; }
+        public string Status { get; set; }
     }
 }

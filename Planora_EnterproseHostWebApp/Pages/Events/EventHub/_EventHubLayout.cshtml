@@ -17,7 +17,7 @@
     EventHubDatesAndSlotsResp scopeData;
     try
     {
-        scopeData = helper.GetEventHubDateAndSlot(userId, eventId, slotId);
+        scopeData = helper.GetEventHubDateAndSlot(userId, eventId);
     }
     catch (Exception ex)
     {
@@ -27,9 +27,6 @@
     var eventDates = scopeData?.EventDates ?? new List<EventHubDates>();
     var totalSlots = eventDates.Sum(d => d.Slots?.Count ?? 0);
 
-    // Which day/slot is "current" is derived from the slotId in the URL,
-    // not assumed to be the first one — this is what keeps the bar in
-    // sync across every panel page instead of resetting on navigation.
     var currentDay = eventDates.FirstOrDefault(d => d.Slots != null && d.Slots.Any(s => s.SlotId == slotId))
                       ?? eventDates.FirstOrDefault();
     var currentDayKey = currentDay != null ? "day" + currentDay.EventDateId : null;

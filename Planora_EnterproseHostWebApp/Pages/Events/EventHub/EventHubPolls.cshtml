@@ -5,9 +5,10 @@
     Layout = "_EventHubLayout";
     ViewData["PageName"] = "Event Hub";
     ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+    var polls = Model.EventHubPollData?.Polls ?? new List<Planora_EnterproseHostWebApp.Models.Poll>();
 }
 
-<div data-view-panel="polls" data-role-only="admin manager" hidden>
+<div data-view-panel="polls" data-role-only="admin manager">
     <div class="hubhead">
         <div class="hubhead__body">
             <h2 class="hubhead__title">Live Polls &amp; Announcements</h2>
@@ -16,100 +17,290 @@
             </p>
         </div>
         <div class="hubhead__actions">
-            <button class="btn btn--primary btn--sm" type="button"
-                    data-modal-open="poll-modal">
+            <button class="btn btn--primary btn--sm" type="button" data-modal-open="poll-modal">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Create Poll
             </button>
         </div>
     </div>
 
-    <article class="livepoll">
-        <p class="livepoll__flag">
-            <span class="live__pulse" aria-hidden="true"></span> Live poll
-        </p>
-        <h3 class="livepoll__question">Which session topic was most valuable?</h3>
+    @if (polls.Any())
+    {
+        foreach (var poll in polls)
+        {
+            bool isLive = string.Equals(poll.PollStatus, "live", StringComparison.OrdinalIgnoreCase)
+                       || string.Equals(poll.PollStatus, "active", StringComparison.OrdinalIgnoreCase);
 
-        <div class="livepoll__rows">
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>AI &amp; Machine Learning</span>
-                    <span class="livepoll__pct">42%</span>
+            <article class="livepoll">
+                @if (isLive)
+                {
+                    <p class="livepoll__flag">
+                        <span class="live__pulse" aria-hidden="true"></span> Live poll
+                    </p>
+                }
+                else
+                {
+                    <p class="livepoll__flag livepoll__flag--closed">@poll.PollStatus poll</p>
+                }
+
+                <h3 class="livepoll__question">@poll.Question</h3>
+
+                <div class="livepoll__rows">
+                    @if (poll.Options != null && poll.Options.Any())
+                    {
+                        int colorIndex = 1;
+                        foreach (var opt in poll.Options)
+                        {
+                            string rawPct = opt.Percentage?.Replace("%", "").Trim() ?? "0";
+                            string fillClass = colorIndex == 1 ? "livepoll__fill" : $"livepoll__fill livepoll__fill--{colorIndex}";
+
+                            <div class="livepoll__row">
+                                <p class="livepoll__top">
+                                    <span>@opt.Name</span>
+                                    <span class="livepoll__pct">@(rawPct)%</span>
+                                </p>
+                                <span class="livepoll__bar">
+                                    <span class="@fillClass" style="width: @(rawPct)%;" data-fill="@rawPct"></span>
+                                </span>
+                            </div>
+
+                            colorIndex = colorIndex >= 4 ? 1 : colorIndex + 1;
+                        }
+                    }
+                    else
+                    {
+                        <p class="u-text-muted">No options available for this poll.</p>
+                    }
+                </div>
+
+                <p class="livepoll__foot">
+                    <span>Visible to checked-in guests</span>
+                    @if (isLive)
+                    {
+                        <button class="btn btn--outline btn--sm btn-close-poll" type="button" data-poll-id="@poll.PollId">Close poll</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn--outline btn--sm btn-relaunch-poll" type="button" data-poll-id="@poll.PollId">Relaunch</button>
+                    }
+                    <button class="btn btn--outline btn--sm" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export
+                    </button>
                 </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill" data-fill="42"></span>
-                </span>
-            </div>
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>Product Design</span>
-                    <span class="livepoll__pct">30%</span>
-                </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill livepoll__fill--2" data-fill="30"></span>
-                </span>
-            </div>
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>Fintech Innovation</span>
-                    <span class="livepoll__pct">20%</span>
-                </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill livepoll__fill--3" data-fill="20"></span>
-                </span>
-            </div>
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>Cloud Infrastructure</span>
-                    <span class="livepoll__pct">8%</span>
-                </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill livepoll__fill--4" data-fill="8"></span>
-                </span>
+            </article>
+        }
+    }
+    else
+    {
+        <div class="panel u-mt-6">
+            <div class="panel__body">
+                <p class="u-text-muted text-center">No active or past polls found for this event.</p>
             </div>
         </div>
-
-        <p class="livepoll__foot">
-            <span>738 total responses &middot; visible to all checked-in guests</span>
-            <button class="btn btn--outline btn--sm" type="button">Close poll</button>
-            <button class="btn btn--outline btn--sm" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export</button>
-        </p>
-    </article>
-
-    <article class="livepoll">
-        <p class="livepoll__flag livepoll__flag--closed">Closed poll</p>
-        <h3 class="livepoll__question">How did you hear about Tech Summit?</h3>
-        <div class="livepoll__rows">
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>Social media</span>
-                    <span class="livepoll__pct">52%</span>
-                </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill" data-fill="52"></span>
-                </span>
-            </div>
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>A colleague</span>
-                    <span class="livepoll__pct">28%</span>
-                </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill livepoll__fill--2" data-fill="28"></span>
-                </span>
-            </div>
-            <div class="livepoll__row">
-                <p class="livepoll__top">
-                    <span>Newsletter</span>
-                    <span class="livepoll__pct">20%</span>
-                </p>
-                <span class="livepoll__bar">
-                    <span class="livepoll__fill livepoll__fill--3" data-fill="20"></span>
-                </span>
-            </div>
-        </div>
-        <p class="livepoll__foot">
-            <span>408 responses &middot; closed 2 hours ago</span>
-            <button class="btn btn--outline btn--sm" type="button">Relaunch</button>
-        </p>
-    </article>
+    }
 </div>
+
+<div class="modal" id="poll-modal" role="dialog" aria-modal="true" aria-labelledby="createpoll-title" data-modal hidden>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="createpoll-title">Create Live Poll</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <form class="modal__body" id="livepoll-form" action="event-hub.html" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="formgrid">
+                <div class="form__field">
+                    <label class="field__label" for="poll-question">
+                        Question<span class="field__required" aria-hidden="true">*</span>
+                        <span class="u-visually-hidden">(required)</span>
+                    </label>
+                    <input class="field__input" id="poll-question" name="poll-question" type="text"
+                           placeholder="e.g. Which session was most valuable?" required>
+                </div>
+            </div>
+
+            <div class="formgrid u-mt-5">
+                <div class="form__field">
+                    <label class="field__label" for="poll-type">Type</label>
+                    <select class="field__select" id="poll-type" name="poll-type">
+                        <option>Single Choice</option>
+                        <option>Multiple Choice</option>
+                        <option>Rating (1&ndash;5)</option>
+                        <option>Open Text</option>
+                    </select>
+                </div>
+            </div>
+
+            <p class="subhead u-mt-5">
+                Options
+                <button class="subhead__action" type="button" data-repeat-add="livepoll-options">
+                    + Add option
+                </button>
+            </p>
+            <div id="livepoll-options">
+                <div class="optionrow" data-repeat-row>
+                    <label class="u-visually-hidden" for="lp-option-1">Option 1</label>
+                    <input class="field__input" id="lp-option-1" name="lp-option-1" type="text" placeholder="Option 1">
+                    <button class="line__remove" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Remove option 1</span>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="optionrow" data-repeat-row>
+                    <label class="u-visually-hidden" for="lp-option-2">Option 2</label>
+                    <input class="field__input" id="lp-option-2" name="lp-option-2" type="text" placeholder="Option 2">
+                    <button class="line__remove" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Remove option 2</span>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="formgrid u-mt-5">
+                <div class="form__field">
+                    <label class="field__label" for="poll-visible">Visible to</label>
+                    <select class="field__select" id="poll-visible" name="poll-visible">
+                        <option>All checked-in guests</option>
+                        <option>All registered guests</option>
+                        <option>VIP tier only</option>
+                        <option>This slot only</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Cancel</button>
+            <button class="btn btn--primary" type="submit" form="livepoll-form">Launch Poll</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentEventId = parseInt("@(ViewData["EventId"] ?? 0)");
+            const currentSlotId = parseInt("@(ViewData["SlotId"] ?? 0)");
+
+            const modal = document.getElementById("poll-modal");
+            const pollForm = document.getElementById("livepoll-form");
+            const optionsContainer = document.getElementById("livepoll-options");
+            const addOptionBtn = document.querySelector('[data-repeat-add="livepoll-options"]');
+
+            // Helper function to extract Anti-Forgery Token
+            function getAntiForgeryToken() {
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                return tokenInput ? tokenInput.value : '';
+            }
+
+            // Modal Open / Close Handlers
+            document.querySelectorAll('[data-modal-open="poll-modal"]').forEach(btn => {
+                btn.addEventListener("click", () => modal?.removeAttribute("hidden"));
+            });
+
+            document.querySelectorAll('#poll-modal [data-modal-close]').forEach(btn => {
+                btn.addEventListener("click", () => modal?.setAttribute("hidden", "true"));
+            });
+
+            // Add Option Row
+            if (addOptionBtn && optionsContainer) {
+                addOptionBtn.addEventListener("click", function() {
+                    const optionCount = optionsContainer.querySelectorAll('.optionrow').length + 1;
+                    const newRow = document.createElement("div");
+                    newRow.className = "optionrow";
+                    newRow.setAttribute("data-repeat-row", "");
+                    newRow.innerHTML = `
+                                <label class="u-visually-hidden" for="lp-option-${optionCount}">Option ${optionCount}</label>
+                                <input class="field__input option-input" id="lp-option-${optionCount}" name="lp-option-${optionCount}" type="text" placeholder="Option ${optionCount}">
+                                <button class="line__remove" type="button" data-repeat-remove>
+                                    <span class="u-visually-hidden">Remove option ${optionCount}</span>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            `;
+                    optionsContainer.appendChild(newRow);
+                });
+            }
+
+            // Remove Option Row (Delegated Event)
+            if (optionsContainer) {
+                optionsContainer.addEventListener("click", function(e) {
+                    const removeBtn = e.target.closest('[data-repeat-remove]');
+                    if (removeBtn) {
+                        const row = removeBtn.closest('.optionrow');
+                        if (optionsContainer.querySelectorAll('.optionrow').length > 2) {
+                            row.remove();
+                        } else {
+                            alert("A poll requires at least 2 options.");
+                        }
+                    }
+                });
+            }
+
+            // Form Submit Handler
+            if (pollForm) {
+                pollForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+
+                    const question = document.getElementById("poll-question").value.trim();
+                    const visibleTo = document.getElementById("poll-visible").value;
+
+                    // Collect options dynamically
+                    const optionInputs = optionsContainer.querySelectorAll('input.field__input, input.option-input');
+                    const options = Array.from(optionInputs)
+                        .map(input => input.value.trim())
+                        .filter(val => val.length > 0);
+
+                    if (!question) {
+                        alert("Please enter a question.");
+                        return;
+                    }
+
+                    if (options.length < 2) {
+                        alert("Please fill in at least two options.");
+                        return;
+                    }
+
+                    const payload = {
+                        EventId: currentEventId,
+                        SlotId: currentSlotId,
+                        Question: question,
+                        Options: options,
+                        VisibleTo: visibleTo
+                    };
+
+                    fetch('?handler=AddPoll', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': getAntiForgeryToken()
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                        .then(async res => {
+                            const data = await res.json().catch(() => null);
+                            if (!res.ok) {
+                                throw new Error(data?.message || `HTTP ${res.status}: ${res.statusText}`);
+                            }
+                            return data;
+                        })
+                        .then(data => {
+                            if (data && data.success) {
+                                alert(data.message || "Poll launched successfully!");
+                                location.reload();
+                            } else {
+                                alert(data?.message || "Failed to launch poll.");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error launching poll:", err);
+                            alert("Error: " + err.message);
+                        });
+                });
+            }
+        });
+    </script>
+}
