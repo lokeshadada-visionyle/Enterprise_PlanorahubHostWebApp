@@ -1,0 +1,803 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.FoodAndOrdersModel
+@{
+    Layout = "_Layout";
+    ViewData["PageName"] = "Food &amp; Orders";
+    ViewData["PageDesc"] = "Menu, orders &amp; counters";
+}
+
+<main class="shell__main" data-page-roles="admin manager">
+
+    <div class="page__head">
+        <div>
+            <h1 class="page__title">Food Management</h1>
+            <p class="page__subtitle">
+                Menu, live orders &amp; counters &middot; allocated against the per-guest
+                allowance, not sold
+            </p>
+        </div>
+        <div class="page__actions">
+            <span class="switchcard switchcard--bare">
+                <span class="switchcard__title" id="ordering-label">Ready to order</span>
+                <button class="switch switch--brand" type="button" role="switch"
+                        aria-checked="true" aria-labelledby="ordering-label" data-switch
+                        data-reveal-inverse="ordering-off"></button>
+            </span>
+            <button class="btn btn--outline" type="button"
+                    data-action="Serving log opened &mdash; every serve, by whom, at which counter">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Serving log
+            </button>
+            <button class="btn btn--primary" type="button" data-food-new
+                    data-modal-open="fooditem-modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add item
+            </button>
+        </div>
+    </div>
+
+    <p class="notice notice--warn notice--flat" id="ordering-off" hidden>
+        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+        Ordering is switched off. Guests can still see the menu, but nothing can be
+        ordered until you switch it back on.
+    </p>
+
+    <section class="grid grid--4 u-mb-6" aria-label="Food totals">
+        <article class="metric">
+            <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg></span>
+            <span>
+                <span class="metric__value">6</span>
+                <span class="metric__label">Menu items</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h5l2 3h4l2-3h5" /><path d="M5.5 4h13l2.5 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6l2.5-8z" /></svg></span>
+            <span>
+                <span class="metric__value">5</span>
+                <span class="metric__label">Open orders</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+            <span>
+                <span class="metric__value">1,204</span>
+                <span class="metric__label">Serves today</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg></span>
+            <span>
+                <span class="metric__value">92%</span>
+                <span class="metric__label">Of allowance used</span>
+            </span>
+        </article>
+    </section>
+
+    <div class="tabs u-mb-6" role="tablist" aria-label="Food sections" data-viewswitch>
+        <button class="tabs__tab" type="button" role="tab" aria-selected="true"
+                data-view="menu">
+            Menu <span class="tabs__count">6</span>
+        </button>
+        <button class="tabs__tab" type="button" role="tab" aria-selected="false"
+                data-view="orders">
+            Live orders <span class="tabs__count">5</span>
+        </button>
+        <button class="tabs__tab" type="button" role="tab" aria-selected="false"
+                data-view="counters">
+            Counters &amp; staff
+            <span class="tabs__count">4</span>
+        </button>
+    </div>
+
+    <!-- Menu -->
+    <div data-view-panel="menu">
+        <div class="toolbar u-mb-5">
+            <div class="searchbox">
+                <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                <label class="u-visually-hidden" for="food-search">Search the menu</label>
+                <input class="searchbox__input" id="food-search" name="food-search"
+                       type="search" placeholder="Search by item name"
+                       data-tablefilter="food-table">
+            </div>
+            <div class="toolbar__field">
+                <label class="u-visually-hidden" for="food-cat">Filter by category</label>
+                <select class="field__select" id="food-cat" name="food-cat"
+                        data-tablefilter-col="food-table">
+                    <option value="">All categories</option>
+                    <option>Starters</option>
+                    <option>Soups</option>
+                    <option>Rice &amp; Biryani</option>
+                    <option>Breads</option>
+                    <option>Main Course</option>
+                    <option>Snacks</option>
+                    <option>Sides</option>
+                    <option>Desserts</option>
+                    <option>Beverages</option>
+                </select>
+            </div>
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="Menu exported as CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export menu
+            </button>
+        </div>
+
+        <div class="tablewrap">
+            <table class="table" id="food-table">
+                <caption class="u-visually-hidden">
+                    Menu items with dietary type, extra serves per guest, servings today and
+                    availability
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Extra serves / guest</th>
+                        <th scope="col">Served</th>
+                        <th scope="col">Availability</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-repeat-row data-food-row class="is-out">
+                        <td>
+                            <span class="cellstack__name">Jollof Rice</span>
+                            <span class="cellsub">
+                                <span class="diet diet--veg" aria-hidden="true"></span>
+                                Veg
+                            </span>
+                        </td>
+                        <td><span class="badge badge--nodot badge--neutral">Rice &amp; Biryani</span></td>
+                        <td>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span class="u-visually-hidden">Fewer extra serves for Jollof Rice</span>
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="fo-1-extra">
+                                    Extra serves per guest for Jollof Rice
+                                </label>
+                                <input class="stepper__value" id="fo-1-extra" name="fo-1-extra"
+                                       type="text" inputmode="numeric" value="2" min="0" max="9">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span class="u-visually-hidden">More extra serves for Jollof Rice</span>
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </td>
+                        <td><b>318</b> <span class="cellsub">today</span></td>
+                        <td>
+                            <button class="badge badge--out" type="button" aria-pressed="false"
+                                    data-availability>
+                                Out of stock
+                            </button>
+                        </td>
+                        <td>
+                            <div class="rowactions">
+                                <button class="iconbtn" type="button" data-food-edit="1"
+                                        data-modal-open="fooditem-modal">
+                                    <span class="u-visually-hidden">Edit Jollof Rice</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving history for Jollof Rice opened">
+                                    <span class="u-visually-hidden">Serving history for Jollof Rice</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                                <button class="iconbtn iconbtn--danger" type="button"
+                                        data-repeat-remove
+                                        data-action="Jollof Rice removed from the menu"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Jollof Rice</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-repeat-row data-food-row>
+                        <td>
+                            <span class="cellstack__name">Chicken Suya Skewers</span>
+                            <span class="cellsub">
+                                <span class="diet diet--nonveg" aria-hidden="true"></span>
+                                Non-veg
+                            </span>
+                        </td>
+                        <td><span class="badge badge--nodot badge--neutral">Starters</span></td>
+                        <td>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span class="u-visually-hidden">Fewer extra serves for Chicken Suya Skewers</span>
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="fo-2-extra">
+                                    Extra serves per guest for Chicken Suya Skewers
+                                </label>
+                                <input class="stepper__value" id="fo-2-extra" name="fo-2-extra"
+                                       type="text" inputmode="numeric" value="1" min="0" max="9">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span class="u-visually-hidden">More extra serves for Chicken Suya Skewers</span>
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </td>
+                        <td><b>287</b> <span class="cellsub">today</span></td>
+                        <td>
+                            <button class="badge badge--live" type="button" aria-pressed="true"
+                                    data-availability>
+                                Available
+                            </button>
+                        </td>
+                        <td>
+                            <div class="rowactions">
+                                <button class="iconbtn" type="button" data-food-edit="2"
+                                        data-modal-open="fooditem-modal">
+                                    <span class="u-visually-hidden">Edit Chicken Suya Skewers</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving history for Chicken Suya Skewers opened">
+                                    <span class="u-visually-hidden">Serving history for Chicken Suya Skewers</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                                <button class="iconbtn iconbtn--danger" type="button"
+                                        data-repeat-remove
+                                        data-action="Chicken Suya Skewers removed from the menu"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Chicken Suya Skewers</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-repeat-row data-food-row>
+                        <td>
+                            <span class="cellstack__name">Puff Puff</span>
+                            <span class="cellsub">
+                                <span class="diet diet--egg" aria-hidden="true"></span>
+                                Egg
+                            </span>
+                        </td>
+                        <td><span class="badge badge--nodot badge--neutral">Snacks</span></td>
+                        <td>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span class="u-visually-hidden">Fewer extra serves for Puff Puff</span>
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="fo-3-extra">
+                                    Extra serves per guest for Puff Puff
+                                </label>
+                                <input class="stepper__value" id="fo-3-extra" name="fo-3-extra"
+                                       type="text" inputmode="numeric" value="3" min="0" max="9">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span class="u-visually-hidden">More extra serves for Puff Puff</span>
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </td>
+                        <td><b>196</b> <span class="cellsub">today</span></td>
+                        <td>
+                            <button class="badge badge--live" type="button" aria-pressed="true"
+                                    data-availability>
+                                Available
+                            </button>
+                        </td>
+                        <td>
+                            <div class="rowactions">
+                                <button class="iconbtn" type="button" data-food-edit="3"
+                                        data-modal-open="fooditem-modal">
+                                    <span class="u-visually-hidden">Edit Puff Puff</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving history for Puff Puff opened">
+                                    <span class="u-visually-hidden">Serving history for Puff Puff</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                                <button class="iconbtn iconbtn--danger" type="button"
+                                        data-repeat-remove
+                                        data-action="Puff Puff removed from the menu"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Puff Puff</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-repeat-row data-food-row>
+                        <td>
+                            <span class="cellstack__name">Zobo Drink</span>
+                            <span class="cellsub">
+                                <span class="diet diet--vegan" aria-hidden="true"></span>
+                                Vegan
+                            </span>
+                        </td>
+                        <td><span class="badge badge--nodot badge--neutral">Beverages</span></td>
+                        <td>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span class="u-visually-hidden">Fewer extra serves for Zobo Drink</span>
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="fo-4-extra">
+                                    Extra serves per guest for Zobo Drink
+                                </label>
+                                <input class="stepper__value" id="fo-4-extra" name="fo-4-extra"
+                                       type="text" inputmode="numeric" value="3" min="0" max="9">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span class="u-visually-hidden">More extra serves for Zobo Drink</span>
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </td>
+                        <td><b>181</b> <span class="cellsub">today</span></td>
+                        <td>
+                            <button class="badge badge--live" type="button" aria-pressed="true"
+                                    data-availability>
+                                Available
+                            </button>
+                        </td>
+                        <td>
+                            <div class="rowactions">
+                                <button class="iconbtn" type="button" data-food-edit="4"
+                                        data-modal-open="fooditem-modal">
+                                    <span class="u-visually-hidden">Edit Zobo Drink</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving history for Zobo Drink opened">
+                                    <span class="u-visually-hidden">Serving history for Zobo Drink</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                                <button class="iconbtn iconbtn--danger" type="button"
+                                        data-repeat-remove
+                                        data-action="Zobo Drink removed from the menu"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Zobo Drink</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-repeat-row data-food-row>
+                        <td>
+                            <span class="cellstack__name">Coconut Rice</span>
+                            <span class="cellsub">
+                                <span class="diet diet--vegan" aria-hidden="true"></span>
+                                Vegan
+                            </span>
+                        </td>
+                        <td><span class="badge badge--nodot badge--neutral">Rice &amp; Biryani</span></td>
+                        <td>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span class="u-visually-hidden">Fewer extra serves for Coconut Rice</span>
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="fo-5-extra">
+                                    Extra serves per guest for Coconut Rice
+                                </label>
+                                <input class="stepper__value" id="fo-5-extra" name="fo-5-extra"
+                                       type="text" inputmode="numeric" value="2" min="0" max="9">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span class="u-visually-hidden">More extra serves for Coconut Rice</span>
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </td>
+                        <td><b>132</b> <span class="cellsub">today</span></td>
+                        <td>
+                            <button class="badge badge--live" type="button" aria-pressed="true"
+                                    data-availability>
+                                Available
+                            </button>
+                        </td>
+                        <td>
+                            <div class="rowactions">
+                                <button class="iconbtn" type="button" data-food-edit="5"
+                                        data-modal-open="fooditem-modal">
+                                    <span class="u-visually-hidden">Edit Coconut Rice</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving history for Coconut Rice opened">
+                                    <span class="u-visually-hidden">Serving history for Coconut Rice</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                                <button class="iconbtn iconbtn--danger" type="button"
+                                        data-repeat-remove
+                                        data-action="Coconut Rice removed from the menu"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Coconut Rice</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-repeat-row data-food-row class="is-out">
+                        <td>
+                            <span class="cellstack__name">Moi Moi</span>
+                            <span class="cellsub">
+                                <span class="diet diet--veg" aria-hidden="true"></span>
+                                Veg
+                            </span>
+                        </td>
+                        <td><span class="badge badge--nodot badge--neutral">Sides</span></td>
+                        <td>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span class="u-visually-hidden">Fewer extra serves for Moi Moi</span>
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="fo-6-extra">
+                                    Extra serves per guest for Moi Moi
+                                </label>
+                                <input class="stepper__value" id="fo-6-extra" name="fo-6-extra"
+                                       type="text" inputmode="numeric" value="1" min="0" max="9">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span class="u-visually-hidden">More extra serves for Moi Moi</span>
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </td>
+                        <td><b>90</b> <span class="cellsub">today</span></td>
+                        <td>
+                            <button class="badge badge--out" type="button" aria-pressed="false"
+                                    data-availability>
+                                Out of stock
+                            </button>
+                        </td>
+                        <td>
+                            <div class="rowactions">
+                                <button class="iconbtn" type="button" data-food-edit="6"
+                                        data-modal-open="fooditem-modal">
+                                    <span class="u-visually-hidden">Edit Moi Moi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving history for Moi Moi opened">
+                                    <span class="u-visually-hidden">Serving history for Moi Moi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                                <button class="iconbtn iconbtn--danger" type="button"
+                                        data-repeat-remove
+                                        data-action="Moi Moi removed from the menu"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Moi Moi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="tablefilter__empty" data-tablefilter-empty="food-table" hidden>
+            No item matches that search.
+        </p>
+
+        <p class="notice notice--info notice--flat u-mt-5">
+            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+            Base allowance is 1 serve per guest per meal, set in the wizard. The number here
+            is how many <b>extra</b> serves of that item a guest may take on top.
+        </p>
+    </div>
+
+    <!-- Live orders -->
+    <div data-view-panel="orders" hidden>
+        <section class="panel" aria-labelledby="orders-title">
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h2 class="panel__title" id="orders-title">Live orders</h2>
+                    <p class="panel__meta">
+                        New &rarr; Preparing &rarr; Ready &rarr; Served &middot; updated moments ago
+                    </p>
+                </div>
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="All ready orders marked collected">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Mark all ready as collected
+                </button>
+            </div>
+            <div class="panel__body" id="order-list">
+                <article class="order" data-order-row data-order-stage="New">
+                    <span class="order__ref">#4821</span>
+                    <span class="order__body">
+                        <span class="cellsub">Main Hall &middot; Seat B12</span>
+                        <span class="order__items">Jollof Rice &times;2 &middot; Zobo Drink &times;2</span>
+                    </span>
+                    <span class="order__side">
+                        <span class="badge badge--nodot badge--new" data-order-badge>New</span>
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-order-advance="Preparing">
+                            Mark Preparing
+                        </button>
+                        <button class="iconbtn iconbtn--danger" type="button"
+                                data-repeat-remove data-action="Order #4821 cancelled"
+                                data-action-tone="warn">
+                            <span class="u-visually-hidden">Cancel order #4821</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </span>
+                </article>
+                <article class="order" data-order-row data-order-stage="Preparing">
+                    <span class="order__ref">#4820</span>
+                    <span class="order__body">
+                        <span class="cellsub">Main Hall &middot; Table 4</span>
+                        <span class="order__items">Chicken Suya Skewers &times;1 &middot; Puff Puff &times;1</span>
+                    </span>
+                    <span class="order__side">
+                        <span class="badge badge--nodot badge--paused" data-order-badge>Preparing</span>
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-order-advance="Ready">
+                            Mark Ready
+                        </button>
+                        <button class="iconbtn iconbtn--danger" type="button"
+                                data-repeat-remove data-action="Order #4820 cancelled"
+                                data-action-tone="warn">
+                            <span class="u-visually-hidden">Cancel order #4820</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </span>
+                </article>
+                <article class="order" data-order-row data-order-stage="Ready">
+                    <span class="order__ref">#4819</span>
+                    <span class="order__body">
+                        <span class="cellsub">VIP Lounge &middot; Table 2</span>
+                        <span class="order__items">Coconut Rice &times;3</span>
+                    </span>
+                    <span class="order__side">
+                        <span class="badge badge--nodot badge--ready" data-order-badge>Ready</span>
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-order-advance="Served">
+                            Mark Served
+                        </button>
+                        <button class="iconbtn iconbtn--danger" type="button"
+                                data-repeat-remove data-action="Order #4819 cancelled"
+                                data-action-tone="warn">
+                            <span class="u-visually-hidden">Cancel order #4819</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </span>
+                </article>
+                <article class="order" data-order-row data-order-stage="Served">
+                    <span class="order__ref">#4818</span>
+                    <span class="order__body">
+                        <span class="cellsub">Hall B &middot; Seat D07</span>
+                        <span class="order__items">Zobo Drink &times;1</span>
+                    </span>
+                    <span class="order__side">
+                        <span class="badge badge--nodot badge--draft" data-order-badge>Served</span>
+                        <span class="badge badge--nodot badge--live">Collected</span>
+                        <button class="iconbtn iconbtn--danger" type="button"
+                                data-repeat-remove data-action="Order #4818 cancelled"
+                                data-action-tone="warn">
+                            <span class="u-visually-hidden">Cancel order #4818</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </span>
+                </article>
+                <article class="order" data-order-row data-order-stage="Served">
+                    <span class="order__ref">#4817</span>
+                    <span class="order__body">
+                        <span class="cellsub">Main Hall &middot; Seat A04</span>
+                        <span class="order__items">Puff Puff &times;2 &middot; Moi Moi &times;1</span>
+                    </span>
+                    <span class="order__side">
+                        <span class="badge badge--nodot badge--draft" data-order-badge>Served</span>
+                        <span class="badge badge--nodot badge--live">Collected</span>
+                        <button class="iconbtn iconbtn--danger" type="button"
+                                data-repeat-remove data-action="Order #4817 cancelled"
+                                data-action-tone="warn">
+                            <span class="u-visually-hidden">Cancel order #4817</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </span>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <!-- Counters and staff -->
+    <div data-view-panel="counters" hidden>
+        <div class="hubhead u-mb-5">
+            <div class="hubhead__body">
+                <h2 class="hubhead__title">Counters &amp; staff</h2>
+                <p class="hubhead__text">
+                    Who is serving where. Vendors are assigned to dates and slots in Event Hub,
+                    not to individual menu items.
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <a class="btn btn--primary btn--sm" href="event-hub.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> Manage in Event Hub
+                </a>
+            </div>
+        </div>
+
+        <div class="tablewrap">
+            <table class="table table--narrow">
+                <caption class="u-visually-hidden">
+                    Vendors and counter staff with their assignment and servings handled
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Vendor or staff</th>
+                        <th scope="col">Counter</th>
+                        <th scope="col">Assigned to</th>
+                        <th scope="col">Serves handled</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="cellstack__name">Mama Put Kitchen</span></td>
+                        <td>Atrium counter 1</td>
+                        <td class="u-muted">Day 1 &middot; Morning Keynote, Fintech Panel</td>
+                        <td><b>512</b></td>
+                        <td><span class="badge badge--live">Serving</span></td>
+                        <td>
+                            <div class="rowactions">
+                                <a class="iconbtn" href="event-hub.html">
+                                    <span class="u-visually-hidden">Manage Mama Put Kitchen in Event Hub</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </a>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving log for Mama Put Kitchen opened">
+                                    <span class="u-visually-hidden">Serving log for Mama Put Kitchen</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="cellstack__name">GreenBite Co.</span></td>
+                        <td>Atrium counter 2</td>
+                        <td class="u-muted">Day 2 &middot; Design Sprint, Investor Clinic</td>
+                        <td><b>268</b></td>
+                        <td><span class="badge badge--live">Serving</span></td>
+                        <td>
+                            <div class="rowactions">
+                                <a class="iconbtn" href="event-hub.html">
+                                    <span class="u-visually-hidden">Manage GreenBite Co. in Event Hub</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </a>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving log for GreenBite Co. opened">
+                                    <span class="u-visually-hidden">Serving log for GreenBite Co.</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="cellstack__name">RefreshCo.</span></td>
+                        <td>Beverage station</td>
+                        <td class="u-muted">Whole event</td>
+                        <td><b>424</b></td>
+                        <td><span class="badge badge--live">Serving</span></td>
+                        <td>
+                            <div class="rowactions">
+                                <a class="iconbtn" href="event-hub.html">
+                                    <span class="u-visually-hidden">Manage RefreshCo. in Event Hub</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </a>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving log for RefreshCo. opened">
+                                    <span class="u-visually-hidden">Serving log for RefreshCo.</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="cellstack__name">Chika Eze</span></td>
+                        <td>Atrium counter 1</td>
+                        <td class="u-muted">Whole event</td>
+                        <td><b>0</b></td>
+                        <td><span class="badge badge--paused">On break</span></td>
+                        <td>
+                            <div class="rowactions">
+                                <a class="iconbtn" href="event-hub.html">
+                                    <span class="u-visually-hidden">Manage Chika Eze in Event Hub</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </a>
+                                <button class="iconbtn" type="button"
+                                        data-action="Serving log for Chika Eze opened">
+                                    <span class="u-visually-hidden">Serving log for Chika Eze</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="notice notice--info notice--flat u-mt-5">
+            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+            Serves handled counts what passed over that counter. Nothing here is priced &mdash;
+            food is part of what the ticket includes.
+        </p>
+    </div>
+
+</main>
+<div class="backdrop" data-backdrop></div>
+
+<div class="modal" id="fooditem-modal" role="dialog" aria-modal="true"
+     aria-labelledby="fooditem-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="fooditem-title">
+                <span data-food-heading>Add menu item</span>
+            </h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <form class="modal__body" id="fooditem-form">
+            <div class="formgrid formgrid--2">
+                <div class="form__field">
+                    <label class="field__label" for="fi-name">
+                        Item name<span class="field__required" aria-hidden="true">*</span>
+                        <span class="u-visually-hidden">(required)</span>
+                    </label>
+                    <input class="field__input" id="fi-name" name="fi-name" type="text"
+                           placeholder="e.g. Jollof Rice" data-food-field="name" required>
+                </div>
+                <div class="form__field">
+                    <label class="field__label" for="fi-cat">Category</label>
+                    <select class="field__select" id="fi-cat" name="fi-cat" data-food-field="cat">
+                        <option>Starters</option>
+                        <option>Soups</option>
+                        <option>Rice &amp; Biryani</option>
+                        <option>Breads</option>
+                        <option>Main Course</option>
+                        <option>Snacks</option>
+                        <option>Sides</option>
+                        <option>Desserts</option>
+                        <option>Beverages</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="formgrid formgrid--2 u-mt-5">
+                <div class="form__field">
+                    <label class="field__label" for="fi-diet">Dietary type</label>
+                    <select class="field__select" id="fi-diet" name="fi-diet" data-food-field="diet">
+                        <option value="veg">Veg</option>
+                        <option value="nonveg">Non-veg</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="egg">Egg</option>
+                    </select>
+                </div>
+                <div class="form__field">
+                    <label class="field__label" for="fi-extra">Extra serves allowed per guest</label>
+                    <input class="field__input" id="fi-extra" name="fi-extra" type="text"
+                           inputmode="numeric" value="1" data-food-field="extra">
+                    <span class="field__hint">
+                        On top of the base allowance set in the wizard. No item carries a price.
+                    </span>
+                </div>
+            </div>
+
+            <div class="form__field u-mt-5">
+                <label class="field__label" for="fi-scope">Available in</label>
+                <select class="field__select" id="fi-scope" name="fi-scope">
+                    <option>Every day and slot</option>
+                    <option>All slots on Day 1</option>
+                    <option>All slots on Day 2</option>
+                    <option>This slot only</option>
+                </select>
+            </div>
+        </form>
+
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Cancel</button>
+            <button class="btn btn--primary" type="button" data-food-save data-modal-close>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> <span data-food-cta>Add to menu</span>
+            </button>
+        </div>
+    </div>
+</div>

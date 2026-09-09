@@ -1,0 +1,310 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubFoodVendorsModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="food" data-role-only="admin manager" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Food &amp; Vendors</h2>
+            <p class="hubhead__text">
+                <span data-scope-label>Day 1</span> &middot; menu, availability and serve limits
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <span class="switchcard switchcard--bare">
+                <span class="switchcard__title" id="ready-label">Ready to order</span>
+                <button class="switch switch--brand" type="button" role="switch"
+                        aria-checked="true" aria-labelledby="ready-label" data-switch></button>
+            </span>
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="menu-modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add Item
+            </button>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="mgrow mgrow--head" aria-hidden="true">
+            <span></span><span>Item</span><span>Category</span>
+            <span>Max / guest</span><span>Availability</span><span></span>
+        </div>
+        <div id="hub-menu-list">
+            <div class="mgrow" data-menu-row data-scope="day1:slot1">
+                <span class="diet diet--nonveg" aria-hidden="true"></span>
+                <span class="mgrow__name">
+                    <span data-menu-name>Chicken Suya Skewers</span>
+                    <label class="u-visually-hidden" for="hubmenu-1-name">Item name</label>
+                    <input id="hubmenu-1-name" name="hubmenu-1-name" type="text" value="Chicken Suya Skewers">
+                </span>
+                <span class="mgrow__cat">Starters</span>
+                <span class="mgrow__limit">
+                    <span class="stepper" data-stepper>
+                        <button class="stepper__btn" type="button" data-step="-1">
+                            <span class="u-visually-hidden">Lower max serves for Chicken Suya Skewers</span>
+                            <span aria-hidden="true">&minus;</span>
+                        </button>
+                        <label class="u-visually-hidden" for="hubmenu-1-limit">
+                            Max serves per guest
+                        </label>
+                        <input class="stepper__value" id="hubmenu-1-limit"
+                               name="hubmenu-1-limit" type="text" inputmode="numeric"
+                               value="1" min="0" max="9">
+                        <button class="stepper__btn" type="button" data-step="1">
+                            <span class="u-visually-hidden">Raise max serves for Chicken Suya Skewers</span>
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </span>
+                </span>
+                <span class="mgrow__avail">
+                    <button class="badge badge--live" type="button" aria-pressed="true"
+                            data-availability>
+                        Available
+                    </button>
+                </span>
+                <span class="mgrow__actions">
+                    <button class="iconbtn" type="button" data-menu-edit>
+                        <span class="u-visually-hidden">Edit Chicken Suya Skewers</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                    </button>
+                    <button class="iconbtn" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Delete Chicken Suya Skewers</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                    </button>
+                </span>
+            </div>
+            <div class="mgrow" data-menu-row data-scope="day1:slot1">
+                <span class="diet diet--veg" aria-hidden="true"></span>
+                <span class="mgrow__name">
+                    <span data-menu-name>Jollof Rice</span>
+                    <label class="u-visually-hidden" for="hubmenu-2-name">Item name</label>
+                    <input id="hubmenu-2-name" name="hubmenu-2-name" type="text" value="Jollof Rice">
+                </span>
+                <span class="mgrow__cat">Rice &amp; Biryani</span>
+                <span class="mgrow__limit">
+                    <span class="stepper" data-stepper>
+                        <button class="stepper__btn" type="button" data-step="-1">
+                            <span class="u-visually-hidden">Lower max serves for Jollof Rice</span>
+                            <span aria-hidden="true">&minus;</span>
+                        </button>
+                        <label class="u-visually-hidden" for="hubmenu-2-limit">
+                            Max serves per guest
+                        </label>
+                        <input class="stepper__value" id="hubmenu-2-limit"
+                               name="hubmenu-2-limit" type="text" inputmode="numeric"
+                               value="2" min="0" max="9">
+                        <button class="stepper__btn" type="button" data-step="1">
+                            <span class="u-visually-hidden">Raise max serves for Jollof Rice</span>
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </span>
+                </span>
+                <span class="mgrow__avail">
+                    <button class="badge badge--live" type="button" aria-pressed="true"
+                            data-availability>
+                        Available
+                    </button>
+                </span>
+                <span class="mgrow__actions">
+                    <button class="iconbtn" type="button" data-menu-edit>
+                        <span class="u-visually-hidden">Edit Jollof Rice</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                    </button>
+                    <button class="iconbtn" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Delete Jollof Rice</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                    </button>
+                </span>
+            </div>
+            <div class="mgrow" data-menu-row data-scope="day1:slot2">
+                <span class="diet diet--vegan" aria-hidden="true"></span>
+                <span class="mgrow__name">
+                    <span data-menu-name>Coconut Rice</span>
+                    <label class="u-visually-hidden" for="hubmenu-3-name">Item name</label>
+                    <input id="hubmenu-3-name" name="hubmenu-3-name" type="text" value="Coconut Rice">
+                </span>
+                <span class="mgrow__cat">Rice &amp; Biryani</span>
+                <span class="mgrow__limit">
+                    <span class="stepper" data-stepper>
+                        <button class="stepper__btn" type="button" data-step="-1">
+                            <span class="u-visually-hidden">Lower max serves for Coconut Rice</span>
+                            <span aria-hidden="true">&minus;</span>
+                        </button>
+                        <label class="u-visually-hidden" for="hubmenu-3-limit">
+                            Max serves per guest
+                        </label>
+                        <input class="stepper__value" id="hubmenu-3-limit"
+                               name="hubmenu-3-limit" type="text" inputmode="numeric"
+                               value="2" min="0" max="9">
+                        <button class="stepper__btn" type="button" data-step="1">
+                            <span class="u-visually-hidden">Raise max serves for Coconut Rice</span>
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </span>
+                </span>
+                <span class="mgrow__avail">
+                    <button class="badge badge--live" type="button" aria-pressed="true"
+                            data-availability>
+                        Available
+                    </button>
+                </span>
+                <span class="mgrow__actions">
+                    <button class="iconbtn" type="button" data-menu-edit>
+                        <span class="u-visually-hidden">Edit Coconut Rice</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                    </button>
+                    <button class="iconbtn" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Delete Coconut Rice</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                    </button>
+                </span>
+            </div>
+            <div class="mgrow is-out" data-menu-row data-scope="day1:slot2">
+                <span class="diet diet--egg" aria-hidden="true"></span>
+                <span class="mgrow__name">
+                    <span data-menu-name>Puff Puff</span>
+                    <label class="u-visually-hidden" for="hubmenu-4-name">Item name</label>
+                    <input id="hubmenu-4-name" name="hubmenu-4-name" type="text" value="Puff Puff">
+                </span>
+                <span class="mgrow__cat">Snacks</span>
+                <span class="mgrow__limit">
+                    <span class="stepper" data-stepper>
+                        <button class="stepper__btn" type="button" data-step="-1">
+                            <span class="u-visually-hidden">Lower max serves for Puff Puff</span>
+                            <span aria-hidden="true">&minus;</span>
+                        </button>
+                        <label class="u-visually-hidden" for="hubmenu-4-limit">
+                            Max serves per guest
+                        </label>
+                        <input class="stepper__value" id="hubmenu-4-limit"
+                               name="hubmenu-4-limit" type="text" inputmode="numeric"
+                               value="3" min="0" max="9">
+                        <button class="stepper__btn" type="button" data-step="1">
+                            <span class="u-visually-hidden">Raise max serves for Puff Puff</span>
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </span>
+                </span>
+                <span class="mgrow__avail">
+                    <button class="badge badge--out" type="button" aria-pressed="false"
+                            data-availability>
+                        Out of stock
+                    </button>
+                </span>
+                <span class="mgrow__actions">
+                    <button class="iconbtn" type="button" data-menu-edit>
+                        <span class="u-visually-hidden">Edit Puff Puff</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                    </button>
+                    <button class="iconbtn" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Delete Puff Puff</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                    </button>
+                </span>
+            </div>
+            <div class="mgrow" data-menu-row data-scope="day2:slot1">
+                <span class="diet diet--veg" aria-hidden="true"></span>
+                <span class="mgrow__name">
+                    <span data-menu-name>Moi Moi</span>
+                    <label class="u-visually-hidden" for="hubmenu-5-name">Item name</label>
+                    <input id="hubmenu-5-name" name="hubmenu-5-name" type="text" value="Moi Moi">
+                </span>
+                <span class="mgrow__cat">Sides</span>
+                <span class="mgrow__limit">
+                    <span class="stepper" data-stepper>
+                        <button class="stepper__btn" type="button" data-step="-1">
+                            <span class="u-visually-hidden">Lower max serves for Moi Moi</span>
+                            <span aria-hidden="true">&minus;</span>
+                        </button>
+                        <label class="u-visually-hidden" for="hubmenu-5-limit">
+                            Max serves per guest
+                        </label>
+                        <input class="stepper__value" id="hubmenu-5-limit"
+                               name="hubmenu-5-limit" type="text" inputmode="numeric"
+                               value="1" min="0" max="9">
+                        <button class="stepper__btn" type="button" data-step="1">
+                            <span class="u-visually-hidden">Raise max serves for Moi Moi</span>
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </span>
+                </span>
+                <span class="mgrow__avail">
+                    <button class="badge badge--live" type="button" aria-pressed="true"
+                            data-availability>
+                        Available
+                    </button>
+                </span>
+                <span class="mgrow__actions">
+                    <button class="iconbtn" type="button" data-menu-edit>
+                        <span class="u-visually-hidden">Edit Moi Moi</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                    </button>
+                    <button class="iconbtn" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Delete Moi Moi</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                    </button>
+                </span>
+            </div>
+            <div class="mgrow" data-menu-row data-scope="all">
+                <span class="diet diet--vegan" aria-hidden="true"></span>
+                <span class="mgrow__name">
+                    <span data-menu-name>Zobo Drink</span>
+                    <label class="u-visually-hidden" for="hubmenu-6-name">Item name</label>
+                    <input id="hubmenu-6-name" name="hubmenu-6-name" type="text" value="Zobo Drink">
+                </span>
+                <span class="mgrow__cat">Beverages</span>
+                <span class="mgrow__limit">
+                    <span class="stepper" data-stepper>
+                        <button class="stepper__btn" type="button" data-step="-1">
+                            <span class="u-visually-hidden">Lower max serves for Zobo Drink</span>
+                            <span aria-hidden="true">&minus;</span>
+                        </button>
+                        <label class="u-visually-hidden" for="hubmenu-6-limit">
+                            Max serves per guest
+                        </label>
+                        <input class="stepper__value" id="hubmenu-6-limit"
+                               name="hubmenu-6-limit" type="text" inputmode="numeric"
+                               value="3" min="0" max="9">
+                        <button class="stepper__btn" type="button" data-step="1">
+                            <span class="u-visually-hidden">Raise max serves for Zobo Drink</span>
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </span>
+                </span>
+                <span class="mgrow__avail">
+                    <button class="badge badge--live" type="button" aria-pressed="true"
+                            data-availability>
+                        Available
+                    </button>
+                </span>
+                <span class="mgrow__actions">
+                    <button class="iconbtn" type="button" data-menu-edit>
+                        <span class="u-visually-hidden">Edit Zobo Drink</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                    </button>
+                    <button class="iconbtn" type="button" data-repeat-remove>
+                        <span class="u-visually-hidden">Delete Zobo Drink</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <p class="panel__foot">
+            <span>6 items &middot; serving window 12:00&ndash;14:30 &middot; base 1 serve per guest</span>
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-modal-open="servinglog-modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Serving log
+            </button>
+        </p>
+    </section>
+
+    <p class="notice notice--info notice--flat u-mt-6">
+        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+        Vendors, the staff under them and the entry staff on each door are managed
+        under <b>Staff</b>. A counter cannot serve until somebody there has a PIN.
+    </p>
+</div>

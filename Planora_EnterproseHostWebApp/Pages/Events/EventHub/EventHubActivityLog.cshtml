@@ -1,0 +1,58 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubActivityLogModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="log" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Activity Log</h2>
+            <p class="hubhead__text">Every action taken on this event, by whom</p>
+        </div>
+        <div class="hubhead__actions">
+            <button class="btn btn--outline btn--sm" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export log</button>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="kv">
+            <span class="avatar" aria-hidden="true">KA</span>
+            <span class="kv__body">
+                <span class="kv__value">Kofi Asante closed the poll "How did you hear about Tech Summit?"</span>
+                <span class="kv__key">4m ago</span>
+            </span>
+        </div>
+        <div class="kv">
+            <span class="avatar" aria-hidden="true">BO</span>
+            <span class="kv__body">
+                <span class="kv__value">Bayo Ogun checked in Amara Osei at Hall A entrance</span>
+                <span class="kv__key">12m ago</span>
+            </span>
+        </div>
+        <div class="kv">
+            <span class="avatar" aria-hidden="true">S</span>
+            <span class="kv__body">
+                <span class="kv__value">System auto-promoted 2 waitlist guests after a refund</span>
+                <span class="kv__key">38m ago</span>
+            </span>
+        </div>
+        <div class="kv">
+            <span class="avatar" aria-hidden="true">CE</span>
+            <span class="kv__body">
+                <span class="kv__value">Chioma Eze marked Puff Puff out of stock</span>
+                <span class="kv__key">1h ago</span>
+            </span>
+        </div>
+        <div class="kv">
+            <span class="avatar" aria-hidden="true">KA</span>
+            <span class="kv__body">
+                <span class="kv__value">Kofi Asante sent broadcast "Hall B has moved to the second floor"</span>
+                <span class="kv__key">1h ago</span>
+            </span>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,115 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubPollsModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="polls" data-role-only="admin manager" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Live Polls &amp; Announcements</h2>
+            <p class="hubhead__text">
+                <span data-scope-label>Day 1</span> &middot; visible to checked-in guests
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="poll-modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Create Poll
+            </button>
+        </div>
+    </div>
+
+    <article class="livepoll">
+        <p class="livepoll__flag">
+            <span class="live__pulse" aria-hidden="true"></span> Live poll
+        </p>
+        <h3 class="livepoll__question">Which session topic was most valuable?</h3>
+
+        <div class="livepoll__rows">
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>AI &amp; Machine Learning</span>
+                    <span class="livepoll__pct">42%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill" data-fill="42"></span>
+                </span>
+            </div>
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>Product Design</span>
+                    <span class="livepoll__pct">30%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill livepoll__fill--2" data-fill="30"></span>
+                </span>
+            </div>
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>Fintech Innovation</span>
+                    <span class="livepoll__pct">20%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill livepoll__fill--3" data-fill="20"></span>
+                </span>
+            </div>
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>Cloud Infrastructure</span>
+                    <span class="livepoll__pct">8%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill livepoll__fill--4" data-fill="8"></span>
+                </span>
+            </div>
+        </div>
+
+        <p class="livepoll__foot">
+            <span>738 total responses &middot; visible to all checked-in guests</span>
+            <button class="btn btn--outline btn--sm" type="button">Close poll</button>
+            <button class="btn btn--outline btn--sm" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export</button>
+        </p>
+    </article>
+
+    <article class="livepoll">
+        <p class="livepoll__flag livepoll__flag--closed">Closed poll</p>
+        <h3 class="livepoll__question">How did you hear about Tech Summit?</h3>
+        <div class="livepoll__rows">
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>Social media</span>
+                    <span class="livepoll__pct">52%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill" data-fill="52"></span>
+                </span>
+            </div>
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>A colleague</span>
+                    <span class="livepoll__pct">28%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill livepoll__fill--2" data-fill="28"></span>
+                </span>
+            </div>
+            <div class="livepoll__row">
+                <p class="livepoll__top">
+                    <span>Newsletter</span>
+                    <span class="livepoll__pct">20%</span>
+                </p>
+                <span class="livepoll__bar">
+                    <span class="livepoll__fill livepoll__fill--3" data-fill="20"></span>
+                </span>
+            </div>
+        </div>
+        <p class="livepoll__foot">
+            <span>408 responses &middot; closed 2 hours ago</span>
+            <button class="btn btn--outline btn--sm" type="button">Relaunch</button>
+        </p>
+    </article>
+</div>

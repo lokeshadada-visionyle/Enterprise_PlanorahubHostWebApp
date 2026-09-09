@@ -1,0 +1,977 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.ScheduleBuilderModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 3;
+    ViewData["StepTotal"] = 9;
+    ViewData["StepName"] = "Schedule Builder";
+    ViewData["StepHint"] = "Set your venue, halls, dates and time slots";
+}
+
+<div class="wizard__body">
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            @Html.AntiForgeryToken()
+            <form class="stack" id="scheduleForm" action="content-sections.html" method="post">
+
+                <!-- Venues & halls: one venue by default, several on request -->
+                <div>
+                    <div class="dashbox" style="margin-bottom: 10px;">
+                        <span class="dashbox__tag">Venue mode</span>
+                        <div class="optin">
+                            <input class="optin__box" id="multivenue" name="multivenue" type="checkbox"
+                                   data-reveal="multi-venue" data-reveal-inverse="single-venue"
+                                   aria-controls="multi-venue">
+                            <label for="multivenue">
+                                <span class="optin__title">Multi-venue, multi-hall event</span>
+                                <span class="optin__hint">
+                                    On: add several venues, each with its own halls, and choose both per
+                                    time slot. Off: one venue &mdash; slots simply pick a hall.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="u-mt-6">
+                        <section class="panel" id="single-venue" aria-labelledby="single-venue-title">
+                            <div class="panel__head">
+                                <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg></span>
+                                <h2 class="panel__title" id="single-venue-title">Venue &amp; Halls</h2>
+                                <p class="panel__meta">One venue &mdash; halls allocated per time slot</p>
+                            </div>
+                            <div class="panel__body">
+                                <div class="formgrid formgrid--2">
+                                    <div class="form__field">
+                                        <label class="field__label" for="sv-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Eko Hotel Convention Centre" required>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="sv-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <select class="field__input" id="sv-city" name="sv-city" required>
+                                            <option value="">Select City...</option>
+                                            @if (Model.Cities != null && Model.Cities.Any())
+                                            {
+                                                @foreach (var city in Model.Cities)
+                                                {
+                                                    <option value="@city.CityName">
+                                                        @city.CityName@(string.IsNullOrWhiteSpace(city.CountryCode) ? "" : $", {city.CountryCode}")
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="formgrid u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="sv-address">Address</label>
+                                        <input class="field__input" id="sv-address" name="sv-address" type="text" placeholder="Full street address" value="Plot 1415 Adetokunbo Ademola St, Victoria Island">
+                                    </div>
+                                </div>
+
+                                <div class="formgrid u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="sv-map-url">Map URL</label>
+                                        <input class="field__input" id="sv-map-url" name="sv-map-url" type="text" placeholder="Map URL" value="https://www.google.com/maps">
+                                    </div>
+                                </div>
+
+                                <div class="halls">
+                                    <p class="halls__head">
+                                        Halls / Rooms &middot; max capacity
+                                        <button class="halls__add" type="button" data-repeat-add="sv-halls">
+                                            + Add Hall
+                                        </button>
+                                    </p>
+                                    <div id="sv-halls">
+                                        <div class="hall" data-repeat-row>
+                                            <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                                            <label class="u-visually-hidden" for="sv-1-hall-name">Hall name</label>
+                                            <input class="hall__name" id="sv-1-hall-name" name="sv-1-hall-name"
+                                                   type="text" placeholder="Hall name" value="Main Hall">
+                                            <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                            <label class="u-visually-hidden" for="sv-1-hall-cap">Maximum capacity</label>
+                                            <input class="hall__cap" id="sv-1-hall-cap" name="sv-1-hall-cap"
+                                                   type="text" inputmode="numeric" value="500">
+                                            <button class="hall__remove" type="button" data-repeat-remove>
+                                                <span class="u-visually-hidden">Remove hall</span>
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="hall" data-repeat-row>
+                                            <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                                            <label class="u-visually-hidden" for="sv-2-hall-name">Hall name</label>
+                                            <input class="hall__name" id="sv-2-hall-name" name="sv-2-hall-name"
+                                                   type="text" placeholder="Hall name" value="Hall B">
+                                            <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                            <label class="u-visually-hidden" for="sv-2-hall-cap">Maximum capacity</label>
+                                            <input class="hall__cap" id="sv-2-hall-cap" name="sv-2-hall-cap"
+                                                   type="text" inputmode="numeric" value="180">
+                                            <button class="hall__remove" type="button" data-repeat-remove>
+                                                <span class="u-visually-hidden">Remove hall</span>
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="hall" data-repeat-row>
+                                            <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                                            <label class="u-visually-hidden" for="sv-3-hall-name">Hall name</label>
+                                            <input class="hall__name" id="sv-3-hall-name" name="sv-3-hall-name"
+                                                   type="text" placeholder="Hall name" value="Breakout Room 1">
+                                            <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                            <label class="u-visually-hidden" for="sv-3-hall-cap">Maximum capacity</label>
+                                            <input class="hall__cap" id="sv-3-hall-cap" name="sv-3-hall-cap"
+                                                   type="text" inputmode="numeric" value="60">
+                                            <button class="hall__remove" type="button" data-repeat-remove>
+                                                <span class="u-visually-hidden">Remove hall</span>
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="panel" id="multi-venue" aria-labelledby="multi-venue-title" hidden>
+                            <div class="panel__head">
+                                <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
+                                <h2 class="panel__title" id="multi-venue-title">Venues &amp; Halls</h2>
+                                <button class="btn btn--outline btn--sm panel__meta" type="button"
+                                        data-repeat-add="venue-list">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add Venue
+                                </button>
+                            </div>
+                            <div class="panel__body">
+                                <div id="venue-list">
+                                    <div class="venue" data-repeat-row>
+                                        <div class="venue__head">
+                                            <span class="venue__no" aria-hidden="true">1</span>
+                                            <h3 class="venue__title">Venue 1</h3>
+                                        </div>
+
+                                        <div class="formgrid formgrid--2">
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-1-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="venue-1-name" name="venue-1-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Eko Hotel Convention Centre" required>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-1-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="venue-1-city" name="venue-1-city" type="text" placeholder="Lagos" value="Lagos" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="formgrid u-mt-5">
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-1-address">Address</label>
+                                                <input class="field__input" id="venue-1-address" name="venue-1-address" type="text" placeholder="Full street address">
+                                            </div>
+                                        </div>
+
+                                        <div class="halls">
+                                            <p class="halls__head">
+                                                Halls / Rooms &middot; max capacity
+                                                <button class="halls__add" type="button" data-repeat-add="venue-1-halls">
+                                                    + Add Hall
+                                                </button>
+                                            </p>
+                                            <div id="venue-1-halls">
+                                                <div class="hall" data-repeat-row>
+                                                    <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                                                    <label class="u-visually-hidden" for="v1-1-hall-name">Hall name</label>
+                                                    <input class="hall__name" id="v1-1-hall-name" name="v1-1-hall-name"
+                                                           type="text" placeholder="Hall name" value="Main Hall">
+                                                    <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                                    <label class="u-visually-hidden" for="v1-1-hall-cap">Maximum capacity</label>
+                                                    <input class="hall__cap" id="v1-1-hall-cap" name="v1-1-hall-cap"
+                                                           type="text" inputmode="numeric" value="500">
+                                                    <button class="hall__remove" type="button" data-repeat-remove>
+                                                        <span class="u-visually-hidden">Remove hall</span>
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="hall" data-repeat-row>
+                                                    <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                                                    <label class="u-visually-hidden" for="v1-2-hall-name">Hall name</label>
+                                                    <input class="hall__name" id="v1-2-hall-name" name="v1-2-hall-name"
+                                                           type="text" placeholder="Hall name" value="Hall B">
+                                                    <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                                    <label class="u-visually-hidden" for="v1-2-hall-cap">Maximum capacity</label>
+                                                    <input class="hall__cap" id="v1-2-hall-cap" name="v1-2-hall-cap"
+                                                           type="text" inputmode="numeric" value="180">
+                                                    <button class="hall__remove" type="button" data-repeat-remove>
+                                                        <span class="u-visually-hidden">Remove hall</span>
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="venue" data-repeat-row>
+                                        <div class="venue__head">
+                                            <span class="venue__no" aria-hidden="true">2</span>
+                                            <h3 class="venue__title">Venue 2</h3>
+                                            <button class="venue__remove" type="button" data-repeat-remove>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove venue
+                                            </button>
+                                        </div>
+
+                                        <div class="formgrid formgrid--2">
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-2-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="venue-2-name" name="venue-2-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Landmark Events Centre" required>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-2-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="venue-2-city" name="venue-2-city" type="text" placeholder="Lagos" value="Lagos" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="formgrid u-mt-5">
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-2-address">Address</label>
+                                                <input class="field__input" id="venue-2-address" name="venue-2-address" type="text" placeholder="Full street address">
+                                            </div>
+                                        </div>
+
+                                        <div class="halls">
+                                            <p class="halls__head">
+                                                Halls / Rooms &middot; max capacity
+                                                <button class="halls__add" type="button" data-repeat-add="venue-2-halls">
+                                                    + Add Hall
+                                                </button>
+                                            </p>
+                                            <div id="venue-2-halls">
+                                                <div class="hall" data-repeat-row>
+                                                    <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                                                    <label class="u-visually-hidden" for="v2-1-hall-name">Hall name</label>
+                                                    <input class="hall__name" id="v2-1-hall-name" name="v2-1-hall-name"
+                                                           type="text" placeholder="Hall name" value="VIP Lounge">
+                                                    <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                                    <label class="u-visually-hidden" for="v2-1-hall-cap">Maximum capacity</label>
+                                                    <input class="hall__cap" id="v2-1-hall-cap" name="v2-1-hall-cap"
+                                                           type="text" inputmode="numeric" value="100">
+                                                    <button class="hall__remove" type="button" data-repeat-remove>
+                                                        <span class="u-visually-hidden">Remove hall</span>
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Single "home" for the Save Venue action, regardless of single/multi mode -->
+                    <div class="u-mt-5" style="text-align: right;">
+                        <button type="button" class="btn btn--primary btn--sm" id="btnSaveVenues">
+                            Save Venue &amp; Load Schedule
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden by default: revealed once venues/halls have been saved (or already exist) -->
+                <section class="panel" aria-labelledby="date-title" data-schedule hidden>
+                    <div class="panel__head">
+                        <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></span>
+                        <h2 class="panel__title" id="date-title">Date &amp; Schedule</h2>
+                        <p class="panel__meta">Date, time slots and hall allocation per slot</p>
+                    </div>
+
+                    <div class="panel__body">
+                        <div class="options" role="radiogroup" aria-label="Schedule type"
+                             id="schedmode" data-pick-group>
+                            <button class="option option--selected" type="button" role="radio"
+                                    aria-checked="true" data-pick="single">
+                                <span class="option__icon" aria-hidden="true">&#128197;</span>
+                                <span class="option__title">Single Day</span>
+                                <span class="option__text">One date with one or more time slots</span>
+                                <svg class="option__check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                            </button>
+                            <button class="option" type="button" role="radio" aria-checked="false"
+                                    data-pick="range">
+                                <span class="option__icon" aria-hidden="true">&#128197;</span>
+                                <span class="option__title">Multi-Day Range</span>
+                                <span class="option__text">Consecutive days between two dates</span>
+                            </button>
+                            <button class="option" type="button" role="radio" aria-checked="false"
+                                    data-pick="specific">
+                                <span class="option__icon" aria-hidden="true">&#128198;</span>
+                                <span class="option__title">Specific Dates</span>
+                                <span class="option__text">Individual, non-consecutive dates</span>
+                            </button>
+                        </div>
+
+                        <div class="formgrid formgrid--2" data-pick-panel="range"
+                             data-pick-owner="schedmode" hidden>
+                            <div class="form__field">
+                                <label class="field__label" for="range-start">Start Date</label>
+                                <input class="field__input" id="range-start" name="range-start" type="date" value="2026-08-06">
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="range-end">End Date</label>
+                                <input class="field__input" id="range-end" name="range-end" type="date" value="2026-08-07">
+                            </div>
+                        </div>
+
+                        <div id="schedule-days" class="u-mt-5">
+                            <div class="day" data-day data-repeat-row>
+                                <div class="day__head">
+                                    <span class="day__no" aria-hidden="true">1</span>
+                                    <span class="day__date">
+                                        <label class="slotcard__label" for="day-1-name">Session name</label>
+                                        <input class="field__input" id="day-1-name" name="day-1-name"
+                                               type="text" value="Opening Day" data-autoname="Session">
+                                    </span>
+                                    <span class="day__date">
+                                        <label class="slotcard__label" for="day-1-date">Date</label>
+                                        <input class="field__input" id="day-1-date" name="day-1-date"
+                                               type="date" value="2026-08-06" data-day-date>
+                                    </span>
+                                </div>
+
+                                <div class="slots" id="day-1-slots">
+                                    <div class="slotcard" data-slot data-repeat-row>
+                                        <div class="slotcard__top">
+                                            <span class="slotcard__no" aria-hidden="true">1</span>
+                                            <label class="u-visually-hidden" for="slot-1-1-name">Slot name</label>
+                                            <input class="slotcard__name" id="slot-1-1-name" name="slot-1-1-name"
+                                                   type="text" value="Morning Keynote" data-autoname="Slot">
+                                            <button class="line__remove" type="button" data-repeat-remove>
+                                                <span class="u-visually-hidden">Remove this slot</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                            </button>
+                                        </div>
+
+                                        <div class="slotcard__grid">
+                                            <div>
+                                                <label class="slotcard__label" for="slot-1-1-start">Start</label>
+                                                <input class="slot__input" id="slot-1-1-start" name="slot-1-1-start"
+                                                       type="time" value="09:00" data-slot-start>
+                                            </div>
+                                            <div>
+                                                <label class="slotcard__label" for="slot-1-1-end">End</label>
+                                                <input class="slot__input" id="slot-1-1-end" name="slot-1-1-end"
+                                                       type="time" value="10:30" data-slot-end>
+                                            </div>
+                                            <div>
+                                                <label class="slotcard__label" for="slot-1-1-venue">Venues</label>
+                                                <select class="slot__select" id="slot-1-1-venue" name="slot-1-1-venue" data-slot-venue-select>
+                                                    <option value="">Select Venues...</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="slotcard__label" for="slot-1-1-hall">Halls</label>
+                                                <select class="slot__select" id="slot-1-1-hall" name="slot-1-1-hall"
+                                                        data-slot-hall disabled>
+                                                    <option value="">Select a venue first...</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="slotcard__label" for="slot-1-1-cap">Max capacity</label>
+                                                <input class="slot__input" id="slot-1-1-cap" name="slot-1-1-cap"
+                                                       type="text" inputmode="numeric" value=""
+                                                       placeholder="0" data-cap-input>
+                                            </div>
+                                            <div class="slotcard__speakers">
+                                                <span class="slotcard__label" id="slot-1-1-splabel">Speakers</span>
+                                                <div class="speakerchips" data-speaker-chips="slot-1-1"></div>
+                                                <label class="u-visually-hidden" for="slot-1-1-speakeradd">
+                                                    Add a speaker to this session
+                                                </label>
+                                                <select class="slot__select" id="slot-1-1-speakeradd"
+                                                        data-speaker-add="slot-1-1"
+                                                        aria-describedby="slot-1-1-splabel">
+                                                    <option value="">Add a speaker&hellip;</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="addline" type="button" data-repeat-add="day-1-slots">
+                                    + Add time slot
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="addline" type="button" data-repeat-add="schedule-days">
+                            + Add day
+                        </button>
+
+                        <p class="notice notice--warn notice--flat u-mt-5"
+                           role="status" data-schedule-conflict hidden>
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                            <span data-schedule-conflict-text></span>
+                        </p>
+                    </div>
+
+                    <div class="capbar">
+                        <span class="capbar__item">
+                            <span class="capbar__label">Total hall capacity</span>
+                            <span class="capbar__value" data-cap-limit>0</span>
+                        </span>
+                        <span class="capbar__item">
+                            <span class="capbar__label">Peak concurrent</span>
+                            <span class="capbar__value capbar__value--total" data-cap-total>0</span>
+                        </span>
+                        <span class="capbar__item">
+                            <span class="capbar__label">Headroom at peak</span>
+                            <span class="capbar__value capbar__value--remaining" data-cap-remaining>0</span>
+                        </span>
+                        <p class="notice notice--warn notice--flat" data-cap-warning hidden>
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                            <span data-cap-warning-text></span>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Speakers section: also hidden until venue/halls are saved, since speakers get attached to sessions -->
+                <section class="panel" aria-labelledby="speakers-title" data-schedule hidden>
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="speakers-title">
+                                Speakers
+                            </h2>
+                            <p class="panel__meta">
+                                Fill a speaker in once, then attach them to any session. Photo, title,
+                                organisation and bio all appear on the event page.
+                            </p>
+                        </div>
+                        <button class="btn btn--outline btn--sm" type="button" style="white-space: nowrap;"
+                                data-repeat-add="speaker-list">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add speaker
+                        </button>
+                    </div>
+                    <div class="panel__body">
+                        <div class="speakers" id="speaker-list">
+                            <article class="speaker" data-speaker-row data-repeat-row
+                                     data-speaker-key="kofi">
+                                <div class="speaker__top">
+                                    <span class="speakerav" data-speaker-avatar="kofi">
+                                        <span class="speakerav__initials">KA</span>
+                                    </span>
+                                    @* <span class="speaker__photoact">
+                                        <label class="btn btn--outline btn--sm" for="sp-1-photo">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg> Photo
+                                        </label>
+                                        <input class="u-visually-hidden" id="sp-1-photo" name="sp-1-photo"
+                                               type="file" accept="image/*"
+                                               data-speaker-photo="kofi">
+                                        <span class="speaker__photohint">Square, at least 400&times;400</span>
+                                    </span> *@
+                                    <span class="speaker__tools">
+                                        <button class="iconbtn" type="button"
+                                                data-speaker-preview="kofi"
+                                                data-modal-open="speakerpreview-modal">
+                                            <span class="u-visually-hidden">Preview Kofi Asante as guests see it</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn iconbtn--danger" type="button"
+                                                data-repeat-remove
+                                                data-action="Kofi Asante removed from the speaker directory"
+                                                data-action-tone="warn">
+                                            <span class="u-visually-hidden">Remove Kofi Asante</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                        </button>
+                                    </span>
+                                </div>
+
+                                <div class="formgrid formgrid--3">
+                                    <div class="form__field">
+                                        <label class="field__label" for="sp-1-name">
+                                            Full name<span class="field__required" aria-hidden="true">*</span>
+                                            <span class="u-visually-hidden">(required)</span>
+                                        </label>
+                                        <input class="field__input" id="sp-1-name" name="sp-1-name"
+                                               type="text" value="Kofi Asante" placeholder="Speaker name"
+                                               data-speaker-field="name" required>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="sp-1-title">Job title</label>
+                                        <input class="field__input" id="sp-1-title" name="sp-1-title"
+                                               type="text" value="Chief Technology Officer"
+                                               placeholder="e.g. Chief Technology Officer"
+                                               data-speaker-field="title">
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="sp-1-org">Organisation</label>
+                                        <input class="field__input" id="sp-1-org" name="sp-1-org"
+                                               type="text" value="Paystack Africa" placeholder="Company or institution"
+                                               data-speaker-field="org">
+                                    </div>
+                                </div>
+
+                                <div class="form__field u-mt-5">
+                                    <label class="field__label" for="sp-1-bio">Short bio</label>
+                                    <textarea class="field__input" id="sp-1-bio" name="sp-1-bio" rows="3"
+                                              placeholder="Two or three sentences. Shown on the event page and the session detail."
+                                              data-speaker-field="bio">Kofi has spent fifteen years building payment infrastructure across West Africa. He led the team behind Paystack&rsquo;s multi-currency settlement engine and now runs its platform organisation.</textarea>
+                                    <span class="field__hint">
+                                        <span data-speaker-count="kofi">0</span> characters &middot; about 300
+                                        reads best on a session card
+                                    </span>
+                                </div>
+
+                                <p class="speaker__sessions">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                                    <span data-speaker-sessions="kofi">Not assigned to a session yet</span>
+                                </p>
+                            </article>
+                        </div>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            A speaker with no title or organisation still works &mdash; the event page
+                            simply shows their name. Only the name is required.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="halls-note-title">
+                    <div class="panel__head panel__head--plain">
+                        <h2 class="panel__title panel__title--lg" id="halls-note-title">
+                            Hall allocation rules
+                        </h2>
+                    </div>
+                    <div class="panel__body">
+                        <ul class="choice__list">
+                            <li>
+                                <span style="display:flex; align-items:flex-start; gap:8px;">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink:0; margin-top:2px;"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                    <span>A hall cannot host two overlapping slots on the same day — overlaps are flagged as you type.</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span style="display:flex; align-items:flex-start; gap:8px;">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink:0; margin-top:2px;"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                    <span>A slot cannot be allocated more seats than its hall holds.</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span style="display:flex; align-items:flex-start; gap:8px;">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink:0; margin-top:2px;"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                    <span>Capacity is measured at peak concurrency, so parallel breakouts are counted once.</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </form>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/BasicDetails" data-wizard-link><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <div class="wizard__foot-end">
+            <button class="btn btn--primary" id="btnContinue" type="button">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+        </div>
+    </footer>
+</div>
+
+<div class="modal" id="speakerpreview-modal" role="dialog" aria-modal="true"
+     aria-labelledby="speakerpreview-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--sm">
+        <div class="modal__head">
+            <h2 class="modal__title" id="speakerpreview-title">How guests see this speaker</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <div class="modal__body">
+            <div class="speakercard" data-speaker-card>
+                <span class="speakerav speakerav--lg" data-speakercard-avatar>
+                    <span class="speakerav__initials" data-speakercard-initials></span>
+                </span>
+                <div class="speakercard__body">
+                    <p class="speakercard__name" data-speakercard-name></p>
+                    <p class="speakercard__role" data-speakercard-role></p>
+                    <p class="speakercard__bio" data-speakercard-bio></p>
+                    <p class="speakercard__sessions" data-speakercard-sessions></p>
+                </div>
+            </div>
+
+            <p class="modal__note">
+                This is the speaker block on the public event page and inside each session
+                they are attached to.
+            </p>
+        </div>
+
+        <div class="modal__foot">
+            <button class="btn btn--primary" type="button" data-modal-close>Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const btnSaveVenues = document.getElementById("btnSaveVenues");
+        const btnContinue = document.getElementById("btnContinue");
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        const token = tokenInput ? tokenInput.value : "";
+
+        const gatedSections = document.querySelectorAll("[data-schedule]");
+
+        // Store fetched venues & speakers globally for dynamically added rows
+        let globalVenuesCache = [];
+        let globalSpeakersCache = [];
+
+        function showGatedSections() {
+            gatedSections.forEach(section => {
+                if (section.hasAttribute("hidden")) {
+                    section.hidden = false;
+                }
+            });
+            if (gatedSections.length) {
+                gatedSections[0].scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+
+        // Populate Speaker Dropdowns globally across time slots
+        function populateSpeakerDropdowns(speakers) {
+            globalSpeakersCache = speakers || [];
+            const speakerSelects = document.querySelectorAll("[data-speaker-add]");
+
+            speakerSelects.forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">Select a speaker…</option>';
+
+                globalSpeakersCache.forEach(sp => {
+                    const spId = sp.SpeakerId ?? sp.speakerId;
+                    const spName = sp.Name ?? sp.name;
+
+                    if (spId && spName) {
+                        const option = document.createElement("option");
+                        option.value = spId;
+                        option.textContent = spName;
+                        select.appendChild(option);
+                    }
+                });
+
+                if (currentVal) {
+                    select.value = currentVal;
+                }
+            });
+        }
+
+        // Fetch Speakers from Ent_Speaker API via Razor Handler
+        async function loadSpeakers() {
+            try {
+                const response = await fetch('?handler=GetSpeakers', { method: 'GET' });
+                const result = await response.json();
+
+                if (result && result.success && Array.isArray(result.data)) {
+                    populateSpeakerDropdowns(result.data);
+                } else {
+                    console.warn("No speakers found or API error:", result?.message);
+                }
+            } catch (err) {
+                console.error("Failed to load speakers:", err);
+            }
+        }
+
+        // Helper to populate Venue dropdowns cleanly
+        function populateVenueDropdowns(venues) {
+            globalVenuesCache = venues || [];
+            const venueSelects = document.querySelectorAll("[data-slot-venue-select]");
+            const singleVenue = globalVenuesCache.length === 1 ? globalVenuesCache[0] : null;
+
+            venueSelects.forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">Select Venues...</option>';
+
+                globalVenuesCache.forEach(v => {
+                    const vId = v.VenueId ?? v.venueId;
+                    const vName = v.VenueName ?? v.venueName;
+
+                    if (vId && vName) {
+                        const option = document.createElement("option");
+                        option.value = vId;
+                        option.textContent = vName;
+                        select.appendChild(option);
+                    }
+                });
+
+                if (currentVal) {
+                    select.value = currentVal;
+                } else if (singleVenue) {
+                    const autoVenueId = singleVenue.VenueId ?? singleVenue.venueId;
+                    select.value = autoVenueId;
+
+                    const slotCard = select.closest("[data-slot]");
+                    if (slotCard) {
+                        const hallSelect = slotCard.querySelector("[data-slot-hall]");
+                        loadHallsForVenue(hallSelect, autoVenueId);
+                    }
+                }
+            });
+        }
+
+        // Fetch halls for selected venue
+        async function loadHallsForVenue(hallSelect, venueId) {
+            if (!hallSelect) return;
+
+            if (!venueId) {
+                hallSelect.innerHTML = '<option value="">Select a venue first...</option>';
+                hallSelect.disabled = true;
+                return;
+            }
+
+            hallSelect.disabled = true;
+            hallSelect.innerHTML = '<option value="">Loading halls...</option>';
+
+            try {
+                const res = await fetch(`?handler=GetHallsByVenue&venueId=${venueId}`);
+                const result = await res.json();
+
+                if (result.success && result.data && result.data.length > 0) {
+                    hallSelect.innerHTML = '<option value="">Select Hall...</option>';
+                    result.data.forEach(h => {
+                        const hId = h.HallId ?? h.hallId;
+                        const hName = h.HallName ?? h.hallName;
+                        const hCap = h.Capacity ?? h.capacity ?? 0;
+
+                        const opt = document.createElement("option");
+                        opt.value = hId;
+                        opt.textContent = `${hName} (Cap: ${hCap})`;
+                        opt.dataset.capacity = hCap;
+                        hallSelect.appendChild(opt);
+                    });
+                    hallSelect.disabled = false;
+                } else {
+                    hallSelect.innerHTML = '<option value="">No halls found for this venue</option>';
+                }
+            } catch (err) {
+                console.error("Error loading halls:", err);
+                hallSelect.innerHTML = '<option value="">Error loading halls</option>';
+            }
+        }
+
+        // Fetch venues from OnGetGetVenues Razor Handler
+        async function loadVenues() {
+            try {
+                const response = await fetch('?handler=GetVenues', { method: 'GET' });
+                const result = await response.json();
+
+                if (result && result.success && Array.isArray(result.data)) {
+                    populateVenueDropdowns(result.data);
+                    if (result.data.length > 0) {
+                        showGatedSections();
+                    }
+                } else {
+                    console.warn("No venues found or API error:", result?.message);
+                }
+            } catch (err) {
+                console.error("Failed to load venues:", err);
+            }
+        }
+
+        // Dynamic Hall Loading on Venue Select Change
+        document.addEventListener("change", function(e) {
+            if (e.target && e.target.matches("[data-slot-venue-select]")) {
+                const venueId = e.target.value;
+                const slotCard = e.target.closest("[data-slot]");
+                if (slotCard) {
+                    const hallSelect = slotCard.querySelector("[data-slot-hall]");
+                    loadHallsForVenue(hallSelect, venueId);
+                }
+            }
+        });
+
+        // Automatically populate venue & speaker dropdowns when new time slots are added dynamically
+        document.addEventListener("click", function(e) {
+            if (e.target && e.target.matches("[data-repeat-add]")) {
+                setTimeout(() => {
+                    if (globalVenuesCache.length > 0) {
+                        populateVenueDropdowns(globalVenuesCache);
+                    }
+                    if (globalSpeakersCache.length > 0) {
+                        populateSpeakerDropdowns(globalSpeakersCache);
+                    }
+                }, 50);
+            }
+        });
+
+        // Initial loads
+        loadVenues();
+        loadSpeakers();
+
+        // Save Venue Listener
+        if (btnSaveVenues) {
+            btnSaveVenues.addEventListener("click", async function() {
+                const isMultiVenue = document.getElementById("multivenue")?.checked;
+                const venues = [];
+
+                if (isMultiVenue) {
+                    document.querySelectorAll("#venue-list .venue").forEach(row => {
+                        const venueName = row.querySelector("input[name*='name']")?.value || "";
+                        const city = row.querySelector("input[name*='city']")?.value || "";
+                        const address = row.querySelector("input[name*='address']")?.value || "";
+                        const halls = [];
+
+                        row.querySelectorAll(".hall").forEach(h => {
+                            const hallName = h.querySelector(".hall__name")?.value || "";
+                            const cap = parseInt(h.querySelector(".hall__cap")?.value || "0", 10);
+                            if (hallName) halls.push({ HallName: hallName, Capacity: cap });
+                        });
+
+                        if (venueName) venues.push({ VenueName: venueName, City: city, Address: address, Halls: halls });
+                    });
+                } else {
+                    const venueName = document.getElementById("sv-name")?.value || "";
+                    const city = document.getElementById("sv-city")?.value || "";
+                    const address = document.getElementById("sv-address")?.value || "";
+                    const halls = [];
+
+                    document.querySelectorAll("#sv-halls .hall").forEach(h => {
+                        const hallName = h.querySelector(".hall__name")?.value || "";
+                        const cap = parseInt(h.querySelector(".hall__cap")?.value || "0", 10);
+                        if (hallName) halls.push({ HallName: hallName, Capacity: cap });
+                    });
+
+                    if (venueName) venues.push({ VenueName: venueName, City: city, Address: address, Halls: halls });
+                }
+
+                if (venues.length === 0) {
+                    alert("Please add at least one venue with at least one hall before continuing.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("?handler=SaveVenue", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "RequestVerificationToken": token
+                        },
+                        body: JSON.stringify({ Venues: venues })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        alert("Venues saved successfully!");
+                        await loadVenues();
+                    } else {
+                        alert("Failed to save venues: " + (result.message || "Unknown error"));
+                    }
+                } catch (err) {
+                    console.error("Save Venue Error:", err);
+                    alert("An error occurred while saving venue information.");
+                }
+            });
+        }
+
+        if (btnContinue) {
+            btnContinue.addEventListener("click", async function() {
+                if (gatedSections.length && gatedSections[0].hasAttribute("hidden")) {
+                    alert("Please save your venue and halls first.");
+                    return;
+                }
+
+                const eventDateList = [];
+                let hasInvalidSlots = false;
+
+                document.querySelectorAll("#schedule-days .day").forEach((dayRow, dayIdx) => {
+                    const sessionNameInput = dayRow.querySelector("input[name*='name']");
+                    const sessionName = sessionNameInput?.value?.trim() || `Session ${dayIdx + 1}`;
+
+                    const dateInput = dayRow.querySelector("[data-day-date]");
+                    const eventDate = dateInput?.value || "";
+
+                    const eventSlots = [];
+                    const slotCards = dayRow.querySelectorAll("[data-slot]");
+
+                    slotCards.forEach((slot, slotIdx) => {
+                        const slotNameInput = slot.querySelector(".slotcard__name");
+                        const slotName = slotNameInput?.value?.trim() || `Slot ${slotIdx + 1}`;
+
+                        const hallIdVal = slot.querySelector("[data-slot-hall]")?.value;
+                        const startTime = slot.querySelector("[data-slot-start]")?.value || "";
+                        const endTime = slot.querySelector("[data-slot-end]")?.value || "";
+                        const capacityVal = slot.querySelector("[data-cap-input]")?.value;
+
+                        const speakerSelect = slot.querySelector("[data-speaker-add]");
+                        const speakersIdVal = speakerSelect?.value || "0";
+
+                        eventSlots.push({
+                            SlotName: slotName,
+                            StartTime: startTime,
+                            EndTime: endTime,
+                            HallId: parseInt(hallIdVal, 10) || 0,
+                            Capacity: parseInt(capacityVal, 10) || 0,
+                            SpeakersId: parseInt(speakersIdVal, 10) || 0
+                        });
+                    });
+
+                    if (eventSlots.length === 0) {
+                        hasInvalidSlots = true;
+                    }
+
+                    if (eventDate) {
+                        eventDateList.push({
+                            SessionName: sessionName,
+                            EventDate: eventDate,
+                            EventSlots: eventSlots
+                        });
+                    }
+                });
+
+                if (eventDateList.length === 0) {
+                    alert("Please add at least one date with a schedule.");
+                    return;
+                }
+
+                if (hasInvalidSlots) {
+                    alert("Each date must contain at least one time slot before continuing.");
+                    return;
+                }
+
+                const speakersList = [];
+                document.querySelectorAll("#speaker-list .speaker").forEach(sp => {
+                    const speakerIdVal = sp.dataset.speakerId || "0";
+                    const name = sp.querySelector("[data-speaker-field='name']")?.value || "";
+                    const jobTitle = sp.querySelector("[data-speaker-field='title']")?.value || "";
+                    const organization = sp.querySelector("[data-speaker-field='org']")?.value || "";
+                    const bio = sp.querySelector("[data-speaker-field='bio']")?.value || "";
+
+                    if (name.trim().length > 0) {
+                        speakersList.push({
+                            SpeakerId: parseInt(speakerIdVal, 10) || 0,
+                            Name: name,
+                            JobTitle: jobTitle,
+                            Organization: organization,
+                            Bio: bio
+                        });
+                    }
+                });
+
+                try {
+                    const response = await fetch("?handler=SaveSchedule", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "RequestVerificationToken": token
+                        },
+                        body: JSON.stringify({
+                            Slots: eventDateList,
+                            Speakers: speakersList
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.href = "/CreateEvent/ContentSection";
+                    } else {
+                        alert("Save Error: " + (result.message || "Could not save schedule."));
+                    }
+                } catch (err) {
+                    console.error("Save Schedule Error:", err);
+                    alert("An error occurred while saving the schedule.");
+                }
+            });
+        }
+    });
+</script>

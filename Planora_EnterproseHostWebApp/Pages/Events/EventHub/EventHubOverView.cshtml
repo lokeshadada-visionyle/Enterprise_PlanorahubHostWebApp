@@ -1,0 +1,137 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubOverViewModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+<div data-view-panel="overview" data-panel-refresh-handler="OverviewData">
+    <div class="stack">
+        <p class="badgestrip">
+            <span class="badgestrip__figures">
+                <span class="badgestrip__figure">
+                  <b>6</b><span>Badges printed</span>
+                </span>
+                <span class="badgestrip__figure">
+                  <b>2</b><span>Pending</span>
+                </span>
+                <span class="badgestrip__figure badgestrip__figure--warn">
+                  <b>2</b><span>Failed</span>
+                </span>
+                <span class="badgestrip__figure">
+                  <b>3</b><span>Reprints</span>
+                </span>
+              </span>
+              <span class="badgestrip__body">
+                Badge printing is <b>on</b> for this event. A failed print never affects a
+                check-in &mdash; staff retry from the counter.
+              </span>
+              <a class="btn btn--primary btn--sm" href="event-hub.html#onsite">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v3h6V3"/><path d="M9 12h6M9 16h4"/></svg> Badge activity
+              </a>
+        </p>
+        <section class="grid grid--4" aria-label="Live totals">
+            <article class="figure">
+                <h3 class="figure__label">Revenue</h3>
+                <p class="figure__value figure__value--success" data-ov-revenue>@Model.eventHubOverviewData.Revenue</p>
+              </article>
+              <article class="figure">
+                <h3 class="figure__label">Tickets Sold</h3>
+                <p class="figure__value figure__value--brand" data-ov-tickets>@Model.eventHubOverviewData.TicketsSold / @Model.eventHubOverviewData.TotalTickets</p>
+              </article>
+              <article class="figure">
+                <h3 class="figure__label">Add-on Rev.</h3>
+                <p class="figure__value figure__value--info" data-ov-addon>@Model.eventHubOverviewData.AddOnRevenue</p>
+              </article>
+              <article class="figure">
+                <h3 class="figure__label">Check-ins Today</h3>
+                <p class="figure__value figure__value--accent" data-ov-checkins>@Model.eventHubOverviewData.TotalCheckIns</p>
+              </article>   
+        </section>
+
+        <div class="grid grid--main">
+            <section class="panel" aria-labelledby="trend-title">
+                <div class="panel__head panel__head--plain">
+                  <h2 class="panel__title panel__title--lg" id="trend-title">Revenue Trend</h2>
+                  <button class="btn btn--outline btn--sm" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14"/></svg> Export</button>
+                </div>
+                <div class="panel__body">
+                  <div class="chart" role="img" aria-label="Daily revenue across the week." data-ov-weekly>
+                      @foreach (var day in Model.eventHubOverviewData.WeeklyRevenue)
+                      {
+                          <div class="chart__col">
+                            <span class="chart__track"><span class="chart__bar" data-height="@day.Revenue"></span></span>
+                            <span class="chart__label">@day.Day</span>
+                          </div>
+                      }
+                  </div>
+                </div>
+            </section>  
+
+            <section class="panel" aria-labelledby="mix-title">
+                <div class="panel__head panel__head--plain">
+                  <h2 class="panel__title panel__title--lg" id="mix-title">Ticket Mix</h2>
+                </div>
+                <div class="panel__body">
+                  <div class="mix">
+                    <span class="donut donut--ticketmix" role="img" aria-label="Ticket mix: Standard 60%, VIP 24%, Early Bird 16%."></span>
+                    <ul class="legend" data-ov-legend>
+                      @foreach (var t in Model.eventHubOverviewData.TicketTypes)
+                      {
+                        <li class="legend__item">
+                            <span class="legend__swatch" aria-hidden="true"></span>
+                            <span class="legend__name">@t.TypeName</span>
+                            <span class="legend__value">@t.TicketSoldPer</span>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </section> 
+        </div>    
+        <section class="panel" aria-labelledby="hubactions-title">
+            <div class="panel__head panel__head--plain">
+                <h2 class="panel__title panel__title--lg" id="hubactions-title">Quick Actions</h2>
+              </div>
+              <div class="panel__body">
+                <div class="quick">
+                  <a class="quick__tile" href="communications.html">
+                    <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z"/><path d="M10 13 21 3"/></svg></span>
+                    Send Broadcast
+                  </a>
+                  <a class="quick__tile" href="food-orders.html">
+                    <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17"/></svg></span>
+                    Manage Food Menu
+                  </a>
+                  <a class="quick__tile" href="#">
+                    <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14"/></svg></span>
+                    Export Guests
+                  </a>
+                  <a class="quick__tile" href="#">
+                    <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span>
+                    Request Payout
+                  </a>
+                </div>
+              </div>  
+        </section>     
+    </div>
+</div>
+@section Scripts {
+    <script>
+        document.addEventListener('eventhub:panel-data', function(e) {
+            var data = e.detail;
+            if (!data || data.status !== 1) return;
+
+            var revenue = document.querySelector('[data-ov-revenue]');
+            var tickets = document.querySelector('[data-ov-tickets]');
+            var addon = document.querySelector('[data-ov-addon]');
+            var checkins = document.querySelector('[data-ov-checkins]');
+
+            if (revenue) revenue.textContent = data.revenue;
+            if (tickets) tickets.textContent = data.ticketsSold + ' / ' + data.totalTickets;
+            if (addon) addon.textContent = data.addOnRevenue;
+            if (checkins) checkins.textContent = data.totalCheckIns;
+        });
+    </script>
+}

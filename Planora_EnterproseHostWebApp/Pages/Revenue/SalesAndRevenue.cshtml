@@ -1,0 +1,555 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Revenue.RevenueModel
+@{
+    Layout = "_Layout";
+    ViewData["PageName"] = "Sales &amp; Revenue";
+    ViewData["PageDesc"] = "Portfolio &amp; per-event revenue";
+}
+
+<main class="shell__main" data-page-roles="admin finance viewer">
+
+    <div class="page__head">
+        <div>
+            <h1 class="page__title">Sales &amp; Revenue</h1>
+            <p class="page__subtitle">
+                Every ticketed event &middot; commission billed monthly in arrears
+            </p>
+        </div>
+        <div class="page__actions">
+            <div class="toolbar__field">
+                <label class="u-visually-hidden" for="sales-range">Period</label>
+                <select class="field__select" id="sales-range" name="sales-range">
+                    <option>This contract year</option>
+                    <option>Last 30 days</option>
+                    <option>Last 90 days</option>
+                    <option>Year to date</option>
+                </select>
+            </div>
+            <button class="btn btn--outline" type="button"
+                    data-action="Revenue export queued as CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export
+            </button>
+            <a class="btn btn--primary" href="my-plan.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg> Billing &amp; invoices</a>
+        </div>
+    </div>
+
+    <section class="reportstats u-mb-6" aria-label="Revenue totals">
+        <span class="reportstat">
+            <span class="reportstat__value">&#8358;127.05M</span>
+            <span class="reportstat__label">Gross collected</span>
+            <span class="reportstat__note">Across 4 ticketed events</span>
+        </span>
+        <span class="reportstat">
+            <span class="reportstat__value">&minus;&#8358;450K</span>
+            <span class="reportstat__label">Refunded</span>
+            <span class="reportstat__note">12 refunds, 3 cancellations</span>
+        </span>
+        <span class="reportstat">
+            <span class="reportstat__value">&minus;&#8358;2.54M</span>
+            <span class="reportstat__label">Commission at 2%</span>
+            <span class="reportstat__note">Billed monthly in arrears</span>
+        </span>
+        <span class="reportstat">
+            <span class="reportstat__value">&#8358;124.06M</span>
+            <span class="reportstat__label">Net to your account</span>
+            <span class="reportstat__note">Settled plus escrow</span>
+        </span>
+    </section>
+
+    <section class="panel" aria-labelledby="byevent-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h2 class="panel__title" id="byevent-title">By event</h2>
+                <p class="panel__meta">
+                    Cancelled events show what went back out, not what came in
+                </p>
+            </div>
+            <div class="toolbar__field">
+                <label class="u-visually-hidden" for="sales-status">Filter by status</label>
+                <select class="field__select" id="sales-status" name="sales-status"
+                        data-tablefilter-col="sales-table">
+                    <option value="">All statuses</option>
+                    <option>Live</option>
+                    <option>Upcoming</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                </select>
+            </div>
+        </div>
+        <div class="panel__body">
+            <div class="tablewrap">
+                <table class="table table--narrow" id="sales-table">
+                    <caption class="u-visually-hidden">
+                        Revenue per event with refunds, commission and net
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Event</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Tickets</th>
+                            <th scope="col">Gross</th>
+                            <th scope="col">Refunds</th>
+                            <th scope="col">Commission</th>
+                            <th scope="col">Net</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="cellstack__name">Tech Summit Africa 2025</span></td>
+                            <td><span class="badge badge--live">Live</span></td>
+                            <td>847 / 1,000</td>
+                            <td><span class="u-nowrap">&#8358;127,050,000</span></td>
+                            <td><span class="u-nowrap">&minus;&#8358;450,000</span></td>
+                            <td><span class="u-nowrap">&#8358;2,541,000</span></td>
+                            <td><b><span class="u-nowrap">&#8358;124,059,000</span></b></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="event-hub.html">
+                                        <span class="u-visually-hidden">Open hub for Tech Summit Africa 2025</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                    </a>
+                                    <button class="iconbtn" type="button"
+                                            data-action="Revenue statement for Tech Summit Africa 2025 downloaded">
+                                        <span class="u-visually-hidden">Statement for Tech Summit Africa 2025</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="cellstack__name">Afrobeat Night Lagos</span></td>
+                            <td><span class="badge badge--paused">Upcoming</span></td>
+                            <td>322 / 500</td>
+                            <td><span class="u-nowrap">&#8358;16,100,000</span></td>
+                            <td><span class="u-nowrap">&mdash;</span></td>
+                            <td><span class="u-nowrap">&#8358;322,000</span></td>
+                            <td><b><span class="u-nowrap">&#8358;15,778,000</span></b></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="event-hub.html">
+                                        <span class="u-visually-hidden">Open hub for Afrobeat Night Lagos</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                    </a>
+                                    <button class="iconbtn" type="button"
+                                            data-action="Revenue statement for Afrobeat Night Lagos downloaded">
+                                        <span class="u-visually-hidden">Statement for Afrobeat Night Lagos</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="cellstack__name">Enterprise Leadership Forum</span></td>
+                            <td><span class="badge badge--nodot badge--role">Completed</span></td>
+                            <td>312 / 312</td>
+                            <td><span class="u-nowrap">&#8358;78,000,000</span></td>
+                            <td><span class="u-nowrap">&mdash;</span></td>
+                            <td><span class="u-nowrap">&#8358;1,560,000</span></td>
+                            <td><b><span class="u-nowrap">&#8358;76,440,000</span></b></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="event-hub.html">
+                                        <span class="u-visually-hidden">Open hub for Enterprise Leadership Forum</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                    </a>
+                                    <button class="iconbtn" type="button"
+                                            data-action="Revenue statement for Enterprise Leadership Forum downloaded">
+                                        <span class="u-visually-hidden">Statement for Enterprise Leadership Forum</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="cellstack__name">HR Innovation Summit</span></td>
+                            <td><span class="badge badge--nodot badge--role">Completed</span></td>
+                            <td>450 / 450</td>
+                            <td><span class="u-nowrap">&#8358;56,250,000</span></td>
+                            <td><span class="u-nowrap">&minus;&#8358;250,000</span></td>
+                            <td><span class="u-nowrap">&#8358;1,120,000</span></td>
+                            <td><b><span class="u-nowrap">&#8358;54,880,000</span></b></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="event-hub.html">
+                                        <span class="u-visually-hidden">Open hub for HR Innovation Summit</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                    </a>
+                                    <button class="iconbtn" type="button"
+                                            data-action="Revenue statement for HR Innovation Summit downloaded">
+                                        <span class="u-visually-hidden">Statement for HR Innovation Summit</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="cellstack__name">Startup Pitch Night</span></td>
+                            <td><span class="badge badge--paused">Upcoming</span></td>
+                            <td>88 / 200</td>
+                            <td><span class="u-nowrap">&#8358;4,400,000</span></td>
+                            <td><span class="u-nowrap">&mdash;</span></td>
+                            <td><span class="u-nowrap">&#8358;88,000</span></td>
+                            <td><b><span class="u-nowrap">&#8358;4,312,000</span></b></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="event-hub.html">
+                                        <span class="u-visually-hidden">Open hub for Startup Pitch Night</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                    </a>
+                                    <button class="iconbtn" type="button"
+                                            data-action="Revenue statement for Startup Pitch Night downloaded">
+                                        <span class="u-visually-hidden">Statement for Startup Pitch Night</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="cellstack__name">Lagos Tech Meetup</span></td>
+                            <td><span class="badge badge--out">Cancelled</span></td>
+                            <td>0 / 150</td>
+                            <td><span class="u-nowrap">&#8358;0</span></td>
+                            <td><span class="u-nowrap">&minus;&#8358;1,200,000</span></td>
+                            <td><span class="u-nowrap">&mdash;</span></td>
+                            <td><b><span class="u-nowrap">&#8358;0</span></b></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="event-hub.html">
+                                        <span class="u-visually-hidden">Open hub for Lagos Tech Meetup</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                    </a>
+                                    <button class="iconbtn" type="button"
+                                            data-action="Revenue statement for Lagos Tech Meetup downloaded">
+                                        <span class="u-visually-hidden">Statement for Lagos Tech Meetup</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="tablefilter__empty" data-tablefilter-empty="sales-table" hidden>
+                No event matches that status.
+            </p>
+        </div>
+    </section>
+
+    <div class="hubhead u-mt-6">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg> Tech Summit Africa 2025</h2>
+            <p class="hubhead__text">
+                The breakdown behind one event &mdash; switch event to see another
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <div class="toolbar__field">
+                <label class="u-visually-hidden" for="sales-event">Event</label>
+                <select class="field__select" id="sales-event" name="sales-event"
+                        data-action="Breakdown reloaded for the selected event">
+                    <option>Tech Summit Africa 2025</option>
+                    <option>Afrobeat Night Lagos</option>
+                    <option>Enterprise Leadership Forum</option>
+                    <option>HR Innovation Summit</option>
+                </select>
+            </div>
+            <a class="btn btn--outline btn--sm" href="event-hub.html">Open Event Hub</a>
+        </div>
+    </div>
+
+    <div class="grid grid--2 u-mt-5">
+        <section class="panel" aria-labelledby="bytier-title">
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h3 class="panel__title" id="bytier-title">By ticket tier</h3>
+                    <p class="panel__meta">Standard oversold by 47 before it closed</p>
+                </div>
+            </div>
+            <div class="panel__body">
+                <div class="tablewrap">
+                    <table class="table table--narrow">
+                        <caption class="u-visually-hidden">Revenue by ticket tier</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Tier</th>
+                                <th scope="col">Sold</th>
+                                <th scope="col">Gross</th>
+                                <th scope="col">Share</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Early Bird</th>
+                                <td>200 <span class="cellsub">/ 200</span></td>
+                                <td><span class="u-nowrap">&#8358;1,000,000</span></td>
+                                <td>
+                                    <span class="reportbar">
+                                        <span class="reportbar__fill" data-fill="11"></span>
+                                    </span>
+                                    <span class="reportbar__label">11%</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Standard</th>
+                                <td>547 <span class="cellsub">/ 500</span></td>
+                                <td><span class="u-nowrap">&#8358;5,470,000</span></td>
+                                <td>
+                                    <span class="reportbar">
+                                        <span class="reportbar__fill" data-fill="56"></span>
+                                    </span>
+                                    <span class="reportbar__label">56%</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VIP</th>
+                                <td>100 <span class="cellsub">/ 100</span></td>
+                                <td><span class="u-nowrap">&#8358;2,500,000</span></td>
+                                <td>
+                                    <span class="reportbar">
+                                        <span class="reportbar__fill" data-fill="25"></span>
+                                    </span>
+                                    <span class="reportbar__label">25%</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Add-ons</th>
+                                <td>210 <span class="cellsub">/ &mdash;</span></td>
+                                <td><span class="u-nowrap">&#8358;855,000</span></td>
+                                <td>
+                                    <span class="reportbar">
+                                        <span class="reportbar__fill" data-fill="8"></span>
+                                    </span>
+                                    <span class="reportbar__label">8%</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="bymethod-title">
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h3 class="panel__title" id="bymethod-title">How guests paid</h3>
+                    <p class="panel__meta">Card clears same day; transfers take up to 48 hours</p>
+                </div>
+            </div>
+            <div class="panel__body">
+                <div class="reportsplits">
+                    <span class="reportsplit">
+                        <span class="reportsplit__name">Card</span>
+                        <span class="reportsplit__value">&#8358;6,940,000</span>
+                        <span class="reportsplit__meta">681 payments &middot; 76%</span>
+                    </span>
+                    <span class="reportsplit">
+                        <span class="reportsplit__name">Bank transfer</span>
+                        <span class="reportsplit__value">&#8358;2,180,000</span>
+                        <span class="reportsplit__meta">142 payments &middot; 16%</span>
+                    </span>
+                    <span class="reportsplit">
+                        <span class="reportsplit__name">USSD</span>
+                        <span class="reportsplit__value">&#8358;520,000</span>
+                        <span class="reportsplit__meta">48 payments &middot; 5%</span>
+                    </span>
+                    <span class="reportsplit">
+                        <span class="reportsplit__name">Complimentary</span>
+                        <span class="reportsplit__value">&#8358;0</span>
+                        <span class="reportsplit__meta">22 payments &middot; 3%</span>
+                    </span>
+                </div>
+
+                <div class="payoutstate u-mt-5">
+                    <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12.5 9 17.5 20 6.5" /></svg></span>
+                    <span class="payoutstate__body">
+                        <span class="payoutstate__title">
+                            &#8358;6.1M settled &middot; &#8358;3.09M in escrow
+                        </span>
+                        <span class="payoutstate__meta">
+                            Escrow releases 3 working days after the event ends, to
+                            First Bank &bull;&bull;&bull;&bull; 4471
+                        </span>
+                    </span>
+                    <button class="btn btn--outline btn--sm" type="button"
+                            data-action="Payout statement downloaded">
+                        Statement
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="panel u-mt-6" aria-labelledby="byslot-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="byslot-title">By day and slot</h3>
+                <p class="panel__meta">
+                    Commission is itemised per day and slot on your invoice
+                </p>
+            </div>
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="Day and slot breakdown exported">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export breakdown
+            </button>
+        </div>
+        <div class="panel__body">
+            <div class="tablewrap">
+                <table class="table table--narrow">
+                    <caption class="u-visually-hidden">
+                        Tickets and revenue per day and slot
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Day</th>
+                            <th scope="col">Slot</th>
+                            <th scope="col">Tickets</th>
+                            <th scope="col">Gross</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Day 1</td>
+                            <th scope="row">Morning Keynote</th>
+                            <td>412</td>
+                            <td><span class="u-nowrap">&#8358;4,120,000</span></td>
+                        </tr>
+                        <tr>
+                            <td>Day 1</td>
+                            <th scope="row">Fintech Panel</th>
+                            <td>180</td>
+                            <td><span class="u-nowrap">&#8358;1,800,000</span></td>
+                        </tr>
+                        <tr>
+                            <td>Day 1</td>
+                            <th scope="row">Breakout 1</th>
+                            <td>60</td>
+                            <td><span class="u-nowrap">&#8358;600,000</span></td>
+                        </tr>
+                        <tr>
+                            <td>Day 2</td>
+                            <th scope="row">Design Sprint</th>
+                            <td>260</td>
+                            <td><span class="u-nowrap">&#8358;2,600,000</span></td>
+                        </tr>
+                        <tr>
+                            <td>Day 2</td>
+                            <th scope="row">Investor Clinic</th>
+                            <td>61</td>
+                            <td><span class="u-nowrap">&#8358;1,525,000</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel u-mt-6" aria-labelledby="refunds-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="refunds-title">Refunds</h3>
+                <p class="panel__meta">
+                    Guest-initiated and host-initiated, with the reason on record
+                </p>
+            </div>
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="Refund report exported">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export refunds
+            </button>
+        </div>
+        <div class="panel__body">
+            <div class="tablewrap">
+                <table class="table table--narrow">
+                    <caption class="u-visually-hidden">
+                        Refunds with guest, event, amount, reason and state
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Reference</th>
+                            <th scope="col">Guest</th>
+                            <th scope="col">Event</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="order__ref">RF-2081</span></td>
+                            <td><span class="cellstack__name">Chidi Okonkwo</span></td>
+                            <td class="u-muted">Tech Summit Africa 2025</td>
+                            <td><span class="u-nowrap">&minus;&#8358;10,000</span></td>
+                            <td>Guest cancelled</td>
+                            <td><span class="badge badge--live">Settled</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="receipt.html?ref=RF-2081">
+                                        <span class="u-visually-hidden">Receipt for RF-2081</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="order__ref">RF-2080</span></td>
+                            <td><span class="cellstack__name">Halima Yusuf</span></td>
+                            <td class="u-muted">Tech Summit Africa 2025</td>
+                            <td><span class="u-nowrap">&minus;&#8358;25,000</span></td>
+                            <td>Duplicate purchase</td>
+                            <td><span class="badge badge--live">Settled</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="receipt.html?ref=RF-2080">
+                                        <span class="u-visually-hidden">Receipt for RF-2080</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="order__ref">RF-2079</span></td>
+                            <td><span class="cellstack__name">Emeka Nwosu</span></td>
+                            <td class="u-muted">HR Innovation Summit</td>
+                            <td><span class="u-nowrap">&minus;&#8358;125,000</span></td>
+                            <td>Date cancelled by host</td>
+                            <td><span class="badge badge--live">Settled</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="receipt.html?ref=RF-2079">
+                                        <span class="u-visually-hidden">Receipt for RF-2079</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="order__ref">RF-2078</span></td>
+                            <td><span class="cellstack__name">Zainab Sule</span></td>
+                            <td class="u-muted">Lagos Tech Meetup</td>
+                            <td><span class="u-nowrap">&minus;&#8358;1,200,000</span></td>
+                            <td>Event cancelled by host</td>
+                            <td><span class="badge badge--paused">Processing</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <a class="iconbtn" href="receipt.html?ref=RF-2078">
+                                        <span class="u-visually-hidden">Receipt for RF-2078</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="notice notice--info notice--flat u-mt-5">
+                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                Commission is reversed on a refund, so a refunded ticket costs you nothing in
+                platform fees.
+            </p>
+        </div>
+    </section>
+
+</main>

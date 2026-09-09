@@ -1,0 +1,829 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.RSVPModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 10;
+    ViewData["StepTotal"] = 12;
+    ViewData["StepName"] = "RSVP Setup";
+    ViewData["StepHint"] = "RSVP requirement & the form guests answer";
+}
+
+<div class="wizard__body">
+
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            <p class="lockbar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg>
+                <span class="lockbar__text">
+                    <span data-type-label>Private Event</span> &mdash; guests are invited, never
+                    discovered
+                </span>
+                <a class="lockbar__change" href="event-type.html">Change</a>
+            </p>
+
+            @if (!string.IsNullOrEmpty(Model.RsvpError))
+            {
+                <div class="notice notice--warn u-mb-4" role="alert">
+                    <p>@Model.RsvpError</p>
+                </div>
+            }
+
+            <form class="stack" id="RsvpForm" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- RSVP requirement -->
+                <section class="panel" aria-labelledby="rsvpreq-title">
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="rsvpreq-title">
+                                Is an RSVP required?
+                            </h2>
+                            <p class="panel__meta">
+                                This is the only decision the wizard needs. Inviting guests and tracking
+                                replies happens in Event Hub once the event is live.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <div class="radios radios--2">
+                            <label class="radio">
+                                <input type="radio" name="rsvp-required" value="yes"
+                                @(Model.Existing?.IsRsvpEnabled != false ? "checked" : "")
+                                       data-reveal="rsvp-form" data-reveal-inverse="rsvp-off"
+                                       data-rsvp-flag="on">
+                                <span class="radio__icon" aria-hidden="true" style="color:var(--color-brand-600)"><i class="fa-solid fa-file-lines"></i></span>
+                                <span class="radio__body">
+                                    <span class="radio__title">Yes &mdash; ask guests to RSVP</span>
+                                    <span class="radio__text">
+                                        Guests answer your questions below before a ticket is issued, and the
+                                        RSVP tab unlocks in Event Hub
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="rsvp-required" value="no"
+                                @(Model.Existing?.IsRsvpEnabled == false ? "checked" : "")
+                                       data-rsvp-flag="off">
+                                <span class="radio__icon" aria-hidden="true" style="color:var(--color-brand-600)"><i class="fa-solid fa-ticket"></i></span>
+                                <span class="radio__body">
+                                    <span class="radio__title">No &mdash; ticket everyone directly</span>
+                                    <span class="radio__text">
+                                        Tickets go out to every guest on the list with no reply needed, and
+                                        the RSVP tab stays locked
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <p class="notice notice--warn notice--flat u-mt-5" id="rsvp-off" hidden>
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                            With RSVP off, the <b>RSVP tab in Event Hub is locked</b> and cannot be
+                            opened. You can still add guests and send their tickets from the Guests
+                            tab.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Custom RSVP form -->
+                <div class="stack" id="rsvp-form">
+                    <section class="panel" aria-labelledby="rsvpform-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title panel__title--lg" id="rsvpform-title">
+                                    RSVP Registration Form
+                                </h2>
+                                <p class="panel__meta">
+                                    What each guest fills in when they reply &middot; drag to reorder
+                                </p>
+                            </div>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-form-preview="rsvppreview-modal"
+                                    data-form-preview-list="rq-list">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Preview form
+                            </button>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-repeat-add="rq-list">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add question
+                            </button>
+                        </div>
+                        <div class="panel__body">
+                            <div class="tplbar">
+                                <span class="tplbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                                <div class="tplbar__pick">
+                                    <label class="tplbar__label" for="tplpick-rq-list">
+                                        Start from a saved template
+                                    </label>
+                                    <select class="field__select" id="tplpick-rq-list" name="tplpick-rq-list">
+                                        <option value="">Choose a template&hellip;</option>
+                                        @if (Model.TemplateList != null && Model.TemplateList.Any())
+                                        {
+                                            foreach (var tpl in Model.TemplateList)
+                                            {
+                                                <option value="@tpl.FormTitle">@tpl.FormTitle - @tpl.TotalFields fields</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="tplbar__acts">
+                                    <button class="btn btn--outline btn--sm" type="button" id="btnLoadTemplate">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Load
+                                    </button>
+                                    <button class="btn btn--outline btn--sm" type="button" data-modal-open="tpllibrary-modal">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Manage
+                                    </button>
+                                </div>
+                                <p class="tplbar__note" data-tplnote="rq-list">
+                                    Loading a template replaces the RSVP questions below. Name and email always stay.
+                                </p>
+                            </div>
+
+                            <div class="fields" id="rq-list">
+                                <div class="fieldrow fieldrow--locked" data-repeat-row>
+                                    <span class="fieldrow__grip" aria-hidden="true">#</span>
+                                    <span class="fieldrow__no" aria-hidden="true">1</span>
+                                    <span>
+                                        <label class="u-visually-hidden" for="rq-1-label">Question</label>
+                                        <input class="fieldrow__input" id="rq-1-label" name="rq-1-label"
+                                               type="text" value="Full Name" placeholder="What do you want to ask?" readonly>
+                                    </span>
+                                    <span>
+                                        <label class="u-visually-hidden" for="rq-1-type">Answer type</label>
+                                        <select class="fieldrow__select" id="rq-1-type" name="rq-1-type" disabled>
+                                            <option selected>Short Text</option>
+                                            <option>Email</option>
+                                            <option>Phone</option>
+                                            <option>Long Text</option>
+                                            <option>Dropdown</option>
+                                            <option>Checkbox</option>
+                                            <option>Date</option>
+                                            <option>Number</option>
+                                            <option>File Upload</option>
+                                        </select>
+                                    </span>
+                                    <label class="fieldrow__req" for="rq-1-req">
+                                        <input id="rq-1-req" name="rq-1-req" type="checkbox" checked disabled>
+                                        Req
+                                    </label>
+                                    <button class="fieldrow__icon" type="button"
+                                            data-action="Answer options for &ldquo;Full Name&rdquo; open here">
+                                        <span class="u-visually-hidden">Answer options for Full Name</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                                    </button>
+                                    <button class="fieldrow__icon fieldrow__icon--danger" type="button"
+                                            data-repeat-remove disabled>
+                                        <span class="u-visually-hidden">Remove Full Name</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                    </button>
+                                </div>
+                                <div class="fieldrow fieldrow--locked" data-repeat-row>
+                                    <span class="fieldrow__grip" aria-hidden="true">#</span>
+                                    <span class="fieldrow__no" aria-hidden="true">2</span>
+                                    <span>
+                                        <label class="u-visually-hidden" for="rq-2-label">Question</label>
+                                        <input class="fieldrow__input" id="rq-2-label" name="rq-2-label"
+                                               type="text" value="Email Address" placeholder="What do you want to ask?" readonly>
+                                    </span>
+                                    <span>
+                                        <label class="u-visually-hidden" for="rq-2-type">Answer type</label>
+                                        <select class="fieldrow__select" id="rq-2-type" name="rq-2-type" disabled>
+                                            <option>Short Text</option>
+                                            <option selected>Email</option>
+                                            <option>Phone</option>
+                                            <option>Long Text</option>
+                                            <option>Dropdown</option>
+                                            <option>Checkbox</option>
+                                            <option>Date</option>
+                                            <option>Number</option>
+                                            <option>File Upload</option>
+                                        </select>
+                                    </span>
+                                    <label class="fieldrow__req" for="rq-2-req">
+                                        <input id="rq-2-req" name="rq-2-req" type="checkbox" checked disabled>
+                                        Req
+                                    </label>
+                                    <button class="fieldrow__icon" type="button"
+                                            data-action="Answer options for &ldquo;Email Address&rdquo; open here">
+                                        <span class="u-visually-hidden">Answer options for Email Address</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                                    </button>
+                                    <button class="fieldrow__icon fieldrow__icon--danger" type="button"
+                                            data-repeat-remove disabled>
+                                        <span class="u-visually-hidden">Remove Email Address</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                Name and email are always asked &mdash; they are how the invitation and
+                                the ticket reach the guest.
+                            </p>
+
+                            <fieldset class="fieldset u-mt-5">
+                                <legend class="fieldset__legend">Add a common question</legend>
+                                <div class="chiprow">
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Job title">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Job title
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Organisation">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Organisation
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Which sessions will you join?">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Which sessions will you join?
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Do you need parking?">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Do you need parking?
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Arrival time">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Arrival time
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="T-shirt size">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> T-shirt size
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Do you need airport pickup?">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Do you need airport pickup?
+                                    </button>
+                                    <button class="chipbtn" type="button"
+                                            data-preset="rq-list" data-preset-label="Consent to be photographed">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Consent to be photographed
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="rsvpnext-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title panel__title--lg" id="rsvpnext-title">
+                                    What happens after you publish
+                                </h2>
+                                <p class="panel__meta">
+                                    These three jobs live in Event Hub, so you are not filling in a guest
+                                    list while you are still designing the event
+                                </p>
+                            </div>
+                        </div>
+                        <div class="panel__body">
+                            <ol class="handoff">
+                                <li class="handoff__step">
+                                    <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 16V5m0 0 4 4m-4-4-4 4M5 20h14" /></svg></span>
+                                    <span class="handoff__body">
+                                        <span class="handoff__title">Add or upload your guest list</span>
+                                        <span class="handoff__text">Import a CSV or add guests one by one &mdash; name, email and WhatsApp number</span>
+                                    </span>
+                                    <a class="handoff__link" data-rsvp-link
+                                       href="../../pages/event-hub.html?type=private&amp;rsvp=on#rsvp">
+                                        Event Hub &rarr; RSVP
+                                    </a>
+                                </li>
+                                <li class="handoff__step">
+                                    <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg></span>
+                                    <span class="handoff__body">
+                                        <span class="handoff__title">Send the RSVP invitation</span>
+                                        <span class="handoff__text">Choose email, WhatsApp or both, set the reply deadline and send</span>
+                                    </span>
+                                    <a class="handoff__link" data-rsvp-link
+                                       href="../../pages/event-hub.html?type=private&amp;rsvp=on#rsvp">
+                                        Event Hub &rarr; RSVP
+                                    </a>
+                                </li>
+                                <li class="handoff__step">
+                                    <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg></span>
+                                    <span class="handoff__body">
+                                        <span class="handoff__title">Track responses &amp; send tickets</span>
+                                        <span class="handoff__text">See who accepted, read their answers and issue tickets in one click or in bulk</span>
+                                    </span>
+                                    <a class="handoff__link" data-rsvp-link
+                                       href="../event-hub.html?type=private&rsvp=on#rsvp">
+                                        Event Hub &rarr; RSVP
+                                    </a>
+                                </li>
+                            </ol>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                Open <b>Event Hub &rarr; RSVP</b> at any time after publishing. The form
+                                you build here is what guests answer there.
+                            </p>
+                        </div>
+                    </section>
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/AccessControl" data-wizard-link><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <div class="wizard__foot-end">
+            <button class="btn btn--primary"
+                    type="button"
+                    id="rsvpContinueBtn"
+                    data-wizard-link>
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true"
+                     focusable="false">
+                    <path d="M10 6l6 6-6 6" />
+                </svg>
+            </button>
+        </div>
+    </footer>
+</div>
+<div class="modal" id="rsvppreview-modal" role="dialog" aria-modal="true"
+     aria-labelledby="rsvppreview-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="rsvppreview-title">RSVP Form Preview</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <div class="modal__body">
+            <p class="confirmbox">
+                <span class="confirmbox__name">Tech Summit Africa 2026</span>
+                <span class="confirmbox__meta">
+                    What an invited guest answers when they reply &middot;
+                    <span data-form-preview-count>7 fields</span>
+                </span>
+            </p>
+
+            <div class="formpreview" data-form-preview-body></div>
+
+            <p class="modal__note">
+                Read-only preview. Edit the questions behind this dialog and open it again to see
+                the change.
+            </p>
+        </div>
+
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Close</button>
+            <button class="btn btn--primary" type="button" data-modal-close>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Looks right
+            </button>
+        </div>
+    </div>
+</div>
+<template data-formtemplate="conference-standard" data-formtemplate-name="Conference Standard">
+    <ul>
+        <li data-tplfield data-label="Full Name" data-type="Short Text" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Email Address" data-type="Email" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Phone Number" data-type="Phone" data-required="true"></li>
+        <li data-tplfield data-label="Organisation" data-type="Short Text" data-required="true"></li>
+        <li data-tplfield data-label="Job Title" data-type="Short Text"></li>
+        <li data-tplfield data-label="Dietary requirements" data-type="Dropdown"></li>
+    </ul>
+</template>
+<template data-formtemplate="corporate-gala" data-formtemplate-name="Corporate Gala">
+    <ul>
+        <li data-tplfield data-label="Full Name" data-type="Short Text" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Email Address" data-type="Email" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Phone Number" data-type="Phone" data-required="true"></li>
+        <li data-tplfield data-label="Organisation" data-type="Short Text" data-required="true"></li>
+        <li data-tplfield data-label="Name of your plus-one" data-type="Short Text"></li>
+        <li data-tplfield data-label="Dietary requirements" data-type="Dropdown" data-required="true"></li>
+        <li data-tplfield data-label="Accessibility needs" data-type="Long Text"></li>
+    </ul>
+</template>
+<template data-formtemplate="workshop-signup" data-formtemplate-name="Workshop Sign-up">
+    <ul>
+        <li data-tplfield data-label="Full Name" data-type="Short Text" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Email Address" data-type="Email" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Experience level" data-type="Dropdown" data-required="true"></li>
+        <li data-tplfield data-label="What do you want to get out of this?" data-type="Long Text"></li>
+    </ul>
+</template>
+<template data-formtemplate="minimal" data-formtemplate-name="Minimal">
+    <ul>
+        <li data-tplfield data-label="Full Name" data-type="Short Text" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Email Address" data-type="Email" data-required="true" data-locked="true"></li>
+    </ul>
+</template>
+<template data-formtemplate="community" data-formtemplate-name="Faith &amp; Community">
+    <ul>
+        <li data-tplfield data-label="Full Name" data-type="Short Text" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Email Address" data-type="Email" data-required="true" data-locked="true"></li>
+        <li data-tplfield data-label="Phone Number" data-type="Phone" data-required="true"></li>
+        <li data-tplfield data-label="Home branch" data-type="Dropdown"></li>
+        <li data-tplfield data-label="Number in your party" data-type="Number" data-required="true"></li>
+    </ul>
+</template>
+<div class="modal" id="tpllibrary-modal" role="dialog" aria-modal="true"
+     aria-labelledby="tpllibrary-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="tpllibrary-title">Form Templates</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <div class="modal__body">
+            <p class="confirmbox">
+                <span class="confirmbox__name">Shared across your organisation</span>
+                <span class="confirmbox__meta">
+                    Every Admin and Event Manager on Acme Global Enterprises can load these
+                </span>
+            </p>
+
+            <div class="tplcards" data-tpllibrary>
+                <article class="tplcard" data-tplcard="conference-standard">
+                    <div class="tplcard__top">
+                        <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                        <span class="tplcard__body">
+                            <span class="tplcard__name">Conference Standard</span>
+                            <span class="tplcard__desc">What we ask at every Tech Summit &mdash; badge details plus catering</span>
+                        </span>
+                        <span class="tplcard__count">6 fields</span>
+                    </div>
+                    <p class="tplcard__meta">
+                        Used by 12 events &middot; updated 2026-07-02
+                    </p>
+                    <p class="tplcard__fields">Full Name &middot; Email Address &middot; Phone Number &middot; Organisation &middot; Job Title &middot; Dietary requirements</p>
+                    <p class="tplcard__acts">
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-tpluse="conference-standard" data-modal-close>
+                            Use this template
+                        </button>
+                    </p>
+                </article>
+                <article class="tplcard" data-tplcard="corporate-gala">
+                    <div class="tplcard__top">
+                        <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                        <span class="tplcard__body">
+                            <span class="tplcard__name">Corporate Gala</span>
+                            <span class="tplcard__desc">Seated dinner events &mdash; adds plus-one and accessibility</span>
+                        </span>
+                        <span class="tplcard__count">7 fields</span>
+                    </div>
+                    <p class="tplcard__meta">
+                        Used by 5 events &middot; updated 2026-06-18
+                    </p>
+                    <p class="tplcard__fields">Full Name &middot; Email Address &middot; Phone Number &middot; Organisation &middot; Name of your plus-one &middot; Dietary requirements &middot; Accessibility needs</p>
+                    <p class="tplcard__acts">
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-tpluse="corporate-gala" data-modal-close>
+                            Use this template
+                        </button>
+                    </p>
+                </article>
+                <article class="tplcard" data-tplcard="workshop-signup">
+                    <div class="tplcard__top">
+                        <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                        <span class="tplcard__body">
+                            <span class="tplcard__name">Workshop Sign-up</span>
+                            <span class="tplcard__desc">Hands-on sessions where we stream people by experience</span>
+                        </span>
+                        <span class="tplcard__count">4 fields</span>
+                    </div>
+                    <p class="tplcard__meta">
+                        Used by 9 events &middot; updated 2026-07-21
+                    </p>
+                    <p class="tplcard__fields">Full Name &middot; Email Address &middot; Experience level &middot; What do you want to get out of this?</p>
+                    <p class="tplcard__acts">
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-tpluse="workshop-signup" data-modal-close>
+                            Use this template
+                        </button>
+                    </p>
+                </article>
+                <article class="tplcard" data-tplcard="minimal">
+                    <div class="tplcard__top">
+                        <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                        <span class="tplcard__body">
+                            <span class="tplcard__name">Minimal</span>
+                            <span class="tplcard__desc">Name and email only &mdash; the fastest form we can publish</span>
+                        </span>
+                        <span class="tplcard__count">2 fields</span>
+                    </div>
+                    <p class="tplcard__meta">
+                        Used by 23 events &middot; updated 2026-05-30
+                    </p>
+                    <p class="tplcard__fields">Full Name &middot; Email Address</p>
+                    <p class="tplcard__acts">
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-tpluse="minimal" data-modal-close>
+                            Use this template
+                        </button>
+                    </p>
+                </article>
+                <article class="tplcard" data-tplcard="community">
+                    <div class="tplcard__top">
+                        <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                        <span class="tplcard__body">
+                            <span class="tplcard__name">Faith &amp; Community</span>
+                            <span class="tplcard__desc">Congregation and community gatherings, party sizes included</span>
+                        </span>
+                        <span class="tplcard__count">5 fields</span>
+                    </div>
+                    <p class="tplcard__meta">
+                        Used by 7 events &middot; updated 2026-06-04
+                    </p>
+                    <p class="tplcard__fields">Full Name &middot; Email Address &middot; Phone Number &middot; Home branch &middot; Number in your party</p>
+                    <p class="tplcard__acts">
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-tpluse="community" data-modal-close>
+                            Use this template
+                        </button>
+                    </p>
+                </article>
+            </div>
+        </div>
+
+        <div class="modal__foot">
+            <button class="btn btn--primary" type="button" data-modal-close>Done</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="tplsave-modal" role="dialog" aria-modal="true"
+     aria-labelledby="tplsave-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--sm">
+        <div class="modal__head">
+            <h2 class="modal__title" id="tplsave-title">Save as a template</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <form class="modal__body" id="tplsave-form" data-tplsave-form>
+            <p class="confirmbox">
+                <span class="confirmbox__name" data-tplsave-count>0 fields</span>
+                <span class="confirmbox__meta" data-tplsave-list></span>
+            </p>
+
+            <div class="form__field">
+                <label class="field__label" for="tplname">
+                    Template name<span class="field__required" aria-hidden="true">*</span>
+                    <span class="u-visually-hidden">(required)</span>
+                </label>
+                <input class="field__input" id="tplname" name="tplname" type="text"
+                       placeholder="e.g. Quarterly Partner Briefing" required>
+            </div>
+
+            <div class="form__field u-mt-5">
+                <label class="field__label" for="tpldesc">Description</label>
+                <input class="field__input" id="tpldesc" name="tpldesc" type="text"
+                       placeholder="When should someone reach for this template?">
+            </div>
+
+            <fieldset class="fieldset u-mt-5">
+                <legend class="fieldset__legend">Who can use it</legend>
+                <div class="radios radios--2">
+                    <label class="radio">
+                        <input type="radio" name="tplscope" value="org" checked>
+                        <span class="radio__body">
+                            <span class="radio__title">Everyone in the organisation</span>
+                            <span class="radio__text">Any Admin or Event Manager can load it</span>
+                        </span>
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="tplscope" value="me">
+                        <span class="radio__body">
+                            <span class="radio__title">Only me</span>
+                            <span class="radio__text">Kept private to your account</span>
+                        </span>
+                    </label>
+                </div>
+            </fieldset>
+        </form>
+
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Cancel</button>
+            <button class="btn btn--primary" type="button" data-tplsave-confirm data-modal-close>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Save template
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const yesRadio = document.querySelector(
+            'input[name="rsvp-required"][value="yes"]'
+        );
+
+        const noRadio = document.querySelector(
+            'input[name="rsvp-required"][value="no"]'
+        );
+
+        const rsvpForm = document.getElementById("rsvp-form");
+        const rsvpOff = document.getElementById("rsvp-off");
+        const continueBtn = document.getElementById("rsvpContinueBtn");
+
+        function updateRsvpVisibility() {
+
+            if (noRadio && noRadio.checked) {
+
+                if (rsvpForm) {
+                    rsvpForm.hidden = true;
+                }
+
+                if (rsvpOff) {
+                    rsvpOff.hidden = false;
+                }
+
+            } else {
+
+                if (rsvpForm) {
+                    rsvpForm.hidden = false;
+                }
+
+                if (rsvpOff) {
+                    rsvpOff.hidden = true;
+                }
+            }
+        }
+
+        if (yesRadio) {
+            yesRadio.addEventListener("change", updateRsvpVisibility);
+        }
+
+        if (noRadio) {
+            noRadio.addEventListener("change", updateRsvpVisibility);
+        }
+
+        if (continueBtn) {
+            continueBtn.addEventListener("click", function() {
+
+                if (noRadio && noRadio.checked) {
+
+                    window.location.href = '@Url.Page("/CreateEvent/BrandingPage")';
+
+                    return;
+                }
+
+                document.getElementById("RsvpForm").submit();
+            });
+        }
+
+        updateRsvpVisibility();
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const loadBtn = document.getElementById("btnLoadTemplate");
+        const templateSelect = document.getElementById("tplpick-rq-list");
+        const container = document.getElementById("rq-list");
+
+        function renderFields(fields) {
+            // Keep the first 2 default locked rows (Full Name & Email) and remove custom rows
+            const rows = container.querySelectorAll('.fieldrow');
+            rows.forEach((row, idx) => {
+                if (idx >= 2) row.remove();
+            });
+
+            // Filter out Full Name and Email from the server response so they aren't duplicated
+            const customFields = fields.filter(field => {
+                const name = (field.label || field.Label || field.CustomName || '').trim().toLowerCase();
+                return name !== 'full name' && name !== 'email' && name !== 'email address';
+            });
+
+            // Render only the remaining custom fields
+            customFields.forEach((field, i) => {
+                const idx = i + 3;
+                const label = field.label || field.Label || field.CustomName || '';
+                const type = field.fieldType || field.FieldType || 'Short Text';
+                const isReq = (field.isRequired || field.IsRequired) ? 'checked' : '';
+
+                const rowHtml = `
+                <div class="fieldrow" data-repeat-row>
+                    <span class="fieldrow__grip" aria-hidden="true">#</span>
+                    <span class="fieldrow__no" aria-hidden="true">${idx}</span>
+                    <span>
+                        <input class="fieldrow__input" id="rq-${idx}-label" name="rq-${idx}-label"
+                               type="text" value="${label}" placeholder="What do you want to ask?">
+                    </span>
+                    <span>
+                        <select class="fieldrow__select" id="rq-${idx}-type" name="rq-${idx}-type">
+                            <option ${type === 'Short Text' ? 'selected' : ''}>Short Text</option>
+                            <option ${type === 'Email' ? 'selected' : ''}>Email</option>
+                            <option ${type === 'Phone' ? 'selected' : ''}>Phone</option>
+                            <option ${type === 'Long Text' ? 'selected' : ''}>Long Text</option>
+                            <option ${type === 'Dropdown' ? 'selected' : ''}>Dropdown</option>
+                            <option ${type === 'Checkbox' ? 'selected' : ''}>Checkbox</option>
+                            <option ${type === 'Date' ? 'selected' : ''}>Date</option>
+                            <option ${type === 'Number' ? 'selected' : ''}>Number</option>
+                            <option ${type === 'File Upload' ? 'selected' : ''}>File Upload</option>
+                        </select>
+                    </span>
+                    <label class="fieldrow__req" for="rq-${idx}-req">
+                        <input id="rq-${idx}-req" name="rq-${idx}-req" type="checkbox" ${isReq}>
+                        Req
+                    </label>
+                    <button class="fieldrow__icon fieldrow__icon--danger" type="button" onclick="this.closest('.fieldrow').remove()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                    </button>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', rowHtml);
+            });
+        }
+
+        function loadTemplateByTitle(title) {
+            if (!title) return;
+
+            // Decode HTML entities if any were picked up from DOM values
+            const txt = document.createElement("textarea");
+            txt.innerHTML = title;
+            const cleanTitle = txt.value.trim();
+
+            if (!cleanTitle) return;
+
+            const encodedTitle = encodeURIComponent(cleanTitle);
+
+            // Pass both formTitle and FormTitle to satisfy both Razor Page Handler and internal API model binder
+            fetch(`?handler=LoadTemplate&formTitle=${encodedTitle}&FormTitle=${encodedTitle}`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 1 && data.fields) {
+                        renderFields(data.fields);
+                    } else {
+                        // Display exact error message returned by server or fallback
+                        alert(data.message || "Failed to load template.");
+                    }
+                })
+                .catch(() => alert("An error occurred while loading the template."));
+        }
+
+        if (templateSelect) {
+            templateSelect.addEventListener("change", function() {
+                if (this.value) {
+                    loadTemplateByTitle(this.value);
+                }
+            });
+        }
+
+        // 2. Load button fallback trigger
+        if (loadBtn) {
+            loadBtn.addEventListener("click", function() {
+                if (!templateSelect.value) {
+                    alert("Please select a template first.");
+                    return;
+                }
+                loadTemplateByTitle(templateSelect.value);
+            });
+        }
+
+        // 3. Handle "Use this template" button inside modal
+        document.querySelectorAll("[data-tpluse]").forEach(button => {
+            button.addEventListener("click", function() {
+                const templateKey = this.getAttribute("data-tpluse");
+                const templateEl = document.querySelector(`template[data-formtemplate="${templateKey}"]`);
+
+                if (templateEl) {
+                    const fields = [];
+                    templateEl.content.querySelectorAll("[data-tplfield]").forEach(item => {
+                        fields.push({
+                            Label: item.getAttribute("data-label"),
+                            FieldType: item.getAttribute("data-type") || "Short Text",
+                            IsRequired: item.getAttribute("data-required") === "true"
+                        });
+                    });
+
+                    renderFields(fields);
+                }
+
+                // Close the modal
+                const modal = document.getElementById("tpllibrary-modal");
+                if (modal) modal.hidden = true;
+            });
+        });
+
+        // 4. Modal Open/Close handling for Manage Modal
+        document.querySelectorAll("[data-modal-open]").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const targetId = this.getAttribute("data-modal-open");
+                const targetModal = document.getElementById(targetId);
+                if (targetModal) targetModal.hidden = false;
+            });
+        });
+
+        document.querySelectorAll("[data-modal-close]").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const modal = this.closest(".modal");
+                if (modal) modal.hidden = true;
+            });
+        });
+    });
+</script>

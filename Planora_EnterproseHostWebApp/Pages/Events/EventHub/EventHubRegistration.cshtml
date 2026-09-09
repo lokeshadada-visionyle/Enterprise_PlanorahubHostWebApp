@@ -1,0 +1,261 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubRegistrationModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+    var data = Model.eventHubGuestRegistrationRespData;
+}
+
+<div data-view-panel="registrations" data-role-only="admin manager viewer">
+
+    <!-- Locked view shown when data fetch fails or Status != 1 -->
+    @if (data == null || data.Status != 1)
+    {
+        <section class="lockcard" data-reg-locked>
+            <span class="tile tile--lg tile--muted" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg>
+            </span>
+            <div class="lockcard__body">
+                <h2 class="lockcard__title">Guest registration is switched off</h2>
+                <p class="lockcard__text">
+                    This event was created with <b>&ldquo;No &mdash; do not collect guest details&rdquo;</b>, so the only thing on file is the name and email on each ticket. Those are on the <b>Guests</b> tab.
+                </p>
+                <p class="lockcard__actions">
+                    <button class="btn btn--outline btn--sm" type="button" data-view="guests">
+                        Go to Guests
+                    </button>
+                    <a class="btn btn--quiet btn--sm" href="create-event/access-control.html">
+                        Turn registration on in Access Control
+                    </a>
+                </p>
+            </div>
+        </section>
+    }
+    else
+    {
+        <div data-reg-live>
+            <div class="hubhead">
+                <div class="hubhead__body">
+                    <h2 class="hubhead__title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> Registrations
+                    </h2>
+                    <p class="hubhead__text">
+                        Everything guests submitted on your registration form, one row each
+                    </p>
+                </div>
+                <div class="hubhead__actions">
+                    <button class="btn btn--outline btn--sm" type="button" data-modal-open="regexport-modal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export data
+                    </button>
+                    <button class="btn btn--primary btn--sm" type="button" data-action="@data.MissingAnswers guests asked to complete their missing answers">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Chase incomplete
+                    </button>
+                </div>
+            </div>
+
+            <section class="panel">
+                <div class="panel__body">
+                    <div class="rsvpstat">
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Registrations</span>
+                                <span class="alloc__value">@data.TotalRegistrations.ToString("N0")</span>
+                            </p>
+                            <p class="alloc__foot"><span>One per issued ticket</span></p>
+                        </article>
+
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12.5 9 17.5 20 6.5" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Complete</span>
+                                <span class="alloc__value">@data.RegistrationCompleted.ToString("N0")</span>
+                            </p>
+                            <p class="alloc__foot"><span>@data.RegistrationPer answered every required field</span></p>
+                        </article>
+
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Missing answers</span>
+                                <span class="alloc__value">@data.MissingAnswers.ToString("N0")</span>
+                            </p>
+                            <p class="alloc__foot"><span>Optional fields left blank</span></p>
+                        </article>
+
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Fields collected</span>
+                                <span class="alloc__value">@data.TotalFields.ToString("N0")</span>
+                            </p>
+                            <p class="alloc__foot"><span>@data.BasicField always asked, @data.FieldsAdded you added</span></p>
+                        </article>
+                    </div>
+
+                    <div class="toolbar u-mt-5">
+                        <div class="searchbox">
+                            <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                            <label class="u-visually-hidden" for="reg-search">
+                                Search registrations
+                            </label>
+                            <input class="searchbox__input" id="reg-search" name="reg-search"
+                                   type="search" placeholder="Search name, email, organisation"
+                                   data-tablefilter="reg-table">
+                        </div>
+                        <div class="toolbar__field">
+                            <label class="u-visually-hidden" for="reg-tier">Filter by tier</label>
+                            <select class="field__select" id="reg-tier" name="reg-tier" data-tablefilter-col="reg-table">
+                                <option value="">All tiers</option>
+                                @if (data.Guests != null && data.Guests.Any())
+                                {
+                                    foreach (var tier in data.Guests.Select(g => g.TicketType).Where(t => !string.IsNullOrEmpty(t)).Distinct())
+                                    {
+                                        <option value="@tier">@tier</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="toolbar__field">
+                            <label class="u-visually-hidden" for="reg-state">Filter by completeness</label>
+                            <select class="field__select" id="reg-state" name="reg-state" data-regstate>
+                                <option value="">All submissions</option>
+                                <option value="complete">Complete only</option>
+                                <option value="partial">Missing answers only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tablewrap u-mt-5">
+                        <table class="table table--narrow" id="reg-table">
+                            <caption class="u-visually-hidden">
+                                Guest registration submissions, one column per configured question
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Guest</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Organisation</th>
+                                    <th scope="col">Job title</th>
+                                    <th scope="col">Dietary</th>
+                                    <th scope="col">Tier</th>
+                                    <th scope="col">Submitted</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (data.Guests != null && data.Guests.Any())
+                                {
+                                    foreach (var guest in data.Guests)
+                                    {
+                                        bool isComplete = string.Equals(guest.Status, "Complete", StringComparison.OrdinalIgnoreCase);
+                                        string initials = !string.IsNullOrWhiteSpace(guest.GuestName)
+                                            ? string.Concat(guest.GuestName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(n => n[0])).ToUpper()
+                                            : "G";
+
+                                        <tr data-reg-row data-reg-state="@(isComplete ? "complete" : "partial")" data-reg-tier="@guest.TicketType">
+                                            <td>
+                                                <div class="cellstack">
+                                                    <span class="avatar" aria-hidden="true">@initials</span>
+                                                    <span class="cellstack__body">
+                                                        <span class="cellstack__name">@guest.GuestName</span>
+                                                        <span class="cellsub">@guest.GuestEmail</span>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(guest.PhoneNo))
+                                                {
+                                                    <span class="u-nowrap">@guest.PhoneNo</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="regmiss">Not answered</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(guest.Organization))
+                                                {
+                                                    @guest.Organization
+                                                }
+                                                else
+                                                {
+                                                    <span class="regmiss">Not answered</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(guest.Jobtitle))
+                                                {
+                                                    @guest.Jobtitle
+                                                }
+                                                else
+                                                {
+                                                    <span class="regmiss">Not answered</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(guest.Dietary))
+                                                {
+                                                    @guest.Dietary
+                                                }
+                                                else
+                                                {
+                                                    <span class="regmiss">Not answered</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge badge--nodot badge--role">@guest.TicketType</span>
+                                            </td>
+                                            <td class="u-muted">
+                                                <span class="u-nowrap">@guest.SubmittedAt</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(isComplete ? "badge--live" : "badge--paused")">
+                                                    @guest.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="rowactions">
+                                                    <button class="iconbtn" type="button" data-reg-view="@guest.GuestId" data-modal-open="regdetail-modal">
+                                                        <span class="u-visually-hidden">View @guest.GuestName&rsquo;s submission</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-action="Asked @guest.GuestName to complete the missing answers">
+                                                        <span class="u-visually-hidden">Chase @guest.GuestName for missing answers</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="tablefilter__empty" data-tablefilter-empty="reg-table" hidden>
+                        No registration matches those filters.
+                    </p>
+
+                    <p class="notice notice--info notice--flat u-mt-5">
+                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                        Columns mirror the registration form. Add a question in
+                        <b>Access Control</b> and it appears here for everyone who registers after
+                        the change &mdash; earlier submissions show it as not answered.
+                    </p>
+                </div>
+            </section>
+        </div>
+    }
+</div>

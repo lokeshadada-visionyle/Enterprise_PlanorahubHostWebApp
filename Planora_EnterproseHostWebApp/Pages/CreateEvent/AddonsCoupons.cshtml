@@ -1,0 +1,479 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.AddonsCouponsModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 7;
+    ViewData["StepTotal"] = Model.IsPrivateEvent ? 12 : 10;
+    ViewData["StepName"] = "Add-ons & Coupons";
+    ViewData["StepHint"] = "Add optional extras and discount codes for paid tickets";
+}
+<style>
+    .addonline + .addonline {
+        margin-top: var(--space-3);
+    }
+
+    .addonline {
+        padding: var(--space-4);
+        background-color: var(--color-white);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+    }
+
+    .addonline__top {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .addonline__desc {
+        margin-top: var(--space-4);
+    }
+
+    .addonline__fields {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--space-3);
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .field__hint {
+        display: block;
+        margin-top: 0.375rem;
+        font-size: 0.6875rem;
+        color: var(--color-text-subtle);
+    }
+
+    .descprev {
+        margin-top: var(--space-3);
+        padding: var(--space-3) 0.875rem;
+        background-color: var(--color-surface-alt);
+        border: 1px dashed var(--color-border);
+        border-radius: var(--radius-sm);
+    }
+
+    .descprev__label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.5625rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    .descprev__list {
+        margin: 0 0 0 1rem;
+        font-size: var(--fs-2xs);
+        color: var(--color-text-label);
+    }
+</style>
+<div class="wizard__body">
+
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            <form class="stack" id="addons-coupons-form" method="post">
+                @Html.AntiForgeryToken()
+
+                @if (!string.IsNullOrWhiteSpace(Model.ApiError))
+                {
+                    <p class="notice notice--error notice--flat">
+                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 8v5M12 16h.01" /></svg>
+                        @Model.ApiError
+                    </p>
+                }
+
+                <p class="notice notice--info notice--flat">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    Add-ons and coupons apply to <b>paid</b> events only. On a free event this
+                    step is skipped automatically.
+                </p>
+
+                <section class="panel" aria-labelledby="addons-title">
+                    <div class="panel__head">
+                        <span class="tile tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg></span>
+                        <h2 class="panel__title" id="addons-title">Add-ons</h2>
+                        <p class="panel__meta">Optional extras sold alongside a ticket</p>
+                    </div>
+                    <div class="panel__body">
+                        <div class="lines lines--addon">
+                            <div class="lines__head" aria-hidden="true">
+                                <span>Name</span><span>Price (₦)</span><span>Stock</span><span></span>
+                            </div>
+                            <div id="addon-list">
+                                <div class="addonline" data-repeat-row="">
+                                    <div class="addonline__top">
+                                        <span class="addonline__fields">
+                                            <label class="u-visually-hidden" for="addon-name-1">Add-on name</label>
+                                            <input class="line__input" id="addon-name-1" name="addon-name-1" type="text" placeholder="e.g. Conference Tote Bag" value="Conference Tote Bag">
+                                            <label class="u-visually-hidden" for="addon-price-1">Price</label>
+                                            <input class="line__input" id="addon-price-1" name="addon-price-1" type="text" inputmode="numeric" placeholder="0" value="2500">
+                                            <label class="u-visually-hidden" for="addon-stock-1">Stock count</label>
+                                            <input class="line__input" id="addon-stock-1" name="addon-stock-1" type="text" inputmode="numeric" placeholder="0" value="150">
+                                        </span>
+                                        <button class="line__remove" type="button" data-repeat-remove="">
+                                            <span class="u-visually-hidden">Remove add-on</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg>
+                                        </button>
+                                    </div>
+
+                                    <div class="form__field addonline__desc">
+                                        <label class="field__label" for="addon-desc-1">Description</label>
+                                        <textarea class="field__input" id="addon-desc-1" name="addon-desc-1" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-1" style=" height: 128px;">Canvas tote with the event print
+                                            Notebook and pen inside
+                                            Collect at the registration desk</textarea>
+                                        <span class="field__hint">
+                                            Start a new line for each point — the buyer sees them as bullets
+                                        </span>
+                                        <div class="descprev" data-desc-prev="addon-1">
+                                            <span class="descprev__label">How the buyer sees it</span>
+                                            <ul class="descprev__list" data-desc-list=""><li>Canvas tote with the event print</li><li>Notebook and pen inside</li><li>Collect at the registration desk</li></ul>
+                                            <p class="descprev__line" data-desc-line="" hidden=""></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="addonline" data-repeat-row="">
+                                    <div class="addonline__top">
+                                        <span class="addonline__fields">
+                                            <label class="u-visually-hidden" for="addon-name-2">Add-on name</label>
+                                            <input class="line__input" id="addon-name-2" name="addon-name-2" type="text" placeholder="e.g. Conference Tote Bag" value="Workshop Pass">
+                                            <label class="u-visually-hidden" for="addon-price-2">Price</label>
+                                            <input class="line__input" id="addon-price-2" name="addon-price-2" type="text" inputmode="numeric" placeholder="0" value="8000">
+                                            <label class="u-visually-hidden" for="addon-stock-2">Stock count</label>
+                                            <input class="line__input" id="addon-stock-2" name="addon-stock-2" type="text" inputmode="numeric" placeholder="0" value="60">
+                                        </span>
+                                        <button class="line__remove" type="button" data-repeat-remove="">
+                                            <span class="u-visually-hidden">Remove add-on</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg>
+                                        </button>
+                                    </div>
+
+                                    <div class="form__field addonline__desc">
+                                        <label class="field__label" for="addon-desc-2">Description</label>
+                                        <textarea class="field__input" id="addon-desc-2" name="addon-desc-2" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-2">Entry to the Fintech Panel workshop
+Workbook and materials
+Certificate of attendance</textarea>
+                                        <span class="field__hint">
+                                            Start a new line for each point — the buyer sees them as bullets
+                                        </span>
+                                        <div class="descprev" data-desc-prev="addon-2">
+                                            <span class="descprev__label">How the buyer sees it</span>
+                                            <ul class="descprev__list" data-desc-list=""><li>Entry to the Fintech Panel workshop</li><li>Workbook and materials</li><li>Certificate of attendance</li></ul>
+                                            <p class="descprev__line" data-desc-line="" hidden=""></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="addline" type="button" data-repeat-add="addon-list">
+                            + Add add-on
+                        </button>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"></circle><path d="M12 12h.01"></path></svg>
+                            Stock is tracked per add-on and sold independently of ticket capacity —
+                            when an add-on runs out it stops being offered at checkout.
+                        </p>
+                    </div>
+                    @* <div class="panel__body">
+                        <div class="lines lines--addon">
+                            <div class="lines__head" aria-hidden="true">
+                                <span>Name</span><span>Price (&#8358;)</span><span>Stock</span><span></span>
+                            </div>
+                            <div id="addon-list">
+                                <div class="line" data-repeat-row style="margin-bottom: 10px;">
+                                    <label class="u-visually-hidden" for="addon-name-1">Add-on name</label>
+                                    <input class="line__input" id="addon-name-1" name="addon-name-1"
+                                           type="text" placeholder="e.g. Conference Tote Bag" value="Conference Tote Bag">
+                                    <label class="u-visually-hidden" for="addon-price-1">Price</label>
+                                    <input class="line__input" id="addon-price-1" name="addon-price-1"
+                                           type="text" inputmode="numeric" placeholder="0" value="2500">
+                                    <label class="u-visually-hidden" for="addon-stock-1">Stock count</label>
+                                    <input class="line__input" id="addon-stock-1" name="addon-stock-1"
+                                           type="text" inputmode="numeric" placeholder="0" value="150">
+                                    <button class="line__remove" type="button" data-repeat-remove>
+                                        <span class="u-visually-hidden">Remove add-on</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                                <div class="line" data-repeat-row style="margin-bottom: 10px;">
+                                    <label class="u-visually-hidden" for="addon-name-2">Add-on name</label>
+                                    <input class="line__input" id="addon-name-2" name="addon-name-2"
+                                           type="text" placeholder="e.g. Conference Tote Bag" value="Workshop Pass">
+                                    <label class="u-visually-hidden" for="addon-price-2">Price</label>
+                                    <input class="line__input" id="addon-price-2" name="addon-price-2"
+                                           type="text" inputmode="numeric" placeholder="0" value="8000">
+                                    <label class="u-visually-hidden" for="addon-stock-2">Stock count</label>
+                                    <input class="line__input" id="addon-stock-2" name="addon-stock-2"
+                                           type="text" inputmode="numeric" placeholder="0" value="60">
+                                    <button class="line__remove" type="button" data-repeat-remove>
+                                        <span class="u-visually-hidden">Remove add-on</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="addline" type="button" data-repeat-add="addon-list">
+                            + Add add-on
+                        </button>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            Stock is tracked per add-on and sold independently of ticket capacity &mdash;
+                            when an add-on runs out it stops being offered at checkout.
+                        </p>
+                    </div> *@
+                </section>
+
+                <section class="panel" aria-labelledby="promo-title">
+                    <div class="panel__head">
+                        <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg></span>
+                        <h2 class="panel__title" id="promo-title">Promo Codes</h2>
+                        <p class="panel__meta">Discount rules buyers redeem at checkout</p>
+                    </div>
+                    <div class="panel__body">
+                        <div id="promo-list">
+                            <div class="promo">
+                                <div class="promo__head">
+                                    <span class="promo__code">TECH25</span>
+                                    @* <span class="badge badge--live">Active</span> *@
+                                    <span class="promo__summary">20% off &middot; Standard &amp; VIP &middot; 100 uses &middot; ends 5 Aug 2026</span>
+                                    <button class="iconbtn" type="button" aria-expanded="true"
+                                            aria-controls="promo-tech25" data-accordion>
+                                        <span class="u-visually-hidden">Toggle rules for TECH25</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                                    </button>
+                                    <button class="line__remove" type="button" data-repeat-remove>
+                                        <span class="u-visually-hidden">Delete TECH25</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+
+                                <div class="promo__rules" id="promo-tech25">
+                                    <div class="formgrid formgrid--3">
+                                        <div class="form__field">
+                                            <label class="field__label" for="promocode-tech25">Code<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="promocode-tech25" name="promocode-tech25" type="text" placeholder="TECH25" value="TECH25" required>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="promotype-tech25">Discount Type</label>
+                                            <select class="field__select" id="promotype-tech25" name="promotype-tech25">
+                                                <option>Percentage (%)</option>
+                                                <option>Fixed amount (&#8358;)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="promovalue-tech25">Value<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="promovalue-tech25" name="promovalue-tech25" type="text" placeholder="0" value="20" required>
+                                            <span class="field__hint">Percent off</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="formgrid formgrid--3 u-mt-5">
+                                        <div class="form__field">
+                                            <label class="field__label" for="promomax-tech25">Max Redemptions</label>
+                                            <input class="field__input" id="promomax-tech25" name="promomax-tech25" type="text" placeholder="Unlimited" value="100">
+                                            <span class="field__hint">Total uses across all buyers</span>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="promouser-tech25">Per-User Limit</label>
+                                            <input class="field__input" id="promouser-tech25" name="promouser-tech25" type="text" placeholder="1" value="1">
+                                            <span class="field__hint">Uses allowed per account</span>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="promomin-tech25">Minimum Order (&#8358;)</label>
+                                            <input class="field__input" id="promomin-tech25" name="promomin-tech25" type="text" placeholder="0" value="10000">
+                                            <span class="field__hint">Order must reach this to qualify</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="formgrid formgrid--2 u-mt-5">
+                                        <div class="form__field">
+                                            <label class="field__label" for="promofrom-tech25">Valid From</label>
+                                            <input class="field__input" id="promofrom-tech25" name="promofrom-tech25" type="date" value="2026-07-01">
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="promountil-tech25">Valid Until</label>
+                                            <input class="field__input" id="promountil-tech25" name="promountil-tech25" type="date" value="2026-08-05">
+                                        </div>
+                                    </div>
+
+                                    <div class="formgrid formgrid--2 u-mt-5">
+                                        <div class="form__field">
+                                            <label class="field__label" for="promoapplies-tech25">Applies To</label>
+                                            <select class="field__select" id="promoapplies-tech25" name="promoapplies-tech25">
+                                                <option value="All">All Tiers</option>
+
+                                                @if (Model.TicketTypeData?.TicketTypes != null && Model.TicketTypeData.TicketTypes.Any())
+                                                {
+                                                    @foreach (var ticket in Model.TicketTypeData.TicketTypes)
+                                                    {
+                                                        <option value="@ticket.TicketTypeId">@ticket.TypeName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="promostatus-tech25">Status</label>
+                                            <select class="field__select" id="promostatus-tech25" name="promostatus-tech25">
+                                                <option>Active</option>
+                                                <option>Paused</option>
+                                                <option>Scheduled</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="optins">
+                                        @* <div class="optin">
+                                            <input class="optin__box" id="stack-tech25" name="stack-tech25" type="checkbox">
+                                            <label for="stack-tech25">
+                                                <span class="optin__title">Can be combined with other codes</span>
+                                                <span class="optin__hint">Leave off so only the best single discount applies per order</span>
+                                            </label>
+                                        </div> *@
+                                        <div class="optin">
+                                            <input class="optin__box" id="firstorder-tech25" name="firstorder-tech25" type="checkbox">
+                                            <label for="firstorder-tech25">
+                                                <span class="optin__title">First-time buyers only</span>
+                                                <span class="optin__hint">Blocks accounts that already bought a ticket to this event</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="addline" type="button" data-repeat-add="promo-list">
+                            + Add promo code
+                        </button>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="exposure-title">
+                    <div class="panel__head">
+                        <span class="tile tile--brand" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M5 20V10M12 20V4M19 20v-7" />
+                            </svg>
+                        </span>
+                        <h2 class="panel__title" id="exposure-title">Discount Exposure</h2>
+                        <p class="panel__meta">Worst case if every code is fully redeemed</p>
+                    </div>
+                    <div class="panel__body">
+                        <div class="invoice">
+                            @if (Model.DiscountExposureData?.Discounts != null && Model.DiscountExposureData.Discounts.Any())
+                            {
+                                @foreach (var item in Model.DiscountExposureData.Discounts)
+                                {
+                                    <p class="invoice__row">
+                                        <span>
+                                            @item.Code &mdash; @item.Description
+                                            <span class="invoice__note">
+                                                @item.MaxUse uses max@(item.Ispaused ? ", paused" : "")
+                                            </span>
+                                        </span>
+                                        <span>&minus;&#8358;@item.DiscountExposure.ToString("N0")</span>
+                                    </p>
+                                }
+
+                                <p class="invoice__row invoice__row--total">
+                                    <span>Maximum discount exposure</span>
+                                    <span>&minus;&#8358;@Model.DiscountExposureData.MaximumDiscountExposure.ToString("N0")</span>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="invoice__row">
+                                    <span>No discount exposure data available.</span>
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+            </form>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/PayoutAccount" data-wizard-link data-type-only="public"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <a class="btn btn--outline" asp-page="/CreateEvent/TicketPricing" data-wizard-link data-type-only="private" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+
+        <!-- private → Food & Beverage -->
+        <div class="wizard__foot-end" data-type-only="private">
+            <!-- <button class="btn btn--quiet" type="submit" form="addons-coupons-form">Skip</button> -->
+            <button class="btn btn--primary" type="submit" form="addons-coupons-form">Continue<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+        </div>
+
+        <!-- public → skip Food, go to Access Control -->
+        <div class="wizard__foot-end" data-type-only="public" hidden>
+            <!-- <button class="btn btn--quiet" type="submit" form="addons-coupons-form">Skip</button> -->
+            <button class="btn btn--primary" type="submit" form="addons-coupons-form">Continue<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+        </div>
+    </footer>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Generic handler function for list items deletion
+        function setupListDeletion(containerId, itemSelector, lastItemMessage) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.addEventListener('click', function (event) {
+                // Find remove button by class or data attribute
+                const deleteBtn = event.target.closest('.line__remove, [data-repeat-remove]');
+                if (!deleteBtn) return;
+
+                // Select all items currently in this container
+                const allItems = container.querySelectorAll(itemSelector);
+
+                // Prevent deletion if only one item remains
+                if (allItems.length <= 1) {
+                    showToast(lastItemMessage);
+                    return;
+                }
+
+                // Remove targeted row item
+                const itemToRemove = deleteBtn.closest(itemSelector);
+                if (itemToRemove) {
+                    itemToRemove.remove();
+                }
+            });
+        }
+
+        // Initialize deletion logic for Promo Codes
+        setupListDeletion(
+            'promo-list',
+            '.promo',
+            'This is the last promo code — there has to be at least one'
+        );
+    });
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.textContent = message;
+
+        Object.assign(toast.style, {
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            backgroundColor: 'rgb(90, 42, 6)',
+            color: 'rgb(255, 255, 255)',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: '9999',
+            opacity: '1',
+            transition: 'opacity 0.3s'
+        });
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>

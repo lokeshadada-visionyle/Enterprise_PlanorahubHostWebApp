@@ -1,0 +1,522 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.BrandingPageModel
+@using Planora_EnterproseHostWebApp.Extensions
+@{
+    Layout = "_CreateEventLayout";
+    bool isPrivate = HttpContext.Session.IsPrivateEvent();
+    ViewData["StepIndex"] = 11;
+    ViewData["StepTotal"] = isPrivate ? 12 : 10;
+    ViewData["StepName"] = "Branding & Page";
+    ViewData["StepHint"] = "Customise how your event page looks to guests";
+
+    var pd = Model.PageDetails;
+    var day1 = pd.EventDates != null && pd.EventDates.Count > 0 ? pd.EventDates[0] : null;
+    var day2 = pd.EventDates != null && pd.EventDates.Count > 1 ? pd.EventDates[1] : null;
+}
+<div class="wizard__body">
+
+    <main class="wizard__content">
+        <div class="wizard__inner">
+
+            @if (!string.IsNullOrEmpty(Model.BrandingError))
+            {
+                <p class="notice notice--alert notice--flat" role="alert">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                    @Model.BrandingError
+                </p>
+            }
+
+            <div class="page__head">
+                <div>
+                    <h1 class="steplead__title u-left">Branding &amp; Event Page</h1>
+                    <p class="steplead__text u-left">
+                        Customise how your event landing page looks to guests
+                    </p>
+                </div>
+                <button class="linkmore" type="button" aria-expanded="true"
+                        aria-controls="page-preview" data-accordion>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Hide preview
+                </button>
+            </div>
+
+            <form class="branding" id="brandingForm" method="post" enctype="multipart/form-data">
+
+                <div class="stack">
+                    <section class="panel" aria-labelledby="logo-title">
+                        <div class="panel__head panel__head--plain">
+                            <h2 class="panel__title panel__title--lg" id="logo-title">Organiser Logo</h2>
+                        </div>
+                        <div class="panel__body">
+                            <div class="logodrop">
+                                <span class="logodrop__box" data-brand-logo-box>
+                                    <span class="logodrop__ph" aria-hidden="true" data-brand-logo-ph>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                                    </span>
+                                </span>
+                                <span class="logodrop__body">
+                                    <span class="logodrop__name" data-brand-logo-name>No logo yet</span>
+                                    <span class="logodrop__hint">
+                                        PNG or SVG &middot; transparent background &middot; at least
+                                        512&times;512
+                                    </span>
+                                    <span class="logodrop__acts">
+                                        <label class="btn btn--outline btn--sm" for="logo-upload">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> <span data-brand-logo-verb>Upload logo</span>
+                                        </label>
+                                        <input class="u-visually-hidden" id="logo-upload" name="logo-upload"
+                                               type="file" accept="image/png,image/svg+xml,image/jpeg"
+                                               data-brand-logo>
+                                        <button class="btn btn--quiet btn--sm" type="button" hidden
+                                                data-brand-logo-clear>
+                                            Remove
+                                        </button>
+                                    </span>
+                                </span>
+                            </div>
+
+                            <div class="form__field u-mt-5">
+                                <label class="field__label" for="brand-name">
+                                    Organiser name shown on the page
+                                </label>
+                                <input class="field__input" id="brand-name" name="brand-name"
+                                       type="text" value="Acme Global" data-brand-name>
+                                <span class="field__hint">
+                                    Sits beside the logo in the page header and footer
+                                </span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="colours-title">
+                        <div class="panel__head panel__head--plain">
+                            <h2 class="panel__title panel__title--lg" id="colours-title">Brand Colours</h2>
+                        </div>
+                        <div class="panel__body">
+                            <div class="form__field">
+                                <label class="field__label" for="primary-colour">Primary Colour</label>
+                                <div class="colorrow">
+                                    <input class="swatch" id="primary-swatch" name="primary-swatch"
+                                           type="color" value="#5a1d54"
+                                           aria-label="Pick a primary colour"
+                                           data-brand-colour="primary">
+                                    <input class="field__input colorrow__input" id="primary-colour"
+                                           name="primary-colour" type="text" value="#5A1D54"
+                                           data-brand-colour="primary">
+                                    <span class="presets" role="group" aria-label="Preset primary colours">
+                                        <button class="preset preset--plum" type="button"
+                                                aria-pressed="true" data-color="#5A1D54"
+                                                data-color-target="primary">
+                                            <span class="u-visually-hidden">Use Plum (#5A1D54)</span>
+                                        </button>
+                                        <button class="preset preset--blue" type="button"
+                                                aria-pressed="false" data-color="#1D3F5A"
+                                                data-color-target="primary">
+                                            <span class="u-visually-hidden">Use Blue (#1D3F5A)</span>
+                                        </button>
+                                        <button class="preset preset--green" type="button"
+                                                aria-pressed="false" data-color="#1D5A3C"
+                                                data-color-target="primary">
+                                            <span class="u-visually-hidden">Use Green (#1D5A3C)</span>
+                                        </button>
+                                        <button class="preset preset--rust" type="button"
+                                                aria-pressed="false" data-color="#8A3B1D"
+                                                data-color-target="primary">
+                                            <span class="u-visually-hidden">Use Rust (#8A3B1D)</span>
+                                        </button>
+                                        <button class="preset preset--slate" type="button"
+                                                aria-pressed="false" data-color="#3F4653"
+                                                data-color-target="primary">
+                                            <span class="u-visually-hidden">Use Slate (#3F4653)</span>
+                                        </button>
+                                    </span>
+                                </div>
+                                <span class="field__hint">Used for buttons and headings</span>
+                            </div>
+
+                            <div class="form__field u-mt-5">
+                                <label class="field__label" for="accent-colour">Accent Colour</label>
+                                <div class="colorrow">
+                                    <input class="swatch" id="accent-swatch" name="accent-swatch"
+                                           type="color" value="#b583af"
+                                           aria-label="Pick an accent colour"
+                                           data-brand-colour="accent">
+                                    <input class="field__input colorrow__input" id="accent-colour"
+                                           name="accent-colour" type="text" value="#B583AF"
+                                           data-brand-colour="accent">
+                                </div>
+                                <span class="field__hint">Badges and secondary highlights</span>
+                            </div>
+
+                            <div class="form__field u-mt-5">
+                                <span class="field__label" id="bg-label">Page Background</span>
+                                <div class="bgpick" role="group" aria-labelledby="bg-label"
+                                     id="bgmode" data-pick-group data-brand-bg>
+                                    <button class="bgpick__opt bgpick__opt--light" type="button"
+                                            aria-pressed="true" data-pick="light">
+                                        Light
+                                    </button>
+                                    <button class="bgpick__opt bgpick__opt--dark" type="button"
+                                            aria-pressed="false" data-pick="dark">
+                                        Dark
+                                    </button>
+                                    <button class="bgpick__opt bgpick__opt--brand" type="button"
+                                            aria-pressed="false" data-pick="brand">
+                                        Brand
+                                    </button>
+                                </div>
+                                <input type="hidden" id="background-colour-input" name="background-colour" value="#FFFFFF">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="standalone-title"
+                             data-type-only="private" hidden>
+                        <div class="panel__head">
+                            <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg></span>
+                            <h2 class="panel__title" id="standalone-title">Standalone Page</h2>
+                            <p class="panel__meta">Direct link only</p>
+                        </div>
+                        <div class="panel__body">
+                            <div class="formgrid">
+                                <div class="form__field">
+                                    <label class="field__label" for="page-slug">Page Link</label>
+                                    <input class="field__input" id="page-slug" name="page-slug" type="text" placeholder="tech-summit-2026" value="planorahub.com/e/&lt;link&gt; &mdash; share this directly with invitees">
+                                </div>
+                            </div>
+
+                            <div class="settingrow">
+                                <span class="featurerow__body">
+                                    <span class="featurerow__title" id="noindex-label">Block search engines</span>
+                                    <span class="featurerow__text">
+                                        Adds noindex so the page never appears in Google
+                                    </span>
+                                </span>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="true" aria-labelledby="noindex-label"
+                                        data-switch></button>
+                            </div>
+
+                            <div class="settingrow">
+                                <span class="featurerow__body">
+                                    <span class="featurerow__title" id="passcode-label">Require a passcode</span>
+                                    <span class="featurerow__text">
+                                        Guests enter a shared code before they can see the page
+                                    </span>
+                                </span>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="false" aria-labelledby="passcode-label"
+                                        aria-controls="passcode-field" data-switch
+                                        data-reveal="passcode-field"
+                                        data-brand-passcode></button>
+                            </div>
+
+                            <div class="reveal" id="passcode-field" hidden>
+                                <span class="reveal__title">Page passcode</span>
+                                <div class="formgrid">
+                                    <div class="form__field">
+                                        <label class="field__label" for="page-passcode">Passcode</label>
+                                        <input class="field__input" id="page-passcode" name="page-passcode" type="text" placeholder="e.g. SUMMIT26" value="Case-insensitive, shown to invitees in the invite email">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                A standalone page is the right choice whenever the event must not be
+                                discoverable: private galas, internal all-hands, investor days and
+                                invite-only launches. Public events cannot use it &mdash; discovery is
+                                locked to Listed.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="seo-title" data-type-hide="private">
+                        <div class="panel__head">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg></span>
+                            <h2 class="panel__title" id="seo-title">Search &amp; Social</h2>
+                            <p class="panel__meta">Listed events only</p>
+                        </div>
+                        <div class="panel__body">
+                            <div class="formgrid">
+                                <div class="form__field">
+                                    <label class="field__label" for="page-slug-public">Page Link</label>
+                                    <input class="field__input" data-brand-slug id="page-slug-public" name="page-slug-public" type="text" placeholder="tech-summit-africa-2026" value="planorahub.com/e/&lt;link&gt;">
+                                </div>
+                            </div>
+                            <div class="formgrid u-mt-5">
+                                <div class="form__field">
+                                    <label class="field__label" for="social-desc">Social Share Description</label>
+                                    <input class="field__input" data-brand-social id="social-desc" name="social-desc" type="text" placeholder="Shown when the link is shared" value="@pd.Description">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="page-preview">
+                    <div class="previewwrap">
+                        <div class="previewwrap__head">
+                            <div>
+                                <p class="previewwrap__title">Guest event page</p>
+                                <p class="previewwrap__hint">
+                                    Everything a guest sees, in your brand. Updates as you edit.
+                                </p>
+                            </div>
+                            <div class="previewwrap__acts">
+                                <span class="segment" id="epwidth" role="group"
+                                      aria-label="Preview width" data-pick-group>
+                                    <button class="segment__opt" type="button" aria-pressed="true"
+                                            data-pick="desktop">
+                                        Desktop
+                                    </button>
+                                    <button class="segment__opt" type="button" aria-pressed="false"
+                                            data-pick="mobile">
+                                        Mobile
+                                    </button>
+                                </span>
+                                <button class="btn btn--outline btn--sm" type="button"
+                                        data-modal-open="fullpreview-modal">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Full size
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="epframe" data-ep-frame>
+                            <div class="epframe__chrome">
+                                <span class="preview__dot preview__dot--red" aria-hidden="true"></span>
+                                <span class="preview__dot preview__dot--amber" aria-hidden="true"></span>
+                                <span class="preview__dot preview__dot--green" aria-hidden="true"></span>
+                                <span class="epframe__url">
+                                    planorahub.com/e/<span data-ep-slug>@pd.EventId</span>
+                                </span>
+                                <span class="epframe__lock" data-ep-lock hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg> Passcode</span>
+                            </div>
+
+                            <div class="epframe__viewport">
+                                <div class="ep ep--light" data-ep-page>
+
+                                    <header class="ep__bar">
+                                        <span class="ep__logo" data-ep-logo>
+                                            <span class="ep__logomark" aria-hidden="true">
+                                                <img src="@(string.IsNullOrWhiteSpace(pd.CoverImage) ? "../../images/App.png" : pd.CoverImage)" alt="logo" />
+                                            </span>
+                                            <span class="ep__logotext" data-brand-name-preview>Acme Global</span>
+                                        </span>
+                                        <nav class="ep__nav" aria-hidden="true">
+                                            <span>About</span><span>Agenda</span><span>Speakers</span>
+                                            <span>Tickets</span>
+                                        </nav>
+                                        <span class="ep__cta">Register</span>
+                                    </header>
+
+                                    <div class="ep__hero" data-ep-hero>
+                                        @if (!string.IsNullOrWhiteSpace(pd.CoverImage))
+                                        {
+                                            <img class="ep__heroimg" src="@pd.CoverImage" alt="@pd.EventName cover" />
+                                        }
+                                        else
+                                        {
+                                            <span class="ep__heroph" data-ep-heroph aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                                                <span>Cover image</span>
+                                            </span>
+                                        }
+                                        <div class="ep__herobody">
+                                            <span class="ep__chip">@pd.Eventcategory</span>
+                                            <p class="ep__title">@pd.EventName</p>
+                                            <p class="ep__tagline">@pd.TagLine</p>
+                                            <p class="ep__facts">
+                                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg> @pd.EventDate</span>
+                                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> @pd.VenueName, @pd.City</span>
+                                            </p>
+                                            <p class="ep__actions">
+                                                <span class="ep__btn">Get tickets</span>
+                                                <span class="ep__btnghost">Add to calendar</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <section class="ep__section">
+                                        <h3 class="ep__h">About this event</h3>
+                                        <p class="ep__p">@pd.Description</p>
+                                    </section>
+
+                                    @if (pd.EventDates != null && pd.EventDates.Count > 0)
+                                    {
+                                        <section class="ep__section">
+                                            <h3 class="ep__h">Programme</h3>
+                                            <div class="ep__daytabs" data-ep-daytabs>
+                                                @for (int i = 0; i < pd.EventDates.Count; i++)
+                                                {
+                                                    <button class="ep__daytab" type="button"
+                                                            aria-pressed="@(i == 0 ? "true" : "false")"
+                                                            data-ep-daytab="day-@pd.EventDates[i].EventDateId">
+                                                        @pd.EventDates[i].Label
+                                                    </button>
+                                                }
+                                            </div>
+                                            @for (int i = 0; i < pd.EventDates.Count; i++)
+                                            {
+                                                var eventDate = pd.EventDates[i];
+                                                <div class="ep__day" data-ep-day="day-@eventDate.EventDateId" hidden="@(i != 0)">
+                                                    @if (eventDate.EventSlots != null)
+                                                    {
+                                                        @foreach (var slot in eventDate.EventSlots)
+                                                        {
+                                                            <div class="ep__session">
+                                                                <span class="ep__stime">@slot.SlotName</span>
+                                                                <span class="ep__sbody">
+                                                                    <span class="ep__sname">@slot.SessionName</span>
+                                                                    <span class="ep__smeta">@slot.HallName &middot; @slot.Speaker</span>
+                                                                </span>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        </section>
+                                    }
+
+                                    @if (pd.Speakers != null && pd.Speakers.Count > 0)
+                                    {
+                                        <section class="ep__section">
+                                            <h3 class="ep__h">Speakers</h3>
+                                            <div class="ep__speakers">
+                                                @foreach (var speaker in pd.Speakers)
+                                                {
+                                                    var initials = string.Join("", (speaker.SpeakerName ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(w => w[0])).ToUpper();
+                                                    <span class="ep__speaker">
+                                                        <span class="speakerav" data-speaker-avatar="@speaker.SpeakerId">
+                                                            <span class="speakerav__initials">@initials</span>
+                                                        </span>
+                                                        <span class="ep__spname">@speaker.SpeakerName</span>
+                                                        <span class="ep__sprole">@speaker.JobTitle</span>
+                                                        <span class="ep__sporg">@speaker.Organization</span>
+                                                    </span>
+                                                }
+                                            </div>
+                                        </section>
+                                    }
+
+                                    @if (pd.Tickets != null && pd.Tickets.Count > 0)
+                                    {
+                                        <section class="ep__section">
+                                            <h3 class="ep__h">Tickets</h3>
+                                            <div class="ep__tiers">
+                                                @foreach (var ticket in pd.Tickets)
+                                                {
+                                                    <div class="ep__tier">
+                                                        <span class="ep__tname">@ticket.TypeName</span>
+                                                        <span class="ep__tprice">@ticket.Price</span>
+                                                        <span class="ep__tdesc">@ticket.Description</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </section>
+                                    }
+
+                                    <section class="ep__section">
+                                        <h3 class="ep__h">Venue &amp; facilities</h3>
+                                        <div class="ep__venue">
+                                            <span class="ep__map" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
+                                            <span class="ep__venuebody">
+                                                <span class="ep__vname">@pd.VenueName</span>
+                                                <span class="ep__vaddr">@pd.City</span>
+                                            </span>
+                                        </div>
+                                    </section>
+
+                                    @if (pd.ThingsToknow != null && pd.ThingsToknow.Count > 0)
+                                    {
+                                        <section class="ep__section">
+                                            <h3 class="ep__h">Know before you go</h3>
+                                            <ul class="ep__bullets">
+                                                @foreach (var item in pd.ThingsToknow)
+                                                {
+                                                    <li>@item</li>
+                                                }
+                                            </ul>
+                                        </section>
+                                    }
+
+                                    @if (pd.FAQS != null && pd.FAQS.Count > 0)
+                                    {
+                                        <section class="ep__section">
+                                            <h3 class="ep__h">Frequently asked</h3>
+                                            <ul class="ep__faqs">
+                                                @foreach (var faq in pd.FAQS)
+                                                {
+                                                    <li>@faq.Question <span aria-hidden="true">+</span></li>
+                                                }
+                                            </ul>
+                                        </section>
+                                    }
+
+                                    @if (pd.TermsConditions != null && pd.TermsConditions.Count > 0)
+                                    {
+                                        <section class="ep__section">
+                                            <h3 class="ep__h">Terms &amp; Conditions</h3>
+                                            <ul class="ep__bullets">
+                                                @foreach (var term in pd.TermsConditions)
+                                                {
+                                                    <li>@term</li>
+                                                }
+                                            </ul>
+                                        </section>
+                                    }
+
+                                    <footer class="ep__foot">
+                                        <span class="ep__logo ep__logo--foot" data-ep-logo>
+                                            <span class="ep__logomark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg></span>
+                                            <span class="ep__logotext" data-brand-name-preview>Acme Global</span>
+                                        </span>
+                                        <span class="ep__footmeta" data-ep-social>@pd.Description</span>
+                                        <span class="ep__terms">Terms &amp; Conditions</span>
+                                    </footer>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="preview__caption">
+                            Title, description, agenda, speakers and tickets come from the earlier
+                            steps &mdash; logo, colours, background and link are live from this one.
+                        </p>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/AccessControl" data-wizard-link data-type-only="public"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <a class="btn btn--outline" asp-page="/CreateEvent/RSVP" data-wizard-link data-type-only="private" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <div class="wizard__foot-end">
+            <button class="btn btn--primary" type="submit" form="brandingForm">
+                Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </button>
+        </div>
+    </footer>
+</div>
+
+<script>
+    document.getElementById('brandingForm').addEventListener('submit', function() {
+        var pressed = document.querySelector('#bgmode .bgpick__opt[aria-pressed="true"]');
+        var mode = pressed ? pressed.getAttribute('data-pick') : 'light';
+        var primary = document.getElementById('primary-colour').value || '#5A1D54';
+
+        var colour = '#FFFFFF';
+        if (mode === 'dark') colour = '#111111';
+        if (mode === 'brand') colour = primary;
+
+        document.getElementById('background-colour-input').value = colour;
+    });
+
+        // Live-sync organiser name into the preview as the field changes
+        document.getElementById('brand-name')?.addEventListener('input', function (e) {
+            document.querySelectorAll('[data-brand-name-preview]').forEach(function (el) {
+                el.textContent = e.target.value || 'Acme Global';
+            });
+        });
+</script>

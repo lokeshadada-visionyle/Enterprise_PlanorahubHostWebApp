@@ -1,0 +1,531 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubPayoutModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="payout" data-role-only="admin finance" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Payout</h2>
+            <p class="hubhead__text">Settled 3&ndash;5 business days after the event ends</p>
+        </div>
+        <div class="hubhead__actions">
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="Payout statement downloaded">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Statement
+            </button>
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="payoutreq-modal" data-role-only="admin finance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg> Request payout
+            </button>
+        </div>
+    </div>
+
+
+    <section class="grid grid--4 u-mb-6" aria-label="Payout position">
+        <article class="metric">
+            <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v18M16.5 7.5A3.5 3.5 0 0 0 13 5h-2a3 3 0 0 0 0 6h2.5a3 3 0 0 1 0 6H11a3.5 3.5 0 0 1-3.5-2.5" /></svg></span>
+            <span>
+                <span class="metric__value">&#8358;136,564,500</span>
+                <span class="metric__label">Net payable on this event</span>
+                <span class="metric__meta">After refunds, commission and processing</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg></span>
+            <span>
+                <span class="metric__value">&#8358;111,000,000</span>
+                <span class="metric__label">Released from escrow</span>
+                <span class="metric__meta">4 of 5 phases settled</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg></span>
+            <span>
+                <span class="metric__value">&#8358;25,564,500</span>
+                <span class="metric__label">Scheduled, not yet released</span>
+                <span class="metric__meta">Final reconciliation on Aug 25</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
+            <span>
+                <span class="metric__value">&#8358;25,564,500</span>
+                <span class="metric__label">Still held in escrow</span>
+                <span class="metric__meta">Released as each phase clears</span>
+            </span>
+        </article>
+    </section>
+
+    <!-- What was charged, before anything is released -->
+    <section class="panel" aria-labelledby="charges-title">
+        <div class="panel__head">
+            <div>
+                <h3 class="panel__title" id="charges-title">Event-level charges</h3>
+                <p class="panel__meta">
+                    Everything that moved the number, in and out, on this event alone
+                </p>
+            </div>
+            <button class="linkmore" type="button"
+                    data-action="Charge breakdown exported as CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export
+            </button>
+        </div>
+        <div class="tablewrap">
+            <table class="table table--narrow ledger">
+                <caption class="u-visually-hidden">
+                    Charges and deductions on this event
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Charge</th>
+                        <th scope="col" class="u-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">
+                            <span class="cellstack__name">Gross ticket sales</span>
+                            <span class="cellsub">Across 847 tickets and 3 tiers</span>
+                        </th>
+                        <td class="u-right">
+                            <span class="u-nowrap">&#8358;127,050,000</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <span class="cellstack__name">Add-on sales</span>
+                            <span class="cellsub">489 optional extras sold</span>
+                        </th>
+                        <td class="u-right">
+                            <span class="u-nowrap">&#8358;14,200,000</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <span class="cellstack__name">Refunds issued</span>
+                            <span class="cellsub">12 refunds, all settled</span>
+                        </th>
+                        <td class="u-right">
+                            <span class="u-nowrap ledger__out">&minus;&#8358;450,000</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <span class="cellstack__name">Commission at 2%</span>
+                            <span class="cellsub">On gross ticket and add-on sales</span>
+                        </th>
+                        <td class="u-right">
+                            <span class="u-nowrap ledger__out">&minus;&#8358;2,825,000</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <span class="cellstack__name">Payment processing</span>
+                            <span class="cellsub">1% of collected, charged by the gateway</span>
+                        </th>
+                        <td class="u-right">
+                            <span class="u-nowrap ledger__out">&minus;&#8358;1,410,500</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <span class="cellstack__name">Chargebacks</span>
+                            <span class="cellsub">None raised on this event</span>
+                        </th>
+                        <td class="u-right">
+                            <span class="u-nowrap ledger__out">&minus;&#8358;0</span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="row">Net payable to you</th>
+                        <td class="u-right"><b>&#8358;136,564,500</b></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+    <!-- The releases themselves -->
+    <section class="panel u-mt-6" aria-labelledby="escrow-title">
+        <div class="panel__head">
+            <div>
+                <h3 class="panel__title" id="escrow-title">Escrow releases</h3>
+                <p class="panel__meta">
+                    What the Admin has released, in which phase, and what each one left
+                    behind
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <div class="toolbar__field">
+                    <label class="u-visually-hidden" for="esc-scope">
+                        View by date
+                    </label>
+                    <select class="field__select" id="esc-scope" name="esc-scope"
+                            data-esc-scope>
+                        <option value="">Whole event</option>
+                        <option value="day1">Day 1 &middot; Opening Day</option>
+                        <option value="day2">Day 2 &middot; Workshops</option>
+                        <option value="day3">Day 3 &middot; Demo Day</option>
+                    </select>
+                </div>
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Escrow statement downloaded">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Statement
+                </button>
+            </div>
+        </div>
+        <div class="panel__body">
+            <p class="bulkbar">
+                <span>
+                    <b data-esc-count>5 phases</b> shown &middot;
+                    <span data-esc-scopelabel>whole event</span>
+                </span>
+                <span class="bulkbar__actions">
+                    <span class="badge badge--nodot badge--live">
+                        <b data-esc-released>&#8358;111,000,000</b> released
+                    </span>
+                    <span class="badge badge--nodot badge--role">
+                        <b data-esc-held>&#8358;25,564,500</b> still held
+                    </span>
+                </span>
+            </p>
+
+            <div class="tablewrap u-mt-5">
+                <table class="table table--narrow" id="escrow-table">
+                    <caption class="u-visually-hidden">
+                        Escrow releases with phase, scope, date, amount and the balance left
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col"><span class="u-visually-hidden">Phase number</span></th>
+                            <th scope="col">Phase</th>
+                            <th scope="col">Applies to</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="u-right">Released</th>
+                            <th scope="col" class="u-right">Balance after</th>
+                            <th scope="col">State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-esc-row data-esc-scope="all">
+                            <td>
+                                <span class="phasemark" aria-hidden="true">1</span>
+                            </td>
+                            <th scope="row">
+                                <span class="cellstack__name">Pre-event advance</span>
+                                <span class="cellsub">Released against confirmed sales to cover venue and vendor deposits</span>
+                            </th>
+                            <td class="u-muted"><span class="u-nowrap">Whole event</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Jul 28, 2025</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;20,000,000</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;116,564,500</span></td>
+                            <td><span class="badge badge--live">Released</span></td>
+                        </tr>
+                        <tr data-esc-row data-esc-scope="day1">
+                            <td>
+                                <span class="phasemark" aria-hidden="true">2</span>
+                            </td>
+                            <th scope="row">
+                                <span class="cellstack__name">Day 1 settlement</span>
+                                <span class="cellsub">Released the morning after Day 1 closed</span>
+                            </th>
+                            <td class="u-muted"><span class="u-nowrap">Day 1 &middot; Opening Day</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Aug 16, 2025</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;42,000,000</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;74,564,500</span></td>
+                            <td><span class="badge badge--live">Released</span></td>
+                        </tr>
+                        <tr data-esc-row data-esc-scope="day2">
+                            <td>
+                                <span class="phasemark" aria-hidden="true">3</span>
+                            </td>
+                            <th scope="row">
+                                <span class="cellstack__name">Day 2 settlement</span>
+                                <span class="cellsub">Released the morning after Day 2 closed</span>
+                            </th>
+                            <td class="u-muted"><span class="u-nowrap">Day 2 &middot; Workshops</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Aug 17, 2025</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;31,000,000</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;43,564,500</span></td>
+                            <td><span class="badge badge--live">Released</span></td>
+                        </tr>
+                        <tr data-esc-row data-esc-scope="day3">
+                            <td>
+                                <span class="phasemark" aria-hidden="true">4</span>
+                            </td>
+                            <th scope="row">
+                                <span class="cellstack__name">Day 3 partial</span>
+                                <span class="cellsub">Partial &mdash; a refund window was still open on 2 tiers</span>
+                            </th>
+                            <td class="u-muted"><span class="u-nowrap">Day 3 &middot; Demo Day</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Aug 18, 2025</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;18,000,000</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;25,564,500</span></td>
+                            <td><span class="badge badge--live">Released</span></td>
+                        </tr>
+                        <tr data-esc-row data-esc-scope="all">
+                            <td>
+                                <span class="phasemark" aria-hidden="true">5</span>
+                            </td>
+                            <th scope="row">
+                                <span class="cellstack__name">Final reconciliation</span>
+                                <span class="cellsub">Everything remaining once the refund window closed</span>
+                            </th>
+                            <td class="u-muted"><span class="u-nowrap">Whole event</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Aug 25, 2025</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;25,564,500</span></td>
+                            <td class="u-right"><span class="u-nowrap">&#8358;0</span></td>
+                            <td><span class="badge badge--paused">Scheduled</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="notice notice--info notice--flat u-mt-5">
+                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                Releases are the Admin&rsquo;s to make, not yours to request &mdash; the
+                schedule exists so a refund raised late in the event has something to come
+                out of. <b>Request payout</b> asks for the held balance early; it does not
+                change the phases.
+            </p>
+        </div>
+    </section>
+
+    <!-- The same money, by date and slot -->
+    <section class="panel u-mt-6" aria-labelledby="byslot-title">
+        <div class="panel__head">
+            <div>
+                <h3 class="panel__title" id="byslot-title">
+                    Charged and released, by date and slot
+                </h3>
+                <p class="panel__meta">
+                    For the question the event total cannot answer &mdash; which session
+                    brought the money in, and how much of it has come through
+                </p>
+            </div>
+            <button class="linkmore" type="button"
+                    data-action="Slot-level payout breakdown exported as CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export
+            </button>
+        </div>
+        <div class="tablewrap">
+            <table class="table table--narrow" id="escslot-table">
+                <caption class="u-visually-hidden">
+                    Charged, released and remaining per date and slot
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Slot</th>
+                        <th scope="col" class="u-right">Charged</th>
+                        <th scope="col" class="u-right">Released</th>
+                        <th scope="col" class="u-right">Remaining</th>
+                        <th scope="col">Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-escslot-row data-esc-scope="day1">
+                        <th scope="row">
+                            <span class="cellstack__name">Morning Keynote</span>
+                            <span class="cellsub">Day 1 &middot; Aug 15</span>
+                        </th>
+                        <td class="u-right"><span class="u-nowrap">&#8358;28,400,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;22,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;6,400,000</span></td>
+                        <td>
+                            <span class="usecell">
+                                <span class="usecell__nums">77% released</span>
+                                <span class="meter meter--slim">
+                                    <span class="meter__fill meter__fill--live"
+                                          data-fill="77"></span>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr data-escslot-row data-esc-scope="day1">
+                        <th scope="row">
+                            <span class="cellstack__name">Fintech Panel</span>
+                            <span class="cellsub">Day 1 &middot; Aug 15</span>
+                        </th>
+                        <td class="u-right"><span class="u-nowrap">&#8358;14,200,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;12,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;2,200,000</span></td>
+                        <td>
+                            <span class="usecell">
+                                <span class="usecell__nums">85% released</span>
+                                <span class="meter meter--slim">
+                                    <span class="meter__fill meter__fill--live"
+                                          data-fill="85"></span>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr data-escslot-row data-esc-scope="day1">
+                        <th scope="row">
+                            <span class="cellstack__name">Evening Mixer</span>
+                            <span class="cellsub">Day 1 &middot; Aug 15</span>
+                        </th>
+                        <td class="u-right"><span class="u-nowrap">&#8358;9,800,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;8,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;1,800,000</span></td>
+                        <td>
+                            <span class="usecell">
+                                <span class="usecell__nums">82% released</span>
+                                <span class="meter meter--slim">
+                                    <span class="meter__fill meter__fill--live"
+                                          data-fill="82"></span>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr data-escslot-row data-esc-scope="day2">
+                        <th scope="row">
+                            <span class="cellstack__name">Design Sprint</span>
+                            <span class="cellsub">Day 2 &middot; Aug 16</span>
+                        </th>
+                        <td class="u-right"><span class="u-nowrap">&#8358;26,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;20,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;6,000,000</span></td>
+                        <td>
+                            <span class="usecell">
+                                <span class="usecell__nums">77% released</span>
+                                <span class="meter meter--slim">
+                                    <span class="meter__fill meter__fill--live"
+                                          data-fill="77"></span>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr data-escslot-row data-esc-scope="day2">
+                        <th scope="row">
+                            <span class="cellstack__name">Investor Clinic</span>
+                            <span class="cellsub">Day 2 &middot; Aug 16</span>
+                        </th>
+                        <td class="u-right"><span class="u-nowrap">&#8358;15,250,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;11,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;4,250,000</span></td>
+                        <td>
+                            <span class="usecell">
+                                <span class="usecell__nums">72% released</span>
+                                <span class="meter meter--slim">
+                                    <span class="meter__fill meter__fill--live"
+                                          data-fill="72"></span>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr data-escslot-row data-esc-scope="day3">
+                        <th scope="row">
+                            <span class="cellstack__name">Startup Pitches</span>
+                            <span class="cellsub">Day 3 &middot; Aug 17</span>
+                        </th>
+                        <td class="u-right"><span class="u-nowrap">&#8358;22,364,500</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;18,000,000</span></td>
+                        <td class="u-right"><span class="u-nowrap">&#8358;4,364,500</span></td>
+                        <td>
+                            <span class="usecell">
+                                <span class="usecell__nums">80% released</span>
+                                <span class="meter meter--slim">
+                                    <span class="meter__fill meter__fill--live"
+                                          data-fill="80"></span>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="row">Total</th>
+                        <td class="u-right"><b data-escslot-charged>&#8358;116,014,500</b></td>
+                        <td class="u-right"><b data-escslot-released>&#8358;91,000,000</b></td>
+                        <td class="u-right"><b data-escslot-left>&#8358;25,014,500</b></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+
+    <div class="u-mt-6">
+        <section class="panel" aria-labelledby="bank-saved-title">
+            <div class="panel__head">
+                <div>
+                    <h3 class="panel__title" id="bank-saved-title">Saved bank details</h3>
+                    <p class="panel__meta">Manage them here &mdash; no need to leave the hub</p>
+                </div>
+                <button class="linkmore" type="button" data-bank-new
+                        data-modal-open="bank-modal" data-role-only="admin finance">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add account
+                </button>
+            </div>
+            <div class="panel__body">
+                <div class="banklist">
+                    <article class="bankcard" data-bank-row>
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                        <span class="bankcard__body">
+                            <span class="bankcard__bank">Guarantee Trust Bank</span>
+                            <span class="bankcard__no">&bull;&bull;&bull;&bull;&bull;&bull;6789</span>
+                            <span class="bankcard__holder">Techsphere Events Ltd</span>
+                        </span>
+                        <span class="bankcard__side">
+                            <span class="badge badge--live">Verified</span>
+                            <span class="badge badge--nodot badge--role">Default</span>
+                        </span>
+                        <span class="bankcard__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-bank-edit="gt" data-modal-open="bank-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Guarantee Trust Bank account removed from this event"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </span>
+                    </article>
+                    <article class="bankcard" data-bank-row>
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                        <span class="bankcard__body">
+                            <span class="bankcard__bank">Zenith Bank</span>
+                            <span class="bankcard__no">&bull;&bull;&bull;&bull;&bull;&bull;2210</span>
+                            <span class="bankcard__holder">Techsphere Events Ltd</span>
+                        </span>
+                        <span class="bankcard__side">
+                            <span class="badge badge--live">Verified</span>
+                        </span>
+                        <span class="bankcard__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Zenith Bank is now the default payout account">
+                                Make default
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-bank-edit="zen" data-modal-open="bank-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Zenith Bank account removed from this event"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </span>
+                    </article>
+                </div>
+
+                <p class="notice notice--info notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    Details are encrypted and verified with the bank. Changing an account
+                    re-verifies it, and a payout already in flight still lands in the old one.
+                </p>
+            </div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,219 @@
+﻿@{
+    string pageName = ViewData["PageName"] as string ?? "";
+    string pageDesc = ViewData["PageDesc"] as string ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Planora_EnterproseHostWebApp</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Planora_EnterproseHostWebApp.styles.css" asp-append-version="true" />
+    <style>
+            .shell {
+                /* margin-left: var(--sidenav-width, 280px); */
+                transition: margin-left .2s ease;
+                /* if flex is being used, force top alignment: */
+                display: flex;
+                /* flex-direction: column; */
+                align-items: stretch; /* not center */
+                justify-content: flex-start; /* not center */
+                min-height: 100vh;
+            }
+
+            .sidenav--rail ~ .shell {
+                margin-left: var(--sidenav-rail-width, 80px); /* collapsed/rail state */
+            }
+    </style>
+</head>
+<body>
+    
+    <div class="shell">
+        <nav class="sidenav" id="sidenav" aria-label="Main" data-sidebar>
+            <script>(function() { try { if (localStorage.getItem('planora:sidebar-rail') === '1') { document.currentScript.parentElement.classList.add('sidenav--rail'); } } catch (e) { } })();</script>
+            <div class="sidenav__head">
+                <a class="sidenav__logo" href="#">
+                    <img src="~/assets/images/App.png" alt="logo" />
+                </a>
+                <div class="sidenav__identity">
+                    <p class="sidenav__name mb-0">Planorahub</p>
+                    <span class="sidenav__chip">Enterprise</span>
+                </div>
+                <button class="sidenav__collapse" type="button" aria-expanded="false" aria-controls="sidenav"
+                        data-sidebar-collapse>
+                    <span class="u-visually-hidden">Collapse navigation</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M14 6l-6 6 6 6" />
+                    </svg>
+                </button>
+            </div>
+            @* <div class="sidenav__cta">
+                <a class="btn btn--primary btn--block sidenav__create" asp-page="/CreateEvent/EventType">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg><span class="sidenav__label">Create Event</span>
+                </a>
+            </div> *@
+
+            <ul class="sidenav__list">
+                <li data-role-only="admin manager finance viewer">
+                    <a class="sidenav__link" asp-page="/Dashboard/HostDashboard" aria-current="page">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                            <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                        </svg>
+                        <span class="sidenav__label">Dashboard</span>
+                        <span class="sidenav__dot" aria-hidden="true"></span>
+                    </a>
+                </li>
+
+                <li data-role-only="admin manager finance viewer">
+                    <a class="sidenav__link" asp-page="/Events/MyEvents">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <rect x="3" y="5" width="18" height="16" rx="2" />
+                            <path d="M3 10h18M8 3v4M16 3v4" />
+                        </svg>
+                        <span class="sidenav__label">My Events</span>
+                    </a>
+                </li>
+                <li data-role-only="admin manager viewer">
+                    <a class="sidenav__link" asp-page="/Events/EventHub">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" />
+                        </svg>
+                        <span class="sidenav__label">Event Hub</span>
+                    </a>
+                </li>
+                <li data-role-only="admin manager">
+                    <a class="sidenav__link" asp-page="/Events/CheckIn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" />
+                        </svg>
+                        <span class="sidenav__label">Check-in</span>
+                    </a>
+                </li>
+                <li data-role-only="admin manager">
+                    <a class="sidenav__link" asp-page="/Events/Communications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M20 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8z" />
+                        </svg>
+                        <span class="sidenav__label">Communications</span>
+                    </a>
+                </li>
+                <!-- <li data-role-only="admin manager">
+          <a class="sidenav__link" href="../pages/food-orders.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17"/></svg>
+            <span class="sidenav__label">Food &amp; Orders</span>
+          </a>
+        </li> -->
+                <li data-role-only="admin finance viewer">
+                    <a class="sidenav__link" asp-page="/Revenue/SalesAndRevenue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M5 20V10M12 20V4M19 20v-7" />
+                        </svg>
+                        <span class="sidenav__label">Sales &amp; Revenue</span>
+                    </a>
+                </li>
+                <li data-role-only="admin">
+                    <a class="sidenav__link" asp-page="/Roles/TeamAndRoles">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" />
+                            <circle cx="9.5" cy="7.5" r="3.5" />
+                            <path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" />
+                        </svg>
+                        <span class="sidenav__label">Team &amp; Roles</span>
+                    </a>
+                </li>
+                <li data-role-only="admin finance">
+                    <a class="sidenav__link" asp-page="/Plans/MyPlan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" />
+                        </svg>
+                        <span class="sidenav__label">My Plan</span>
+                    </a>
+                </li>
+                <li data-role-only="admin">
+                    <a class="sidenav__link" asp-page="/Login/Profile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.4-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 4a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 11a2 2 0 1 1 0 4z" />
+                        </svg>
+                        <span class="sidenav__label">Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidenav__foot">
+                <div class="sidenav__user">
+                    <span class="avatar" aria-hidden="true">KA</span>
+                    <span class="sidenav__identity">
+                        <span class="sidenav__user-name">Kofi Asante</span>
+                        <span class="sidenav__user-role" data-role-label>Admin</span>
+                    </span>
+                </div>
+                <a class="sidenav__link" asp-page="/Login/Login">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3M16 17l5-5-5-5M21 12H9" />
+                    </svg>
+                    <span class="sidenav__label sidenav__exit-label">Exit Portal</span>
+                </a>
+            </div>
+        </nav>
+        <div class="shell__body">
+            <header class="topbar">
+                <div class="topbar__titles">
+                    <p class="topbar__title">@pageName</p>
+                    <p class="topbar__subtitle">@pageDesc</p>
+                </div>
+
+                <div class="topbar__tools">
+                    <a class="iconbtn" asp-page="/Events/Communications">
+                        <span class="u-visually-hidden">Notifications &mdash; 3 unread</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6M13.7 20a2 2 0 0 1-3.4 0" /></svg>
+                        <span class="iconbtn__badge" aria-hidden="true"></span>
+                    </a>
+
+                    <button class="iconbtn" type="button" aria-expanded="true"
+                            aria-controls="sidenav" data-sidebar-toggle>
+                        <span class="u-visually-hidden">Toggle navigation</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+                    </button>
+
+                    <a class="topbar__account" asp-page="/Login/Profile">
+                        <span class="avatar" aria-hidden="true">KA</span>
+                        <span class="topbar__accountbody">
+                            <span class="topbar__accountname">Kofi Asante</span>
+                            <span class="topbar__accountrole" data-role-label>Admin</span>
+                        </span>
+                    </a>
+                </div>
+            </header>
+            @RenderBody()
+        </div>
+            
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/script.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,554 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubPromosAddonsModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="extras" data-role-only="admin finance viewer" hidden>
+
+    <!-- Gated: an event with neither configured never sees this tab -->
+    <section class="lockcard" data-extras-locked hidden>
+        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
+        <div class="lockcard__body">
+            <h2 class="lockcard__title">
+                No add-ons or promo codes on this event
+            </h2>
+            <p class="lockcard__text">
+                Nothing was configured in <b>Add-ons &amp; Coupons</b> during creation, so
+                there is nothing to sell alongside a ticket and no code to track.
+            </p>
+            <p class="lockcard__actions">
+                <a class="btn btn--outline btn--sm" href="create-event/addons-coupons.html">
+                    Configure add-ons &amp; coupons
+                </a>
+            </p>
+        </div>
+    </section>
+
+    <div data-extras-live>
+        <div class="hubhead">
+            <div class="hubhead__body">
+                <h2 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg> Add-ons &amp; Promo Codes</h2>
+                <p class="hubhead__text">
+                    What sells alongside a ticket, by date and slot &mdash; and what your
+                    codes are actually doing
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Add-on and promo report exported as CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export report
+                </button>
+                <button class="btn btn--primary btn--sm" type="button"
+                        data-addon-new data-modal-open="addonedit-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add an extra
+                </button>
+            </div>
+        </div>
+
+        <section class="grid grid--4 u-mb-6" aria-label="Add-on and promo totals">
+            <article class="metric">
+                <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg></span>
+                <span>
+                    <span class="metric__value">489</span>
+                    <span class="metric__label">Add-ons sold</span>
+                    <span class="metric__meta">Across 6 configured extras</span>
+                </span>
+            </article>
+            <article class="metric">
+                <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v18M16.5 7.5A3.5 3.5 0 0 0 13 5h-2a3 3 0 0 0 0 6h2.5a3 3 0 0 1 0 6H11a3.5 3.5 0 0 1-3.5-2.5" /></svg></span>
+                <span>
+                    <span class="metric__value">&#8358;3,381,500</span>
+                    <span class="metric__label">Add-on revenue</span>
+                    <span class="metric__meta">On top of ticket sales</span>
+                </span>
+            </article>
+            <article class="metric">
+                <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg></span>
+                <span>
+                    <span class="metric__value">224</span>
+                    <span class="metric__label">Promo codes used</span>
+                    <span class="metric__meta">4 codes configured</span>
+                </span>
+            </article>
+            <article class="metric">
+                <span class="tile tile--lg tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.5" /><circle cx="16.5" cy="16.5" r="2.5" /></svg></span>
+                <span>
+                    <span class="metric__value">&minus;&#8358;4,690,000</span>
+                    <span class="metric__label">Discount given</span>
+                    <span class="metric__meta">What the codes cost you</span>
+                </span>
+            </article>
+        </section>
+
+        <!-- ============ Add-ons, scoped by date and slot ============ -->
+        <section class="panel" aria-labelledby="addons-title">
+            <div class="panel__head">
+                <div>
+                    <h3 class="panel__title" id="addons-title">
+                        Optional extras, by date and slot
+                    </h3>
+                    <p class="panel__meta">
+                        A workshop pass belongs to one session, not to the event &mdash; so
+                        these read per slot
+                    </p>
+                </div>
+                <div class="hubhead__actions">
+                    <div class="toolbar__field">
+                        <label class="u-visually-hidden" for="addon-scope">
+                            Filter add-ons by date and slot
+                        </label>
+                        <select class="field__select" id="addon-scope" name="addon-scope"
+                                data-addon-scope>
+                            <option value="">Every date and slot</option>
+                            <option value="day1:slot1">Day 1 &middot; Morning Keynote</option>
+                            <option value="day1:slot2">Day 1 &middot; Fintech Panel</option>
+                            <option value="day1:slot3">Day 1 &middot; Session 3</option>
+                            <option value="day2:slot1">Day 2 &middot; Design Sprint</option>
+                            <option value="day2:slot2">Day 2 &middot; Investor Clinic</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="panel__body">
+                <p class="bulkbar">
+                    <span>
+                        <b data-addon-count>6 extras</b> shown &middot;
+                        <span data-addon-scopelabel>every date and slot</span>
+                    </span>
+                    <span class="bulkbar__actions">
+                        <span class="badge badge--nodot badge--live">
+                            <b data-addon-live>0</b> on sale
+                        </span>
+                        <span class="badge badge--nodot badge--out">
+                            <b data-addon-out>0</b> sold out
+                        </span>
+                    </span>
+                </p>
+
+                <div class="addongrid u-mt-5">
+                    <article class="addoncard" data-addon-row data-addon="tote"
+                             data-addon-scope="all" data-addon-state="live">
+                        <div class="addoncard__head">
+                            <span class="addoncard__body">
+                                <span class="addoncard__name" data-addon-name>Conference Tote Bag</span>
+                                <span class="addoncard__scope"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Every date &middot; every slot</span>
+                            </span>
+                            <span class="addoncard__side">
+                                <span class="badge badge--live" data-addon-badge>On sale</span>
+                                <span class="addoncard__price">&#8358;2,500</span>
+                            </span>
+                        </div>
+
+                        <p class="addoncard__figures">
+                            <span><b>138</b> of 150 sold</span>
+                            <span><b>&#8358;345,000</b> collected</span>
+                            <span>12 left</span>
+                        </p>
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--live" data-fill="92"></span>
+                        </span>
+
+                        <div class="addoncard__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-addon-state="tote|paused"
+                                    data-action="Conference Tote Bag paused &mdash; it stops selling immediately"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-modal-open="addonedit-modal" data-addon-pick="tote">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Conference Tote Bag buyers exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Buyers
+                            </button>
+                        </div>
+                    </article>
+                    <article class="addoncard" data-addon-row data-addon="wshop"
+                             data-addon-scope="day1:slot2" data-addon-state="out">
+                        <div class="addoncard__head">
+                            <span class="addoncard__body">
+                                <span class="addoncard__name" data-addon-name>Workshop Pass</span>
+                                <span class="addoncard__scope"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Day 1 &middot; Fintech Panel</span>
+                            </span>
+                            <span class="addoncard__side">
+                                <span class="badge badge--out" data-addon-badge>Sold out</span>
+                                <span class="addoncard__price">&#8358;8,000</span>
+                            </span>
+                        </div>
+
+                        <p class="addoncard__figures">
+                            <span><b>60</b> of 60 sold</span>
+                            <span><b>&#8358;480,000</b> collected</span>
+                            <span>0 left</span>
+                        </p>
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--email" data-fill="100"></span>
+                        </span>
+
+                        <div class="addoncard__acts">
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-modal-open="addonstock-modal" data-addon-pick="wshop">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add stock
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-addon-state="wshop|paused"
+                                    data-action="Workshop Pass paused &mdash; it stops selling immediately"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-modal-open="addonedit-modal" data-addon-pick="wshop">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Workshop Pass buyers exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Buyers
+                            </button>
+                        </div>
+                    </article>
+                    <article class="addoncard" data-addon-row data-addon="bfast1"
+                             data-addon-scope="day1:slot1" data-addon-state="live">
+                        <div class="addoncard__head">
+                            <span class="addoncard__body">
+                                <span class="addoncard__name" data-addon-name>Breakfast &amp; Networking</span>
+                                <span class="addoncard__scope"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Day 1 &middot; Morning Keynote</span>
+                            </span>
+                            <span class="addoncard__side">
+                                <span class="badge badge--live" data-addon-badge>On sale</span>
+                                <span class="addoncard__price">&#8358;4,000</span>
+                            </span>
+                        </div>
+
+                        <p class="addoncard__figures">
+                            <span><b>176</b> of 200 sold</span>
+                            <span><b>&#8358;704,000</b> collected</span>
+                            <span>24 left</span>
+                        </p>
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--live" data-fill="88"></span>
+                        </span>
+
+                        <div class="addoncard__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-addon-state="bfast1|paused"
+                                    data-action="Breakfast &amp; Networking paused &mdash; it stops selling immediately"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-modal-open="addonedit-modal" data-addon-pick="bfast1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Breakfast &amp; Networking buyers exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Buyers
+                            </button>
+                        </div>
+                    </article>
+                    <article class="addoncard" data-addon-row data-addon="sprint"
+                             data-addon-scope="day2:slot1" data-addon-state="live">
+                        <div class="addoncard__head">
+                            <span class="addoncard__body">
+                                <span class="addoncard__name" data-addon-name>Design Sprint Kit</span>
+                                <span class="addoncard__scope"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Day 2 &middot; Design Sprint</span>
+                            </span>
+                            <span class="addoncard__side">
+                                <span class="badge badge--live" data-addon-badge>On sale</span>
+                                <span class="addoncard__price">&#8358;6,500</span>
+                            </span>
+                        </div>
+
+                        <p class="addoncard__figures">
+                            <span><b>41</b> of 80 sold</span>
+                            <span><b>&#8358;266,500</b> collected</span>
+                            <span>39 left</span>
+                        </p>
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--live" data-fill="51"></span>
+                        </span>
+
+                        <div class="addoncard__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-addon-state="sprint|paused"
+                                    data-action="Design Sprint Kit paused &mdash; it stops selling immediately"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-modal-open="addonedit-modal" data-addon-pick="sprint">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Design Sprint Kit buyers exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Buyers
+                            </button>
+                        </div>
+                    </article>
+                    <article class="addoncard" data-addon-row data-addon="gala"
+                             data-addon-scope="day2:slot2" data-addon-state="live">
+                        <div class="addoncard__head">
+                            <span class="addoncard__body">
+                                <span class="addoncard__name" data-addon-name>Gala Dinner Seat</span>
+                                <span class="addoncard__scope"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Day 2 &middot; Investor Clinic</span>
+                            </span>
+                            <span class="addoncard__side">
+                                <span class="badge badge--live" data-addon-badge>On sale</span>
+                                <span class="addoncard__price">&#8358;25,000</span>
+                            </span>
+                        </div>
+
+                        <p class="addoncard__figures">
+                            <span><b>62</b> of 80 sold</span>
+                            <span><b>&#8358;1,550,000</b> collected</span>
+                            <span>18 left</span>
+                        </p>
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--live" data-fill="78"></span>
+                        </span>
+
+                        <div class="addoncard__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-addon-state="gala|paused"
+                                    data-action="Gala Dinner Seat paused &mdash; it stops selling immediately"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-modal-open="addonedit-modal" data-addon-pick="gala">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Gala Dinner Seat buyers exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Buyers
+                            </button>
+                        </div>
+                    </article>
+                    <article class="addoncard" data-addon-row data-addon="parking"
+                             data-addon-scope="all" data-addon-state="paused">
+                        <div class="addoncard__head">
+                            <span class="addoncard__body">
+                                <span class="addoncard__name" data-addon-name>Reserved Parking</span>
+                                <span class="addoncard__scope"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Every date &middot; every slot</span>
+                            </span>
+                            <span class="addoncard__side">
+                                <span class="badge badge--paused" data-addon-badge>Paused</span>
+                                <span class="addoncard__price">&#8358;3,000</span>
+                            </span>
+                        </div>
+
+                        <p class="addoncard__figures">
+                            <span><b>12</b> of 40 sold</span>
+                            <span><b>&#8358;36,000</b> collected</span>
+                            <span>28 left</span>
+                        </p>
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--email" data-fill="30"></span>
+                        </span>
+
+                        <div class="addoncard__acts">
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-addon-state="parking|live"
+                                    data-action="Reserved Parking is back on sale">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4l13 8-13 8V4z" /></svg> Resume
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-modal-open="addonedit-modal" data-addon-pick="parking">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-action="Reserved Parking buyers exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Buyers
+                            </button>
+                        </div>
+                    </article>
+                </div>
+
+                <p class="emptystate" data-addon-empty hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg>
+                    <span class="emptystate__body">
+                        <span class="emptystate__title">Nothing sold on that slot</span>
+                        <span class="emptystate__text">
+                            No optional extra is configured for the date and slot you picked.
+                        </span>
+                    </span>
+                </p>
+            </div>
+        </section>
+
+        <!-- ============ Promo code usage ============ -->
+        <section class="panel u-mt-6" aria-labelledby="codes-title">
+            <div class="panel__head">
+                <div>
+                    <h3 class="panel__title" id="codes-title">Promo code usage</h3>
+                    <p class="panel__meta">
+                        Uses against the cap, what each code discounted, and what it brought in
+                    </p>
+                </div>
+                <button class="linkmore" type="button"
+                        data-action="Promo code usage exported as CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export usage
+                </button>
+            </div>
+            <div class="tablewrap">
+                <table class="table table--narrow" id="codes-table">
+                    <caption class="u-visually-hidden">
+                        Promo codes with uses, discount given and gross generated
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col">Discount</th>
+                            <th scope="col">Applies to</th>
+                            <th scope="col">Uses</th>
+                            <th scope="col">Discounted</th>
+                            <th scope="col">Gross generated</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-code-row data-code="TECH25">
+                            <td><span class="order__ref">TECH25</span></td>
+                            <td>20% off</td>
+                            <td class="u-muted">Standard &amp; VIP</td>
+                            <td>
+                                <span class="usecell">
+                                    <span class="usecell__nums"><b>74</b> / 100</span>
+                                    <span class="meter meter--slim">
+                                        <span class="meter__fill meter__fill--live"
+                                              data-fill="74"></span>
+                                    </span>
+                                </span>
+                            </td>
+                            <td><span class="u-nowrap">&minus;&#8358;3,700,000</span></td>
+                            <td><span class="u-nowrap">&#8358;14,800,000</span></td>
+                            <td><span class="badge badge--live" data-code-badge>Active</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--quiet btn--sm" type="button"
+                                            data-code-state="TECH25|paused"
+                                            data-action="TECH25 paused &mdash; it stops working at checkout"
+                                            data-action-tone="warn">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                                    </button>
+                                    <button class="iconbtn" type="button"
+                                            data-action="TECH25 usage exported as CSV">
+                                        <span class="u-visually-hidden">Export TECH25 usage</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-code-row data-code="TEAM5K">
+                            <td><span class="order__ref">TEAM5K</span></td>
+                            <td>&#8358;5,000 off</td>
+                            <td class="u-muted">All tiers &middot; min. 4 tickets</td>
+                            <td>
+                                <span class="usecell">
+                                    <span class="usecell__nums"><b>38</b> / 50</span>
+                                    <span class="meter meter--slim">
+                                        <span class="meter__fill meter__fill--live"
+                                              data-fill="76"></span>
+                                    </span>
+                                </span>
+                            </td>
+                            <td><span class="u-nowrap">&minus;&#8358;190,000</span></td>
+                            <td><span class="u-nowrap">&#8358;6,080,000</span></td>
+                            <td><span class="badge badge--paused" data-code-badge>Paused</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--quiet btn--sm" type="button"
+                                            data-code-state="TEAM5K|live"
+                                            data-action="TEAM5K is working again">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4l13 8-13 8V4z" /></svg> Resume
+                                    </button>
+                                    <button class="iconbtn" type="button"
+                                            data-action="TEAM5K usage exported as CSV">
+                                        <span class="u-visually-hidden">Export TEAM5K usage</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-code-row data-code="EARLY10">
+                            <td><span class="order__ref">EARLY10</span></td>
+                            <td>10% off</td>
+                            <td class="u-muted">Early Bird only</td>
+                            <td>
+                                <span class="usecell">
+                                    <span class="usecell__nums"><b>100</b> / 100</span>
+                                    <span class="meter meter--slim">
+                                        <span class="meter__fill meter__fill--out"
+                                              data-fill="100"></span>
+                                    </span>
+                                </span>
+                            </td>
+                            <td><span class="u-nowrap">&minus;&#8358;500,000</span></td>
+                            <td><span class="u-nowrap">&#8358;5,000,000</span></td>
+                            <td><span class="badge badge--out" data-code-badge>Limit reached</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--quiet btn--sm" type="button"
+                                            data-modal-open="codelimit-modal" data-code-pick="EARLY10">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Raise limit
+                                    </button>
+                                    <button class="iconbtn" type="button"
+                                            data-action="EARLY10 usage exported as CSV">
+                                        <span class="u-visually-hidden">Export EARLY10 usage</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-code-row data-code="PRESS100">
+                            <td><span class="order__ref">PRESS100</span></td>
+                            <td>100% off</td>
+                            <td class="u-muted">Complimentary &middot; press list</td>
+                            <td>
+                                <span class="usecell">
+                                    <span class="usecell__nums"><b>12</b> / 25</span>
+                                    <span class="meter meter--slim">
+                                        <span class="meter__fill meter__fill--live"
+                                              data-fill="48"></span>
+                                    </span>
+                                </span>
+                            </td>
+                            <td><span class="u-nowrap">&minus;&#8358;300,000</span></td>
+                            <td><span class="u-nowrap">&#8358;0</span></td>
+                            <td><span class="badge badge--live" data-code-badge>Active</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--quiet btn--sm" type="button"
+                                            data-code-state="PRESS100|paused"
+                                            data-action="PRESS100 paused &mdash; it stops working at checkout"
+                                            data-action-tone="warn">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" /></svg> Pause
+                                    </button>
+                                    <button class="iconbtn" type="button"
+                                            data-action="PRESS100 usage exported as CSV">
+                                        <span class="u-visually-hidden">Export PRESS100 usage</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <p class="notice notice--info notice--flat u-mt-6">
+            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+            You can pause, resume and raise the limit on a code, and adjust stock or
+            price on an extra. Creating the promotional programme itself &mdash; which
+            codes exist across your events, and the discount ceilings they may use
+            &mdash; stays with your Super Admin.
+        </p>
+    </div>
+</div>

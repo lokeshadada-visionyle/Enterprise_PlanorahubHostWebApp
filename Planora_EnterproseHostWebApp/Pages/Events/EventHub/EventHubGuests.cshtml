@@ -1,0 +1,263 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubGuestsModel
+@{
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+    var data = Model.eventHubEventData;
+}
+
+<div data-view-panel="guests" data-role-only="admin manager viewer">
+
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="alert alert--danger u-mb-4" role="alert">
+            @Model.ApiError
+        </div>
+    }
+
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Guests</h2>
+            <p class="hubhead__text">
+                <span data-scope-label>Day 1</span> &middot; attendance, orders and reports
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="guest-modal" data-role-only="admin manager">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add Guest
+            </button>
+        </div>
+    </div>
+
+    <!-- Capacity Overview Bar -->
+    <p class="capbar" data-capbar="Guests">
+        <span class="capbar__figures">
+            <span class="capbar__figure">
+                <b data-cap-total>@data.TotalSeats.ToString("N0")</b>
+                <span>Seats configured</span>
+            </span>
+            <span class="capbar__figure">
+                <b>@data.SoldSeats.ToString("N0")</b>
+                <span>Taken</span>
+            </span>
+            <span class="capbar__figure capbar__figure--tight">
+                <b data-cap-remaining>@data.LeftSeats.ToString("N0")</b>
+                <span>Left</span>
+            </span>
+        </span>
+        <span class="capbar__body">
+            Filling up. Adding guests keeps the layout you already configured and
+            tells you the charge before anything is committed.
+        </span>
+        <span class="capbar__acts">
+            <a class="btn btn--quiet btn--sm" href="capacity-flow.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> How this works
+            </a>
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="addcap-modal" data-cap-from="Guests" data-role-only="admin manager">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add guests
+            </button>
+        </span>
+    </p>
+
+    <!-- Attendance Overview Grid -->
+    <section class="grid grid--4 u-mb-6" aria-label="Attendance overview">
+        <article class="figure">
+            <h3 class="figure__label">Registered</h3>
+            <p class="figure__value figure__value--brand">@data.SoldSeats.ToString("N0")</p>
+        </article>
+        <article class="figure">
+            <h3 class="figure__label">Checked in</h3>
+            <p class="figure__value figure__value--success">
+                @(data.Guests?.Count(g => g.IsCheckIn).ToString("N0") ?? "0")
+            </p>
+        </article>
+        <article class="figure">
+            <h3 class="figure__label">Not arrived</h3>
+            <p class="figure__value figure__value--accent">
+                @(data.Guests?.Count(g => !g.IsCheckIn).ToString("N0") ?? "0")
+            </p>
+        </article>
+        <article class="figure">
+            <h3 class="figure__label">Attendance rate</h3>
+            <p class="figure__value figure__value--info">@(string.IsNullOrEmpty(data.AttendancePer) ? "0%" : data.AttendancePer)</p>
+        </article>
+    </section>
+
+    <!-- Reports Metrics -->
+    <div class="grid grid--3 u-mb-6">
+        <section class="panel" aria-labelledby="orders-report-title">
+            <div class="panel__head">
+                <span class="tile tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg></span>
+                <h3 class="panel__title" id="orders-report-title">Food Orders</h3>
+            </div>
+            <div class="panel__body">
+                <p class="figure__value figure__value--accent">@data.FoodOrders.ToString("N0")</p>
+                <p class="figure__label u-mt-5">meals served &middot; @(string.IsNullOrEmpty(data.FoodServedPer) ? "0%" : data.FoodServedPer) of allowance</p>
+                <button class="btn btn--outline btn--sm btn--block u-mt-5" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Download report
+                </button>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="polls-report-title">
+            <div class="panel__head">
+                <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg></span>
+                <h3 class="panel__title" id="polls-report-title">Polls</h3>
+            </div>
+            <div class="panel__body">
+                <p class="figure__value figure__value--brand">@data.PollsRating / 5</p>
+                <p class="figure__label u-mt-5">average rating &middot; @data.TotalPollVotes.ToString("N0") votes, @data.TotalPolls.ToString("N0") polls</p>
+                <button class="btn btn--outline btn--sm btn--block u-mt-5" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Polls report
+                </button>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="rev-report-title">
+            <div class="panel__head">
+                <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8m0 0h-5m5 0v5" /></svg></span>
+                <h3 class="panel__title" id="rev-report-title">Revenue Generated</h3>
+            </div>
+            <div class="panel__body">
+                <p class="figure__value figure__value--success">@(string.IsNullOrEmpty(data.Revenue) ? "&#8358;0" : data.Revenue)</p>
+                <p class="figure__label u-mt-5">tickets + add-ons &middot; 2% commission applies</p>
+                <button class="btn btn--outline btn--sm btn--block u-mt-5" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Revenue report
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Guest List Filtering Controls -->
+    <div class="toolbar">
+        <div class="toolbar__search">
+            <form class="searchbox" role="search" action="#" method="get">
+                <label class="u-visually-hidden" for="guest-search">Search guests</label>
+                <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                <input class="searchbox__input" id="guest-search" name="guest-search"
+                       type="search" placeholder="Search guests by name, email or seat...">
+            </form>
+        </div>
+        <div class="toolbar__field">
+            <label class="u-visually-hidden" for="tier-filter">Filter by tier</label>
+            <select class="field__select" id="tier-filter" name="tier-filter">
+                <option value="0">All tiers</option>
+                @if (Model.TicketTypeData?.TicketTypes != null && Model.TicketTypeData.TicketTypes.Any())
+                {
+                    foreach (var ticket in Model.TicketTypeData.TicketTypes)
+                    {
+                        <option value="@ticket.TicketTypeId">@ticket.TypeName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="toolbar__field">
+            <label class="u-visually-hidden" for="checkin-filter">Filter by check-in</label>
+            <select class="field__select" id="checkin-filter" name="checkin-filter">
+                <option>All guests</option>
+                <option>Checked in</option>
+                <option>Not checked in</option>
+            </select>
+        </div>
+        <button class="btn btn--outline btn--sm" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export list</button>
+    </div>
+
+    <!-- Dynamic Guests Table -->
+    <div class="tablewrap">
+        <table class="table">
+            <caption class="u-visually-hidden">Guests with RSVP, payment and check-in status</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Guest</th>
+                    <th scope="col">Tier</th>
+                    <th scope="col">Seat</th>
+                    <th scope="col">RSVP</th>
+                    <th scope="col">Payment</th>
+                    <th scope="col">Check-in</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (data.Guests != null && data.Guests.Any())
+                {
+                    foreach (var guest in data.Guests)
+                    {
+                        var initials = !string.IsNullOrWhiteSpace(guest.GuestName)
+                            ? string.Concat(guest.GuestName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(x => x[0])).ToUpper()
+                            : "G";
+                        if (initials.Length > 2) initials = initials.Substring(0, 2);
+
+                        <tr>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">@initials</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">@guest.GuestName</span>
+                                        <span class="cellsub">@guest.GuestEmail</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge--nodot badge--role badge--vendor">
+                                    @(string.IsNullOrEmpty(guest.TicketType) ? "N/A" : guest.TicketType)
+                                </span>
+                            </td>
+                            <td><span class="u-nowrap">@(string.IsNullOrEmpty(guest.SeatNo) ? "N/A" : guest.SeatNo)</span></td>
+                            <td>
+                                <span class="badge @(guest.RsvpStatus?.ToLower() == "confirmed" ? "badge--live" : "badge--paused")">
+                                    @guest.RsvpStatus
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(guest.PaymentStatus?.ToLower() == "paid" ? "badge--live" : "badge--paused")">
+                                    @guest.PaymentStatus
+                                </span>
+                            </td>
+                            <td>
+                                @if (guest.IsCheckIn)
+                                {
+                                    <span class="badge badge--live">Checked-in</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge--draft">Not checked-in</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="iconbtn" type="button" data-action="Opening record for @guest.GuestName">
+                                        <span class="u-visually-hidden">View @guest.GuestName</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-action="Message sent to @guest.GuestName">
+                                        <span class="u-visually-hidden">Message @guest.GuestName</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                    </button>
+                                    <button class="iconbtn iconbtn--info" type="button" data-checkin="@guest.GuestName" data-role-only="admin manager">
+                                        <span class="u-visually-hidden">Check in @guest.GuestName</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-action="Ticket resent to @guest.GuestName">
+                                        <span class="u-visually-hidden">Resend ticket to @guest.GuestName</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="u-text-center u-p-4">
+                            No guest records found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

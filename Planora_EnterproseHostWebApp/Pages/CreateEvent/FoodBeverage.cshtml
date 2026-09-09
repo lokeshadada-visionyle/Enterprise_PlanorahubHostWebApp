@@ -1,0 +1,1133 @@
+﻿@page
+@using Planora_EnterproseHostWebApp.Models
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.FoodBeverageModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 8;
+    ViewData["StepTotal"] = 12;
+    ViewData["StepName"] = "Food & Beverage";
+    ViewData["StepHint"] = "Set up catering and drink service";
+    var categories = Model.Categories ?? new List<Categories>();
+}
+<div class="wizard__body">
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            @if (!string.IsNullOrWhiteSpace(Model.FoodError))
+            {
+                <div class="notice notice--error u-mb-5" role="alert">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8"></circle>
+                        <path d="M12 8v5"></path>
+                        <path d="M12 16h.01"></path>
+                    </svg>
+                    <span>@Model.FoodError</span>
+                </div>
+            }
+            <form class="stack" method="post" id="food-beverage-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="food-enabled" name="food-enabled" value="true" />
+                <input type="hidden" id="serving-type" name="serving-type" value="live" />
+                <input type="hidden" id="menu-csv-filename" name="menu-csv-filename" value="" />
+                <input type="hidden" id="menu-csv-base64" name="menu-csv-base64" value="" />
+
+                <section class="panel" aria-labelledby="food-title">
+                    <div class="panel__head panel__head--plain" style="padding-bottom:10px">
+                        <div>
+                            <h2 class="panel__title" id="food-title">Food Ordering</h2>
+                            <p class="panel__meta">Turn on to serve or sell food at this event</p>
+                        </div>
+                        <button class="switch switch--brand" type="button" role="switch" aria-checked="true" aria-labelledby="food-title" aria-controls="food-config" data-food-switch></button>
+                    </div>
+                </section>
+
+                <div id="food-config">
+                    <section class="panel" aria-labelledby="serving-title" style="margin-bottom:10px;">
+                        <div class="panel__head">
+                            <span class="tile tile--brand" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" />
+                                </svg>
+                            </span>
+                            <h2 class="panel__title" id="serving-title">Serving Type</h2>
+                            <p class="panel__meta">Decides what the host and guests can do</p>
+                        </div>
+                        <div class="panel__body">
+                            <div class="publishpick" id="servingtype" role="group" aria-label="Serving type">
+                                <button class="publishpick__opt" type="button" aria-pressed="true" data-serving-type="live">
+                                    <span class="publishpick__icon" aria-hidden="true">
+                                        <i class="fa-solid fa-bell-concierge"></i>
+                                    </span>
+                                    <span class="publishpick__title">Live serving</span>
+                                    <span class="publishpick__text">Guests order in-app; allowances and extra serves are tracked and managed live in Event Hub</span>
+                                </button>
+                                <button class="publishpick__opt" type="button" aria-pressed="false" data-serving-type="counter">
+                                    <span class="publishpick__icon" aria-hidden="true">
+                                        <i class="fa-solid fa-store"></i>
+                                    </span>
+                                    <span class="publishpick__title">Counter serve</span>
+                                    <span class="publishpick__text">The menu is published for reference only &mdash; guests order and collect at the counter</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="foodscope-title" style="margin-bottom:10px;">
+                        <div class="panel__head">
+                            <span class="tile tile--info" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                                    <path d="M3 10h18M8 3v4M16 3v4" />
+                                </svg>
+                            </span>
+                            <h2 class="panel__title" id="foodscope-title">Food Availability Scope</h2>
+                            <p class="panel__meta">Which days of the event food is served on</p>
+                        </div>
+                        <div class="panel__body">
+                            <div class="radios radios--2">
+                                <label class="radio">
+                                    <input type="radio" name="food-scope" value="AllSessions" checked />
+                                    <span class="radio__icon" aria-hidden="true">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                    </span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">Entire event</span>
+                                        <span class="radio__text">The menu is served on every day and every session of the event</span>
+                                    </span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="food-scope" value="SelectedDates" />
+                                    <span class="radio__icon" aria-hidden="true">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">Selected dates</span>
+                                        <span class="radio__text">Pick the days and individual sessions where food is available</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="scopepicker u-mt-5" id="food-dates" hidden>
+                                <p class="scopepicker__head">Select the event days and sessions where food is available.</p>
+                                <div id="dynamic-food-dates">
+                                    <div class="notice notice--info notice--flat">
+                                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="8" />
+                                            <path d="M12 12h.01" />
+                                        </svg>
+                                        Loading schedule…
+                                    </div>
+                                </div>
+                                <p class="notice notice--info notice--flat u-mt-5">
+                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="8" />
+                                        <path d="M12 12h.01" />
+                                    </svg>
+                                    Serving allowances and extra serves apply only inside the selected days.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ================================================= LIVE SERVING ================================================= -->
+                    <div data-serving-panel="live">
+                        <section class="panel u-mt-6" aria-labelledby="menu-title" style="margin-bottom:10px;">
+                            <div class="panel__head">
+                                <span class="tile tile--brand" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" />
+                                    </svg>
+                                </span>
+                                <h2 class="panel__title" id="menu-title">Menu</h2>
+                                <p class="panel__meta">Import a CSV/Excel file or build it item by item</p>
+                            </div>
+                            <div class="panel__body">
+                                <div class="upload" id="menu-dropzone">
+                                    <span class="tile tile--lg tile--info" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+                                            <path d="M14 3v5h5M9 13h6M9 17h6" />
+                                        </svg>
+                                    </span>
+                                    <span class="upload__body">
+                                        <span class="upload__title">Upload menu (CSV or Excel)</span>
+                                        Columns: item, category, dietary type, extra serves per guest
+                                    </span>
+                                    <label class="btn btn--outline btn--sm" for="menu-csv">Choose file</label>
+                                    <input class="u-visually-hidden" id="menu-csv" type="file" accept=".csv,text/csv,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+                                </div>
+                                <div class="directory" id="menu-directory" hidden>
+                                    <div class="directory__head">
+                                        <span class="directory__file">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+                                                <path d="M14 3v5h5M9 13h6M9 17h6" />
+                                            </svg>
+                                            <span id="menu-upload-name"></span>
+                                        </span>
+                                        <span>Imported</span>
+                                        <span class="directory__actions">
+                                            <button class="directory__action" type="button" id="menu-download">Download</button>
+                                            <button class="directory__action directory__action--danger" type="button" id="menu-remove">Remove</button>
+                                        </span>
+                                    </div>
+                                    <p class="directory__foot">Imported items can be edited below.</p>
+                                </div>
+                                <div class="menugrid u-mt-5" id="live-menu-list">
+                                    @foreach (var category in categories)
+                                    {
+                                        if (category.MenuItems == null) continue;
+                                        foreach (var item in category.MenuItems)
+                                        {
+                                            var diet = item.IsVeg ? "veg" : "nonveg";
+                                            <article class="menucard" data-menu-row>
+                                                <div class="menucard__top">
+                                                    <span class="diet diet--@diet" aria-hidden="true"></span>
+                                                    <label class="u-visually-hidden" for="live-menu-@item.MenuItemId-name">Item name</label>
+                                                    <input class="menucard__name" id="live-menu-@item.MenuItemId-name" name="live-menu-@item.MenuItemId-name" type="text" placeholder="Item name" value="@item.ItemName" />
+                                                    <button class="line__remove" type="button" data-remove-menu>
+                                                        <span class="u-visually-hidden">Remove @item.ItemName</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="menucard__grid">
+                                                    <div>
+                                                        <label class="menucard__label" for="live-menu-@item.MenuItemId-cat">Category</label>
+                                                        <select class="slot__select" id="live-menu-@item.MenuItemId-cat" name="live-menu-@item.MenuItemId-cat">
+                                                            @foreach (var cat in categories)
+                                                            {
+                                                                if (cat.CategoryId == category.CategoryId)
+                                                                {
+                                                                    <option value="@cat.CategoryId" selected>@cat.CategoryName</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@cat.CategoryId">@cat.CategoryName</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="menucard__label" for="live-menu-@item.MenuItemId-diet">Dietary Type</label>
+                                                        <select class="slot__select" id="live-menu-@item.MenuItemId-diet" name="live-menu-@item.MenuItemId-diet" data-diet-select>
+                                                            <option value="veg" selected="@(item.IsVeg)">Veg</option>
+                                                            <option value="nonveg" selected="@(!item.IsVeg)">Non-veg</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <span class="menucard__label" id="extra-@item.MenuItemId-label">Extra serves per guest</span>
+                                                        <span class="stepper" data-stepper>
+                                                            <button class="stepper__btn" type="button" data-step="-1">
+                                                                <span class="u-visually-hidden">Fewer extra serves</span>
+                                                                <span aria-hidden="true">&minus;</span>
+                                                            </button>
+                                                            <label class="u-visually-hidden" for="live-menu-@item.MenuItemId-extra">Extra serves allowed per guest</label>
+                                                            <input class="stepper__value" id="live-menu-@item.MenuItemId-extra" name="live-menu-@item.MenuItemId-extra" type="text" inputmode="numeric" value="@item.Extras" min="0" aria-describedby="extra-@item.MenuItemId-label" />
+                                                            <button class="stepper__btn" type="button" data-step="1">
+                                                                <span class="u-visually-hidden">More extra serves</span>
+                                                                <span aria-hidden="true">+</span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        }
+                                    }
+                                </div>
+                                <button class="addline" type="button" id="add-live-menu">+ Add menu item</button>
+                            </div>
+                        </section>
+
+                        <div class="u-my-4" style="margin: 15px 0;">
+                            <button class="btn btn--primary" type="button" id="food-continue-top">
+                                Continue
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M10 6l6 6-6 6" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <section class="panel u-mt-6" id="guest-preview-section" aria-labelledby="preview-title" style="margin-bottom:10px; display: none;">
+                            <div class="panel__head">
+                                <span class="tile tile--accent" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </span>
+                                <h2 class="panel__title" id="preview-title">How guests see it</h2>
+                                <p class="panel__meta">Grouped by category in the attendee app</p>
+                            </div>
+                            <div class="panel__body">
+                                <div class="menupreview" id="live-preview">
+                                    @foreach (var category in categories)
+                                    {
+                                        if (category.MenuItems == null || category.MenuItems.Count == 0) continue;
+                                        <div class="menupreview__group">
+                                            <p class="menupreview__heading">
+                                                @category.CategoryName
+                                                <span class="menupreview__count">@category.MenuItems.Count @(category.MenuItems.Count == 1 ? "item" : "items")</span>
+                                            </p>
+                                            @foreach (var item in category.MenuItems)
+                                            {
+                                                var diet = item.IsVeg ? "veg" : "nonveg";
+                                                var dietText = item.IsVeg ? "Veg" : "Non-veg";
+                                                <div class="menuitem">
+                                                    <span class="diet diet--@diet" aria-hidden="true"></span>
+                                                    <span class="menuitem__body">
+                                                        <span class="menuitem__name">@item.ItemName</span>
+                                                        <span class="menuitem__meta">@dietText</span>
+                                                    </span>
+                                                    @if (item.Extras > 0)
+                                                    {
+                                                        <span class="menuitem__limit">+@item.Extras extra</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="menuitem__limit menuitem__limit--none">1 serve only</span>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    @if (!categories.Any(c => c.MenuItems != null && c.MenuItems.Count > 0))
+                                    {
+                                        <div class="notice notice--info notice--flat">
+                                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="8" />
+                                                <path d="M12 12h.01" />
+                                            </svg>
+                                            No menu items are available for this event.
+                                        </div>
+                                    }
+                                    <p class="menulegend">
+                                        <span style="display:flex;">
+                                            <span class="diet diet--veg" aria-hidden="true"></span> Veg
+                                        </span>
+                                        <span style="display:flex;">
+                                            <span class="diet diet--nonveg" aria-hidden="true"></span> Non-veg
+                                        </span>
+                                        <span style="display:flex;">
+                                            <span class="diet diet--vegan" aria-hidden="true"></span> Vegan
+                                        </span>
+                                        <span style="display:flex;">
+                                            <span class="diet diet--egg" aria-hidden="true"></span> Egg
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ================================================= COUNTER SERVING ================================================= -->
+                    <div data-serving-panel="counter" hidden>
+                        <section class="panel u-mt-6" aria-labelledby="counter-title">
+                            <div class="panel__head">
+                                <span class="tile tile--accent" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" />
+                                    </svg>
+                                </span>
+                                <h2 class="panel__title" id="counter-title">Menu on Display</h2>
+                                <p class="panel__meta">Published for reference &mdash; no ordering</p>
+                            </div>
+                            <div class="panel__body">
+                                <div class="menugrid" id="counter-menu-list">
+                                    @foreach (var category in categories)
+                                    {
+                                        if (category.MenuItems == null) continue;
+                                        foreach (var item in category.MenuItems)
+                                        {
+                                            var diet = item.IsVeg ? "veg" : "nonveg";
+                                            <article class="menucard" data-menu-row>
+                                                <div class="menucard__top">
+                                                    <span class="diet diet--@diet" aria-hidden="true"></span>
+                                                    <label class="u-visually-hidden" for="counter-menu-@item.MenuItemId-name">Item name</label>
+                                                    <input class="menucard__name" id="counter-menu-@item.MenuItemId-name" name="counter-menu-@item.MenuItemId-name" type="text" placeholder="Item name" value="@item.ItemName" />
+                                                    <button class="line__remove" type="button" data-remove-menu>
+                                                        <span class="u-visually-hidden">Remove @item.ItemName</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="menucard__grid">
+                                                    <div>
+                                                        <label class="menucard__label" for="counter-menu-@item.MenuItemId-cat">Category</label>
+                                                        <select class="slot__select" id="counter-menu-@item.MenuItemId-cat" name="counter-menu-@item.MenuItemId-cat">
+                                                            @foreach (var cat in categories)
+                                                            {
+                                                                if (cat.CategoryId == category.CategoryId)
+                                                                {
+                                                                    <option value="@cat.CategoryId" selected>@cat.CategoryName</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@cat.CategoryId">@cat.CategoryName</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="menucard__label" for="counter-menu-@item.MenuItemId-diet">Dietary Type</label>
+                                                        <select class="slot__select" id="counter-menu-@item.MenuItemId-diet" name="counter-menu-@item.MenuItemId-diet" data-diet-select>
+                                                            <option value="veg" selected="@(item.IsVeg)">Veg</option>
+                                                            <option value="nonveg" selected="@(!item.IsVeg)">Non-veg</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        }
+                                    }
+                                </div>
+                                <button class="addline" type="button" id="add-counter-menu">+ Add menu item</button>
+                            </div>
+                        </section>
+                        <section class="panel u-mt-6" aria-labelledby="counter-preview-title">
+                            <div class="panel__head">
+                                <span class="tile tile--muted" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </span>
+                                <h2 class="panel__title" id="counter-preview-title">How guests see it</h2>
+                                <p class="panel__meta">Menu only &mdash; no allowances shown</p>
+                            </div>
+                            <div class="panel__body">
+                                <div class="menupreview" id="counter-preview">
+                                    @foreach (var category in categories)
+                                    {
+                                        if (category.MenuItems == null || category.MenuItems.Count == 0) continue;
+                                        <div class="menupreview__group">
+                                            <p class="menupreview__heading">
+                                                @category.CategoryName
+                                                <span class="menupreview__count">@category.MenuItems.Count @(category.MenuItems.Count == 1 ? "item" : "items")</span>
+                                            </p>
+                                            @foreach (var item in category.MenuItems)
+                                            {
+                                                var diet = item.IsVeg ? "veg" : "nonveg";
+                                                var dietText = item.IsVeg ? "Veg" : "Non-veg";
+                                                <div class="menuitem">
+                                                    <span class="diet diet--@diet" aria-hidden="true"></span>
+                                                    <span class="menuitem__body">
+                                                        <span class="menuitem__name">@item.ItemName</span>
+                                                        <span class="menuitem__meta">@dietText</span>
+                                                    </span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    @if (!categories.Any(c => c.MenuItems != null && c.MenuItems.Count > 0))
+                                    {
+                                        <div class="notice notice--info notice--flat">
+                                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="8" />
+                                                <path d="M12 12h.01" />
+                                            </svg>
+                                            No menu items are available for this event.
+                                        </div>
+                                    }
+                                    <p class="menulegend">
+                                        <span style="display:flex;">
+                                            <span class="diet diet--veg" aria-hidden="true"></span> Veg
+                                        </span>
+                                        <span style="display:flex;">
+                                            <span class="diet diet--nonveg" aria-hidden="true"></span> Non-veg
+                                        </span>
+                                        <span style="display:flex;">
+                                            <span class="diet diet--vegan" aria-hidden="true"></span> Vegan
+                                        </span>
+                                        <span style="display:flex;">
+                                            <span class="diet diet--egg" aria-hidden="true"></span> Egg
+                                        </span>
+                                    </p>
+                                </div>
+                                <p class="notice notice--info notice--flat u-mt-5">
+                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="8" />
+                                        <path d="M12 12h.01" />
+                                    </svg>
+                                    Counter serve publishes the menu on the event page. Guests order and collect at the counter, so no allowances, extras or scans are tracked.
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/AddonsCoupons" data-wizard-link>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 6l-6 6 6 6" />
+            </svg>
+            Back
+        </a>
+        <div class="wizard__foot-end">
+            <button class="btn btn--primary" type="submit" form="food-beverage-form" id="food-continue-footer" style="display: none;">
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M10 6l6 6-6 6" />
+                </svg>
+            </button>
+        </div>
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const availableCategories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Model.Categories.Select(c => new { c.CategoryId, c.CategoryName })
+                ));
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("food-beverage-form");
+        const foodSwitch = document.querySelector("[data-food-switch]");
+        const foodEnabled = document.getElementById("food-enabled");
+        const foodConfig = document.getElementById("food-config");
+        const servingTypeInput = document.getElementById("serving-type");
+        const servingButtons = document.querySelectorAll("[data-serving-type]");
+        const servingPanels = document.querySelectorAll("[data-serving-panel]");
+        const foodDates = document.getElementById("food-dates");
+        const foodScopeInputs = document.querySelectorAll('input[name="food-scope"]');
+
+        const topContinueBtn = document.getElementById("food-continue-top");
+        const footerContinueBtn = document.getElementById("food-continue-footer");
+        const guestPreviewSection = document.getElementById("guest-preview-section");
+
+        if (topContinueBtn) {
+            topContinueBtn.addEventListener("click", function() {
+                // The preview markup below was rendered server-side once, at page
+                // load, from the saved menu. Anything added since then - a row from
+                // "+ Add menu item", an imported CSV/XLSX, an edit, a removal - only
+                // exists in the form fields, so the preview has to be rebuilt from
+                // that live DOM state every time it's about to be shown, not just
+                // toggled visible as-is.
+                refreshGuestPreview();
+
+                // Reveal the "How guests see it" section and the footer Continue button
+                if (guestPreviewSection) {
+                    guestPreviewSection.style.display = "block";
+                }
+                if (footerContinueBtn) {
+                    footerContinueBtn.style.display = "inline-flex";
+                }
+            });
+        }
+
+        function updateFoodState() {
+            if (!foodSwitch) return;
+            const enabled = foodSwitch.getAttribute("aria-checked") === "true";
+            if (foodEnabled) foodEnabled.value = enabled ? "true" : "false";
+            if (foodConfig) foodConfig.hidden = !enabled;
+        }
+
+        if (foodSwitch) {
+            foodSwitch.addEventListener("click", function() {
+                const current = this.getAttribute("aria-checked") === "true";
+                this.setAttribute("aria-checked", current ? "false" : "true");
+                updateFoodState();
+            });
+        }
+        updateFoodState();
+
+        function updateServingType(value) {
+            if (!value) value = "live";
+            if (servingTypeInput) servingTypeInput.value = value;
+            servingButtons.forEach(function(button) {
+                const buttonValue = button.getAttribute("data-serving-type");
+                button.setAttribute("aria-pressed", buttonValue === value ? "true" : "false");
+            });
+            servingPanels.forEach(function(panel) {
+                const panelValue = panel.getAttribute("data-serving-panel");
+                panel.hidden = panelValue !== value;
+            });
+            refreshGuestPreview();
+        }
+
+        servingButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                updateServingType(this.getAttribute("data-serving-type"));
+            });
+        });
+        updateServingType(servingTypeInput ? servingTypeInput.value : "live");
+
+        function updateFoodScope() {
+            const selected = document.querySelector('input[name="food-scope"]:checked');
+            if (!selected || !foodDates) return;
+            const isDates = selected.value === "SelectedDates";
+            foodDates.hidden = !isDates;
+
+            if (isDates && !foodDates.dataset.loaded) {
+                loadDateAndSlots();
+            }
+        }
+
+        function loadDateAndSlots() {
+            const container = document.getElementById("dynamic-food-dates");
+            if (!container) return;
+
+            container.innerHTML = '<p class="notice notice--info notice--flat">Loading schedule…</p>';
+
+            fetch(window.location.pathname + "?handler=DateAndSlots")
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success || !data.dates || data.dates.length === 0) {
+                        container.innerHTML = '<div class="notice notice--warn notice--flat">' +
+                            (data.message || "No schedule found. Build your schedule first.") + '</div>';
+                        return;
+                    }
+
+                    container.innerHTML = "";
+                    data.dates.forEach(day => {
+                        const dayEl = document.createElement("div");
+                        dayEl.className = "scopeday";
+                        const slotCount = day.slots.length;
+                        dayEl.innerHTML =
+                            '<label class="scopeday__head">' +
+                            '<input type="checkbox" name="food-day-' + day.eventDateId + '" checked>' +
+                            '<span class="scopeday__body">' +
+                            '<span class="scopeday__name">' + day.label + "</span>" +
+                            '<span class="scopeday__meta">' + day.date + " · " + slotCount + " session" + (slotCount === 1 ? "" : "s") + "</span>" +
+                            "</span>" +
+                            "</label>" +
+                            '<div class="scopeday__slots">' +
+                            day.slots.map(slot =>
+                                '<label class="scopeslot">' +
+                                '<input type="checkbox" name="food-day-' + day.eventDateId + "-s-" + slot.slotId + '" checked>' +
+                                '<span class="scopeslot__body">' +
+                                '<span class="scopeslot__name">' + slot.name + "</span>" +
+                                '<span class="scopeslot__meta">' + slot.time + " · " + slot.hall + "</span>" +
+                                "</span>" +
+                                "</label>"
+                            ).join("") +
+                            "</div>";
+                        container.appendChild(dayEl);
+                    });
+                    foodDates.dataset.loaded = "true";
+                })
+                .catch(() => {
+                    container.innerHTML = '<div class="notice notice--warn notice--flat">Couldn\'t load the schedule. Try again.</div>';
+                });
+        }
+
+        foodScopeInputs.forEach(radio => radio.addEventListener("change", updateFoodScope));
+        updateFoodScope();
+
+        document.addEventListener("click", function(event) {
+            const removeButton = event.target.closest("[data-remove-menu]");
+            if (!removeButton) return;
+            const row = removeButton.closest("[data-menu-row]");
+            if (!row) return;
+
+            const list = row.parentElement;
+            const rows = list.querySelectorAll("[data-menu-row]");
+            if (rows.length <= 1) {
+                const nameInput = row.querySelector(".menucard__name");
+                if (nameInput) nameInput.value = "";
+                refreshGuestPreview();
+                return;
+            }
+            row.remove();
+            refreshGuestPreview();
+        });
+
+        function getCategoryOptions() {
+            const source = document.querySelector("#live-menu-list select[name*='-cat']")
+                || document.querySelector("#counter-menu-list select[name*='-cat']");
+            if (source && source.options.length > 0) {
+                return source.innerHTML;
+            }
+            if (availableCategories && availableCategories.length > 0) {
+                return availableCategories
+                    .map(cat => `<option value="${cat.CategoryId}">${cat.CategoryName}</option>`)
+                    .join("");
+            }
+            return '<option value="">No categories available</option>';
+        }
+
+        // ------------------------------------------------------------------
+        // Guest preview - built from whatever is currently in the form
+        // ------------------------------------------------------------------
+        // The "How guests see it" panels were originally only rendered once,
+        // server-side, from the saved menu. That leaves them stale the moment
+        // someone adds, imports, edits or removes a menu item client-side.
+        // These functions read the live-menu-list / counter-menu-list DOM and
+        // rebuild the matching preview to match, so it always reflects what's
+        // actually about to be submitted.
+
+        const DIET_PREVIEW_LABELS = { veg: "Veg", nonveg: "Non-veg", vegan: "Vegan", egg: "Egg" };
+
+        function getCategoryNameById(id) {
+            if (!availableCategories) return "";
+            const match = availableCategories.find(function(cat) {
+                return String(cat.CategoryId) === String(id);
+            });
+            return match ? match.CategoryName : "";
+        }
+
+        function readMenuItemsFromList(listId, hasExtras) {
+            const list = document.getElementById(listId);
+            if (!list) return [];
+
+            return Array.prototype.slice.call(list.querySelectorAll("[data-menu-row]"))
+                .map(function(row) {
+                    const nameInput = row.querySelector(".menucard__name");
+                    const catSelect = row.querySelector("select[name*='-cat']");
+                    const dietSelect = row.querySelector("[data-diet-select]");
+                    const extraInput = hasExtras ? row.querySelector(".stepper__value") : null;
+
+                    return {
+                        name: nameInput ? nameInput.value.trim() : "",
+                        categoryId: catSelect ? catSelect.value : "",
+                        diet: dietSelect ? dietSelect.value : "veg",
+                        extra: extraInput ? (parseInt(extraInput.value, 10) || 0) : 0
+                    };
+                })
+                .filter(function(item) { return item.name.length > 0; });
+        }
+
+        function renderMenuPreview(previewId, items, hasExtras) {
+            const container = document.getElementById(previewId);
+            if (!container) return;
+
+            // Group by category, keeping categories in first-seen order.
+            const groups = [];
+            const groupIndexByName = {};
+
+            items.forEach(function(item) {
+                const catName = getCategoryNameById(item.categoryId) || "Uncategorised";
+                if (!(catName in groupIndexByName)) {
+                    groupIndexByName[catName] = groups.length;
+                    groups.push({ name: catName, items: [] });
+                }
+                groups[groupIndexByName[catName]].items.push(item);
+            });
+
+            let html = "";
+
+            if (groups.length === 0) {
+                html += '<div class="notice notice--info notice--flat">' +
+                    '<svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+                    '<circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>' +
+                    'No menu items are available for this event.</div>';
+            } else {
+                groups.forEach(function(group) {
+                    html += '<div class="menupreview__group">' +
+                        '<p class="menupreview__heading">' + escapeHtmlAttr(group.name) +
+                        '<span class="menupreview__count">' + group.items.length + ' ' +
+                        (group.items.length === 1 ? "item" : "items") + '</span></p>';
+
+                    group.items.forEach(function(item) {
+                        const dietText = DIET_PREVIEW_LABELS[item.diet] || "Veg";
+                        html += '<div class="menuitem">' +
+                            '<span class="diet diet--' + item.diet + '" aria-hidden="true"></span>' +
+                            '<span class="menuitem__body">' +
+                            '<span class="menuitem__name">' + escapeHtmlAttr(item.name) + '</span>' +
+                            '<span class="menuitem__meta">' + dietText + '</span></span>';
+
+                        if (hasExtras) {
+                            html += item.extra > 0
+                                ? '<span class="menuitem__limit">+' + item.extra + ' extra</span>'
+                                : '<span class="menuitem__limit menuitem__limit--none">1 serve only</span>';
+                        }
+
+                        html += '</div>';
+                    });
+
+                    html += '</div>';
+                });
+            }
+
+            html += '<p class="menulegend">' +
+                '<span style="display:flex;"><span class="diet diet--veg" aria-hidden="true"></span> Veg</span>' +
+                '<span style="display:flex;"><span class="diet diet--nonveg" aria-hidden="true"></span> Non-veg</span>' +
+                '<span style="display:flex;"><span class="diet diet--vegan" aria-hidden="true"></span> Vegan</span>' +
+                '<span style="display:flex;"><span class="diet diet--egg" aria-hidden="true"></span> Egg</span></p>';
+
+            container.innerHTML = html;
+        }
+
+        function refreshGuestPreview() {
+            const isCounter = servingTypeInput && servingTypeInput.value === "counter";
+            if (isCounter) {
+                renderMenuPreview("counter-preview", readMenuItemsFromList("counter-menu-list", false), false);
+            } else {
+                renderMenuPreview("live-preview", readMenuItemsFromList("live-menu-list", true), true);
+            }
+        }
+
+        let liveIndex = document.querySelectorAll("#live-menu-list [data-menu-row]").length;
+        let counterIndex = document.querySelectorAll("#counter-menu-list [data-menu-row]").length;
+
+        function createLiveMenuRow(values) {
+            values = values || {};
+            liveIndex++;
+            const row = document.createElement("article");
+            row.className = "menucard";
+            row.setAttribute("data-menu-row", "");
+            const diet = values.diet || "veg";
+            const name = values.name || "";
+            const extra = values.extra != null ? values.extra : 0;
+            row.innerHTML = `
+                                    <div class="menucard__top">
+                                        <span class="diet diet--${diet}" aria-hidden="true"></span>
+                                        <label class="u-visually-hidden" for="live-menu-${liveIndex}-name">Item name</label>
+                                        <input class="menucard__name" id="live-menu-${liveIndex}-name" name="live-menu-${liveIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
+                                        <button class="line__remove" type="button" data-remove-menu>
+                                            <span class="u-visually-hidden">Remove menu item</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="menucard__grid">
+                                        <div>
+                                            <label class="menucard__label" for="live-menu-${liveIndex}-cat">Category</label>
+                                            <select class="slot__select" id="live-menu-${liveIndex}-cat" name="live-menu-${liveIndex}-cat">${getCategoryOptions()}</select>
+                                        </div>
+                                        <div>
+                                            <label class="menucard__label" for="live-menu-${liveIndex}-diet">Dietary Type</label>
+                                            <select class="slot__select" id="live-menu-${liveIndex}-diet" name="live-menu-${liveIndex}-diet" data-diet-select>
+                                                <option value="veg">Veg</option>
+                                                <option value="nonveg">Non-veg</option>
+                                                <option value="vegan">Vegan</option>
+                                                <option value="egg">Egg</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <span class="menucard__label">Extra serves per guest</span>
+                                            <span class="stepper" data-stepper>
+                                                <button class="stepper__btn" type="button" data-step="-1">
+                                                    <span aria-hidden="true">&minus;</span>
+                                                </button>
+                                                <label class="u-visually-hidden" for="live-menu-${liveIndex}-extra">Extra serves allowed per guest</label>
+                                                <input class="stepper__value" id="live-menu-${liveIndex}-extra" name="live-menu-${liveIndex}-extra" type="text" inputmode="numeric" value="${extra}" min="0">
+                                                <button class="stepper__btn" type="button" data-step="1">
+                                                    <span aria-hidden="true">+</span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
+            const dietSelect = row.querySelector("[data-diet-select]");
+            if (dietSelect) dietSelect.value = diet;
+            return row;
+        }
+
+        function createCounterMenuRow(values) {
+            values = values || {};
+            counterIndex++;
+            const row = document.createElement("article");
+            row.className = "menucard";
+            row.setAttribute("data-menu-row", "");
+            const diet = values.diet || "veg";
+            const name = values.name || "";
+            row.innerHTML = `
+                                    <div class="menucard__top">
+                                        <span class="diet diet--${diet}" aria-hidden="true"></span>
+                                        <label class="u-visually-hidden" for="counter-menu-${counterIndex}-name">Item name</label>
+                                        <input class="menucard__name" id="counter-menu-${counterIndex}-name" name="counter-menu-${counterIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
+                                        <button class="line__remove" type="button" data-remove-menu>
+                                            <span class="u-visually-hidden">Remove menu item</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="menucard__grid">
+                                        <div>
+                                            <label class="menucard__label" for="counter-menu-${counterIndex}-cat">Category</label>
+                                            <select class="slot__select" id="counter-menu-${counterIndex}-cat" name="counter-menu-${counterIndex}-cat">${getCategoryOptions()}</select>
+                                        </div>
+                                        <div>
+                                            <label class="menucard__label" for="counter-menu-${counterIndex}-diet">Dietary Type</label>
+                                            <select class="slot__select" id="counter-menu-${counterIndex}-diet" name="counter-menu-${counterIndex}-diet" data-diet-select>
+                                                <option value="veg">Veg</option>
+                                                <option value="nonveg">Non-veg</option>
+                                                <option value="vegan">Vegan</option>
+                                                <option value="egg">Egg</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                `;
+            const dietSelect = row.querySelector("[data-diet-select]");
+            if (dietSelect) dietSelect.value = diet;
+            return row;
+        }
+
+        function escapeHtmlAttr(text) {
+            return String(text).replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+        const addLiveMenu = document.getElementById("add-live-menu");
+        if (addLiveMenu) {
+            addLiveMenu.addEventListener("click", function() {
+                const list = document.getElementById("live-menu-list");
+                if (!list) return;
+                const row = createLiveMenuRow();
+                list.appendChild(row);
+                const nameInput = row.querySelector(".menucard__name");
+                if (nameInput) nameInput.focus();
+                refreshGuestPreview();
+            });
+        }
+
+        const addCounterMenu = document.getElementById("add-counter-menu");
+        if (addCounterMenu) {
+            addCounterMenu.addEventListener("click", function() {
+                const list = document.getElementById("counter-menu-list");
+                if (!list) return;
+                const row = createCounterMenuRow();
+                list.appendChild(row);
+                const nameInput = row.querySelector(".menucard__name");
+                if (nameInput) nameInput.focus();
+                refreshGuestPreview();
+            });
+        }
+
+        document.addEventListener("change", function(event) {
+            const select = event.target.closest("[data-diet-select]");
+            if (!select) return;
+            const row = select.closest("[data-menu-row]");
+            if (!row) return;
+            const icon = row.querySelector(".diet");
+            if (!icon) return;
+
+            icon.classList.remove("diet--veg", "diet--nonveg", "diet--vegan", "diet--egg");
+            icon.classList.add("diet--" + select.value);
+        });
+
+        // ------------------------------------------------------------------
+        // Menu CSV import
+        // ------------------------------------------------------------------
+        // Columns (matching the hint text above the dropzone):
+        //   item, category, dietary type, extra serves per guest
+        // Imported rows are rendered straight into whichever list matches
+        // the currently selected serving type (live vs counter), using the
+        // same row-builder functions as "+ Add menu item" so they stay in
+        // sync with everything else on the page (steppers, diet icon,
+        // category dropdown, remove button, form field names/indexes).
+
+        const DIET_ALIASES = {
+            veg: "veg", vegetarian: "veg",
+            nonveg: "nonveg", "non-veg": "nonveg", "non veg": "nonveg", meat: "nonveg",
+            vegan: "vegan",
+            egg: "egg", eggetarian: "egg"
+        };
+
+        function normaliseDiet(raw) {
+            const key = (raw || "").toString().trim().toLowerCase();
+            return DIET_ALIASES[key] || "veg";
+        }
+
+        function findCategoryIdByName(name) {
+            const key = (name || "").toString().trim().toLowerCase();
+            if (!key || !availableCategories) return null;
+            const match = availableCategories.find(function(cat) {
+                return (cat.CategoryName || "").toString().trim().toLowerCase() === key;
+            });
+            return match ? match.CategoryId : null;
+        }
+
+        // Shared by both the CSV and XLSX paths once each has produced a plain
+        // array-of-arrays of cell values (row 0 may or may not be a header row).
+        function parseMenuRows(rows) {
+            if (!rows || rows.length === 0) return [];
+
+            const first = (rows[0] || []).map(c => (c ?? "").toString().toLowerCase());
+            const hasHeader = first.some(c => c.includes("item")) || first.some(c => c.includes("categ"));
+            const dataRows = hasHeader ? rows.slice(1) : rows;
+
+            return dataRows
+                .map(r => (r || []).map(cell => (cell ?? "").toString().trim()))
+                .filter(r => (r[0] || "").length > 0)
+                .map(r => ({
+                    name: r[0] || "",
+                    category: r[1] || "",
+                    diet: normaliseDiet(r[2]),
+                    extra: Math.max(0, parseInt(r[3], 10) || 0)
+                }));
+        }
+
+        function parseMenuCsvText(csvText) {
+            const lines = (csvText || "").split(/\r\n|\n/).map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) return [];
+
+            const rows = lines.map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()));
+            return parseMenuRows(rows);
+        }
+
+        function parseMenuXlsxArrayBuffer(arrayBuffer) {
+            if (typeof XLSX === "undefined") {
+                throw new Error("XLSX library did not load");
+            }
+            const workbook = XLSX.read(arrayBuffer, { type: "array" });
+            const firstSheetName = workbook.SheetNames[0];
+            if (!firstSheetName) return [];
+
+            const sheet = workbook.Sheets[firstSheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: "" });
+            return parseMenuRows(rows);
+        }
+
+        function renderImportedMenuItems(items, fileName) {
+            if (!items.length) {
+                alert("No menu items were found in \"" + fileName + "\".");
+                return;
+            }
+
+            const isCounter = servingTypeInput && servingTypeInput.value === "counter";
+            const list = document.getElementById(isCounter ? "counter-menu-list" : "live-menu-list");
+            if (!list) return;
+
+            items.forEach(function(item) {
+                const row = isCounter
+                    ? createCounterMenuRow({ name: item.name, diet: item.diet })
+                    : createLiveMenuRow({ name: item.name, diet: item.diet, extra: item.extra });
+
+                const catSelect = row.querySelector("select[name*='-cat']");
+                if (catSelect) {
+                    const matchedId = findCategoryIdByName(item.category);
+                    if (matchedId != null) catSelect.value = String(matchedId);
+                }
+
+                list.appendChild(row);
+            });
+
+            refreshGuestPreview();
+        }
+
+        const csvInput = document.getElementById("menu-csv");
+        const csvFilename = document.getElementById("menu-csv-filename");
+        const csvBase64 = document.getElementById("menu-csv-base64");
+        const csvDirectory = document.getElementById("menu-directory");
+        const csvUploadName = document.getElementById("menu-upload-name");
+
+        const XLSX_EXTENSIONS = [".xlsx", ".xls"];
+        const XLSX_MIME_TYPES = [
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+            "application/vnd.ms-excel" // .xls (also sometimes reported for .csv, hence the extension check first)
+        ];
+
+        function detectMenuFileType(file) {
+            const nameLower = file.name.toLowerCase();
+
+            if (nameLower.endsWith(".csv") || file.type === "text/csv") {
+                return "csv";
+            }
+            if (XLSX_EXTENSIONS.some(ext => nameLower.endsWith(ext)) || XLSX_MIME_TYPES.includes(file.type)) {
+                return "xlsx";
+            }
+            return null;
+        }
+
+        function readCsvFile(file) {
+            if (!file) return;
+
+            const fileType = detectMenuFileType(file);
+            if (!fileType) {
+                alert("Please select a CSV or Excel (.xlsx) file. \"" + file.name + "\" doesn't look like one.");
+                return;
+            }
+
+            if (csvFilename) csvFilename.value = file.name;
+            if (csvUploadName) csvUploadName.textContent = file.name;
+            if (csvDirectory) csvDirectory.hidden = false;
+
+            // Parse and preview the rows...
+            if (fileType === "csv") {
+                const textReader = new FileReader();
+                textReader.onload = function(event) {
+                    let items = [];
+                    try {
+                        items = parseMenuCsvText(event.target.result || "");
+                    } catch (err) {
+                        console.error("Error parsing menu CSV:", err);
+                        alert("Couldn't read \"" + file.name + "\" as a CSV file. Please check the format and try again.");
+                        return;
+                    }
+                    renderImportedMenuItems(items, file.name);
+                };
+                textReader.onerror = () => alert("Couldn't read that file. Please try again.");
+                textReader.readAsText(file);
+            } else {
+                const xlsxReader = new FileReader();
+                xlsxReader.onload = function(event) {
+                    let items = [];
+                    try {
+                        items = parseMenuXlsxArrayBuffer(event.target.result);
+                    } catch (err) {
+                        console.error("Error parsing menu XLSX:", err);
+                        if (typeof XLSX === "undefined") {
+                            alert("The Excel import tool didn't load. Please check your connection and try again.");
+                        } else {
+                            alert("Couldn't read \"" + file.name + "\" as an Excel file. Please check the format and try again.");
+                        }
+                        return;
+                    }
+                    renderImportedMenuItems(items, file.name);
+                };
+                xlsxReader.onerror = () => alert("Couldn't read that file. Please try again.");
+                xlsxReader.readAsArrayBuffer(file);
+            }
+
+            // ...and separately as base64, so the raw original file is still
+            // posted to the server as-is alongside the parsed/edited items.
+            const base64Reader = new FileReader();
+            base64Reader.onload = function(event) {
+                const result = event.target.result;
+                if (!result) return;
+                const commaIndex = result.indexOf(",");
+                if (csvBase64) {
+                    csvBase64.value = commaIndex >= 0 ? result.substring(commaIndex + 1) : result;
+                }
+            };
+            base64Reader.readAsDataURL(file);
+        }
+
+        if (csvInput) {
+            csvInput.addEventListener("change", function() {
+                readCsvFile(this.files && this.files.length > 0 ? this.files[0] : null);
+                this.value = "";
+            });
+        }
+
+        const menuDropzone = document.getElementById("menu-dropzone");
+        if (menuDropzone) {
+            menuDropzone.addEventListener("dragover", e => { e.preventDefault(); menuDropzone.classList.add("is-dragover"); });
+            menuDropzone.addEventListener("dragleave", () => menuDropzone.classList.remove("is-dragover"));
+            menuDropzone.addEventListener("drop", e => {
+                e.preventDefault();
+                menuDropzone.classList.remove("is-dragover");
+                readCsvFile(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0 ? e.dataTransfer.files[0] : null);
+            });
+        }
+
+        const removeCsv = document.getElementById("menu-remove");
+        if (removeCsv) {
+            removeCsv.addEventListener("click", function() {
+                if (csvInput) csvInput.value = "";
+                if (csvFilename) csvFilename.value = "";
+                if (csvBase64) csvBase64.value = "";
+                if (csvDirectory) csvDirectory.hidden = true;
+                if (csvUploadName) csvUploadName.textContent = "";
+            });
+        }
+
+        if (form) {
+            form.addEventListener("submit", function() {
+                if (foodSwitch && foodEnabled) {
+                    foodEnabled.value = foodSwitch.getAttribute("aria-checked") === "true" ? "true" : "false";
+                }
+                if (servingTypeInput && !servingTypeInput.value) {
+                    servingTypeInput.value = "live";
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,102 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubSalesModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="sales" data-role-only="admin finance viewer" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Sales</h2>
+            <p class="hubhead__text">
+                <span data-scope-label>Day 1</span> &middot; tickets and add-ons sold
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="Ticket sales exported as CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export CSV
+            </button>
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="Complimentary ticket issued">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> Comp ticket
+            </button>
+        </div>
+    </div>
+
+    <p class="capbar" data-capbar="Ticket management">
+        <span class="capbar__figures">
+            <span class="capbar__figure">
+                <b data-cap-total>1000</b>
+                <span>Seats configured</span>
+            </span>
+            <span class="capbar__figure">
+                <b>847</b>
+                <span>Taken</span>
+            </span>
+            <span class="capbar__figure capbar__figure--tight">
+                <b data-cap-remaining>153</b>
+                <span>Left</span>
+            </span>
+        </span>
+        <span class="capbar__body">
+            Filling up. Adding guests keeps the layout you already configured and
+            tells you the charge before anything is committed.
+        </span>
+        <span class="capbar__acts">
+            <a class="btn btn--quiet btn--sm" href="capacity-flow.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> How this works
+            </a>
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="addcap-modal" data-cap-from="Ticket management" data-role-only="admin manager">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add guests
+            </button>
+        </span>
+    </p>
+
+    <section class="grid grid--4 u-mb-6" aria-label="Sales totals">
+        <article class="figure">
+            <h3 class="figure__label">Gross revenue</h3>
+            <p class="figure__value figure__value--success">&#8358;127,050,000</p>
+        </article>
+        <article class="figure">
+            <h3 class="figure__label">Tickets sold</h3>
+            <p class="figure__value figure__value--brand">847 / 1,000</p>
+        </article>
+        <article class="figure">
+            <h3 class="figure__label">Add-on revenue</h3>
+            <p class="figure__value figure__value--info">&#8358;14,200,000</p>
+        </article>
+        <article class="figure">
+            <h3 class="figure__label">Refunds</h3>
+            <p class="figure__value figure__value--accent">&#8358;450,000</p>
+        </article>
+    </section>
+
+    <section class="panel">
+        <div class="kv">
+            <span class="kv__body">
+                <span class="kv__value">Early Bird</span>
+                <span class="kv__key">200 of 200 sold &middot; closed</span>
+            </span>
+            <span><b>&#8358;1,000,000</b></span>
+        </div>
+        <div class="kv">
+            <span class="kv__body">
+                <span class="kv__value">Standard</span>
+                <span class="kv__key">547 of 500 sold &middot; overselling blocked</span>
+            </span>
+            <span><b>&#8358;5,470,000</b></span>
+        </div>
+        <div class="kv">
+            <span class="kv__body">
+                <span class="kv__value">VIP</span>
+                <span class="kv__key">100 of 100 sold &middot; closed</span>
+            </span>
+            <span><b>&#8358;2,500,000</b></span>
+        </div>
+    </section>
+</div>

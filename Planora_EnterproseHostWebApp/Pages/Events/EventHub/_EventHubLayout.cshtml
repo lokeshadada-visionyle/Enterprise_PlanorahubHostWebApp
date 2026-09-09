@@ -1,0 +1,258 @@
+﻿@using Planora_EnterproseHostWebApp.Models
+@{
+    Layout = "_Layout";
+
+    var eventId = ViewData["EventId"] as int? ?? 0;
+    var slotId = ViewData["SlotId"] as int? ?? 0;
+    var userId = Context.Session.GetInt32("UserId") ?? 0;
+
+    ViewData["PageName"] = ViewData["PageName"] as string ?? "Event Hub";
+    ViewData["PageDesc"] = ViewData["PageDesc"] as string ?? "Tech Summit Africa 2025 &middot; Live";
+
+    var activePanel = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    Func<string, bool> IsActiveTab = pagePath =>
+        activePanel.EndsWith(pagePath, StringComparison.OrdinalIgnoreCase);
+
+    var helper = new CommonHelper();
+    EventHubDatesAndSlotsResp scopeData;
+    try
+    {
+        scopeData = helper.GetEventHubDateAndSlot(userId, eventId, slotId);
+    }
+    catch (Exception ex)
+    {
+        scopeData = new EventHubDatesAndSlotsResp { Status = 0, Message = ex.Message };
+    }
+
+    var eventDates = scopeData?.EventDates ?? new List<EventHubDates>();
+    var totalSlots = eventDates.Sum(d => d.Slots?.Count ?? 0);
+
+    // Which day/slot is "current" is derived from the slotId in the URL,
+    // not assumed to be the first one — this is what keeps the bar in
+    // sync across every panel page instead of resetting on navigation.
+    var currentDay = eventDates.FirstOrDefault(d => d.Slots != null && d.Slots.Any(s => s.SlotId == slotId))
+                      ?? eventDates.FirstOrDefault();
+    var currentDayKey = currentDay != null ? "day" + currentDay.EventDateId : null;
+}
+<main class="shell__main shell__main--flush" data-page-roles="admin manager viewer finance"
+      data-eventhub data-event-id="@eventId" data-slot-id="@slotId">
+
+    <section class="hero" aria-labelledby="hub-title">
+        <div class="hero__body">
+            <p class="hero__flag">
+                <span class="live__pulse" aria-hidden="true"></span> Live
+            </p>
+            <h1 class="hero__title" id="hub-title">Event Hub &mdash; Tech Summit 2025</h1>
+            <p class="hero__meta">Aug 15&ndash;17, 2025 &middot; Eko Hotel, Lagos</p>
+        </div>
+        <div class="hero__stats">
+            <p class="hero__figure">
+                <span class="hero__value" data-count="checkedin">847</span>
+                <span class="hero__caption">Checked In</span>
+            </p>
+            <p class="hero__figure">
+                <span class="hero__value" data-count="remaining">153</span>
+                <span class="hero__caption">Remaining</span>
+            </p>
+            <p class="hero__figure">
+                <span class="hero__value">&#8358;127M</span>
+                <span class="hero__caption">Revenue</span>
+            </p>
+        </div>
+    </section>
+
+    <nav class="subtabs" role="tablist" aria-label="Event hub sections">
+        <a class="subtabs__tab @(IsActiveTab("/Overview") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Overview") ? "true" : "false")"
+           asp-page="/Events/EventHub/EventHubOverView" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg> Overview
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Guests") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Guests") ? "true" : "false")"
+           data-role-only="admin manager viewer"
+           asp-page="/Events/EventHub/EventHubGuests" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg> Guests
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Registrations") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Registrations") ? "true" : "false")"
+           data-role-only="admin manager viewer"
+           asp-page="/Events/EventHub/EventHubRegistration" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> Registrations
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Rsvp") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Rsvp") ? "true" : "false")"
+           data-type-only="private" data-role-only="admin manager"
+           asp-page="/Events/EventHub/EventHubRsvp" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> RSVP
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Seating") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Seating") ? "true" : "false")"
+           data-role-only="admin manager viewer"
+           asp-page="/Events/EventHub/EventHubSeating" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg> Seating
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Food") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Food") ? "true" : "false")"
+           data-role-only="admin manager"
+           asp-page="/Events/EventHub/EventHubFoodVendors" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg> Food/Vendors
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Staff") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Staff") ? "true" : "false")"
+           data-role-only="admin manager"
+           asp-page="/Events/EventHub/EventHubStaff" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> Staff
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Onsite") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Onsite") ? "true" : "false")"
+           data-role-only="admin manager viewer"
+           asp-page="/Events/EventHub/EventHubOnSiteOps" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9V3h10v6" /><rect x="3" y="9" width="18" height="7" rx="2" /><path d="M7 16h10v5H7z" /></svg> On-Site Ops
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Polls") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Polls") ? "true" : "false")"
+           data-role-only="admin manager"
+           asp-page="/Events/EventHub/EventHubPolls" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg> Polls
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Broadcast") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Broadcast") ? "true" : "false")"
+           data-role-only="admin manager"
+           asp-page="/Events/EventHub/EventHubBroadcast" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Broadcast
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Sales") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Sales") ? "true" : "false")"
+           data-role-only="admin finance viewer"
+           asp-page="/Events/EventHub/EventHubSales" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg> Sales
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Extras") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Extras") ? "true" : "false")"
+           data-role-only="admin finance viewer"
+           asp-page="/Events/EventHub/EventHubPromosAddons" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg> Add-ons &amp; Promo
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Brand") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Brand") ? "true" : "false")"
+           data-role-only="admin manager"
+           asp-page="/Events/EventHub/EventHubBrand" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg> Branding
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Payout") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Payout") ? "true" : "false")"
+           data-role-only="admin finance"
+           asp-page="/Events/EventHub/EventHubPayout" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg> Payout
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Insights") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Insights") ? "true" : "false")"
+           asp-page="/Events/EventHub/EventHubInsights" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Insights
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Log") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Log") ? "true" : "false")"
+           asp-page="/Events/EventHub/EventHubLog" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> Activity Log
+        </a>
+        <a class="subtabs__tab @(IsActiveTab("/Settings") ? "active" : "")"
+           role="tab" aria-selected="@(IsActiveTab("/Settings") ? "true" : "false")"
+           data-role-only="admin"
+           asp-page="/Events/EventHub/EventHubSettings" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.4-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 4a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 11a2 2 0 1 1 0 4z" /></svg> Settings
+        </a>
+    </nav>
+
+    <div class="scopebar" data-scope-group id="scopeBar">
+        <div class="scopebar__row" role="tablist" aria-label="Event day">
+            <span class="scopebar__label">Date</span>
+            @for (int i = 0; i < eventDates.Count; i++)
+            {
+                var day = eventDates[i];
+                var dayKey = "day" + day.EventDateId;
+                var firstSlotOfDay = day.Slots?.FirstOrDefault();
+                <button class="scopetab" type="button" role="tab"
+                        aria-selected="@(dayKey == currentDayKey ? "true" : "false")"
+                        data-day-scope="@dayKey"
+                        data-day-first-slot="@(firstSlotOfDay?.SlotId ?? 0)"
+                        data-scope-name="@day.SessionName">
+                    @day.SessionName
+                    <span class="scopetab__date">@day.Date</span>
+                </button>
+            }
+            <span class="scopebar__meta">
+                @eventDates.Count days &middot; @totalSlots slots
+            </span>
+        </div>
+
+        @for (int i = 0; i < eventDates.Count; i++)
+        {
+            var day = eventDates[i];
+            var dayKey = "day" + day.EventDateId;
+            <div class="scopebar__row" data-slot-scope-for="@dayKey" hidden="@(dayKey != currentDayKey)">
+                <span class="scopebar__label">Slot</span>
+                @for (int j = 0; j < day.Slots.Count; j++)
+                {
+                    var slot = day.Slots[j];
+                    <button class="scopetab scopetab--chip" type="button"
+                            aria-pressed="@(slot.SlotId == slotId ? "true" : "false")"
+                            data-slot-scope="slot@(slot.SlotId)" data-scope-name="@slot.SessionName">
+                        @slot.SessionName <span class="scopetab__date">@slot.SessionTIme</span>
+                    </button>
+                }
+                <span class="scopebar__meta">
+                    @day.Slots.Count slot@(day.Slots.Count == 1 ? "" : "s") on this day
+                </span>
+            </div>
+        }
+
+        @if (eventDates.Count == 0 && scopeData.Status != 1)
+        {
+            <p class="scopebar__error">@(scopeData.Message ?? "Unable to load dates and slots.")</p>
+        }
+    </div>
+
+    <div class="section">
+        @RenderBody()
+    </div>
+</main>
+
+<script>
+    (function() {
+        'use strict';
+
+        var main = document.querySelector('[data-eventhub]');
+        if (!main) return;
+
+        var EVENT_ID = main.getAttribute('data-event-id');
+
+        // Navigates to the SAME page (whichever panel is currently open),
+        // just with an updated slotId — this keeps the URL as the single
+        // source of truth, so the selection survives switching panels.
+        function navigateToSlot(newSlotId) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('eventId', EVENT_ID);
+            url.searchParams.set('slotId', newSlotId);
+            window.location.href = url.toString();
+        }
+
+        document.addEventListener('click', function(event) {
+            var dayBtn = event.target.closest('[data-day-scope]');
+            if (dayBtn) {
+                var firstSlotId = dayBtn.getAttribute('data-day-first-slot');
+                if (firstSlotId && firstSlotId !== '0') {
+                    navigateToSlot(firstSlotId);
+                }
+                return;
+            }
+
+            var slotBtn = event.target.closest('[data-slot-scope]');
+            if (slotBtn) {
+                var newSlotId = slotBtn.getAttribute('data-slot-scope').replace('slot', '');
+                navigateToSlot(newSlotId);
+            }
+        });
+    })();
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)

@@ -1,0 +1,934 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubStaffModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="staff" data-role-only="admin manager" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Staff</h2>
+            <p class="hubhead__text">
+                Vendors and the people under them, and who is on each door by date and
+                slot. Everyone signs in with their own PIN.
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <span class="segment" id="crewfilter" role="group"
+                  aria-label="Filter staff" data-pick-group>
+                <button class="segment__opt" type="button" aria-pressed="true"
+                        data-pick="all">
+                    All
+                </button>
+                <button class="segment__opt" type="button" aria-pressed="false"
+                        data-pick="vendor">
+                    Vendors &amp; food staff
+                </button>
+                <button class="segment__opt" type="button" aria-pressed="false"
+                        data-pick="staff">
+                    Entry staff
+                </button>
+            </span>
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-crew-new data-modal-open="crew-modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add vendor or staff
+            </button>
+        </div>
+    </div>
+
+    <p class="bulkbar">
+        <span>
+            <b data-crew-count>12 people</b> &middot;
+            <span data-crew-breakdown>
+                3 vendors, 5 food staff,
+                4 entry staff
+            </span>
+        </span>
+        <span class="bulkbar__actions">
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="PIN sheet downloaded &mdash; one row per person">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export PIN sheet
+            </button>
+            <button class="btn btn--outline btn--sm" type="button"
+                    data-action="PINs sent to all 12 people by WhatsApp">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share all PINs
+            </button>
+        </span>
+    </p>
+
+    <section class="panel u-mt-6" data-crew-block="vendor"
+             aria-labelledby="vendors-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="vendors-title">
+                    Food vendors &amp; their staff
+                </h3>
+                <p class="panel__meta">
+                    A vendor is answerable for their own people, so their staff sit under
+                    them
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <div class="crews" id="crew-list">
+                <article class="crew crew--group" data-crew-row data-repeat-row
+                         data-crew-kind="vendor" data-crew-scope="slots">
+                    <div class="crew__top">
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg></span>
+                        <span class="crew__body">
+                            <span class="crew__name">Mama Put Kitchen</span>
+                            <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 802 445 1180 &middot; Food vendor</span>
+                            <span class="crew__detail">Starters &middot; Rice &amp; Biryani &middot; Mains</span>
+                        </span>
+                        <span class="crew__pinbox">
+                            <span class="crew__pinlabel">Login PIN</span>
+                            <span class="crew__pin" data-crew-pin="mama">481902</span>
+                        </span>
+                    </div>
+
+                    <div class="crew__assign">
+                        <span class="crew__assignlabel">Assigned to</span>
+                        <span class="assignchips">
+                            <span class="assignchip">Day 1 &middot; Morning Keynote</span>
+                            <span class="assignchip">Day 1 &middot; Fintech Panel</span>
+                            <span class="assignchip">Day 2 &middot; Design Sprint</span>
+                        </span>
+                    </div>
+
+                    <div class="crew__acts">
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-regen="mama">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-share="mama" data-modal-open="crewshare-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-edit="mama" data-modal-open="crew-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-new data-crew-under="Mama Put Kitchen"
+                                data-modal-open="crew-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add staff
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-repeat-remove
+                                data-action="Mama Put Kitchen removed &mdash; their PIN no longer works"
+                                data-action-tone="warn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                        </button>
+                    </div>
+
+                    <div class="crewnest">
+                        <p class="crewnest__head">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> <b>2</b> staff under Mama Put Kitchen
+                        </p>
+                        <article class="crewsub" data-crew-row data-repeat-row
+                                 data-crew-kind="vendor" data-crew-scope="slots">
+                            <span class="crewsub__body">
+                                <span class="crewsub__name">Chika Eze</span>
+                                <span class="crewsub__meta">+234 705 664 3098 &middot; Atrium counter</span>
+                                <span class="assignchips assignchips--tight">
+                                    <span class="assignchip">Day 1 &middot; Morning Keynote</span>
+                                    <span class="assignchip">Day 1 &middot; Fintech Panel</span>
+                                </span>
+                            </span>
+                            <span class="crewsub__pin">
+                                <span class="crew__pinlabel">PIN</span>
+                                <span class="crew__pin crew__pin--sm" data-crew-pin="mama-chika">128940</span>
+                            </span>
+                            <span class="crewsub__acts">
+                                <button class="iconbtn" type="button" data-crew-regen="mama-chika">
+                                    <span class="u-visually-hidden">Regenerate PIN for Chika Eze</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-share="mama-chika"
+                                        data-modal-open="crewshare-modal">
+                                    <span class="u-visually-hidden">Share PIN with Chika Eze</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-edit="mama-chika"
+                                        data-modal-open="crew-modal">
+                                    <span class="u-visually-hidden">Edit Chika Eze</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-repeat-remove
+                                        data-action="Chika Eze removed &mdash; their PIN no longer works"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Chika Eze</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </span>
+                        </article>
+                        <article class="crewsub" data-crew-row data-repeat-row
+                                 data-crew-kind="vendor" data-crew-scope="slots">
+                            <span class="crewsub__body">
+                                <span class="crewsub__name">Sade Balogun</span>
+                                <span class="crewsub__meta">+234 811 209 4471 &middot; Main Hall counter</span>
+                                <span class="assignchips assignchips--tight">
+                                    <span class="assignchip">Day 2 &middot; Design Sprint</span>
+                                </span>
+                            </span>
+                            <span class="crewsub__pin">
+                                <span class="crew__pinlabel">PIN</span>
+                                <span class="crew__pin crew__pin--sm" data-crew-pin="mama-sade">664120</span>
+                            </span>
+                            <span class="crewsub__acts">
+                                <button class="iconbtn" type="button" data-crew-regen="mama-sade">
+                                    <span class="u-visually-hidden">Regenerate PIN for Sade Balogun</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-share="mama-sade"
+                                        data-modal-open="crewshare-modal">
+                                    <span class="u-visually-hidden">Share PIN with Sade Balogun</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-edit="mama-sade"
+                                        data-modal-open="crew-modal">
+                                    <span class="u-visually-hidden">Edit Sade Balogun</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-repeat-remove
+                                        data-action="Sade Balogun removed &mdash; their PIN no longer works"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Sade Balogun</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </span>
+                        </article>
+                    </div>
+                </article>
+
+                <article class="crew crew--group" data-crew-row data-repeat-row
+                         data-crew-kind="vendor" data-crew-scope="slots">
+                    <div class="crew__top">
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg></span>
+                        <span class="crew__body">
+                            <span class="crew__name">GreenBite Co.</span>
+                            <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 809 337 2214 &middot; Food vendor</span>
+                            <span class="crew__detail">Vegan &middot; Salads &middot; Beverages</span>
+                        </span>
+                        <span class="crew__pinbox">
+                            <span class="crew__pinlabel">Login PIN</span>
+                            <span class="crew__pin" data-crew-pin="green">735514</span>
+                        </span>
+                    </div>
+
+                    <div class="crew__assign">
+                        <span class="crew__assignlabel">Assigned to</span>
+                        <span class="assignchips">
+                            <span class="assignchip">Day 2 &middot; Design Sprint</span>
+                            <span class="assignchip">Day 2 &middot; Investor Clinic</span>
+                        </span>
+                    </div>
+
+                    <div class="crew__acts">
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-regen="green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-share="green" data-modal-open="crewshare-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-edit="green" data-modal-open="crew-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-new data-crew-under="GreenBite Co."
+                                data-modal-open="crew-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add staff
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-repeat-remove
+                                data-action="GreenBite Co. removed &mdash; their PIN no longer works"
+                                data-action-tone="warn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                        </button>
+                    </div>
+
+                    <div class="crewnest">
+                        <p class="crewnest__head">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> <b>1</b> staff under GreenBite Co.
+                        </p>
+                        <article class="crewsub" data-crew-row data-repeat-row
+                                 data-crew-kind="vendor" data-crew-scope="slots">
+                            <span class="crewsub__body">
+                                <span class="crewsub__name">Tobi Adeniyi</span>
+                                <span class="crewsub__meta">+234 703 887 1265 &middot; Hall B counter</span>
+                                <span class="assignchips assignchips--tight">
+                                    <span class="assignchip">Day 2 &middot; Design Sprint</span>
+                                </span>
+                            </span>
+                            <span class="crewsub__pin">
+                                <span class="crew__pinlabel">PIN</span>
+                                <span class="crew__pin crew__pin--sm" data-crew-pin="green-tobi">390255</span>
+                            </span>
+                            <span class="crewsub__acts">
+                                <button class="iconbtn" type="button" data-crew-regen="green-tobi">
+                                    <span class="u-visually-hidden">Regenerate PIN for Tobi Adeniyi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-share="green-tobi"
+                                        data-modal-open="crewshare-modal">
+                                    <span class="u-visually-hidden">Share PIN with Tobi Adeniyi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-edit="green-tobi"
+                                        data-modal-open="crew-modal">
+                                    <span class="u-visually-hidden">Edit Tobi Adeniyi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-repeat-remove
+                                        data-action="Tobi Adeniyi removed &mdash; their PIN no longer works"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Tobi Adeniyi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </span>
+                        </article>
+                    </div>
+                </article>
+
+                <article class="crew crew--group" data-crew-row data-repeat-row
+                         data-crew-kind="vendor" data-crew-scope="event">
+                    <div class="crew__top">
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg></span>
+                        <span class="crew__body">
+                            <span class="crew__name">RefreshCo.</span>
+                            <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 701 992 6640 &middot; Food vendor</span>
+                            <span class="crew__detail">Beverages only</span>
+                        </span>
+                        <span class="crew__pinbox">
+                            <span class="crew__pinlabel">Login PIN</span>
+                            <span class="crew__pin" data-crew-pin="refresh">260473</span>
+                        </span>
+                    </div>
+
+                    <div class="crew__assign">
+                        <span class="crew__assignlabel">Assigned to</span>
+                        <span class="assignchips">
+                            <span class="assignchip assignchip--all">Whole event</span>
+                        </span>
+                    </div>
+
+                    <div class="crew__acts">
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-regen="refresh">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-share="refresh" data-modal-open="crewshare-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-edit="refresh" data-modal-open="crew-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-crew-new data-crew-under="RefreshCo."
+                                data-modal-open="crew-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add staff
+                        </button>
+                        <button class="btn btn--quiet btn--sm" type="button"
+                                data-repeat-remove
+                                data-action="RefreshCo. removed &mdash; their PIN no longer works"
+                                data-action-tone="warn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                        </button>
+                    </div>
+
+                    <div class="crewnest">
+                        <p class="crewnest__head">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> <b>2</b> staff under RefreshCo.
+                        </p>
+                        <article class="crewsub" data-crew-row data-repeat-row
+                                 data-crew-kind="vendor" data-crew-scope="event">
+                            <span class="crewsub__body">
+                                <span class="crewsub__name">Uche Nnamdi</span>
+                                <span class="crewsub__meta">+234 808 554 7719 &middot; Roaming trolley</span>
+                                <span class="assignchips assignchips--tight">
+                                    <span class="assignchip assignchip--all">Whole event</span>
+                                </span>
+                            </span>
+                            <span class="crewsub__pin">
+                                <span class="crew__pinlabel">PIN</span>
+                                <span class="crew__pin crew__pin--sm" data-crew-pin="refresh-uche">817446</span>
+                            </span>
+                            <span class="crewsub__acts">
+                                <button class="iconbtn" type="button" data-crew-regen="refresh-uche">
+                                    <span class="u-visually-hidden">Regenerate PIN for Uche Nnamdi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-share="refresh-uche"
+                                        data-modal-open="crewshare-modal">
+                                    <span class="u-visually-hidden">Share PIN with Uche Nnamdi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-edit="refresh-uche"
+                                        data-modal-open="crew-modal">
+                                    <span class="u-visually-hidden">Edit Uche Nnamdi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-repeat-remove
+                                        data-action="Uche Nnamdi removed &mdash; their PIN no longer works"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Uche Nnamdi</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </span>
+                        </article>
+                        <article class="crewsub" data-crew-row data-repeat-row
+                                 data-crew-kind="vendor" data-crew-scope="slots">
+                            <span class="crewsub__body">
+                                <span class="crewsub__name">Ify Okoro</span>
+                                <span class="crewsub__meta">+234 810 663 2280 &middot; VIP Lounge bar</span>
+                                <span class="assignchips assignchips--tight">
+                                    <span class="assignchip">Day 2 &middot; Investor Clinic</span>
+                                </span>
+                            </span>
+                            <span class="crewsub__pin">
+                                <span class="crew__pinlabel">PIN</span>
+                                <span class="crew__pin crew__pin--sm" data-crew-pin="refresh-ify">502961</span>
+                            </span>
+                            <span class="crewsub__acts">
+                                <button class="iconbtn" type="button" data-crew-regen="refresh-ify">
+                                    <span class="u-visually-hidden">Regenerate PIN for Ify Okoro</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-share="refresh-ify"
+                                        data-modal-open="crewshare-modal">
+                                    <span class="u-visually-hidden">Share PIN with Ify Okoro</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-crew-edit="refresh-ify"
+                                        data-modal-open="crew-modal">
+                                    <span class="u-visually-hidden">Edit Ify Okoro</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                </button>
+                                <button class="iconbtn" type="button" data-repeat-remove
+                                        data-action="Ify Okoro removed &mdash; their PIN no longer works"
+                                        data-action-tone="warn">
+                                    <span class="u-visually-hidden">Remove Ify Okoro</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                </button>
+                            </span>
+                        </article>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel u-mt-6" data-crew-block="staff"
+             aria-labelledby="entry-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="entry-title">Entry staff by date &amp; slot</h3>
+                <p class="panel__meta">
+                    Anyone assigned to the whole event appears on every slot
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <section class="daygroup">
+                <p class="daygroup__head">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg> <b>Day 1 &mdash; Opening Day</b>
+                    <span class="daygroup__meta">2026-08-06 &middot; 3 slots</span>
+                </p>
+                <div class="slotgroup">
+                    <p class="slotgroup__head">
+                        <span class="slotgroup__name">Morning Keynote</span>
+                        <span class="slotgroup__meta">09:00 &ndash; 10:30 &middot; Main Hall</span>
+                        <span class="slotgroup__count">2 on duty</span>
+                    </p>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="slots">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Bayo Ogun</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 803 118 5502 &middot; Entry scanner</span>
+                                <span class="crew__detail">Hall A entrance</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="bayo">910268</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip">Day 1 &middot; Morning Keynote</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="bayo">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="bayo" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="bayo" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Bayo Ogun removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="event">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Seyi Lawal</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 807 220 1148 &middot; Entry scanner</span>
+                                <span class="crew__detail">All doors &mdash; floating</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="seyi">236889</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip assignchip--all">Whole event</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="seyi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="seyi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="seyi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Seyi Lawal removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                </div>
+                <div class="slotgroup">
+                    <p class="slotgroup__head">
+                        <span class="slotgroup__name">Fintech Panel</span>
+                        <span class="slotgroup__meta">11:00 &ndash; 12:30 &middot; Hall B</span>
+                        <span class="slotgroup__count">2 on duty</span>
+                    </p>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="slots">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Ndidi Musa</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 806 220 7731 &middot; Entry scanner</span>
+                                <span class="crew__detail">Hall B entrance</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="ndidi">553817</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip">Day 1 &middot; Fintech Panel</span>
+                                <span class="assignchip">Day 1 &middot; Session 3</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="ndidi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="ndidi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="ndidi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Ndidi Musa removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="event">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Seyi Lawal</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 807 220 1148 &middot; Entry scanner</span>
+                                <span class="crew__detail">All doors &mdash; floating</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="seyi">236889</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip assignchip--all">Whole event</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="seyi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="seyi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="seyi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Seyi Lawal removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                </div>
+                <div class="slotgroup">
+                    <p class="slotgroup__head">
+                        <span class="slotgroup__name">Session 3</span>
+                        <span class="slotgroup__meta">11:00 &ndash; 12:30 &middot; Breakout Room 1</span>
+                        <span class="slotgroup__count">2 on duty</span>
+                    </p>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="slots">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Ndidi Musa</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 806 220 7731 &middot; Entry scanner</span>
+                                <span class="crew__detail">Hall B entrance</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="ndidi">553817</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip">Day 1 &middot; Fintech Panel</span>
+                                <span class="assignchip">Day 1 &middot; Session 3</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="ndidi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="ndidi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="ndidi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Ndidi Musa removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="event">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Seyi Lawal</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 807 220 1148 &middot; Entry scanner</span>
+                                <span class="crew__detail">All doors &mdash; floating</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="seyi">236889</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip assignchip--all">Whole event</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="seyi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="seyi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="seyi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Seyi Lawal removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="daygroup">
+                <p class="daygroup__head">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg> <b>Day 2 &mdash; Session 2</b>
+                    <span class="daygroup__meta">2026-08-07 &middot; 2 slots</span>
+                </p>
+                <div class="slotgroup">
+                    <p class="slotgroup__head">
+                        <span class="slotgroup__name">Design Sprint</span>
+                        <span class="slotgroup__meta">09:30 &ndash; 11:00 &middot; Main Hall</span>
+                        <span class="slotgroup__count">2 on duty</span>
+                    </p>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="slots">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Amaka Obi</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 812 447 9903 &middot; Entry scanner</span>
+                                <span class="crew__detail">Registration desk</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="amaka">744301</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip">Day 2 &middot; Design Sprint</span>
+                                <span class="assignchip">Day 2 &middot; Investor Clinic</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="amaka">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="amaka" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="amaka" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Amaka Obi removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="event">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Seyi Lawal</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 807 220 1148 &middot; Entry scanner</span>
+                                <span class="crew__detail">All doors &mdash; floating</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="seyi">236889</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip assignchip--all">Whole event</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="seyi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="seyi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="seyi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Seyi Lawal removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                </div>
+                <div class="slotgroup">
+                    <p class="slotgroup__head">
+                        <span class="slotgroup__name">Investor Clinic</span>
+                        <span class="slotgroup__meta">13:00 &ndash; 15:00 &middot; VIP Lounge</span>
+                        <span class="slotgroup__count">2 on duty</span>
+                    </p>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="slots">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Amaka Obi</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 812 447 9903 &middot; Entry scanner</span>
+                                <span class="crew__detail">Registration desk</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="amaka">744301</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip">Day 2 &middot; Design Sprint</span>
+                                <span class="assignchip">Day 2 &middot; Investor Clinic</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="amaka">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="amaka" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="amaka" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Amaka Obi removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                    <article class="crew" data-crew-row data-repeat-row
+                             data-crew-kind="staff" data-crew-scope="event">
+                        <div class="crew__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="crew__body">
+                                <span class="crew__name">Seyi Lawal</span>
+                                <span class="crew__meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 19h2" /></svg> +234 807 220 1148 &middot; Entry scanner</span>
+                                <span class="crew__detail">All doors &mdash; floating</span>
+                            </span>
+                            <span class="crew__pinbox">
+                                <span class="crew__pinlabel">Login PIN</span>
+                                <span class="crew__pin" data-crew-pin="seyi">236889</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__assign">
+                            <span class="crew__assignlabel">On duty</span>
+                            <span class="assignchips">
+                                <span class="assignchip assignchip--all">Whole event</span>
+                            </span>
+                        </div>
+
+                        <div class="crew__acts">
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-regen="seyi">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Regenerate PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-share="seyi" data-modal-open="crewshare-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Share PIN
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-crew-edit="seyi" data-modal-open="crew-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Edit
+                            </button>
+                            <button class="btn btn--quiet btn--sm" type="button"
+                                    data-repeat-remove
+                                    data-action="Seyi Lawal removed &mdash; their PIN no longer works"
+                                    data-action-tone="warn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <p class="crews__empty" data-crew-empty hidden>
+        Nobody matches that filter.
+    </p>
+
+    <p class="notice notice--info notice--flat u-mt-6">
+        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+        Removing somebody stops their PIN working immediately. Regenerating a PIN
+        invalidates the old one, so share the new one before their next shift.
+    </p>
+</div>

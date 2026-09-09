@@ -1,0 +1,255 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.MyEventsModel
+@{
+    Layout = "_Layout";
+    ViewData["PageName"] = "My Events";
+    ViewData["PageDesc"] = $"{Model.myEventData.TotalEvents} events &middot; {Model.myEventData.LiveEvents} live";
+}
+
+<main class="shell__main" data-page-roles="admin manager finance viewer">
+
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="alert alert--danger u-mb-4" role="alert">
+            <p><strong>Error:</strong> @Model.ApiError</p>
+        </div>
+    }
+
+    <div class="page__head">
+        <div>
+            <h1 class="page__title">My Events</h1>
+            <p class="page__subtitle">
+                @Model.myEventData.TotalEvents total &middot;
+                <span class="u-live">@Model.myEventData.LiveEvents live</span> &middot;
+                <span class="u-upcoming">@Model.myEventData.UpcomingEvents upcoming</span> &middot;
+                @Model.myEventData.DraftEvents drafts
+            </p>
+        </div>
+        <a class="btn btn--primary" href="create-event/event-type.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Create Event
+        </a>
+    </div>
+
+    <!-- Metrics Cards -->
+    <section class="grid grid--4 u-mb-6" aria-label="Portfolio totals">
+        <article class="metric">
+            <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg></span>
+            <span>
+                <span class="metric__value">@Model.myEventData.TicketsSold.ToString("N0")</span>
+                <span class="metric__label">Total Tickets Sold</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8m0 0h-5m5 0v5" /></svg></span>
+            <span>
+                <span class="metric__value">&#8358;@Model.myEventData.TotalRevenue</span>
+                <span class="metric__label">Total Revenue</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--danger" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg></span>
+            <span>
+                <span class="metric__value">@Model.myEventData.LiveEvents</span>
+                <span class="metric__label">Live Now</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+            <span>
+                <span class="metric__value">@Model.myEventData.TotalCheckIns.ToString("N0")</span>
+                <span class="metric__label">Total Check-ins</span>
+            </span>
+        </article>
+    </section>
+
+    <!-- Toolbar: Status Filters, Search, Download Icon, View Switcher -->
+    <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Filter events by status">
+            <a class="tabs__tab @(Model.Status == "All" ? "is-active" : "")"
+               asp-page="./MyEvents" asp-route-status="All" asp-route-search="@Model.Search">
+                All Events
+            </a>
+            <a class="tabs__tab @(Model.Status.Equals("live", StringComparison.OrdinalIgnoreCase) ? "is-active" : "")"
+               asp-page="./MyEvents" asp-route-status="Live" asp-route-search="@Model.Search">
+                Live <span class="tabs__count">@Model.myEventData.LiveEvents</span>
+            </a>
+            <a class="tabs__tab @(Model.Status.Equals("upcoming", StringComparison.OrdinalIgnoreCase) ? "is-active" : "")"
+               asp-page="./MyEvents" asp-route-status="Upcoming" asp-route-search="@Model.Search">
+                Upcoming <span class="tabs__count">@Model.myEventData.UpcomingEvents</span>
+            </a>
+            <a class="tabs__tab @(Model.Status.Equals("draft", StringComparison.OrdinalIgnoreCase) ? "is-active" : "")"
+               asp-page="./MyEvents" asp-route-status="Draft" asp-route-search="@Model.Search">
+                Draft <span class="tabs__count">@Model.myEventData.DraftEvents</span>
+            </a>
+            <a class="tabs__tab @(Model.Status.Equals("completed", StringComparison.OrdinalIgnoreCase) ? "is-active" : "")"
+               asp-page="./MyEvents" asp-route-status="Completed" asp-route-search="@Model.Search">
+                Completed <span class="tabs__count">@Model.myEventData.CompletedEvents</span>
+            </a>
+            <a class="tabs__tab @(Model.Status.Equals("cancelled", StringComparison.OrdinalIgnoreCase) ? "is-active" : "")"
+               asp-page="./MyEvents" asp-route-status="Cancelled" asp-route-search="@Model.Search">
+                Cancelled <span class="tabs__count">@Model.myEventData.CancelledEvents</span>
+            </a>
+        </div>
+
+        <div class="toolbar__actions" style="display: flex; align-items: center; gap: 12px;">
+            <form class="searchbox" role="search" method="get">
+                <input type="hidden" name="status" value="@Model.Status" />
+                <label class="u-visually-hidden" for="event-search">Search events</label>
+                <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                <input class="searchbox__input" id="event-search" name="search" type="search" value="@Model.Search" placeholder="Search events...">
+            </form>
+
+            <button class="btn btn--icon-only" type="button" aria-label="Export Data">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+            </button>
+
+            <div class="view-toggle">
+                <button class="view-toggle__btn is-active" type="button" aria-label="List View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+                </button>
+                <button class="view-toggle__btn" type="button" aria-label="Grid View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    @if (Model.myEventData.MyEvents == null || !Model.myEventData.MyEvents.Any())
+    {
+        <p class="emptystate">
+            <svg class="emptystate__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+            No events found. Try another search or filter setting.
+        </p>
+    }
+    else
+    {
+        <section data-view-panel="list" aria-label="Events table">
+            <div class="tablewrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Event</th>
+                            <th scope="col">Date &amp; Venue</th>
+                            <th scope="col">Format</th>
+                            <th scope="col">Tickets Sold</th>
+                            <th scope="col">Revenue</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ev in Model.myEventData.MyEvents)
+                        {
+                            string badgeCss = ev.Status.ToLower() switch
+                            {
+                                "live" => "badge--live",
+                                "upcoming" => "badge--upcoming",
+                                "draft" => "badge--draft",
+                                "completed" => "badge--completed",
+                                "cancelled" => "badge--cancelled",
+                                _ => "badge--default"
+                            };
+
+                            <tr data-status="@ev.Status.ToLower()">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar avatar--square" aria-hidden="true">
+                                            @(string.IsNullOrEmpty(ev.EventName) ? 'E' : ev.EventName[0])
+                                        </span>
+                                        <span class="cellstack__body">
+                                            <a class="cellstack__name" href="#">@ev.EventName</a>
+                                            <span class="cellsub">@ev.EventCategory</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0">@ev.EventDate</p>
+                                    <p class="cellsub">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                                            @ev.Location
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="format">
+                                        @if (ev.EventChargeType?.Equals("Public", StringComparison.OrdinalIgnoreCase) == true)
+                                        {
+                                            <!-- Public Icon (Globe) -->
+                                            <svg class="format__icon format__icon--public" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 16px; height: 16px; color: #2563eb; vertical-align: middle; margin-right: 6px;">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <line x1="2" y1="12" x2="22" y2="12" />
+                                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                                            </svg>
+                                            <span>Public</span>
+                                        }
+                                        else
+                                        {
+                                            <!-- Private Icon (User / Lock) -->
+                                            <svg class="format__icon format__icon--private" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 16px; height: 16px; color: #9333ea; vertical-align: middle; margin-right: 6px;">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                                <circle cx="12" cy="7" r="4" />
+                                                <polyline points="16 11 18 13 22 9" />
+                                            </svg>
+                                            <span>Private</span>
+                                        }
+                                    </span>
+                                </td>
+                                <td>
+                                    <p class="sold">
+                                        <span><span class="sold__count">@ev.SoldTickets</span> <span class="sold__total">/ @ev.TotalTickets</span></span>
+                                        <span class="sold__pct">@ev.SoldTicketsPer</span>
+                                    </p>
+                                    <!-- Progress Meter -->
+                                    <span class="meter">
+                                        <span class="meter__fill meter__fill--live"
+                                              data-fill="@ev.SoldTicketsPer?.Replace("%", "").Trim()"
+                                              style="width: @ev.SoldTicketsPer;"></span>
+                                    </span>
+                                    <p class="cellsub">@ev.CheckIns checked in</p>
+                                </td>
+                                <td>
+                                    <p class="u-nowrap"><strong>&#8358;@ev.Revenue</strong></p>
+                                </td>
+                                <td>
+                                    <span class="badge @badgeCss">@ev.Status</span>
+                                </td>
+                                <td>
+                                    <div class="rowactions">
+                                        <a class="iconbtn" asp-page="/Events/EventHub" asp-route-eventId="@ev.EventId"
+                                           @* asp-route-slotId="@ev.SlotId" *@
+>
+                                            <span class="u-visually-hidden">Open Event Hub</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel panel__foot panel__foot--table" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Showing <b>@Model.myEventData.MyEvents.Count</b> of @Model.myEventData.TotalRecords events</span>
+
+                @{
+                    int pageSize = 10;
+                    int totalPages = (int)Math.Ceiling((double)Model.myEventData.TotalRecords / pageSize);
+                    if (totalPages < 1) totalPages = 1;
+                }
+
+                <nav class="pager" aria-label="Pagination">
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        bool isActive = (i == Model.PageNo);
+                        <a class="pager__btn"
+                           href="?pageNo=@i&status=@Model.Status&search=@Model.Search"
+                            @(isActive ? "aria-current=page" : "")>
+                            @i
+                        </a>
+                    }
+                </nav>
+            </div>
+        </section>
+    }
+</main>

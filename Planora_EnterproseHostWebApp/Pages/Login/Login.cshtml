@@ -1,0 +1,173 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Login.LoginModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sign in to your Planorahub enterprise account to manage events, ticketing, check-in and revenue.">
+    <meta name="theme-color" content="#240a26">
+    <meta name="robots" content="noindex, follow">
+
+    <title>Sign in | Planorahub</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/css/styles.css">
+</head>
+
+<body>
+    <div class="auth">
+
+        <!-- ============================================================
+         Brand panel — reusable block, identical on every auth page
+         ============================================================ -->
+        <aside class="auth__brand">
+            <span class="auth__orb" aria-hidden="true"></span>
+            <span class="auth__dots" aria-hidden="true"></span>
+
+            <header class="brand">
+                <span class="brand__mark" aria-hidden="true">
+                    <img src="~/assets/images/App.png" alt="logo" />
+                </span>
+                <div>
+                    <p class="brand__name">Planorahub</p>
+                    <p class="brand__tagline">Enterprise Platform</p>
+                </div>
+            </header>
+
+            <section class="pitch" aria-labelledby="pitch-title">
+                <h1 class="pitch__title" id="pitch-title">
+                    Run your events.<br>Skip the chaos.
+                </h1>
+                <p class="pitch__text">
+                    The complete enterprise event management suite for modern
+                    organizations across Africa and beyond.
+                </p>
+
+                <ul class="pitch__list">
+                    <li class="pitch__item">
+                        <span class="pitch__check" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        </span>
+                        Multi-currency ticketing &amp; checkout
+                    </li>
+                    <li class="pitch__item">
+                        <span class="pitch__check" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        </span>
+                        Real-time check-in &amp; seat maps
+                    </li>
+                    <li class="pitch__item">
+                        <span class="pitch__check" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        </span>
+                        Revenue analytics &amp; payouts
+                    </li>
+                    <li class="pitch__item">
+                        <span class="pitch__check" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        </span>
+                        Enterprise RBAC &amp; team management
+                    </li>
+                </ul>
+            </section>
+
+            <footer class="proof">
+                <span class="proof__avatars" aria-hidden="true">
+                    <span class="proof__avatar proof__avatar--a">KA</span>
+                    <span class="proof__avatar proof__avatar--b">FB</span>
+                    <span class="proof__avatar proof__avatar--c">DO</span>
+                </span>
+                <p>
+                    <strong class="proof__title">Trusted by 2,400+ hosts</strong>
+                    <span class="proof__meta">across 47 countries</span>
+                </p>
+            </footer>
+        </aside>
+
+        <!-- ============================================================
+         Sign-in form
+         ============================================================ -->
+        <main class="auth__main">
+            <section class="card" aria-labelledby="login-title">
+
+                <h2 class="card__title" id="login-title">Welcome back</h2>
+                <p class="card__subtitle">Sign in to your enterprise account</p>
+
+                @if (!string.IsNullOrEmpty(Model.LoginError))
+                {
+                    <p class="form__error-summary" role="alert">@Model.LoginError</p>
+                }
+
+                <form class="form" method="post">
+                    <div class="form__field">
+                        <label class="field__label" for="email">
+                            Work Email<span class="field__required" aria-hidden="true">*</span>
+                            <span class="u-visually-hidden">(required)</span>
+                        </label>
+                        <div class="field__control">
+                            <input class="field__input" id="email" asp-for="Email" type="email"
+                                   inputmode="email" autocomplete="email"
+                                   placeholder="you@company.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form__field">
+                        <label class="field__label" for="password">
+                            Password<span class="field__required" aria-hidden="true">*</span>
+                            <span class="u-visually-hidden">(required)</span>
+                        </label>
+                        <div class="field__control field__control--with-action">
+                            <input class="field__input" id="password" asp-for="Password" type="password"
+                                   autocomplete="current-password" placeholder="Your password"
+                                   maxlength="256" required>
+                            <button class="field__toggle" type="button" aria-pressed="false"
+                                    aria-controls="password" data-password-toggle>
+                                <span class="u-visually-hidden">Show password</span>
+                                <svg class="field__icon--show" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M1.8 10S4.9 4.6 10 4.6 18.2 10 18.2 10 15.1 15.4 10 15.4 1.8 10 1.8 10z" />
+                                    <circle cx="10" cy="10" r="2.6" />
+                                </svg>
+                                <svg class="field__icon--hide" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M2.5 2.5l15 15" />
+                                    <path d="M7.4 5.2A8.6 8.6 0 0 1 10 4.6c5.1 0 8.2 5.4 8.2 5.4a15 15 0 0 1-2.5 3.2M4.4 6.6A15.3 15.3 0 0 0 1.8 10s3.1 5.4 8.2 5.4a8.4 8.4 0 0 0 3-.5" />
+                                    <path d="M8.2 8.3a2.6 2.6 0 0 0 3.6 3.6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="checkrow">
+                        <label class="checkbox">
+                            <input type="checkbox" asp-for="RememberMe">
+                            Remember me
+                        </label>
+                        <a class="textlink" asp-page="/Dashboard/ResetPassword">Forgot password?</a>
+                    </div>
+
+                    <div class="form__actions">
+                        <button class="btn btn--primary btn--block" type="submit">Sign In</button>
+                    </div>
+                </form>
+
+                <p class="divider">or continue with</p>
+
+                <a class="sso" asp-page="/Dashboard/HostDashboard">
+                    <span class="sso__mark" aria-hidden="true">G</span>
+                    Google Workspace
+                </a>
+
+            </section>
+        </main>
+
+    </div>
+
+    <script src="~/assets/js/script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.PayoutAccountModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 6;
+    ViewData["StepTotal"] = 10;
+    ViewData["StepName"] = "Bank Details";
+    ViewData["StepHint"] = "Add Bank Details";
+}
+
+<div class="wizard__body">
+
+    <main class="wizard__content" data-page-roles="admin manager">
+        <div class="wizard__inner">
+            <form class="stack" action="addons-coupons.html" method="get">
+
+                <!-- Why this step exists at all -->
+                <p class="notice notice--alert notice--flat">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.5" /><circle cx="16.5" cy="16.5" r="2.5" /></svg>
+                    <span>
+                        <b>This event sells tickets, so a commission is charged.</b><br>
+                        Planorahub takes 2% of gross ticket sales and settles the rest to your
+                        account. That is the only reason this step is here &mdash; a non-ticketed
+                        or private event has nothing to settle and never sees it.
+                    </span>
+                </p>
+
+                <!-- Optional, and honest about it -->
+                <section class="panel" aria-labelledby="skip-title">
+                    <div class="panel__head">
+                        <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg></span>
+                        <div>
+                            <h2 class="panel__title" id="skip-title">You can do this later</h2>
+                            <p class="panel__meta">
+                                Nothing about publishing depends on it &mdash; money only moves once
+                                tickets sell
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <fieldset class="fieldset">
+                            <legend class="fieldset__legend">When do you want to set this up?</legend>
+                            <div class="radios radios--2">
+                                <label class="radio">
+                                    <input type="radio" name="payout-when" value="now" checked
+                                           data-reveal="payout-now">
+                                    <span class="radio__body">
+                                        <span class="radio__title">Now, while I am here</span>
+                                        <span class="radio__text">
+                                            Verified before the event goes live, so the first payout is not
+                                            held up
+                                        </span>
+                                    </span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="payout-when" value="later"
+                                           data-reveal-inverse="payout-now">
+                                    <span class="radio__body">
+                                        <span class="radio__title">Later, from the Event Hub</span>
+                                        <span class="radio__text">
+                                            Set it up under <b>Event Hub &rarr; Payout</b> any time before you
+                                            request a payout
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <p class="notice notice--info notice--flat u-mt-5" data-payout-later hidden>
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            Tickets still sell and guests still check in. Requesting a payout is the
+                            only thing that needs the account, and the hub asks for it then.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- The country decides the form -->
+                <div id="payout-now">
+                    <section class="panel" aria-labelledby="country-title">
+                        <div class="panel__head">
+                            <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg></span>
+                            <div>
+                                <h2 class="panel__title" id="country-title">Bank Details</h2>
+                                <p class="panel__meta">
+                                    Pick the account country first &mdash; it decides what is asked and
+                                    what is verified
+                                </p>
+                            </div>
+                        </div>
+                        <div class="panel__body">
+                            <div class="form__field">
+                                <label class="field__label" for="pv-country">
+                                    Account country
+                                </label>
+                                <select class="field__select" id="pv-country"
+                                        name="pv-country" data-pv-countrypick>
+                                    <option value="ng" selected>Nigeria &middot; NGN &middot; Nigerian Naira</option>
+                                    <option value="za">South Africa &middot; ZAR &middot; South African Rand</option>
+                                </select>
+                                <span class="field__hint">
+                                    The fields below and the check that runs on them both change with
+                                    this
+                                </span>
+                            </div>
+
+                            <div class="payoutform" data-pv-form="ng" hidden>
+                                <p class="payoutform__note">
+                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                    <span>
+                                        Nigeria settles by <b>NUBAN</b>. Ten digits plus the bank is enough for
+                                        the bank to return the account name &mdash; you never type the name
+                                        yourself, so it cannot be wrong.
+                                    </span>
+                                </p>
+
+                                <div class="formgrid formgrid--2 u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="ng-acct">
+                                            Account number<span class="field__required" aria-hidden="true">*</span>
+                                            <span class="u-visually-hidden">(required)</span>
+                                        </label>
+                                        <input class="field__input" id="ng-acct" name="ng-acct"
+                                               type="text" inputmode="numeric" autocomplete="off"
+                                               placeholder="10 digits" data-pv-acct="ng"
+                                               data-pv-len="10" required>
+                                        <span class="field__hint">10-digit NUBAN &mdash; the name is fetched, not typed</span>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="ng-bank">
+                                            Bank<span class="field__required" aria-hidden="true">*</span>
+                                            <span class="u-visually-hidden">(required)</span>
+                                        </label>
+                                        <input class="field__input" id="ng-bank" name="ng-bank"
+                                               type="text" list="ng-banklist" autocomplete="off"
+                                               placeholder="Start typing a bank name"
+                                               data-pv-bank="ng" required>
+                                        <datalist id="ng-banklist">
+                                            <option value="Guaranty Trust Bank (GTBank)" data-bank-code="058"></option>
+                                            <option value="Zenith Bank" data-bank-code="057"></option>
+                                            <option value="Access Bank" data-bank-code="044"></option>
+                                            <option value="First Bank of Nigeria" data-bank-code="011"></option>
+                                            <option value="First City Monument Bank (FCMB)" data-bank-code="214"></option>
+                                            <option value="Fidelity Bank" data-bank-code="070"></option>
+                                            <option value="Stanbic IBTC Bank" data-bank-code="221"></option>
+                                            <option value="Sterling Bank" data-bank-code="232"></option>
+                                            <option value="United Bank for Africa (UBA)" data-bank-code="033"></option>
+                                            <option value="Wema Bank" data-bank-code="035"></option>
+                                            <option value="Kuda Microfinance Bank" data-bank-code="50211"></option>
+                                            <option value="OPay Digital Services" data-bank-code="999992"></option>
+                                            <option value="PalmPay" data-bank-code="120001"></option>
+                                            <option value="Moniepoint MFB" data-bank-code="090405"></option>
+                                        </datalist>
+                                        <span class="field__hint">
+                                            Bank code
+                                            <b data-pv-code="ng">&mdash;</b>
+                                            &mdash; filled in from the bank you pick
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="verify" data-pv-box="ng">
+                                    <span class="verify__mark" data-pv-mark aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                                    <span class="verify__body">
+                                        <span class="verify__label" data-pv-label>
+                                            Not verified yet
+                                        </span>
+                                        <span class="verify__name" data-pv-name>
+                                            Enter the account number and pick the bank
+                                        </span>
+                                        <span class="verify__meta" data-pv-meta></span>
+                                    </span>
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-pv-run="ng" disabled>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg> <span data-pv-runlabel>Verify account</span>
+                                    </button>
+                                </div>
+
+                                <div class="formgrid formgrid--2 u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="ng-currency">Settlement currency</label>
+                                        <select class="field__select" id="ng-currency" name="ng-currency" data-pv-part>
+                                            <option>NGN &middot; Nigerian Naira</option>
+                                        </select>
+                                        <span class="field__hint">Locked to the account country</span>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="ng-vat">VAT status</label>
+                                        <select class="field__select" id="ng-vat" name="ng-vat" data-pv-part>
+                                            <option>VAT registered</option>
+                                            <option>Not VAT registered</option>
+                                            <option>VAT exempt</option>
+                                        </select>
+                                        <span class="field__hint">Shown on your commission invoices</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="payoutform" data-pv-form="za" hidden>
+                                <p class="payoutform__note">
+                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                    <span>
+                                        South Africa verifies against the account holder&rsquo;s identity, so the
+                                        bank needs an <b>account type</b> and an <b>identity document</b> as well
+                                        as the number &mdash; an AVS check without them comes back inconclusive.
+                                    </span>
+                                </p>
+
+                                <div class="formgrid formgrid--2 u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-acct">
+                                            Account number<span class="field__required" aria-hidden="true">*</span>
+                                            <span class="u-visually-hidden">(required)</span>
+                                        </label>
+                                        <input class="field__input" id="za-acct" name="za-acct"
+                                               type="text" inputmode="numeric" autocomplete="off"
+                                               placeholder="10 digits" data-pv-acct="za"
+                                               data-pv-len="10" required>
+                                        <span class="field__hint">Between 9 and 11 digits &mdash; 10 is the most common</span>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-bank">
+                                            Bank<span class="field__required" aria-hidden="true">*</span>
+                                            <span class="u-visually-hidden">(required)</span>
+                                        </label>
+                                        <input class="field__input" id="za-bank" name="za-bank"
+                                               type="text" list="za-banklist" autocomplete="off"
+                                               placeholder="Start typing a bank name"
+                                               data-pv-bank="za" required>
+                                        <datalist id="za-banklist">
+                                            <option value="Absa Bank" data-bank-code="632005"></option>
+                                            <option value="Capitec Bank" data-bank-code="470010"></option>
+                                            <option value="First National Bank (FNB)" data-bank-code="250655"></option>
+                                            <option value="Nedbank" data-bank-code="198765"></option>
+                                            <option value="Standard Bank of South Africa" data-bank-code="051001"></option>
+                                            <option value="African Bank" data-bank-code="678910"></option>
+                                            <option value="Bidvest Bank" data-bank-code="460005"></option>
+                                            <option value="Discovery Bank" data-bank-code="584000"></option>
+                                            <option value="TymeBank" data-bank-code="679000"></option>
+                                            <option value="Investec Bank" data-bank-code="462005"></option>
+                                        </datalist>
+                                        <span class="field__hint">
+                                            Bank code
+                                            <b data-pv-code="za">&mdash;</b>
+                                            &mdash; filled in from the bank you pick
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="formgrid formgrid--3 u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-dial">Country code<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <select class="field__select" id="za-dial" name="za-dial" data-pv-part>
+                                            <option>+27 &middot; South Africa</option>
+                                            <option>+266 &middot; Lesotho</option>
+                                            <option>+268 &middot; Eswatini</option>
+                                            <option>+267 &middot; Botswana</option>
+                                        </select>
+                                        <span class="field__hint">Dialling code for the number below</span>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-phone">Mobile number<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="za-phone" name="za-phone" type="text"
+                                               placeholder="82 000 0000" autocomplete="off" data-pv-part required>
+                                        <span class="field__hint">The number registered with the bank</span>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-accttype">Account type<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <select class="field__select" id="za-accttype" name="za-accttype" data-pv-part>
+                                            <option>Cheque / Current</option>
+                                            <option>Savings</option>
+                                            <option>Transmission</option>
+                                            <option>Bond</option>
+                                        </select>
+                                        <span class="field__hint">Required by the AVS check</span>
+                                    </div>
+                                </div>
+
+                                <div class="formgrid formgrid--2 u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-doctype">Document type<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <select class="field__select" id="za-doctype" name="za-doctype" data-pv-part>
+                                            <option>South African ID</option>
+                                            <option>Passport</option>
+                                            <option>Company registration number</option>
+                                        </select>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-docno">Document number<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="za-docno" name="za-docno" type="text"
+                                               placeholder="8001015009087" autocomplete="off" data-pv-part required>
+                                        <span class="field__hint">Matched against the name the bank holds</span>
+                                    </div>
+                                </div>
+
+                                <div class="verify" data-pv-box="za">
+                                    <span class="verify__mark" data-pv-mark aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                                    <span class="verify__body">
+                                        <span class="verify__label" data-pv-label>
+                                            Not verified yet
+                                        </span>
+                                        <span class="verify__name" data-pv-name>
+                                            Enter the account number and pick the bank
+                                        </span>
+                                        <span class="verify__meta" data-pv-meta></span>
+                                    </span>
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-pv-run="za" disabled>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg> <span data-pv-runlabel>Verify account</span>
+                                    </button>
+                                </div>
+
+                                <div class="formgrid formgrid--2 u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-currency">Settlement currency</label>
+                                        <select class="field__select" id="za-currency" name="za-currency" data-pv-part>
+                                            <option>ZAR &middot; South African Rand</option>
+                                        </select>
+                                        <span class="field__hint">Locked to the account country</span>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="za-vat">VAT status</label>
+                                        <select class="field__select" id="za-vat" name="za-vat" data-pv-part>
+                                            <option>VAT registered</option>
+                                            <option>Not VAT registered</option>
+                                            <option>VAT exempt</option>
+                                        </select>
+                                        <span class="field__hint">Shown on your commission invoices</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel u-mt-6" aria-labelledby="holder-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title" id="holder-title">Who holds the account</h2>
+                                <p class="panel__meta">
+                                    Read back from the bank &mdash; this is what verification confirms
+                                </p>
+                            </div>
+                        </div>
+                        <div class="panel__body">
+                            <dl class="reglist">
+                                <dt>Account name</dt>
+                                <dd><b data-pv-holder>Not verified yet</b></dd>
+                                <dt>Bank</dt>
+                                <dd data-pv-holderbank>&mdash;</dd>
+                                <dt>Account number</dt>
+                                <dd data-pv-holderacct>&mdash;</dd>
+                                <dt>Bank code</dt>
+                                <dd data-pv-holdercode>&mdash;</dd>
+                                <dt>Verified</dt>
+                                <dd data-pv-holderstate>No</dd>
+                            </dl>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg>
+                                Details are encrypted at rest. Verification is a name lookup with the
+                                bank &mdash; no money moves and no debit is made against the account.
+                            </p>
+                        </div>
+                    </section>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/TicketPricing" data-wizard-link><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <div class="wizard__foot-end">
+            @* <a class="btn btn--quiet" href="addons-coupons.html" data-wizard-link>Skip</a> *@
+            <a class="btn btn--primary" asp-page="/CreateEvent/AddonsCoupons" data-wizard-link>Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></a>
+        </div>
+    </footer>
+</div>
+
+<div class="backdrop" data-backdrop></div>
+
+<div class="modal" id="discard-modal" role="dialog" aria-modal="true"
+     aria-labelledby="discard-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="discard-title">Discard this draft?</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+        <div class="modal__body">
+            <p class="confirmbox">
+                <span class="confirmbox__name">Tech Summit Africa 2026</span>
+                <span class="confirmbox__meta">
+                    Everything entered so far is removed &mdash; this cannot be undone
+                </span>
+            </p>
+            <p class="modal__note">
+                Leaving the wizard without discarding keeps the draft, so you can pick it up from
+                My Events whenever you like.
+            </p>
+        </div>
+        <div class="modal__foot">
+            <a class="btn btn--outline" href="../../pages/my-events.html">Keep the draft</a>
+            <button class="btn btn--danger" type="button" data-modal-close
+                    data-action="Draft discarded" data-action-tone="warn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Discard draft
+            </button>
+        </div>
+    </div>
+</div>

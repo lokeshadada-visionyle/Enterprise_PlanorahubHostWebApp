@@ -1,0 +1,607 @@
+﻿@page
+@using Planora_EnterproseHostWebApp.Models
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubRsvpModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2026 &middot; Live";
+
+    var rsvpGuestData = Model.eventHubRsvpData;
+    var rsvpRespData = Model.rsvpResponseData;
+}
+
+<div data-view-panel="rsvp" data-role-only="admin manager" data-type-only="private">
+
+    <!-- Locked because the event was created with RSVP turned off -->
+    @if ((rsvpGuestData == null || rsvpGuestData.Status != 1) && (rsvpRespData == null || rsvpRespData.Status != 1))
+    {
+        <section class="lockcard" data-rsvp-locked>
+            <span class="tile tile--lg tile--muted" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg>
+            </span>
+            <div class="lockcard__body">
+                <h2 class="lockcard__title">RSVP is switched off for this event</h2>
+                <p class="lockcard__text">
+                    This event was created with <b>&ldquo;No &mdash; ticket everyone directly&rdquo;</b>, so there is nothing to collect here. Guests and their tickets are handled on the <b>Guests</b> tab instead.
+                </p>
+                <p class="lockcard__actions">
+                    <button class="btn btn--outline btn--sm" type="button" data-view="guests">
+                        Go to Guests
+                    </button>
+                    <a class="btn btn--quiet btn--sm" href="create-event/rsvp-setup.html?type=private">
+                        Turn RSVP on in RSVP Setup
+                    </a>
+                </p>
+            </div>
+        </section>
+    }
+    else
+    {
+        <div data-rsvp-live>
+            <div class="hubhead">
+                <div class="hubhead__body">
+                    <h2 class="hubhead__title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> RSVP
+                    </h2>
+                    <p class="hubhead__text">
+                        Build the guest list, send the invitation, then issue tickets to whoever accepts
+                    </p>
+                </div>
+                <div class="hubhead__actions">
+                    <button class="btn btn--outline btn--sm" type="button" data-modal-open="rsvpexport-modal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export responses
+                    </button>
+                    <button class="btn btn--primary btn--sm" type="button" data-modal-open="rsvpsend-modal" data-rsvp-gated>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Send invitations
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================= 1. Guest list ================= -->
+            <section class="panel" aria-labelledby="hubguests-title">
+                <div class="panel__head">
+                    <div>
+                        <h3 class="panel__title" id="hubguests-title">1. Guest List</h3>
+                        <p class="panel__meta">
+                            Nothing can be sent until somebody is on it. Every guest needs a name plus at least one of email or WhatsApp number.
+                        </p>
+                    </div>
+                    <div class="hubhead__actions">
+                        <button class="btn btn--quiet btn--sm" type="button" data-action="CSV template downloaded &mdash; name, email, WhatsApp number, tier">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> CSV template
+                        </button>
+                        <button class="btn btn--outline btn--sm" type="button" data-modal-open="guestimport-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 16V5m0 0 4 4m-4-4-4 4M5 20h14" /></svg> Upload list
+                        </button>
+                        <button class="btn btn--primary btn--sm" type="button" data-guest-new data-modal-open="guestadd-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add guest
+                        </button>
+                    </div>
+                </div>
+                <div class="panel__body">
+                    @{
+                        var rsvpGuests = rsvpGuestData?.RsvpGuests ?? new List<EventHubRsvpGuest>();
+                        int guestCount = rsvpGuests.Count;
+                    }
+
+                    <p class="bulkbar">
+                        <span>
+                            <b data-guestlist-count>@guestCount guests</b>
+                        </span>
+                        <span class="bulkbar__actions">
+                            <button class="btn btn--outline btn--sm" type="button" data-action="Guest list exported as CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export list
+                            </button>
+                        </span>
+                    </p>
+
+                    <div class="toolbar u-mt-5">
+                        <div class="searchbox">
+                            <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                            <label class="u-visually-hidden" for="guestlist-search">Search the guest list</label>
+                            <input class="searchbox__input" id="guestlist-search" name="guestlist-search" type="search" placeholder="Search by name, email or number" data-tablefilter="guestlist-table">
+                        </div>
+                        <div class="toolbar__field">
+                            <label class="u-visually-hidden" for="guestlist-tier">Filter by tier</label>
+                            <select class="field__select" id="guestlist-tier" name="guestlist-tier" data-tablefilter="guestlist-table" data-tablefilter-col="1">
+                                <option value="">All tiers</option>
+                                @foreach (var tier in rsvpGuests.Select(g => g.TicketType).Where(t => !string.IsNullOrEmpty(t)).Distinct())
+                                {
+                                    <option value="@tier">@tier</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tablewrap u-mt-5">
+                        <table class="table table--narrow" id="guestlist-table">
+                            <caption class="u-visually-hidden">Every guest on the list, however they were added</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Guest</th>
+                                    <th scope="col">Tier</th>
+                                    <th scope="col">Added</th>
+                                    <th scope="col">Invitation</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestlist-body">
+                                @if (rsvpGuests.Any())
+                                {
+                                    foreach (var guest in rsvpGuests)
+                                    {
+                                        string initials = !string.IsNullOrWhiteSpace(guest.GuestName)
+                                            ? string.Concat(guest.GuestName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(n => n[0])).ToUpper()
+                                            : "G";
+
+                                        string statusClass = guest.Status?.ToLower() switch
+                                        {
+                                            "accepted" => "badge--live",
+                                            "declined" => "badge--draft",
+                                            "awaiting reply" or "pending" => "badge--paused",
+                                            "invitation expired" or "expired" => "badge--out",
+                                            _ => "badge--draft"
+                                        };
+
+                                        <tr data-guest-row data-guest="@guest.GuestId" data-guest-state="@guest.Status?.ToLower()" data-guest-tier="@guest.TicketType">
+                                            <td>
+                                                <div class="cellstack">
+                                                    <span class="avatar" aria-hidden="true">@initials</span>
+                                                    <span class="cellstack__body">
+                                                        <span class="cellstack__name" data-guest-name>@guest.GuestName</span>
+                                                        <span class="cellsub">
+                                                            <span data-guest-email>@guest.Email</span>
+                                                            @if (!string.IsNullOrWhiteSpace(guest.PhoneNo))
+                                                            {
+                                                                <text> &middot; <span data-guest-phone>@guest.PhoneNo</span></text>
+                                                            }
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge--nodot badge--role" data-guest-tierlabel>@guest.TicketType</span>
+                                            </td>
+                                            <td class="u-muted">@(string.IsNullOrWhiteSpace(guest.AddedFrom) ? "Added by hand" : guest.AddedFrom)</td>
+                                            <td>
+                                                <span class="badge @statusClass" data-guest-statelabel>@guest.Status</span>
+                                            </td>
+                                            <td>
+                                                <div class="rowactions">
+                                                    <button class="iconbtn" type="button" data-guest-edit="@guest.GuestId" data-modal-open="guestadd-modal">
+                                                        <span class="u-visually-hidden">Edit @guest.GuestName</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-guest-delete="@guest.GuestId" data-modal-open="guestdel-modal">
+                                                        <span class="u-visually-hidden">Delete @guest.GuestName</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (!rsvpGuests.Any())
+                    {
+                        <p class="emptystate" data-guestlist-empty>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                            <span class="emptystate__body">
+                                <span class="emptystate__title">No guests on the list yet</span>
+                                <span class="emptystate__text">
+                                    Upload a CSV or Excel file, or add guests one at a time. Invitations stay disabled until somebody is here.
+                                </span>
+                            </span>
+                            <button class="btn btn--primary btn--sm" type="button" data-guest-new data-modal-open="guestadd-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add the first guest
+                            </button>
+                        </p>
+                    }
+                </div>
+            </section>
+
+            <!-- ================= 2. Send the invitation ================= -->
+            <section class="panel u-mt-6" aria-labelledby="hubinvite-title">
+                <div class="panel__head panel__head--plain">
+                    <div>
+                        <h3 class="panel__title" id="hubinvite-title">2. Send the RSVP Invitation</h3>
+                        <p class="panel__meta">
+                            Choose who it goes to, write it, then send &mdash; guests answer the RSVP form you built in the wizard
+                        </p>
+                    </div>
+                </div>
+                <div class="panel__body">
+                    <div class="channelpick">
+                        <label class="sendcard">
+                            <input type="checkbox" name="hub-channel-email" checked>
+                            <span class="sendcard__body">
+                                <span class="sendcard__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6.5 8.5 6 8.5-6" /></svg> Email invitation</span>
+                                <span class="sendcard__text">RSVP link plus an ICS calendar attachment</span>
+                            </span>
+                            <span class="sendcard__cost">&#8358;1.50 / 1,000</span>
+                        </label>
+                        <label class="sendcard">
+                            <input type="checkbox" name="hub-channel-whatsapp" checked>
+                            <span class="sendcard__body">
+                                <span class="sendcard__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.7a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.4-4.6A8.4 8.4 0 1 1 20.5 11.7z" /><path d="M9 9.2c0 3 2.4 5.4 5.3 5.4l.6-1.4-1.8-.8-.9.9a4.7 4.7 0 0 1-2-2l.9-.9-.8-1.8L9 9.2z" /></svg> WhatsApp invitation</span>
+                                <span class="sendcard__text">Approved template with Accept and Decline quick replies</span>
+                            </span>
+                            <span class="sendcard__cost">&#8358;35 / message</span>
+                        </label>
+                    </div>
+
+                    <fieldset class="fieldset u-mt-5">
+                        <legend class="fieldset__legend">Who receives this invitation</legend>
+                        <div class="groups">
+                            <div class="grouppick">
+                                <label class="checkline">
+                                    <input type="checkbox" name="rsvp-group-new" data-group="new" checked>
+                                    <span class="checkline__body">
+                                        <span class="checkline__title">Newly added guests</span>
+                                        <span class="checkline__text">On the list but never invited</span>
+                                    </span>
+                                </label>
+                                <span class="grouppick__count"><b data-group-count="new">0</b> guests</span>
+                            </div>
+                            <div class="grouppick">
+                                <label class="checkline">
+                                    <input type="checkbox" name="rsvp-group-expired" data-group="expired">
+                                    <span class="checkline__body">
+                                        <span class="checkline__title">Expired invitations</span>
+                                        <span class="checkline__text">Invited, but the link timed out before they replied</span>
+                                    </span>
+                                </label>
+                                <span class="grouppick__count"><b data-group-count="expired">0</b> guests</span>
+                            </div>
+                            <div class="grouppick">
+                                <label class="checkline">
+                                    <input type="checkbox" name="rsvp-group-pending" data-group="pending">
+                                    <span class="checkline__body">
+                                        <span class="checkline__title">Pending RSVP guests</span>
+                                        <span class="checkline__text">Invited and still deciding &mdash; this resends</span>
+                                    </span>
+                                </label>
+                                <span class="grouppick__count"><b data-group-count="pending">0</b> guests</span>
+                            </div>
+                            <div class="grouppick">
+                                <label class="checkline">
+                                    <input type="checkbox" name="rsvp-group-tier" data-group="tier">
+                                    <span class="checkline__body">
+                                        <span class="checkline__title">A specific ticket tier</span>
+                                        <span class="checkline__text">Everyone on one tier, whatever their reply</span>
+                                    </span>
+                                </label>
+                                <span class="grouppick__count"><b data-group-count="tier">0</b> guests</span>
+                                <span class="grouppick__extra" data-group-extra="tier" hidden>
+                                    <label class="u-visually-hidden" for="rsvp-group-tier">Which ticket tier</label>
+                                    <select class="field__select" id="rsvp-group-tier" name="rsvp-group-tier" data-group-tier>
+                                        @foreach (var tier in rsvpGuests.Select(g => g.TicketType).Where(t => !string.IsNullOrEmpty(t)).Distinct())
+                                        {
+                                            <option value="@tier">@tier</option>
+                                        }
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="grouppick">
+                                <label class="checkline">
+                                    <input type="checkbox" name="rsvp-group-picked" data-group="picked">
+                                    <span class="checkline__body">
+                                        <span class="checkline__title">Specific guests</span>
+                                        <span class="checkline__text">Hand-picked from the list below</span>
+                                    </span>
+                                </label>
+                                <span class="grouppick__count"><b data-group-count="picked">0</b> guests</span>
+                                <span class="grouppick__extra grouppick__extra--wide" data-group-extra="picked" hidden>
+                                    <button class="btn btn--outline btn--sm" type="button" data-modal-open="guestpick-modal">
+                                        Choose guests &mdash; <b data-picked-count>0</b> selected
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="grouptotal">
+                            <span class="grouptotal__body"><b data-group-total>0</b> guests will receive this invitation</span>
+                            <span class="grouptotal__note" data-group-note>Pick at least one group</span>
+                        </p>
+                    </fieldset>
+
+                    <div class="formgrid u-mt-5">
+                        <div class="form__field">
+                            <label class="field__label" for="hub-deadline">Replies close</label>
+                            <select class="field__select" id="hub-deadline" name="hub-deadline">
+                                <option>3 days before the event</option>
+                                <option>7 days before the event</option>
+                                <option>14 days before the event</option>
+                                <option>When capacity is reached</option>
+                            </select>
+                            <span class="field__hint">After this, an unanswered invitation shows as expired and can be re-sent</span>
+                        </div>
+                    </div>
+
+                    <div class="form__field u-mt-5">
+                        <span class="field__label">Invitation message</span>
+                        <div class="rte" data-rte>
+                            <div class="rte__bar" role="toolbar" aria-label="Message formatting">
+                                <button class="rte__btn rte__btn--bold" type="button" data-rte-cmd="bold" aria-pressed="false"><span aria-hidden="true">B</span><span class="u-visually-hidden">Bold</span></button>
+                                <button class="rte__btn rte__btn--italic" type="button" data-rte-cmd="italic" aria-pressed="false"><span aria-hidden="true">I</span><span class="u-visually-hidden">Italic</span></button>
+                                <button class="rte__btn rte__btn--under" type="button" data-rte-cmd="underline" aria-pressed="false"><span aria-hidden="true">U</span><span class="u-visually-hidden">Underline</span></button>
+                                <span class="rte__sep" aria-hidden="true"></span>
+                                <button class="rte__btn" type="button" data-rte-block="h3"><span aria-hidden="true">H</span><span class="u-visually-hidden">Heading</span></button>
+                                <button class="rte__btn" type="button" data-rte-block="p"><span aria-hidden="true">&para;</span><span class="u-visually-hidden">Paragraph</span></button>
+                                <button class="rte__btn" type="button" data-rte-cmd="insertUnorderedList">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" /></svg>
+                                    <span class="u-visually-hidden">Bullet list</span>
+                                </button>
+                                <span class="rte__sep" aria-hidden="true"></span>
+                                <button class="rte__btn" type="button" data-modal-open="rtelink-modal">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></svg>
+                                    <span class="u-visually-hidden">Insert a link</span>
+                                </button>
+                                <button class="rte__btn" type="button" data-modal-open="rteimg-modal">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                                    <span class="u-visually-hidden">Insert an image</span>
+                                </button>
+                                <button class="rte__btn" type="button" data-rte-cmd="removeFormat">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                    <span class="u-visually-hidden">Clear formatting</span>
+                                </button>
+                            </div>
+
+                            <div class="rte__area" id="rsvp-message" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Invitation message" data-rte-area>
+                                <h3>You are invited to Tech Summit Africa 2026</h3>
+                                <p>
+                                    <b>Eko Convention Centre, Lagos</b> &middot; 6&ndash;7 August 2026. Please reply so we can reserve your place.
+                                </p>
+                                <ul>
+                                    <li>Doors open 08:30, keynote at 09:00</li>
+                                    <li>Lunch and the evening reception are included</li>
+                                </ul>
+                            </div>
+
+                            <p class="rte__foot">
+                                <span class="field__hint">Guest name, event name, date and venue are merged in automatically.</span>
+                                <button class="btn btn--quiet btn--sm" type="button" data-modal-open="rtepreview-modal">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Preview as a guest
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="optins u-mt-5">
+                        <div class="optin">
+                            <input class="optin__box" id="hub-reminder" name="hub-reminder" type="checkbox" checked>
+                            <label for="hub-reminder">
+                                <span class="optin__title">Remind guests who have not replied</span>
+                                <span class="optin__hint">One reminder, 72 hours later, on the same channels</span>
+                            </label>
+                        </div>
+                        <div class="optin">
+                            <input class="optin__box" id="hub-autoticket" name="hub-autoticket" type="checkbox" checked>
+                            <label for="hub-autoticket">
+                                <span class="optin__title">Issue the ticket automatically on acceptance</span>
+                                <span class="optin__hint">Turn this off to approve each acceptance by hand below</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="bulkbar u-mt-5">
+                        <span><b data-group-total>0</b> guests selected to receive this</span>
+                        <span class="bulkbar__actions">
+                            <button class="btn btn--outline btn--sm" type="button" data-action="Test invitation sent to your own address">
+                                Send test to myself
+                            </button>
+                            <button class="btn btn--primary btn--sm" type="button" data-modal-open="rsvpsend-modal" data-rsvp-gated>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Send invitations
+                            </button>
+                        </span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- ================= 3. Responses and tickets ================= -->
+            <section class="panel u-mt-6" aria-labelledby="hubresp-title">
+                <div class="panel__head panel__head--plain">
+                    <div>
+                        <h3 class="panel__title" id="hubresp-title">3. Guest Responses &amp; Ticket Delivery</h3>
+                        <p class="panel__meta">
+                            Replies land here with the answers each guest gave to your questions
+                        </p>
+                    </div>
+                    <button class="btn btn--primary btn--sm" type="button" data-modal-open="rsvpticket-modal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> Send tickets to accepted
+                    </button>
+                </div>
+                <div class="panel__body">
+                    <div class="rsvpstat">
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Guests on list</span>
+                                <span class="alloc__value">@((rsvpRespData?.TotalGuests ?? 0).ToString("N0"))</span>
+                            </p>
+                            <p class="alloc__foot"><span>Imported plus added by hand</span></p>
+                        </article>
+
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Invitations sent</span>
+                                <span class="alloc__value">@((rsvpRespData?.TotalInvitations ?? 0).ToString("N0"))</span>
+                            </p>
+                            <p class="alloc__foot"><span>Email @(rsvpRespData?.TotalEmailsSent ?? 0) &middot; WhatsApp @(rsvpRespData?.TotalWhatsAppSent ?? 0)</span></p>
+                        </article>
+
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Accepted</span>
+                                <span class="alloc__value">@((rsvpRespData?.Accepted ?? 0).ToString("N0"))</span>
+                            </p>
+                            <p class="alloc__foot"><span>@(rsvpRespData?.DeclinedPer ?? 0)% declined</span></p>
+                        </article>
+
+                        <article class="alloc">
+                            <div class="alloc__top">
+                                <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg></span>
+                            </div>
+                            <p>
+                                <span class="alloc__label">Tickets issued</span>
+                                <span class="alloc__value">@((rsvpRespData?.TotalTicketsIssued ?? 0).ToString("N0"))</span>
+                            </p>
+                            <p class="alloc__foot"><span>@(rsvpRespData?.TicketsToIssue ?? 0) accepted guests still to receive</span></p>
+                        </article>
+                    </div>
+
+                    <div class="toolbar u-mt-5">
+                        <div class="searchbox">
+                            <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                            <label class="u-visually-hidden" for="hub-rsvp-search">Search guests</label>
+                            <input class="searchbox__input" id="hub-rsvp-search" name="hub-rsvp-search" type="search" placeholder="Search by name, email or reference" data-tablefilter="rsvp-table">
+                        </div>
+                        <div class="toolbar__field">
+                            <label class="u-visually-hidden" for="hub-rsvp-filter">Filter by response</label>
+                            <select class="field__select" id="hub-rsvp-filter" name="hub-rsvp-filter" data-tablefilter="rsvp-table" data-tablefilter-col="3">
+                                <option value="">All responses</option>
+                                <option>Accepted</option>
+                                <option>Declined</option>
+                                <option>Awaiting reply</option>
+                                <option>Not yet sent</option>
+                                <option>Invitation expired</option>
+                                <option>Revoked</option>
+                            </select>
+                        </div>
+                        <button class="btn btn--outline btn--sm" type="button" data-modal-open="rsvpexport-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export list
+                        </button>
+                    </div>
+
+                    <div class="tablewrap u-mt-5">
+                        <table class="table table--narrow" id="rsvp-table">
+                            <caption class="u-visually-hidden">Invited guests, their answers, response and ticket status</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Guest</th>
+                                    <th scope="col">Their answers</th>
+                                    <th scope="col">Ticket ref</th>
+                                    <th scope="col">Response</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (rsvpRespData?.RsvpGuestResponses != null && rsvpRespData.RsvpGuestResponses.Any())
+                                {
+                                    foreach (var resp in rsvpRespData.RsvpGuestResponses)
+                                    {
+                                        string initials = !string.IsNullOrWhiteSpace(resp.Name)
+                                            ? string.Concat(resp.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(n => n[0])).ToUpper()
+                                            : "G";
+
+                                        string responseStatus = resp.Response ?? string.Empty;
+                                        string badgeClass = responseStatus.ToLower() switch
+                                        {
+                                            "accepted" => "badge--live",
+                                            "declined" => "badge--draft",
+                                            "awaiting reply" or "pending" => "badge--paused",
+                                            "invitation expired" or "expired" => "badge--out",
+                                            _ => "badge--draft"
+                                        };
+
+                                        bool isAccepted = string.Equals(responseStatus, "Accepted", StringComparison.OrdinalIgnoreCase);
+                                        bool isDeclined = string.Equals(responseStatus, "Declined", StringComparison.OrdinalIgnoreCase);
+                                        bool isUnsent = string.Equals(responseStatus, "Not yet sent", StringComparison.OrdinalIgnoreCase);
+                                        bool isPending = string.Equals(responseStatus, "Awaiting reply", StringComparison.OrdinalIgnoreCase) || string.Equals(responseStatus, "Pending", StringComparison.OrdinalIgnoreCase);
+
+                                        <tr data-resp-row data-guest="@resp.GuestId" data-guest-state="@responseStatus.ToLower()">
+                                            <td>
+                                                <div class="cellstack">
+                                                    <span class="avatar" aria-hidden="true">@initials</span>
+                                                    <span class="cellstack__body">
+                                                        <span class="cellstack__name">@resp.Name</span>
+                                                        <span class="cellsub">@resp.Email</span>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(resp.Answers))
+                                                {
+                                                    @resp.Answers
+                                                }
+                                                else
+                                                {
+                                                    <text>&mdash;</text>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="u-nowrap" data-guest-ref>
+                                                    @(!string.IsNullOrWhiteSpace(resp.TicketRef) ? resp.TicketRef : "—")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @badgeClass" data-guest-statelabel>@responseStatus</span>
+                                            </td>
+                                            <td>
+                                                <div class="rowactions">
+                                                    @if (isAccepted)
+                                                    {
+                                                        if (!string.IsNullOrWhiteSpace(resp.TicketRef) && resp.TicketRef != "—")
+                                                        {
+                                                            <span class="badge badge--nodot badge--live">Ticket sent</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button class="btn btn--outline btn--sm" type="button" data-modal-open="rsvpticket-modal" data-ticket-one="@resp.GuestId">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> Send ticket
+                                                            </button>
+                                                        }
+                                                        <button class="iconbtn iconbtn--danger" type="button" data-revoke="@resp.GuestId" data-modal-open="revoke-modal">
+                                                            <span class="u-visually-hidden">Revoke the invitation sent to @resp.Name</span>
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                                        </button>
+                                                    }
+                                                    else if (isDeclined)
+                                                    {
+                                                        <button class="btn btn--quiet btn--sm" type="button" data-action="Invitation resent to @resp.Name" data-guest-restate="@resp.GuestId|pending">Re-invite</button>
+                                                    }
+                                                    else if (isUnsent)
+                                                    {
+                                                        <button class="btn btn--quiet btn--sm" type="button" data-action="Invitation sent to @resp.Name" data-guest-restate="@resp.GuestId|pending">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Send invitation
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn--quiet btn--sm" type="button" data-action="RSVP resent to @resp.Name">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Resend
+                                                        </button>
+                                                        <button class="iconbtn iconbtn--danger" type="button" data-revoke="@resp.GuestId" data-modal-open="revoke-modal">
+                                                            <span class="u-visually-hidden">Revoke the invitation sent to @resp.Name</span>
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="notice notice--info notice--flat u-mt-5">
+                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                        Revoking kills the link the guest already holds &mdash; but the message that carried it was still sent, so those credits stay spent.
+                    </p>
+                </div>
+            </section>
+        </div>
+    }
+</div>

@@ -1,0 +1,1413 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Plans.MyPlanModel
+@{
+    Layout = "_Layout";
+    ViewData["PageName"] = "My Plan";
+    ViewData["PageDesc"] = "Acme Global Enterprises &middot; Professional Enterprise";
+}
+
+<main class="shell__main shell__main--flush" data-page-roles="admin finance">
+
+    <nav class="subtabs" role="tablist" aria-label="Plan sections" data-viewswitch>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="true"
+                data-view="events">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg> My Events &amp; Hub
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                data-view="usage">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8m0 0h-5m5 0v5" /></svg> Package &amp; Usage Monitor
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                data-view="wallet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg> Communication Wallet
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                data-view="billing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> Billing &amp; Invoices
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                data-view="audit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg> Usage &amp; Audit Report
+        </button>
+    </nav>
+
+    <div class="section">
+        <div data-view-panel="events">
+            <section class="grid grid--4" aria-label="Portfolio at a glance">
+                <article class="figure">
+                    <h3 class="figure__label">Events this contract</h3>
+                    <p class="figure__value figure__value--brand">42 <span class="alloc__total">/ 50</span></p>
+                </article>
+                <article class="figure">
+                    <h3 class="figure__label">Guests registered</h3>
+                    <p class="figure__value figure__value--info">18,500 <span class="alloc__total">/ 20,000</span></p>
+                </article>
+                <article class="figure">
+                    <h3 class="figure__label">Ticketed revenue</h3>
+                    <p class="figure__value figure__value--success">$124,500</p>
+                </article>
+                <article class="figure">
+                    <h3 class="figure__label">Commission accrued</h3>
+                    <p class="figure__value figure__value--accent">$2,490</p>
+                </article>
+            </section>
+
+            <div class="hubhead u-mt-6">
+                <div class="hubhead__body">
+                    <h2 class="hubhead__title">My Events &amp; Hub</h2>
+                    <p class="hubhead__text">
+                        Every event counts against your allocation &mdash; only ticketed events accrue
+                        the 2% commission
+                    </p>
+                </div>
+                <div class="hubhead__actions">
+                    <a class="btn btn--outline btn--sm" href="my-events.html">All events</a>
+                    <a class="btn btn--primary btn--sm"
+                       href="create-event/event-type.html">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Create Event</a>
+                    </div>
+                </div>
+
+                <div class="tablewrap">
+                    <table class="table table--narrow">
+                        <caption class="u-visually-hidden">
+                            Events with status, attendance, slots, revenue and billing type
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Event</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Attendance</th>
+                                <th scope="col">Schedule</th>
+                                <th scope="col">Ticket revenue</th>
+                                <th scope="col">Billing</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="cellstack__name">Tech Summit Africa 2025</span></td>
+                                <td><span class="badge badge--live">Live</span></td>
+                                <td>847 / 1,000</td>
+                                <td class="u-muted">3 days &middot; 6 slots</td>
+                                <td><b>$124,500</b></td>
+                                <td>
+                                    <span class="badge badge--nodot badge--vendor">Ticketed</span>
+                                </td>
+                                <td>
+                                    <div class="rowactions rowactions--menu">
+                                        <a class="iconbtn" href="event-hub.html">
+                                            <span class="u-visually-hidden">Open Event Hub &mdash; Tech Summit Africa 2025</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                        </a>
+                                        <a class="iconbtn" href="event-hub.html" data-role-only="admin manager">
+                                            <span class="u-visually-hidden">Check-in desk &mdash; Tech Summit Africa 2025</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg>
+                                        </a>
+                                        <button class="iconbtn" type="button"
+                                                aria-expanded="false" aria-haspopup="true"
+                                                aria-controls="menu-plan-1" data-rowmenu="menu-plan-1">
+                                            <span class="u-visually-hidden">More actions for Tech Summit Africa 2025</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>
+                                        </button>
+                                        <div class="rowmenu" id="menu-plan-1" role="menu"
+                                             aria-label="Actions for Tech Summit Africa 2025" hidden>
+                                            <p class="rowmenu__head">
+                                                <span class="rowmenu__name">Tech Summit Africa 2025</span>
+                                                <span class="badge badge--live">Live</span>
+                                            </p>
+                                            <a class="rowmenu__item" href="event-hub.html" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                                <span>Open Event Hub</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="event-hub.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg>
+                                                <span>Check-in desk</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="event-hub.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                                <span>Send a broadcast</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="event-hub.html" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                                <span>Live sales</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="create-event/basic-details.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                <span>Edit event</span>
+                                            </a>
+                                            <button class="rowmenu__item rowmenu__item--danger" type="button" data-modal-open="endevent-modal" data-event-name="Tech Summit Africa 2025" data-role-only="admin" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg>
+                                                <span>End event</span>
+                                            </button>
+                                            <button class="rowmenu__item rowmenu__item--danger" type="button" data-modal-open="cancelevent-modal" data-event-name="Tech Summit Africa 2025" data-role-only="admin" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                                <span>Cancel remaining dates</span>
+                                            </button>
+                                            <p class="rowmenu__blockedhead">Not available while live</p>
+                                            <span class="rowmenu__blocked">
+                                                <b>Delete event</b> &mdash; published events are cancelled, not deleted
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Edit schedule</b> &mdash; the schedule is locked once an event goes live
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="cellstack__name">Afrobeat Night Lagos</span></td>
+                                <td><span class="badge badge--upcoming">Upcoming</span></td>
+                                <td>322 / 500</td>
+                                <td class="u-muted">1 day &middot; 2 slots</td>
+                                <td><b>$16,100</b></td>
+                                <td>
+                                    <span class="badge badge--nodot badge--vendor">Ticketed</span>
+                                </td>
+                                <td>
+                                    <div class="rowactions rowactions--menu">
+                                        <a class="iconbtn" href="event-hub.html">
+                                            <span class="u-visually-hidden">Open Event Hub &mdash; Afrobeat Night Lagos</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                        </a>
+                                        <button class="iconbtn" type="button" data-action="Public event page opened in a new tab">
+                                            <span class="u-visually-hidden">View public page &mdash; Afrobeat Night Lagos</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                aria-expanded="false" aria-haspopup="true"
+                                                aria-controls="menu-plan-2" data-rowmenu="menu-plan-2">
+                                            <span class="u-visually-hidden">More actions for Afrobeat Night Lagos</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>
+                                        </button>
+                                        <div class="rowmenu" id="menu-plan-2" role="menu"
+                                             aria-label="Actions for Afrobeat Night Lagos" hidden>
+                                            <p class="rowmenu__head">
+                                                <span class="rowmenu__name">Afrobeat Night Lagos</span>
+                                                <span class="badge badge--paused">Upcoming</span>
+                                            </p>
+                                            <a class="rowmenu__item" href="event-hub.html" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                                <span>Open Event Hub</span>
+                                            </a>
+                                            <button class="rowmenu__item" type="button" data-action="Public event page opened in a new tab" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                                <span>View public page</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Event link copied to your clipboard" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></svg>
+                                                <span>Copy event link</span>
+                                            </button>
+                                            <a class="rowmenu__item" href="create-event/basic-details.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                <span>Edit event</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="event-hub.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                                                <span>Send a broadcast</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="event-hub.html" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                                <span>Guest list</span>
+                                            </a>
+                                            <button class="rowmenu__item" type="button" data-action="Duplicated as a new draft" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                                <span>Duplicate event</span>
+                                            </button>
+                                            <button class="rowmenu__item rowmenu__item--danger" type="button" data-modal-open="cancelevent-modal" data-event-name="Afrobeat Night Lagos" data-role-only="admin" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                                <span>Cancel event</span>
+                                            </button>
+                                            <p class="rowmenu__blockedhead">Not available while upcoming</p>
+                                            <span class="rowmenu__blocked">
+                                                <b>End event</b> &mdash; it has not started
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Delete event</b> &mdash; published events are cancelled, not deleted
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="cellstack__name">Enterprise Leadership Forum</span></td>
+                                <td><span class="badge badge--completed">Completed</span></td>
+                                <td>312 / 312</td>
+                                <td class="u-muted">1 day &middot; 3 slots</td>
+                                <td><b>$0</b></td>
+                                <td>
+                                    <span class="badge badge--nodot badge--neutral">Non-ticketed</span>
+                                </td>
+                                <td>
+                                    <div class="rowactions rowactions--menu">
+                                        <a class="iconbtn" href="event-hub.html">
+                                            <span class="u-visually-hidden">Open Event Hub &mdash; Enterprise Leadership Forum</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                        </a>
+                                        <button class="iconbtn" type="button" data-action="Attendance report is downloading">
+                                            <span class="u-visually-hidden">Attendance report &mdash; Enterprise Leadership Forum</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                aria-expanded="false" aria-haspopup="true"
+                                                aria-controls="menu-plan-3" data-rowmenu="menu-plan-3">
+                                            <span class="u-visually-hidden">More actions for Enterprise Leadership Forum</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>
+                                        </button>
+                                        <div class="rowmenu" id="menu-plan-3" role="menu"
+                                             aria-label="Actions for Enterprise Leadership Forum" hidden>
+                                            <p class="rowmenu__head">
+                                                <span class="rowmenu__name">Enterprise Leadership Forum</span>
+                                                <span class="badge badge--nodot badge--role">Completed</span>
+                                            </p>
+                                            <a class="rowmenu__item" href="event-hub.html" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                                <span>Open Event Hub</span>
+                                            </a>
+                                            <button class="rowmenu__item" type="button" data-action="Attendance report is downloading" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+                                                <span>Attendance report</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Food orders summary is downloading" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg>
+                                                <span>Food orders summary</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Polls report is downloading" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                                                <span>Polls report</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Payment summary is downloading" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg>
+                                                <span>Payment summary</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Guest list export queued" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                                <span>Export guest list</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Duplicated as a new draft" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                                <span>Duplicate event</span>
+                                            </button>
+                                            <p class="rowmenu__blockedhead">Not available while completed</p>
+                                            <span class="rowmenu__blocked">
+                                                <b>Edit event</b> &mdash; the event has finished
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Cancel or end</b> &mdash; it already ended
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Delete event</b> &mdash; completed events are kept for the audit trail
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="cellstack__name">Product Design Workshop</span></td>
+                                <td><span class="badge badge--draft">Draft</span></td>
+                                <td>0 / 80</td>
+                                <td class="u-muted">1 day &middot; 1 slot</td>
+                                <td><b>$0</b></td>
+                                <td>
+                                    <span class="badge badge--nodot badge--neutral">Non-ticketed</span>
+                                </td>
+                                <td>
+                                    <div class="rowactions rowactions--menu">
+                                        <a class="iconbtn" href="create-event/basic-details.html" data-role-only="admin manager">
+                                            <span class="u-visually-hidden">Continue editing &mdash; Product Design Workshop</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                        </a>
+                                        <a class="iconbtn" href="create-event/review-publish.html" data-role-only="admin manager">
+                                            <span class="u-visually-hidden">Run pre-publish check &mdash; Product Design Workshop</span>
+                                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg>
+                                        </a>
+                                        <button class="iconbtn" type="button"
+                                                aria-expanded="false" aria-haspopup="true"
+                                                aria-controls="menu-plan-4" data-rowmenu="menu-plan-4">
+                                            <span class="u-visually-hidden">More actions for Product Design Workshop</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>
+                                        </button>
+                                        <div class="rowmenu" id="menu-plan-4" role="menu"
+                                             aria-label="Actions for Product Design Workshop" hidden>
+                                            <p class="rowmenu__head">
+                                                <span class="rowmenu__name">Product Design Workshop</span>
+                                                <span class="badge badge--draft">Draft</span>
+                                            </p>
+                                            <a class="rowmenu__item" href="create-event/basic-details.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                <span>Continue editing</span>
+                                            </a>
+                                            <a class="rowmenu__item" href="create-event/review-publish.html" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg>
+                                                <span>Run pre-publish check</span>
+                                            </a>
+                                            <button class="rowmenu__item" type="button" data-action="Draft preview opened in a new tab" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                                <span>Preview draft page</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Duplicated as a new draft" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                                <span>Duplicate as a new draft</span>
+                                            </button>
+                                            <button class="rowmenu__item rowmenu__item--danger" type="button" data-modal-open="deleteevent-modal" data-event-name="Product Design Workshop" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                <span>Delete draft</span>
+                                            </button>
+                                            <p class="rowmenu__blockedhead">Not available while draft</p>
+                                            <span class="rowmenu__blocked">
+                                                <b>Open Event Hub</b> &mdash; the event is not published yet
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Broadcast &amp; reports</b> &mdash; there are no guests yet
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Cancel event</b> &mdash; nothing has been published to cancel
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="cellstack__name">Community Church Fest</span></td>
+                                <td><span class="badge badge--cancelled">Cancelled</span></td>
+                                <td>0 / 400</td>
+                                <td class="u-muted">1 day &middot; 2 slots</td>
+                                <td><b>$0</b></td>
+                                <td>
+                                    <span class="badge badge--nodot badge--neutral">Non-ticketed</span>
+                                </td>
+                                <td>
+                                    <div class="rowactions rowactions--menu">
+                                        <a class="iconbtn" href="cancellation-summary.html">
+                                            <span class="u-visually-hidden">Cancellation summary &mdash; Community Church Fest</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                        </a>
+                                        <button class="iconbtn" type="button"
+                                                aria-expanded="false" aria-haspopup="true"
+                                                aria-controls="menu-plan-5" data-rowmenu="menu-plan-5">
+                                            <span class="u-visually-hidden">More actions for Community Church Fest</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>
+                                        </button>
+                                        <div class="rowmenu" id="menu-plan-5" role="menu"
+                                             aria-label="Actions for Community Church Fest" hidden>
+                                            <p class="rowmenu__head">
+                                                <span class="rowmenu__name">Community Church Fest</span>
+                                                <span class="badge badge--out">Cancelled</span>
+                                            </p>
+                                            <a class="rowmenu__item" href="cancellation-summary.html" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                                <span>Cancellation summary</span>
+                                            </a>
+                                            <button class="rowmenu__item" type="button" data-action="Refund status: 312 of 312 refunds settled" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg>
+                                                <span>Refund status</span>
+                                            </button>
+                                            <button class="rowmenu__item" type="button" data-action="Duplicated as a new draft" data-role-only="admin manager" role="menuitem">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg>
+                                                <span>Duplicate event</span>
+                                            </button>
+                                            <p class="rowmenu__blockedhead">Not available while cancelled</p>
+                                            <span class="rowmenu__blocked">
+                                                <b>Open Event Hub</b> &mdash; the event was cancelled
+                                            </span>
+                                            <span class="rowmenu__blocked">
+                                                <b>Edit, end or delete</b> &mdash; a cancelled event is read-only
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div data-view-panel="usage" hidden>
+                <section class="contract">
+                    <div class="contract__body">
+                        <p class="contract__chips">
+                            <span class="contract__chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg> Professional Enterprise</span>
+                            <span class="contract__chip contract__chip--active">Active Subscription</span>
+                            <span class="contract__chip contract__chip--renew">Auto-Renew Active</span>
+                        </p>
+                        <h2 class="contract__name">Acme Global Enterprises</h2>
+                        <p class="contract__meta">
+                            Region: Global (USD) &nbsp;&bull;&nbsp; Billing Terms: Milestone (50/50)
+                            &nbsp;&bull;&nbsp; Licence: $50,000 USD / yr
+                        </p>
+                    </div>
+
+                    <div class="contract__expiry">
+                        <p class="contract__expiry-top">
+                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> Contract Expiry</span>
+                            <span class="contract__days">142 Days Left</span>
+                        </p>
+                        <p class="contract__dates">
+                            <span>Start: 2026-01-01</span>
+                            <span>Expiry: 2026-12-31</span>
+                        </p>
+                        <span class="contract__track">
+                            <span class="contract__fill" data-fill="61"></span>
+                        </span>
+                        <p class="contract__note">14 days grace period configured by Admin</p>
+                    </div>
+                </section>
+
+                <div class="sectionhead">
+                    <div class="sectionhead__body">
+                        <h2 class="sectionhead__title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8m0 0h-5m5 0v5" /></svg> Usage Monitor &amp; Allocation Limits
+                        </h2>
+                        <p class="sectionhead__text">
+                            Admin configured limits, synchronised live with what this host account has
+                            actually consumed
+                        </p>
+                    </div>
+                    <button class="sectionhead__action" type="button">Refresh Allocations</button>
+                </div>
+
+                <section class="grid grid--3" aria-label="Allocation limits">
+                    <article class="alloc">
+                        <div class="alloc__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></span>
+                            <span class="pill pill--ok">On track</span>
+                        </div>
+                        <p>
+                            <span class="alloc__label">Events Allocation</span>
+                            <span class="alloc__value">10 <span class="alloc__total">/ 20 Events</span></span>
+                        </p>
+                        <span class="alloc__bar">
+                            <span class="alloc__fill alloc__fill--ok" data-fill="50"></span>
+                        </span>
+                        <p class="alloc__foot">
+                            <span>50% Consumed</span>
+                            <span>10 Events Left</span>
+                        </p>
+                    </article>
+                    <article class="alloc">
+                        <div class="alloc__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
+                            <span class="pill pill--warn">Low capacity alert</span>
+                        </div>
+                        <p>
+                            <span class="alloc__label">Annual Guest Registrations</span>
+                            <span class="alloc__value">18,500 <span class="alloc__total">/ 20,000 Guests</span></span>
+                        </p>
+                        <span class="alloc__bar">
+                            <span class="alloc__fill alloc__fill--danger" data-fill="93"></span>
+                        </span>
+                        <p class="alloc__foot">
+                            <span>93% Consumed</span>
+                            <span>1,500 Guests Left</span>
+                        </p>
+                    </article>
+                    <article class="alloc">
+                        <div class="alloc__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
+                            <span class="pill pill--ok">Active</span>
+                        </div>
+                        <p>
+                            <span class="alloc__label">Host Team User Seats</span>
+                            <span class="alloc__value">38 <span class="alloc__total">/ 50 Seats</span></span>
+                        </p>
+                        <span class="alloc__bar">
+                            <span class="alloc__fill alloc__fill--ok" data-fill="76"></span>
+                        </span>
+                        <p class="alloc__foot">
+                            <span>76% Consumed</span>
+                            <span>12 Seats Available</span>
+                        </p>
+                    </article>
+                    <article class="alloc">
+                        <div class="alloc__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                            <span class="pill pill--warn">Near limit (80%+)</span>
+                        </div>
+                        <p>
+                            <span class="alloc__label">Guest Capacity per Event</span>
+                            <span class="alloc__value">800 <span class="alloc__total">/ 1,000 Guests</span></span>
+                        </p>
+                        <span class="alloc__bar">
+                            <span class="alloc__fill alloc__fill--warn" data-fill="80"></span>
+                        </span>
+                        <p class="alloc__foot">
+                            <span>80% Consumed</span>
+                            <span>200 Guests Headroom</span>
+                        </p>
+                    </article>
+                    <article class="alloc">
+                        <div class="alloc__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.7a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.4-4.6A8.4 8.4 0 1 1 20.5 11.7z" /><path d="M9 9.2c0 3 2.4 5.4 5.3 5.4l.6-1.4-1.8-.8-.9.9a4.7 4.7 0 0 1-2-2l.9-.9-.8-1.8L9 9.2z" /></svg></span>
+                            <span class="pill pill--ok">WhatsApp active</span>
+                        </div>
+                        <p>
+                            <span class="alloc__label">WhatsApp Message Credits</span>
+                            <span class="alloc__value">12,100 <span class="alloc__total">/ 53,528 Messages</span></span>
+                        </p>
+                        <span class="alloc__bar">
+                            <span class="alloc__fill alloc__fill--ok" data-fill="23"></span>
+                        </span>
+                        <p class="alloc__foot">
+                            <span>23% Consumed</span>
+                            <span>41,428 Messages Left</span>
+                        </p>
+                    </article>
+                    <article class="alloc">
+                        <div class="alloc__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6.5 8.5 6 8.5-6" /></svg></span>
+                            <span class="pill pill--ok">Email active</span>
+                        </div>
+                        <p>
+                            <span class="alloc__label">Email Send Credits</span>
+                            <span class="alloc__value">45,000 <span class="alloc__total">/ 1,011,666 Emails</span></span>
+                        </p>
+                        <span class="alloc__bar">
+                            <span class="alloc__fill alloc__fill--ok" data-fill="4"></span>
+                        </span>
+                        <p class="alloc__foot">
+                            <span>4% Consumed</span>
+                            <span>966,666 Emails Left</span>
+                        </p>
+                    </article>
+                </section>
+
+                <div class="creditstrip">
+                    <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg></span>
+                    <span class="creditstrip__body">
+                        <span class="creditstrip__label">Applied communication credits</span>
+                        <span class="creditstrip__value">121,496 Credits</span>
+                        <span class="creditstrip__split">
+                            WhatsApp ~41,428 &nbsp;&bull;&nbsp; Email ~966,666
+                        </span>
+                    </span>
+                    <button class="btn btn--primary" type="button" data-view="wallet">
+                        Manage &amp; Top Up Credits <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg>
+                    </button>
+                </div>
+
+            </div>
+
+            <div data-view-panel="wallet" hidden>
+                <section class="panel">
+                    <div class="wallethead">
+                        <div class="wallethead__body">
+                            <p class="wallethead__eyebrow">
+                                <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg></span>
+                                <span>
+                                    <span class="wallethead__kicker">Multi-channel enterprise wallet</span>
+                                    <span class="wallethead__title">Communication Credits Hub</span>
+                                </span>
+                            </p>
+                            <p class="wallethead__text">
+                                Pre-funded communication wallet powering transactional guest notifications,
+                                WhatsApp broadcast alerts, and automated email tickets.
+                            </p>
+                        </div>
+
+                        <div class="creditsum wallethead__aside">
+                            <p>
+                                <span class="alloc__label">Total Communication Credits Applied</span>
+                                <span class="creditsum__value">121,496 <span class="alloc__total">Credits</span></span>
+                                <span class="creditsum__split">
+                                    WhatsApp: ~41,428 credits &nbsp;&bull;&nbsp; Email: ~966,666 credits
+                                </span>
+                            </p>
+                            <button class="btn btn--primary btn--block" type="button"
+                                    data-modal-open="topup-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Apply Additional Credits
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <h3 class="hubhead__title u-mt-6">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg> Channel Breakdown &amp; Remaining Message Capacity
+                </h3>
+
+                <section class="grid grid--3 u-mt-5" aria-label="Channel capacity">
+                    <article class="channel">
+                        <div class="channel__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8z" /></svg></span>
+                            <span class="badge badge--live">WhatsApp active</span>
+                        </div>
+                        <p class="channel__name">WhatsApp Business API</p>
+                        <p class="channel__text">High-deliverability guest alerts &amp; ticket QR delivery</p>
+                        <div class="channel__rates">
+                            <p class="channel__rate">
+                                <span>Messages Sent to Date:</span><b>12,100</b>
+                            </p>
+                            <p class="channel__rate">
+                                <span>Unit Rate (Admin):</span><b>$0.035 / msg</b>
+                            </p>
+                        </div>
+                        <p class="channel__capacity">
+                            Estimated WhatsApp Capacity Left
+                            <span class="channel__left channel__left--wa">~41,428 Messages</span>
+                        </p>
+                    </article>
+                    <article class="channel">
+                        <div class="channel__top">
+                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h5l2 3h4l2-3h5" /><path d="M5.5 4h13l2.5 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6l2.5-8z" /></svg></span>
+                            <span class="badge badge--upcoming">Email active</span>
+                        </div>
+                        <p class="channel__name">Enterprise Email Relay</p>
+                        <p class="channel__text">Confirmation receipts, invitations &amp; ICS calendar invites</p>
+                        <div class="channel__rates">
+                            <p class="channel__rate">
+                                <span>Emails Delivered to Date:</span><b>45,000</b>
+                            </p>
+                            <p class="channel__rate">
+                                <span>Unit Rate (Admin):</span><b>$1.50 / 1,000 emails</b>
+                            </p>
+                        </div>
+                        <p class="channel__capacity">
+                            Estimated Email Capacity Left
+                            <span class="channel__left channel__left--email">~966,666 Emails</span>
+                        </p>
+                    </article>
+                </section>
+
+            </div>
+
+            <div data-view-panel="billing" hidden>
+                <section class="grid grid--3" aria-label="Contract billing totals">
+                    <article class="panel">
+                        <div class="panel__body">
+                            <p class="alloc__label">Total Contract Invoiced</p>
+                            <p class="alloc__value">$62,395.38 <span class="alloc__total">USD</span></p>
+                            <p class="channel__text u-mt-5">Includes Licence, Top-ups &amp; Commissions</p>
+                        </div>
+                    </article>
+                    <article class="panel">
+                        <div class="panel__body">
+                            <p class="alloc__label">Total Settled &amp; Paid</p>
+                            <p class="alloc__value figure__value--success">
+                                $62,395.38 <span class="alloc__total">USD</span>
+                            </p>
+                            <p class="u-mt-5"><span class="badge badge--live">Fully Cleared</span></p>
+                        </div>
+                    </article>
+                    <article class="panel">
+                        <div class="panel__body">
+                            <p class="alloc__label">Outstanding Balance Due</p>
+                            <p class="alloc__value">$0 <span class="alloc__total">USD</span></p>
+                            <p class="channel__text u-mt-5">No Overdue Invoices</p>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="commission u-mt-6">
+                    <span class="commission__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.5" /><circle cx="16.5" cy="16.5" r="2.5" /></svg></span>
+                    <div class="commission__body">
+                        <p class="commission__title">Platform Ticket Sales Commission (2%)</p>
+                        <p class="commission__text">
+                            Per Admin specification, a 2% platform commission applies on gross ticket sales
+                            and is automatically itemised on your monthly invoice.
+                        </p>
+                    </div>
+                    <div class="commission__figure">
+                        <span class="commission__label">Total Ticket Revenue Ticketed</span>
+                        <span class="commission__value">$124,500.00 USD</span>
+                        <span class="commission__badge">2% Commission = $2,490.00 USD</span>
+                    </div>
+                </section>
+
+                <section class="panel u-mt-6" aria-labelledby="invoices-title">
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h3 class="panel__title" id="invoices-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> Enterprise Billing &amp; Admin Invoices
+                            </h3>
+                            <p class="panel__meta">
+                                View itemised invoices issued by Super Admin, pay outstanding dues, and
+                                download official receipts.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="panel__body">
+                        <article class="invoicecard">
+                            <button class="invoicecard__head" type="button" aria-expanded="true"
+                                    aria-controls="inv-001" data-accordion>
+                                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                                <span class="invoicecard__body">
+                                    <span class="invoicecard__ref">
+                                        INV-2026-ACME-001 <span class="badge badge--live">Paid</span>
+                                    </span>
+                                    <span class="invoicecard__dates">
+                                        Issued Date: 2026-01-02 &bull; Due Date: 2026-01-30
+                                    </span>
+                                </span>
+                                <span class="invoicecard__amount">
+                                    <span class="alloc__label">Total Amount</span>
+                                    <span class="invoicecard__total">$62,395.38 USD</span>
+                                </span>
+                                <svg class="accordion__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                            </button>
+
+                            <div class="invoicecard__panel" id="inv-001">
+                                <p class="auditbar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                                    <b>Multi-Date &amp; Multi-Slot Audit Itemization Active</b>
+                                    &mdash; Commissions, platform fees, and slot allocations are billed per
+                                    event day and time slot.
+                                    <span class="auditbar__tag">Synchronized</span>
+                                </p>
+
+                                <table class="lineitems">
+                                    <caption>Itemized charges &amp; slot breakdown</caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Professional Enterprise Annual Licence (50 Events / 20k Guests)</td>
+                                            <td><span class="itemtype itemtype--subscription">Subscription</span></td>
+                                            <td><b>$50,000 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Event: Cloud Summit 2026 | Day 1 (Oct 12) - Morning Slot (09:00-12:00: Keynote) | 2% Platform Commission ($35,000 Sales)</td>
+                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
+                                            <td><b>$700 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Event: Cloud Summit 2026 | Day 1 (Oct 12) - Afternoon Slot (13:00-17:00: Dev Labs) | 2% Platform Commission ($28,000 Sales)</td>
+                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
+                                            <td><b>$560 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Event: Cloud Summit 2026 | Day 2 (Oct 13) - Morning Slot (09:00-12:00: Security) | 2% Platform Commission ($22,000 Sales)</td>
+                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
+                                            <td><b>$440 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Event: Cloud Summit 2026 | Day 2 (Oct 13) - Evening Slot (18:00-22:00: Gala) | 2% Platform Commission ($39,500 Sales)</td>
+                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
+                                            <td><b>$790 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>WhatsApp &amp; SMS Communication Wallet Top-up (Applied Credits)</td>
+                                            <td><span class="itemtype itemtype--addon">Addon</span></td>
+                                            <td><b>$1,200 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Guest Allocation Overage Surcharge (3 extra event slots)</td>
+                                            <td><span class="itemtype itemtype--overage">Overage</span></td>
+                                            <td><b>$450 USD</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Custom API Development &amp; Data Migration Support</td>
+                                            <td><span class="itemtype itemtype--service">ProfessionalService</span></td>
+                                            <td><b>$3,500 USD</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="totalsblock">
+                                    <p class="totalsblock__row">
+                                        <span>Subtotal:</span><span>$57,640 USD</span>
+                                    </p>
+                                    <p class="totalsblock__row">
+                                        <span>Applicable Tax (8.25%):</span><span>$4,755.38 USD</span>
+                                    </p>
+                                    <p class="totalsblock__row totalsblock__row--grand">
+                                        <span>Total Due:</span><span>$62,395.38 USD</span>
+                                    </p>
+                                </div>
+
+                                <p class="invoicecard__foot">
+                                    <button class="btn btn--outline btn--sm" type="button">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Download PDF Receipt
+                                    </button>
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </div>
+
+            <div data-view-panel="audit" hidden>
+                <div class="hubhead">
+                    <div class="hubhead__body">
+                        <h2 class="hubhead__title">Usage &amp; Audit Report</h2>
+                        <p class="hubhead__text">
+                            Every metered line the Super Admin bills against, with the configured rate
+                            beside it &mdash; so your numbers and theirs always reconcile
+                        </p>
+                    </div>
+                    <div class="filterrow">
+                        <div class="filterrow__field">
+                            <label class="u-visually-hidden" for="audit-period">Reporting period</label>
+                            <select class="field__select" id="audit-period" name="audit-period">
+                                <option>Current contract year (2026)</option>
+                                <option>This month</option>
+                                <option>Last month</option>
+                                <option>Previous contract year (2025)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-action="Usage and audit report exported as CSV">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tablewrap">
+                    <table class="table table--narrow">
+                        <caption class="u-visually-hidden">
+                            Metered usage against admin-configured limits and rates
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Metric</th>
+                                <th scope="col">Consumed</th>
+                                <th scope="col">Consumed value</th>
+                                <th scope="col">Admin configuration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Events created</b></td>
+                                <td>42 of 50</td>
+                                <td>84%</td>
+                                <td class="u-muted">Admin cap: 50 / contract year</td>
+                            </tr>
+                            <tr>
+                                <td><b>Guest registrations</b></td>
+                                <td>18,500 of 20,000</td>
+                                <td>93%</td>
+                                <td class="u-muted">Admin cap: 20,000 / contract year</td>
+                            </tr>
+                            <tr>
+                                <td><b>Team user seats</b></td>
+                                <td>38 of 50</td>
+                                <td>76%</td>
+                                <td class="u-muted">Admin cap: 50 accounts</td>
+                            </tr>
+                            <tr>
+                                <td><b>WhatsApp messages</b></td>
+                                <td>12,100 sent</td>
+                                <td>$423.50</td>
+                                <td class="u-muted">Admin rate: $0.035 / msg</td>
+                            </tr>
+                            <tr>
+                                <td><b>Emails delivered</b></td>
+                                <td>45,000 sent</td>
+                                <td>$67.50</td>
+                                <td class="u-muted">Admin rate: $1.50 / 1,000</td>
+                            </tr>
+                            <tr>
+                                <td><b>Ticket commission</b></td>
+                                <td>$124,500 gross</td>
+                                <td>$2,490.00</td>
+                                <td class="u-muted">Admin rate: 2% of gross sales</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="notice notice--info notice--flat u-mt-6">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    <span>
+                        These figures are the same records the Super Admin invoices from. If a number
+                        here disagrees with an invoice line, raise it before the due date &mdash;
+                        itemisation is retained per event day and time slot.
+                    </span>
+                </p>
+            </div>
+        </div>
+    </main>
+    <div class="backdrop" data-backdrop></div>
+
+    <div class="modal" id="cancelevent-modal" role="dialog" aria-modal="true"
+         aria-labelledby="cancelevent-title" data-modal hidden>
+        <div class="modal__scrim" data-modal-close></div>
+        <div class="modal__dialog">
+            <div class="modal__head">
+                <h2 class="modal__title" id="cancelevent-title">Cancel event</h2>
+                <button class="iconbtn" type="button" data-modal-close>
+                    <span class="u-visually-hidden">Close</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+            </div>
+
+            <div class="modal__body">
+                <p class="confirmbox">
+                    <span class="confirmbox__name" data-event-target>This event</span>
+                    <span class="confirmbox__meta">
+                        Cancelling is permanent. Guests are notified straight away and any money taken
+                        is refunded automatically.
+                    </span>
+                </p>
+
+                <fieldset class="fieldset">
+                    <legend class="fieldset__legend">What are you cancelling?</legend>
+                    <div class="radios">
+                        <label class="radio">
+                            <input type="radio" name="cancel-scope" value="event" checked
+                                   data-cancel-scope="event" data-cancel-refund="127050000"
+                                   data-cancel-guests="1000">
+                            <span class="radio__body">
+                                <span class="radio__title">The entire event</span>
+                                <span class="radio__text">
+                                    Every date and slot. The event moves to Cancelled and cannot be reopened.
+                                </span>
+                            </span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="cancel-scope" value="dates"
+                                   data-cancel-scope="dates" data-reveal="cancel-dates"
+                                   data-reveal-inverse="cancel-slots">
+                            <span class="radio__body">
+                                <span class="radio__title">Specific dates</span>
+                                <span class="radio__text">
+                                    The rest of the event goes ahead. Guests holding tickets for those dates
+                                    are refunded.
+                                </span>
+                            </span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="cancel-scope" value="slots"
+                                   data-cancel-scope="slots" data-reveal="cancel-slots"
+                                   data-reveal-inverse="cancel-dates">
+                            <span class="radio__body">
+                                <span class="radio__title">Specific slots</span>
+                                <span class="radio__text">
+                                    One or more sessions only. Reservations for those sessions are released.
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <div class="scopepicker u-mt-5" id="cancel-dates" hidden>
+                    <p class="scopepicker__head">Which dates are cancelled?</p>
+                    <div class="scopeday__slots scopeday__slots--flush">
+                        <label class="scopeslot">
+                            <input type="checkbox" name="cancel-day1" data-cancel-item
+                                   data-cancel-refund="74250000" data-cancel-guests="600">
+                            <span class="scopeslot__body">
+                                <span class="scopeslot__name">Day 1 &mdash; Opening Day</span>
+                                <span class="scopeslot__meta">2026-08-06 &middot; 600 guests</span>
+                            </span>
+                        </label>
+                        <label class="scopeslot">
+                            <input type="checkbox" name="cancel-day2" data-cancel-item
+                                   data-cancel-refund="52800000" data-cancel-guests="400">
+                            <span class="scopeslot__body">
+                                <span class="scopeslot__name">Day 2 &mdash; Workshops</span>
+                                <span class="scopeslot__meta">2026-08-07 &middot; 400 guests</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="scopepicker u-mt-5" id="cancel-slots" hidden>
+                    <p class="scopepicker__head">Which slots are cancelled?</p>
+                    <div class="scopeday__slots scopeday__slots--flush">
+                        <label class="scopeslot">
+                            <input type="checkbox" name="cancel-s11" data-cancel-item
+                                   data-cancel-refund="41250000" data-cancel-guests="412">
+                            <span class="scopeslot__body">
+                                <span class="scopeslot__name">Morning Keynote</span>
+                                <span class="scopeslot__meta">Day 1 &middot; Main Hall &middot; 412 reserved</span>
+                            </span>
+                        </label>
+                        <label class="scopeslot">
+                            <input type="checkbox" name="cancel-s12" data-cancel-item
+                                   data-cancel-refund="17800000" data-cancel-guests="180">
+                            <span class="scopeslot__body">
+                                <span class="scopeslot__name">Fintech Panel</span>
+                                <span class="scopeslot__meta">Day 1 &middot; Hall B &middot; 180 reserved</span>
+                            </span>
+                        </label>
+                        <label class="scopeslot">
+                            <input type="checkbox" name="cancel-s21" data-cancel-item
+                                   data-cancel-refund="26100000" data-cancel-guests="260">
+                            <span class="scopeslot__body">
+                                <span class="scopeslot__name">Design Sprint</span>
+                                <span class="scopeslot__meta">Day 2 &middot; Main Hall &middot; 260 reserved</span>
+                            </span>
+                        </label>
+                        <label class="scopeslot">
+                            <input type="checkbox" name="cancel-s22" data-cancel-item
+                                   data-cancel-refund="6100000" data-cancel-guests="61">
+                            <span class="scopeslot__body">
+                                <span class="scopeslot__name">Investor Clinic</span>
+                                <span class="scopeslot__meta">Day 2 &middot; VIP Lounge &middot; 61 reserved</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="refundbox" data-cancel-summary>
+                    <p class="refundbox__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg> Refunds this cancellation triggers</p>
+                    <p class="refundbox__row">
+                        <span>Guests affected</span>
+                        <span data-cancel-guestcount>1,000</span>
+                    </p>
+                    <p class="refundbox__row">
+                        <span>Tickets to refund</span>
+                        <span data-cancel-amount>&#8358;127,050,000</span>
+                    </p>
+                    <p class="refundbox__row">
+                        <span>Commission reversed</span>
+                        <span data-cancel-commission>&#8358;2,541,000</span>
+                    </p>
+                    <p class="refundbox__row refundbox__row--total">
+                        <span>Back to guests within 5&ndash;10 working days</span>
+                        <span data-cancel-total>&#8358;127,050,000</span>
+                    </p>
+                    <p class="refundbox__note" data-cancel-note>
+                        Non-ticketed guests are notified but nothing is refunded.
+                    </p>
+                </div>
+
+                <div class="form__field u-mt-5">
+                    <label class="field__label" for="cancel-reason">
+                        Reason shown to guests<span class="field__required" aria-hidden="true">*</span>
+                        <span class="u-visually-hidden">(required)</span>
+                    </label>
+                    <textarea class="field__input" id="cancel-reason" name="cancel-reason" rows="2"
+                              placeholder="Guests see this in the cancellation email and WhatsApp message"
+                              required></textarea>
+                </div>
+
+                <div class="optin u-mt-5">
+                    <input class="optin__box" id="cancel-confirm" name="cancel-confirm"
+                           type="checkbox" data-cancel-confirm>
+                    <label for="cancel-confirm">
+                        <span class="optin__title">
+                            I understand this cannot be undone and refunds start immediately
+                        </span>
+                        <span class="optin__hint">
+                            Required before the cancellation can be submitted
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal__foot">
+                <button class="btn btn--outline" type="button" data-modal-close>Keep the event</button>
+                <button class="btn btn--danger" type="button" data-modal-close disabled
+                        data-cancel-submit data-action="Cancellation submitted &mdash; guests notified and refunds queued"
+                        data-action-tone="warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> <span data-cancel-cta>Cancel entire event</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="endevent-modal" role="dialog" aria-modal="true"
+         aria-labelledby="endevent-title" data-modal hidden>
+        <div class="modal__scrim" data-modal-close></div>
+        <div class="modal__dialog modal__dialog--sm">
+            <div class="modal__head">
+                <h2 class="modal__title" id="endevent-title">End event</h2>
+                <button class="iconbtn" type="button" data-modal-close>
+                    <span class="u-visually-hidden">Close</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+            </div>
+
+            <div class="modal__body">
+                <p class="confirmbox">
+                    <span class="confirmbox__name" data-event-target>This event</span>
+                    <span class="confirmbox__meta">
+                        Ending closes the event down cleanly &mdash; it does not refund anyone
+                    </span>
+                </p>
+
+                <ul class="endlist">
+                    <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Check-in stops and passes no longer scan</li>
+                    <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Food ordering closes and open orders are marked collected</li>
+                    <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Live polls close and their results are frozen</li>
+                    <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Reports become final and downloadable</li>
+                    <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> The event moves to Completed</li>
+                </ul>
+
+                <p class="notice notice--warn notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                    847 of 1,000 guests checked in. Ending now records the remaining 153 as no-shows.
+                </p>
+            </div>
+
+            <div class="modal__foot">
+                <button class="btn btn--outline" type="button" data-modal-close>Not yet</button>
+                <button class="btn btn--danger" type="button" data-modal-close
+                        data-action="Event ended &mdash; reports are now final" data-action-tone="warn">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg> End event now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteevent-modal" role="dialog" aria-modal="true"
+         aria-labelledby="deleteevent-title" data-modal hidden>
+        <div class="modal__scrim" data-modal-close></div>
+        <div class="modal__dialog modal__dialog--sm">
+            <div class="modal__head">
+                <h2 class="modal__title" id="deleteevent-title">Delete draft</h2>
+                <button class="iconbtn" type="button" data-modal-close>
+                    <span class="u-visually-hidden">Close</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+            </div>
+
+            <div class="modal__body">
+                <p class="confirmbox">
+                    <span class="confirmbox__name" data-event-target>This draft</span>
+                    <span class="confirmbox__meta">
+                        Never published, so no guest has seen it and nothing is refunded
+                    </span>
+                </p>
+
+                <p class="modal__note">
+                    The draft and everything configured in it is removed. Published events cannot be
+                    deleted &mdash; they are cancelled instead, so the audit trail survives.
+                </p>
+            </div>
+
+            <div class="modal__foot">
+                <button class="btn btn--outline" type="button" data-modal-close>Keep it</button>
+                <button class="btn btn--danger" type="button" data-modal-close
+                        data-action="Draft deleted" data-action-tone="warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Delete draft
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="topup-modal" role="dialog" aria-modal="true"
+         aria-labelledby="topup-title" data-modal hidden>
+        <div class="modal__scrim" data-modal-close></div>
+        <div class="modal__dialog modal__dialog--wide">
+            <div class="modal__head">
+                <h2 class="modal__title" id="topup-title">Communication credits</h2>
+                <button class="iconbtn" type="button" data-modal-close>
+                    <span class="u-visually-hidden">Close</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+            </div>
+
+            <div class="modal__body">
+                <p class="confirmbox">
+                    <span class="confirmbox__name">One credit is one message</span>
+                    <span class="confirmbox__meta">
+                        A WhatsApp credit sends one template message; an email credit sends one email.
+                        Buy in packs of 10 or 100 &mdash; the 100 pack is the better rate.
+                    </span>
+                </p>
+
+                <div class="creditcards">
+                    <article class="creditcard" data-creditcard="wa"
+                             data-per10="350" data-per100="3,200">
+                        <div class="creditcard__top">
+                            <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.7a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.4-4.6A8.4 8.4 0 1 1 20.5 11.7z" /><path d="M9 9.2c0 3 2.4 5.4 5.3 5.4l.6-1.4-1.8-.8-.9.9a4.7 4.7 0 0 1-2-2l.9-.9-.8-1.8L9 9.2z" /></svg></span>
+                            <span class="creditcard__body">
+                                <span class="creditcard__name">WhatsApp credits</span>
+                                <span class="creditcard__meta">12,100 sent to date</span>
+                            </span>
+                            <span class="creditcard__balance">
+                                <span class="creditcard__value">41,428</span>
+                                <span class="creditcard__unit">available</span>
+                            </span>
+                        </div>
+
+                        <div class="creditcard__rates">
+                            <span class="creditrate">
+                                <span class="creditrate__label">10 credits</span>
+                                <span class="creditrate__value">&#8358;350</span>
+                            </span>
+                            <span class="creditrate">
+                                <span class="creditrate__label">100 credits</span>
+                                <span class="creditrate__value">&#8358;3,200</span>
+                                <span class="creditrate__save">better rate</span>
+                            </span>
+                        </div>
+
+                        <div class="creditcard__packs">
+                            <div class="packrow">
+                                <span class="packrow__label">Packs of 10</span>
+                                <span class="stepper" data-stepper>
+                                    <button class="stepper__btn" type="button" data-step="-1">
+                                        <span class="u-visually-hidden">Fewer 10-credit packs of WhatsApp</span>
+                                        <span aria-hidden="true">&minus;</span>
+                                    </button>
+                                    <label class="u-visually-hidden" for="pack10-wa">
+                                        Packs of 10 WhatsApp credits
+                                    </label>
+                                    <input class="stepper__value" id="pack10-wa" name="pack10-wa"
+                                           type="text" inputmode="numeric" value="0" min="0" max="99"
+                                           data-pack="10">
+                                    <button class="stepper__btn" type="button" data-step="1">
+                                        <span class="u-visually-hidden">More 10-credit packs of WhatsApp</span>
+                                        <span aria-hidden="true">+</span>
+                                    </button>
+                                </span>
+                            </div>
+
+                            <div class="packrow">
+                                <span class="packrow__label">Packs of 100</span>
+                                <span class="stepper" data-stepper>
+                                    <button class="stepper__btn" type="button" data-step="-1">
+                                        <span class="u-visually-hidden">Fewer 100-credit packs of WhatsApp</span>
+                                        <span aria-hidden="true">&minus;</span>
+                                    </button>
+                                    <label class="u-visually-hidden" for="pack100-wa">
+                                        Packs of 100 WhatsApp credits
+                                    </label>
+                                    <input class="stepper__value" id="pack100-wa" name="pack100-wa"
+                                           type="text" inputmode="numeric" value="0" min="0" max="99"
+                                           data-pack="100">
+                                    <button class="stepper__btn" type="button" data-step="1">
+                                        <span class="u-visually-hidden">More 100-credit packs of WhatsApp</span>
+                                        <span aria-hidden="true">+</span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="creditcard__foot">
+                            <span>
+                                Adding <b data-credit-add>0</b> credits &rarr;
+                                new balance <b data-credit-new>41,428</b>
+                            </span>
+                            <span class="creditcard__cost" data-credit-cost>&#8358;0</span>
+                        </p>
+                    </article>
+                    <article class="creditcard" data-creditcard="email"
+                             data-per10="15" data-per100="140">
+                        <div class="creditcard__top">
+                            <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6.5 8.5 6 8.5-6" /></svg></span>
+                            <span class="creditcard__body">
+                                <span class="creditcard__name">Email credits</span>
+                                <span class="creditcard__meta">45,000 sent to date</span>
+                            </span>
+                            <span class="creditcard__balance">
+                                <span class="creditcard__value">966,666</span>
+                                <span class="creditcard__unit">available</span>
+                            </span>
+                        </div>
+
+                        <div class="creditcard__rates">
+                            <span class="creditrate">
+                                <span class="creditrate__label">10 credits</span>
+                                <span class="creditrate__value">&#8358;15</span>
+                            </span>
+                            <span class="creditrate">
+                                <span class="creditrate__label">100 credits</span>
+                                <span class="creditrate__value">&#8358;140</span>
+                                <span class="creditrate__save">better rate</span>
+                            </span>
+                        </div>
+
+                        <div class="creditcard__packs">
+                            <div class="packrow">
+                                <span class="packrow__label">Packs of 10</span>
+                                <span class="stepper" data-stepper>
+                                    <button class="stepper__btn" type="button" data-step="-1">
+                                        <span class="u-visually-hidden">Fewer 10-credit packs of Email</span>
+                                        <span aria-hidden="true">&minus;</span>
+                                    </button>
+                                    <label class="u-visually-hidden" for="pack10-email">
+                                        Packs of 10 Email credits
+                                    </label>
+                                    <input class="stepper__value" id="pack10-email" name="pack10-email"
+                                           type="text" inputmode="numeric" value="0" min="0" max="99"
+                                           data-pack="10">
+                                    <button class="stepper__btn" type="button" data-step="1">
+                                        <span class="u-visually-hidden">More 10-credit packs of Email</span>
+                                        <span aria-hidden="true">+</span>
+                                    </button>
+                                </span>
+                            </div>
+
+                            <div class="packrow">
+                                <span class="packrow__label">Packs of 100</span>
+                                <span class="stepper" data-stepper>
+                                    <button class="stepper__btn" type="button" data-step="-1">
+                                        <span class="u-visually-hidden">Fewer 100-credit packs of Email</span>
+                                        <span aria-hidden="true">&minus;</span>
+                                    </button>
+                                    <label class="u-visually-hidden" for="pack100-email">
+                                        Packs of 100 Email credits
+                                    </label>
+                                    <input class="stepper__value" id="pack100-email" name="pack100-email"
+                                           type="text" inputmode="numeric" value="0" min="0" max="99"
+                                           data-pack="100">
+                                    <button class="stepper__btn" type="button" data-step="1">
+                                        <span class="u-visually-hidden">More 100-credit packs of Email</span>
+                                        <span aria-hidden="true">+</span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="creditcard__foot">
+                            <span>
+                                Adding <b data-credit-add>0</b> credits &rarr;
+                                new balance <b data-credit-new>966,666</b>
+                            </span>
+                            <span class="creditcard__cost" data-credit-cost>&#8358;0</span>
+                        </p>
+                    </article>
+                </div>
+
+                <span class="field__label u-mt-5">Payment method</span>
+                <div class="radios radios--2">
+                    <label class="radio">
+                        <input type="radio" name="topup-method" value="card" checked>
+                        <span class="radio__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg></span>
+                        <span class="radio__body">
+                            <span class="radio__title">Corporate Visa ending 4242</span>
+                            <span class="radio__text">Charged immediately, credits available at once</span>
+                        </span>
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="topup-method" value="invoice">
+                        <span class="radio__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                        <span class="radio__body">
+                            <span class="radio__title">Add to my next invoice</span>
+                            <span class="radio__text">
+                                Credits available now, billed with the licence
+                            </span>
+                        </span>
+                    </label>
+                </div>
+
+                <div class="totalsblock u-mt-5">
+                    <p class="totalsblock__row">
+                        <span>WhatsApp credits</span>
+                        <span data-total-wa>0 credits &middot; &#8358;0</span>
+                    </p>
+                    <p class="totalsblock__row">
+                        <span>Email credits</span>
+                        <span data-total-email>0 credits &middot; &#8358;0</span>
+                    </p>
+                    <p class="totalsblock__row totalsblock__row--grand">
+                        <span>Total to pay</span>
+                        <span data-total-cost>&#8358;0</span>
+                    </p>
+                </div>
+
+                <p class="notice notice--info notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    Credits never expire and are shared across every event on this account. Unused
+                    credits stay on the wallet at the end of the contract year.
+                </p>
+            </div>
+
+            <div class="modal__foot">
+                <button class="btn btn--outline" type="button" data-modal-close>Cancel</button>
+                <button class="btn btn--primary" type="button" disabled data-topup-submit
+                        data-modal-close data-action="Credits added to your wallet">
+                    <span data-topup-cta>Add credits</span>
+                </button>
+            </div>
+        </div>
+    </div>

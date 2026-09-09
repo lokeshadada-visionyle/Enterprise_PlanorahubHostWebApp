@@ -1,0 +1,205 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateHost.EventTypeModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 1;
+    ViewData["StepTotal"] = 10;
+    ViewData["StepName"] = "Event Type";
+    ViewData["StepHint"] = "Choose your event format to get started";
+}
+
+<div class="wizard__body">
+
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            <div class="steplead">
+                <h1 class="steplead__title">What kind of event are you creating?</h1>
+                <p class="steplead__text">
+                    Your selection shapes visibility, access rules, and how commission is
+                    applied throughout the wizard.
+                </p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ApiError))
+            {
+                <p class="notice notice--alert notice--flat" role="alert">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                    @Model.ApiError
+                </p>
+            }
+
+            <form id="event-type-form" method="post">
+            <div class="choices" role="radiogroup" aria-label="Event format"
+                 id="event-format" data-choice-group data-choice-field="event-type-value"
+                 data-choice-link="basic-details.html">
+                <button class="choice choice--public choice--selected" type="button" role="radio"
+                        aria-checked="true" data-choice="public">
+                    <span class="choice__flag" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                    <span class="choice__head">
+                        <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg></span>
+                        <span class="choice__title">Public Event</span>
+                        <span class="choice__subtitle">Maximum reach</span>
+                    </span>
+                    <span class="choice__body">
+                        <span class="choice__caption">How it works</span>
+                        <span class="choice__list">
+                            <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Listed in discovery &amp; search</span>
+                            <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Open access &mdash; no login required</span>
+                            <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Shareable public landing page</span>
+                        </span>
+                        <span class="choice__note"><b>Best for:</b> Conferences, concerts, festivals, community events</span>
+                        <span class="choice__auto">
+                            <span class="choice__auto-title">Auto-configured</span>
+                            <span class="choice__auto-list">
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg> Discovery: @(Model.Response.PublicListedInDiscovery ? "Listed (locked ON)" : "Not listed")</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg> Access: @(Model.Response.PublicOpenRegistration ? "Open (locked ON)" : "Restricted")</span>
+                            </span>
+                        </span>
+                    </span>
+                </button>
+                <button class="choice choice--private" type="button" role="radio"
+                        aria-checked="false" data-choice="private">
+                    <span class="choice__flag" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                    <span class="choice__head choice__head--private">
+                        <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
+                        <span class="choice__title">Private Event</span>
+                        <span class="choice__subtitle">Invite-only access</span>
+                    </span>
+                    <span class="choice__body">
+                        <span class="choice__caption">How it works</span>
+                        <span class="choice__list">
+                            <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Not listed in discovery</span>
+                            <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Accessible via direct link only</span>
+                            <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Email verify or invite-list access</span>
+                        </span>
+                        <span class="choice__note"><b>Best for:</b> Corporate galas, member gatherings, private workshops</span>
+                        <span class="choice__auto">
+                            <span class="choice__auto-title">Auto-configured</span>
+                            <span class="choice__auto-list">
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg> Access control is fully configurable</span>
+                            </span>
+                        </span>
+                    </span>
+                </button>
+            </div>
+            <input class="u-visually-hidden" id="event-type-value" name="EventType"
+                   type="text" value="public" readonly tabindex="-1"
+                   aria-hidden="true">
+
+            <p class="notice notice--alert notice--flat" style="margin-bottom:10px;">
+                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                You can change event type later &mdash; some locked settings (like access rules) will reset.
+            </p>
+            </form>
+
+            <section class="panel u-mt-6" aria-labelledby="matrix-title">
+                <div class="panel__head">
+                    <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg></span>
+                    <h2 class="panel__title" id="matrix-title">What each type turns on</h2>
+                    <p class="panel__meta">The wizard adapts to your choice</p>
+                </div>
+                <div class="tablewrap">
+                    <table class="table table--narrow">
+                        <caption class="u-visually-hidden">
+                            Which wizard features apply to public and private events
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Feature</th>
+                                <th scope="col">Public Event</th>
+                                <th scope="col">Private Event</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Listed in discovery</td>
+                                <td><span class="badge badge--nodot badge--upcoming">Locked</span> @Model.LockedBadgeText(Model.Response.PublicListedInDiscovery)</td>
+                                <td><span class="badge badge--nodot badge--upcoming">Locked</span> @Model.LockedBadgeText(Model.Response.PrivateListedInDiscovery)</td>
+                            </tr>
+                            <tr>
+                                <td>Standalone landing page</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicHasLandingPage)">@Model.BadgeText(Model.Response.PublicHasLandingPage)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateHasLandingPage)">@Model.BadgeText(Model.Response.PrivateHasLandingPage)</span></td>
+                            </tr>
+                            <tr>
+                                <td>Open registration</td>
+                                <td><span class="badge badge--nodot badge--upcoming">Locked</span> @Model.LockedBadgeText(Model.Response.PublicOpenRegistration)</td>
+                                <td><span class="badge badge--nodot badge--upcoming">Locked</span> @Model.LockedBadgeText(Model.Response.PrivateOpenRegistration)</td>
+                            </tr>
+                            <tr>
+                                <td>Email verification</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicEmailVerification)">@Model.BadgeText(Model.Response.PublicEmailVerification)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateEmailVerification)">@Model.BadgeText(Model.Response.PrivateEmailVerification)</span></td>
+                            </tr>
+                            <tr>
+                                <td>Invite list</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicInviteList)">@Model.BadgeText(Model.Response.PublicInviteList)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateInviteList)">@Model.BadgeText(Model.Response.PrivateInviteList)</span></td>
+                            </tr>
+                            <tr>
+                                <td>RSVP approval &amp; queue</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicRsvpApproval)">@Model.BadgeText(Model.Response.PublicRsvpApproval)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateRsvpApproval)">@Model.BadgeText(Model.Response.PrivateRsvpApproval)</span></td>
+                            </tr>
+                            <tr>
+                                <td>Ticketing</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicTicketing)">@Model.BadgeText(Model.Response.PublicTicketing)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateTicketing)">@Model.BadgeText(Model.Response.PrivateTicketing, "If ticketed")</span></td>
+                            </tr>
+                            <tr>
+                                <td>2% Ticket commission</td>
+                                <td>on sales</td>
+                                <td>on sales</td>
+                            </tr>
+                            <tr>
+                                <td>Add-ons &amp; coupons</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicAddOnsCoupons)">@Model.BadgeText(Model.Response.PublicAddOnsCoupons)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateAddOnsCoupons)">@Model.BadgeText(Model.Response.PrivateAddOnsCoupons)</span></td>
+                            </tr>
+                            <tr>
+                                <td>Food ordering</td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PublicFood)">@Model.BadgeText(Model.Response.PublicFood)</span></td>
+                                <td><span class="@Model.BadgeClass(Model.Response.PrivateFood)">@Model.BadgeText(Model.Response.PrivateFood)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/Dashboard/HostDashboard" data-wizard-link><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Cancel</a>
+        <div class="wizard__foot-end">
+            <button type="submit" form="event-type-form" class="btn btn--primary">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+        </div>
+    </footer>
+</div>
+@section Scripts {
+    <script>
+        // Selecting a card just updates the hidden EventType field and the
+        // visual selected state — the actual choice is saved server-side
+        // (Session) when the form posts on "Continue", not via the URL.
+        document.addEventListener('DOMContentLoaded', function() {
+            var choices = document.querySelectorAll('[data-choice]');
+            var hiddenField = document.getElementById('event-type-value');
+
+            function selectType(type) {
+                hiddenField.value = type;
+                choices.forEach(function (btn) {
+                    var selected = btn.getAttribute('data-choice') === type;
+                    btn.classList.toggle('choice--selected', selected);
+                    btn.classList.toggle('choice--public', btn.getAttribute('data-choice') === 'public');
+                    btn.classList.toggle('choice--private', btn.getAttribute('data-choice') === 'private');
+                    btn.setAttribute('aria-checked', selected ? 'true' : 'false');
+                });
+            }
+
+            choices.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    selectType(btn.getAttribute('data-choice')); // "public" or "private"
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,228 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.ContentSectionModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 4;
+    ViewData["StepTotal"] = 9;
+    ViewData["StepName"] = "Content Sections";
+    ViewData["StepHint"] = "Add engagement features, terms and FAQs";
+}
+
+<div class="wizard__body">
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            <form class="stack" id="contentSectionForm" method="post">
+
+                <!-- Engagement Features Panel -->
+                <section class="panel" aria-labelledby="features-title">
+                    <div class="panel__head">
+                        <span class="tile tile--brand" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="3" y="4" width="18" height="16" rx="2" />
+                                <circle cx="8.5" cy="9.5" r="1.6" />
+                                <path d="M21 16l-5-5-9 9" />
+                            </svg>
+                        </span>
+                        <h2 class="panel__title" id="features-title">Engagement Features</h2>
+                    </div>
+                    <div>
+                        <!-- Polls -->
+                        <div class="featurerow">
+                            <svg class="featurerow__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M5 20V10M12 20V4M19 20v-7" />
+                            </svg>
+                            <span class="featurerow__body">
+                                <span class="featurerow__title" id="polls-label">Polls</span>
+                                <span class="featurerow__text">Create live polls for attendees to vote in real-time during your event</span>
+                            </span>
+                            <input type="checkbox" id="polls-check" asp-for="PolicyRequest.IsPollsEnabled" style="display:none;" />
+                            <button class="switch switch--info" type="button" role="switch" aria-labelledby="polls-label" data-switch-for="polls-check"></button>
+                        </div>
+
+                        <!-- Posts & Updates (Feedback) -->
+                        <div class="featurerow">
+                            <svg class="featurerow__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M20 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8z" />
+                            </svg>
+                            <span class="featurerow__body">
+                                <span class="featurerow__title" id="posts-label">Posts &amp; Updates</span>
+                                <span class="featurerow__text">Share announcements, photos, and updates on your event feed</span>
+                            </span>
+                            <input type="checkbox" id="feedback-check" asp-for="PolicyRequest.IsFeedbackEnabled" style="display:none;" />
+                            <button class="switch switch--brand" type="button" role="switch" aria-labelledby="posts-label" data-switch-for="feedback-check"></button>
+                        </div>
+
+                        <!-- Media Attachments -->
+                        <div class="featurerow">
+                            <svg class="featurerow__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="3" y="4" width="18" height="16" rx="2" />
+                                <circle cx="8.5" cy="9.5" r="1.6" />
+                                <path d="M21 16l-5-5-9 9" />
+                            </svg>
+                            <span class="featurerow__body">
+                                <span class="featurerow__title" id="media-label">Media Attachments</span>
+                                <span class="featurerow__text">Allow attendees to upload photos and documents to the event gallery</span>
+                            </span>
+                            <input type="checkbox" id="photo-check" asp-for="PolicyRequest.CanGuestAttactPhoto" style="display:none;" />
+                            <button class="switch switch--accent" type="button" role="switch" aria-labelledby="media-label" data-switch-for="photo-check"></button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Terms & Conditions Section -->
+                <section class="accordion">
+                    <button class="accordion__head" type="button" aria-expanded="false" aria-controls="tc-panel" data-accordion>
+                        <span class="tile tile--brand" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+                                <path d="M14 3v5h5M9 13h6M9 17h6" />
+                            </svg>
+                        </span>
+                        <span class="accordion__body">
+                            <span class="accordion__title">Terms &amp; Conditions</span>
+                            <span class="accordion__text">Legal terms attendees agree to upon registration</span>
+                        </span>
+                        <svg class="accordion__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M6 10l6 6 6-6" />
+                        </svg>
+                    </button>
+                    <div class="accordion__panel" id="tc-panel" hidden>
+                        <label class="field__label" for="terms">Terms attendees accept</label>
+                        <textarea class="field__input bulletarea" id="terms" asp-for="TermsAndConditions" rows="6" data-bullets placeholder="Tickets are non-transferable without written consent"></textarea>
+                    </div>
+                </section>
+
+                <!-- Things to Know Section -->
+                <section class="accordion">
+                    <button class="accordion__head" type="button" aria-expanded="false" aria-controls="ttk-panel" data-accordion>
+                        <span class="tile tile--brand" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3 11.2c.6.4 1 1.1 1 1.8h4c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z" />
+                            </svg>
+                        </span>
+                        <span class="accordion__body">
+                            <span class="accordion__title">Things to Know</span>
+                            <span class="accordion__text">Practical info &mdash; dress code, ID requirements, what to bring</span>
+                        </span>
+                        <svg class="accordion__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M6 10l6 6 6-6" />
+                        </svg>
+                    </button>
+                    <div class="accordion__panel" id="ttk-panel" hidden>
+                        <label class="field__label" for="things">Practical notes for guests</label>
+                        <textarea class="field__input bulletarea" id="things" asp-for="ThingsToKnow" rows="6" data-bullets placeholder="Dress code, ID requirements, what to bring..."></textarea>
+                    </div>
+                </section>
+
+                <!-- FAQ Section -->
+                <section class="accordion">
+                    <button class="accordion__head" type="button" aria-expanded="true" aria-controls="faq-panel" data-accordion>
+                        <span class="tile tile--brand" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <circle cx="12" cy="12" r="9" />
+                                <path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2 1.8-2 3.5M12 17h.01" />
+                            </svg>
+                        </span>
+                        <span class="accordion__body">
+                            <span class="accordion__title">FAQ</span>
+                            <span class="accordion__text">Answer common questions before they&rsquo;re asked</span>
+                        </span>
+                        <svg class="accordion__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M6 10l6 6 6-6" />
+                        </svg>
+                    </button>
+                    <div class="accordion__panel" id="faq-panel">
+                        <div id="faq-list">
+                            <div class="qa" data-repeat-row>
+                                <button class="qa__remove" type="button" data-repeat-remove>
+                                    <span class="u-visually-hidden">Remove this FAQ</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                    </svg>
+                                </button>
+                                <input class="field__input" name="PolicyRequest.FAQs[0].Question" placeholder="Question" />
+                                <div class="qa__answer">
+                                    <textarea class="field__input" name="PolicyRequest.FAQs[0].Answer" rows="2" placeholder="Answer..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="addline" type="button" id="add-faq-btn">+ Add FAQ</button>
+                    </div>
+                </section>
+
+            </form>
+        </div>
+    </main>
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/ScheduleBuilder" data-wizard-link>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back
+        </a>
+        <div class="wizard__foot-end">
+            <button type="submit" class="btn btn--primary" form="contentSectionForm" data-wizard-link>
+                Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </button>
+        </div>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Sync custom switch buttons with hidden checkboxes
+        document.querySelectorAll('[data-switch-for]').forEach(button => {
+            const checkbox = document.getElementById(button.getAttribute('data-switch-for'));
+            if (checkbox) {
+                // Initial state sync
+                button.setAttribute('aria-checked', checkbox.checked ? 'true' : 'false');
+
+                button.addEventListener('click', () => {
+                    checkbox.checked = !checkbox.checked;
+                    button.setAttribute('aria-checked', checkbox.checked ? 'true' : 'false');
+                });
+            }
+        });
+
+        // Dynamic FAQ list re-indexing script
+        const faqList = document.getElementById('faq-list');
+        const addFaqBtn = document.getElementById('add-faq-btn');
+
+        function reindexFaqs() {
+            const rows = faqList.querySelectorAll('[data-repeat-row]');
+            rows.forEach((row, index) => {
+                const questionInput = row.querySelector('input[name*=".Question"]');
+                const answerInput = row.querySelector('textarea[name*=".Answer"]');
+
+                if (questionInput) questionInput.name = `PolicyRequest.FAQs[${index}].Question`;
+                if (answerInput) answerInput.name = `PolicyRequest.FAQs[${index}].Answer`;
+            });
+        }
+
+        if (addFaqBtn) {
+            addFaqBtn.addEventListener('click', () => {
+                const count = faqList.querySelectorAll('[data-repeat-row]').length;
+                const newRow = document.createElement('div');
+                newRow.className = 'qa';
+                newRow.setAttribute('data-repeat-row', '');
+                newRow.innerHTML = `
+                        <button class="qa__remove" type="button" data-repeat-remove>
+                            <span class="u-visually-hidden">Remove this FAQ</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                            </svg>
+                        </button>
+                        <input class="field__input" name="PolicyRequest.FAQs[${count}].Question" placeholder="Question" />
+                        <div class="qa__answer">
+                            <textarea class="field__input" name="PolicyRequest.FAQs[${count}].Answer" rows="2" placeholder="Answer..."></textarea>
+                        </div>`;
+                faqList.appendChild(newRow);
+            });
+        }
+
+        faqList.addEventListener('click', (e) => {
+            const removeBtn = e.target.closest('[data-repeat-remove]');
+            if (removeBtn) {
+                removeBtn.closest('[data-repeat-row]').remove();
+                reindexFaqs();
+            }
+        });
+    });
+</script>

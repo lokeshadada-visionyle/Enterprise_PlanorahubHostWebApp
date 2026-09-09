@@ -1,0 +1,493 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.ReviewAndPublishModel
+@using Planora_EnterproseHostWebApp.Extensions
+@{
+    Layout = "_CreateEventLayout";
+    bool isPrivate = HttpContext.Session.IsPrivateEvent();
+    ViewData["StepIndex"] = 12;
+    ViewData["StepTotal"] = isPrivate ? 12 : 10;
+    ViewData["StepName"] = "Review & Publish";
+    ViewData["StepHint"] = "Check everything before going live";
+}
+
+<div class="wizard__body">
+
+    <main class="wizard__content">
+        <div class="wizard__inner">
+
+            @if (!string.IsNullOrEmpty(Model.PageError))
+            {
+                <p class="notice notice--alert notice--flat" role="alert">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                    @Model.PageError
+                </p>
+            }
+
+            <form id="publishForm" method="post" asp-page-handler="Publish">
+                <input type="hidden" name="isPublish" id="isPublishInput" value="true" />
+
+                <div class="stack">
+
+                    <section class="panel" aria-labelledby="preview-title">
+                        <div class="reviewhero">
+                            <svg class="reviewhero__placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                            <p class="reviewhero__stats">
+                                <span>
+                                    <span class="reviewhero__value">@Model.Summary.TotalSeats</span>
+                                    <span class="reviewhero__caption">Total seats</span>
+                                </span>
+                                <span>
+                                    <span class="reviewhero__value">@Model.Summary.TotalPotential</span>
+                                    <span class="reviewhero__caption">Potential</span>
+                                </span>
+                            </p>
+                            <p class="reviewhero__chips">
+                                <span class="reviewhero__chip">@Model.Summary.EventType</span>
+                                <span class="reviewhero__chip">@Model.Summary.EventCategory</span>
+                            </p>
+                            <h2 class="reviewhero__title" id="preview-title">@Model.Summary.EventName</h2>
+                            <p class="reviewhero__tagline">@Model.Summary.TagLine</p>
+                        </div>
+
+                        <div class="factbar">
+                            <p>
+                                <span class="factbar__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg> Date</span>
+                                <span class="factbar__value">@Model.Summary.Date</span>
+                            </p>
+                            <p>
+                                <span class="factbar__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Venue</span>
+                                <span class="factbar__value">@Model.Summary.Venue</span>
+                            </p>
+                            <p>
+                                <span class="factbar__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> Tiers</span>
+                                <span class="factbar__value">@Model.Summary.TotalTicketTiers tier(s)</span>
+                            </p>
+                            <p>
+                                <span class="factbar__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg> Capacity</span>
+                                <span class="factbar__value">@Model.Summary.Capacity seats</span>
+                            </p>
+                        </div>
+
+                        <div class="kvlist">
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 1 &mdash; Event Type</span>
+                                    <span class="kv__value">@Model.Summary.EventType</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/EventType" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 2 &mdash; Basic Details</span>
+                                    <span class="kv__value">@Model.Summary.EventName &middot; @Model.Summary.Venue</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/BasicDetails" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 3 &mdash; Schedule Builder</span>
+                                    <span class="kv__value">@Model.Summary.Halls halls &middot; @Model.Summary.TotalSessions sessions</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/ScheduleBuilder" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 4 &mdash; Content Sections</span>
+                                    <span class="kv__value">@Model.Summary.Engagement &middot; refund: @Model.Summary.Refund</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/ContentSections" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 5 &mdash; Tickets &amp; Pricing</span>
+                                    <span class="kv__value">@Model.Summary.TotalTicketTiers tier(s) &middot; @Model.Summary.Commission commission</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/TicketsPricing" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 6 &mdash; Add-ons &amp; Coupons</span>
+                                    <span class="kv__value">@Model.Summary.TotalAddons add-ons &middot; @Model.Summary.TotalPromoCodes coupons</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/AddonsCoupons" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 7 &mdash; Food &amp; Beverage</span>
+                                    <span class="kv__value">@Model.Summary.FoodServing</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/FoodBeverage" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 8 &mdash; Access Control</span>
+                                    <span class="kv__value">@Model.Summary.TotalCustomFields form fields</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/AccessControl" data-wizard-link>Edit</a>
+                            </div>
+                            <div class="kv">
+                                <span class="kv__body">
+                                    <span class="kv__key">Step 9 &mdash; Branding &amp; Page</span>
+                                    <span class="kv__value">Branding configured</span>
+                                </span>
+                                <a class="btn btn--outline btn--sm" asp-page="/CreateEvent/BrandingPage" data-wizard-link>Edit</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="syscheck-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title panel__title--lg" id="syscheck-title">
+                                    System Check
+                                </h2>
+                                <p class="panel__meta">
+                                    Runs every rule the platform can verify: capacity, hall conflicts,
+                                    missing required information and settings left half-finished
+                                </p>
+                            </div>
+                            <button class="btn btn--primary btn--sm" type="button" data-syscheck-run style="white-space: nowrap;">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg> Run system check
+                            </button>
+                        </div>
+
+                        <div class="panel__body">
+                            <!-- NOTE: EventSummaryResp does not currently return the granular
+                                 fields this checker block needs. Left as static/demo attributes.
+                                 Extend Ent_GetEventDetails to bind these live. -->
+                            <div class="u-visually-hidden" data-syscheck
+                                 data-type="public"
+                                 data-discovery="listed"
+                                 data-cover-images="0"
+                                 data-pricing="paid"
+                                 data-tiers="3"
+                                 data-tickets-released="800"
+                                 data-hall-capacity="740"
+                                 data-peak-capacity="500"
+                                 data-tiers-no-sale-end="1"
+                                 data-tiers-no-access="0"
+                                 data-payout-complete="1"
+                                 data-regform-fields="4"
+                                 data-seating-set="3"
+                                 data-hall-conflicts="0"
+                                 data-slot-over-hall="0"
+                                 data-sessions="5"
+                                 data-sessions-no-speaker="1"
+                                 data-speakers="5"
+                                 data-speakers-no-bio="0"
+                                 data-speakers-no-photo="5"
+                                 data-food-enabled="1"
+                                 data-food-window-covers-sessions="0"
+                                 data-discount-exposure="450000"
+                                 data-potential-revenue="8500000"
+                                 data-rsvp-required="0"
+                                 data-rsvp-questions="0"
+                                 data-passcode-required="0"
+                                 data-passcode-set="0"
+                                 data-terms="1"
+                                 data-agenda-entries="4"></div>
+
+                            <p class="syscheck__idle" data-syscheck-idle>
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                Nothing has been checked yet. Run the check before publishing &mdash; it
+                                takes a second and it is the last chance to catch a conflict.
+                            </p>
+
+                            <div data-syscheck-out hidden>
+                                <div class="syscheck__score">
+                                    <span class="syscheck__pill syscheck__pill--block">
+                                        <b data-syscheck-blockers>0</b> blockers
+                                    </span>
+                                    <span class="syscheck__pill syscheck__pill--warn">
+                                        <b data-syscheck-warnings>0</b> warnings
+                                    </span>
+                                    <span class="syscheck__pill syscheck__pill--pass">
+                                        <b data-syscheck-passes>0</b> checks passed
+                                    </span>
+                                    <span class="syscheck__ran" data-syscheck-ran></span>
+                                </div>
+
+                                <div class="findings" data-syscheck-list></div>
+
+                                <p class="notice notice--info notice--flat u-mt-5" data-syscheck-clear hidden>
+                                    <svg class="notice__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Nothing is blocking this event. Warnings are worth a look but will
+                                    not stop you publishing.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- NOTE: Pre-publish Checklist intentionally left static/unbound.
+                         EventSummaryResp has no per-item completion flags. -->
+                    <section class="panel" aria-labelledby="checklist-title">
+                        <div class="panel__head">
+                            <h2 class="panel__title" id="checklist-title">Pre-publish Checklist</h2>
+                            <p class="panel__meta"><span class="countpill">18/19 complete</span></p>
+                        </div>
+                        <div class="checklist">
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Event type</span>
+                                <span class="checklist__value">@Model.Summary.EventType</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Event name</span>
+                                <span class="checklist__value">@Model.Summary.EventName</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Category</span>
+                                <span class="checklist__value">@Model.Summary.EventCategory</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Tagline / subtitle</span>
+                                <span class="checklist__value">@Model.Summary.TagLine</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Event date</span>
+                                <span class="checklist__value">@Model.Summary.Date</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Venue / location</span>
+                                <span class="checklist__value">@Model.Summary.Venue</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Halls / rooms</span>
+                                <span class="checklist__value">@Model.Summary.Halls halls</span>
+                            </p>
+                            <p class="checklist__item checklist__item--todo">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg></span>
+                                <span class="checklist__label">Cover image</span>
+                                <span class="checklist__value checklist__value--missing">Missing</span>
+                                <a class="checklist__fix" asp-page="/CreateEvent/BrandingPage" data-wizard-link>Edit <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></a>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Ticket tiers</span>
+                                <span class="checklist__value">@Model.Summary.TotalTicketTiers tiers</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Food serving rules</span>
+                                <span class="checklist__value">@Model.Summary.FoodServing</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Registration form</span>
+                                <span class="checklist__value">@Model.Summary.TotalCustomFields fields</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Seating per tier</span>
+                                <span class="checklist__value">All @Model.Summary.TotalTicketTiers set</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Add-ons</span>
+                                <span class="checklist__value">@Model.Summary.TotalAddons add-ons</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Promo codes</span>
+                                <span class="checklist__value">@Model.Summary.TotalPromoCodes codes</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Engagement &amp; access</span>
+                                <span class="checklist__value">@Model.Summary.Engagement</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Refund policy</span>
+                                <span class="checklist__value">@Model.Summary.Refund</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Agenda</span>
+                                <span class="checklist__value">@Model.Summary.TotalSessions sessions</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Hall conflicts</span>
+                                <span class="checklist__value">None detected</span>
+                            </p>
+                            <p class="checklist__item">
+                                <span class="checklist__mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
+                                <span class="checklist__label">Commission model</span>
+                                <span class="checklist__value">@Model.Summary.Commission on ticket sales</span>
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="panel" aria-labelledby="charge-title">
+                        <div class="panel__head">
+                            <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg></span>
+                            <h2 class="panel__title" id="charge-title">Nothing to Pay to Publish</h2>
+                            <p class="panel__meta"><span class="badge badge--live">Enterprise licence</span></p>
+                        </div>
+                        <div class="panel__body">
+                            <div class="invoice">
+                                <p class="invoice__row">
+                                    <span>Publishing fee<span class="invoice__note"> covered by your annual licence</span></span>
+                                    <span>@Model.Summary.PublishingFee</span>
+                                </p>
+                                <p class="invoice__row">
+                                    <span>Guest charges<span class="invoice__note"> no per-guest billing on enterprise</span></span>
+                                    <span>@Model.Summary.GuestCharges</span>
+                                </p>
+                                <p class="invoice__row invoice__row--total">
+                                    <span>Due now</span>
+                                    <span>@Model.Summary.DueAmount</span>
+                                </p>
+                            </div>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                <span>
+                                    <b>This event is ticketed</b>, so Planorahub takes a
+                                    <b>@Model.Summary.Commission commission on gross ticket sales</b> &mdash; itemised per event day
+                                    and time slot on your monthly invoice. Nothing is charged upfront, and
+                                    non-ticketed events carry no commission at all.
+                                </span>
+                            </p>
+
+                            <div class="invoice u-mt-5">
+                                <p class="invoice__row">
+                                    <span>Projected gross ticket sales<span class="invoice__note"> at sell-out</span></span>
+                                    <span>@Model.Summary.TotalPotential</span>
+                                </p>
+                            </div>
+
+                            <p class="field__hint">
+                                See <b>My Plan &rarr; Billing &amp; Invoices</b> for the itemised commission
+                                breakdown per day and slot once tickets start selling.
+                            </p>
+                        </div>
+                    </section>
+
+                    <p class="notice notice--warn notice--flat" data-publish-block hidden>
+                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                        <span>
+                            <b>
+                                <span data-publish-block-count>0</span> blockers must be fixed before this
+                                event can go live.
+                            </b>
+                            Save as draft, fix them, and run the check again.
+                        </span>
+                    </p>
+
+                    <div class="publishbar">
+                        <button type="submit" class="btn btn--outline"
+                                onclick="document.getElementById('isPublishInput').value='false';">
+                            Save as Draft
+                        </button>
+                        <button class="btn btn--success" type="button" data-modal-open="publish-modal"
+                                data-publish-gate>
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg> Publish Now
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer class="wizard__foot">
+        <a class="btn btn--outline" asp-page="/CreateEvent/BrandingPage" data-wizard-link><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <div class="wizard__foot-end">
+            <button class="btn btn--success" type="button" data-modal-open="publish-modal">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg> Publish Now
+            </button>
+        </div>
+    </footer>
+</div>
+
+<div class="modal" id="publish-modal" role="dialog" aria-modal="true"
+     aria-labelledby="publish-title" data-modal hidden>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="publish-title">Ready to publish?</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <div data-publish-step="confirm">
+            <div class="modal__body">
+                <div class="confirmbox">
+                    <p class="confirmbox__name">&ldquo;@Model.Summary.EventName&rdquo;</p>
+                    <p class="confirmbox__meta">@Model.Summary.EventType event &middot; @Model.Summary.TotalTicketTiers tier(s) &middot; @Model.Summary.Capacity capacity</p>
+                </div>
+
+                <ul class="confirmlist">
+                    <li class="confirmlist__item">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        <span><b>Visibility: Listed</b> &mdash; Discoverable in search</span>
+                    </li>
+                    <li class="confirmlist__item">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        <span><b>Access: Open</b> &mdash; Anyone can register</span>
+                    </li>
+                    <li class="confirmlist__item">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        <span><b>Publish: Immediately</b> &mdash; Live immediately</span>
+                    </li>
+                    <li class="confirmlist__item">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                        <span><b>Registration: Open</b> &mdash; Guests can register right away</span>
+                    </li>
+                </ul>
+
+                <p class="modal__note">
+                    Nothing is charged to publish. As a ticketed event, a @Model.Summary.Commission commission on gross
+                    ticket sales appears on your monthly enterprise invoice.
+                </p>
+            </div>
+
+            <div class="modal__foot">
+                <button class="btn btn--outline" type="button" data-modal-close>Review Again</button>
+                <button class="btn btn--success" type="submit" form="publishForm"
+                        onclick="document.getElementById('isPublishInput').value='true';">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg> Publish Now
+                </button>
+            </div>
+        </div>
+
+        <div class="working" data-publish-step="working" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <p class="working__title" role="status">Publishing your event&hellip;</p>
+            <p class="working__text">Setting up ticketing, landing page and notifications</p>
+            <span class="working__track"><span class="working__bar"></span></span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var inlineBar = document.querySelector('.publishbar');
+            var footerEnd = document.querySelector('.wizard__foot-end');
+
+            if (inlineBar && footerEnd) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        footerEnd.style.display = entry.isIntersecting ? 'none' : '';
+                    });
+                }, {
+                    root: null,
+                    threshold: 0.15
+                });
+
+                observer.observe(inlineBar);
+            }
+        });
+
+        // Footer "Publish Now" button opens the same modal as the inline one.
+        // The modal's own confirm button submits publishForm directly.
+    </script>
+}

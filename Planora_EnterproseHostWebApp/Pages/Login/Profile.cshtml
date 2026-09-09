@@ -1,0 +1,565 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Login.ProfileModel
+@{
+    Layout = "_Layout";
+    ViewData["PageName"] = "Settings";
+    ViewData["PageDesc"] = "Account &amp; preferences";
+}
+
+<main class="shell__main" data-page-roles="admin">
+
+    <div class="page__head">
+        <div>
+            <h1 class="page__title">Settings</h1>
+            <p class="page__subtitle">Account, organization, and payout preferences</p>
+        </div>
+    </div>
+
+    <div class="settings">
+
+        <nav class="secnav" aria-label="Settings sections" data-settings-nav>
+            <a class="secnav__link" href="#profile" aria-current="true"
+               data-section="profile">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
+                <span class="secnav__body">
+                    <span class="secnav__title">Profile</span>
+                    <span class="secnav__text">Name, photo, contact</span>
+                </span>
+                <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </a>
+            <a class="secnav__link" href="#organization" aria-current="false"
+               data-section="organization">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                <span class="secnav__body">
+                    <span class="secnav__title">Organization</span>
+                    <span class="secnav__text">Company &amp; currency</span>
+                </span>
+                <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </a>
+            <a class="secnav__link" href="#bank" aria-current="false"
+               data-section="bank">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
+                <span class="secnav__body">
+                    <span class="secnav__title">Bank Account</span>
+                    <span class="secnav__text">Payouts &amp; transfers</span>
+                </span>
+                <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </a>
+            <a class="secnav__link" href="#credits" aria-current="false"
+               data-section="credits">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg></span>
+                <span class="secnav__body">
+                    <span class="secnav__title">Comms Credits</span>
+                    <span class="secnav__text">WhatsApp &amp; email sends</span>
+                </span>
+                <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </a>
+            <a class="secnav__link" href="#notifications" aria-current="false"
+               data-section="notifications">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6M13.7 20a2 2 0 0 1-3.4 0" /></svg></span>
+                <span class="secnav__body">
+                    <span class="secnav__title">Notifications</span>
+                    <span class="secnav__text">Alert preferences</span>
+                </span>
+                <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </a>
+            <a class="secnav__link" href="#security" aria-current="false"
+               data-section="security">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
+                <span class="secnav__body">
+                    <span class="secnav__title">Security</span>
+                    <span class="secnav__text">Password &amp; 2FA</span>
+                </span>
+                <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+            </a>
+            <div class="secnav__foot">
+                <span class="avatar" aria-hidden="true">KA</span>
+                <span>
+                    <span class="secnav__who">Kofi Asante</span>
+                    <span class="secnav__org">Owner &middot; TechSphere Corp</span>
+                </span>
+            </div>
+        </nav>
+
+        <form action="settings.html" method="get">
+            <div data-section-panel="profile">
+                <section class="panel" aria-labelledby="profile-title">
+                    <div class="panel__body">
+                        <div class="identity">
+                            <span class="identity__avatar" aria-hidden="true">KA</span>
+                            <div>
+                                <h2 class="identity__name" id="profile-title">Kofi Asante</h2>
+                                <p class="identity__role">Owner &middot; TechSphere Corp</p>
+                                <p class="identity__since">Joined March 2024</p>
+                                <label class="btn btn--outline btn--sm" for="avatar-upload">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Change Photo
+                                </label>
+                                <input class="u-visually-hidden" id="avatar-upload" name="avatar-upload"
+                                       type="file" accept="image/png,image/jpeg">
+                            </div>
+                        </div>
+
+                        <div class="formgrid formgrid--2">
+                            <div class="form__field">
+                                <label class="field__label" for="full-name">Full Name</label>
+                                <input class="field__input" id="full-name" name="full-name" type="text" value="Kofi Asante">
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="work-email">Work Email</label>
+                                <input class="field__input" id="work-email" name="work-email" type="email" value="kofi@techsphere.io">
+                            </div>
+                        </div>
+
+                        <div class="formgrid formgrid--2 u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="phone">Phone</label>
+                                <input class="field__input" id="phone" name="phone" type="tel" value="+234 812 345 6789">
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="job-title">Job Title</label>
+                                <input class="field__input" id="job-title" name="job-title" type="text" value="CEO &amp; Founder">
+                            </div>
+                        </div>
+
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="bio">Bio (optional)</label>
+                                <textarea class="field__input" id="bio" name="bio" rows="3"
+                                          placeholder="A short introduction shown on event pages"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form__actions">
+                            <button class="btn btn--primary" type="submit">Save Changes</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div data-section-panel="organization" hidden>
+                <section class="panel" aria-labelledby="org-title">
+                    <h2 class="u-visually-hidden" id="org-title">Organization details</h2>
+                    <div class="panel__body">
+                        <div class="formgrid">
+                            <div class="form__field">
+                                <label class="field__label" for="org-name">Organization Name</label>
+                                <input class="field__input" id="org-name" name="org-name" type="text" value="TechSphere Corp">
+                            </div>
+                        </div>
+
+                        <div class="formgrid formgrid--2 u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="industry">Industry</label>
+                                <select class="field__select" id="industry" name="industry">
+                                    <option>Technology</option>
+                                    <option>Media &amp; Entertainment</option>
+                                    <option>Finance</option>
+                                    <option>Education</option>
+                                    <option>Non-profit</option>
+                                </select>
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="company-size">Company Size</label>
+                                <select class="field__select" id="company-size" name="company-size">
+                                    <option>1&ndash;10</option>
+                                    <option>11&ndash;50</option>
+                                    <option>51&ndash;200</option>
+                                    <option>200+</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="website">Website</label>
+                                <input class="field__input" id="website" name="website" type="url" value="https://techsphere.io">
+                            </div>
+                        </div>
+
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="settlement">Settlement Currency</label>
+                                <select class="field__select" id="settlement" name="settlement">
+                                    <option>NGN &middot; Nigerian Naira</option>
+                                    <option>USD &middot; US Dollar</option>
+                                    <option>GHS &middot; Ghanaian Cedi</option>
+                                    <option>GBP &middot; Pound Sterling</option>
+                                </select>
+                                <span class="field__hint">Locked after first payout</span>
+                            </div>
+                        </div>
+
+                        <p class="notice notice--warn notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                            Settlement currency is locked to NGN after your first approved payout.
+                            Contact support to change it.
+                        </p>
+
+                        <div class="form__actions">
+                            <button class="btn btn--primary" type="submit">Save Changes</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div data-section-panel="bank" hidden>
+                <p class="notice notice--alert notice--flat">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg>
+                    <span>
+                        <b>Payout Bank Account</b><br>
+                        Funds are settled to this account within 3&ndash;5 business days after an event
+                        ends. Verification required before first payout.
+                    </span>
+                </p>
+
+                <section class="panel u-mt-6" aria-labelledby="bank-title">
+                    <div class="panel__head panel__head--plain">
+                        <h2 class="panel__title panel__title--lg" id="bank-title">Bank Account Details</h2>
+                    </div>
+                    <div class="panel__body">
+                        <div class="formgrid formgrid--2">
+                            <div class="form__field">
+                                <label class="field__label" for="bank-name">Bank Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <select class="field__select" id="bank-name" name="bank-name" data-bank-lookup-bank>
+                                    <option>Guarantee Trust Bank (GTBank)</option>
+                                    <option>Zenith Bank</option>
+                                    <option>Access Bank</option>
+                                    <option>First Bank of Nigeria</option>
+                                    <option>Kuda MFB</option>
+                                </select>
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="acct-number">Account Number<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <input class="field__input" id="acct-number" name="acct-number" type="text" placeholder="0123456789" required inputmode="numeric" data-bank-lookup-no>
+                                <span class="field__hint">Type the 10-digit NUBAN &mdash; the name is fetched from the bank</span>
+                            </div>
+                        </div>
+
+                        <p class="lookupbox u-mt-5 is-waiting" data-bank-lookup-out>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
+                            <span class="lookupbox__body">
+                                <span class="lookupbox__label">Account holder name</span>
+                                <span class="lookupbox__value" data-bank-lookup-name>
+                                    Waiting for a 10-digit number
+                                </span>
+                            </span>
+                        </p>
+
+                        <div class="formgrid formgrid--2 u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="acct-currency">Account Currency<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <select class="field__select" id="acct-currency" name="acct-currency">
+                                    <option>NGN &middot; Nigerian Naira</option>
+                                    <option>USD &middot; US Dollar</option>
+                                    <option>GBP &middot; Pound Sterling</option>
+                                </select>
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="sort-code">Routing / Sort Code</label>
+                                <input class="field__input" id="sort-code" name="sort-code" type="text" placeholder="12-34-56">
+                                <span class="field__hint">For GBP accounts only &mdash; leave blank for NGN</span>
+                            </div>
+                        </div>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            The name is fetched from the bank against the account number, so it cannot
+                            be mistyped. Details are encrypted and verified via Paystack, and a test
+                            deposit of &#8358;50 confirms the account before the first payout.
+                        </p>
+
+                        <div class="modal__foot u-mt-5">
+                            <button class="btn btn--outline" type="reset">Cancel</button>
+                            <button class="btn btn--primary" type="submit"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Save &amp; Verify</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel u-mt-6" aria-labelledby="payouts-title">
+                    <div class="panel__head">
+                        <h2 class="panel__title panel__title--lg" id="payouts-title">Payout History</h2>
+                        <button class="linkmore" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export</button>
+                    </div>
+                    <div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">Enterprise Leadership Forum</span>
+                                <span class="histrow__when">Jul 25, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&#8358;78,000,000</span>
+                                <span class="badge badge--nodot badge--live">Settled</span>
+                            </span>
+                        </div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">Design Sprint Conference</span>
+                                <span class="histrow__when">Jun 14, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&#8358;23,500,000</span>
+                                <span class="badge badge--nodot badge--live">Settled</span>
+                            </span>
+                        </div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">Startup Pitch Lagos</span>
+                                <span class="histrow__when">May 30, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&#8358;4,400,000</span>
+                                <span class="badge badge--nodot badge--live">Settled</span>
+                            </span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div data-section-panel="credits" hidden>
+                <div class="grid grid--2">
+                    <article class="creditcard">
+                        <div class="creditcard__top">
+                            <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8z" /></svg></span>
+                            <span>
+                                <span class="creditcard__name">WhatsApp</span>
+                                <span class="creditcard__rate">&#8358;15 per message</span>
+                            </span>
+                        </div>
+                        <p class="creditcard__value creditcard__value--whatsapp">1,240</p>
+                        <p class="creditcard__note">1,240 credits remaining</p>
+                        <p class="creditcard__usage">
+                            <span>Used this month</span>
+                            <span>3,260</span>
+                        </p>
+                        <span class="meter"><span class="meter__fill meter__fill--live" data-fill="62"></span></span>
+                        <p class="creditcard__note u-mt-5">100 credits = 100 WhatsApp messages</p>
+                        <a class="btn btn--outline btn--block u-mt-5" href="#buy-title"
+                           data-buycredits="WhatsApp">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Buy Credits
+                        </a>
+                    </article>
+
+                    <article class="creditcard">
+                        <div class="creditcard__top">
+                            <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h5l2 3h4l2-3h5" /><path d="M5.5 4h13l2.5 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6l2.5-8z" /></svg></span>
+                            <span>
+                                <span class="creditcard__name">Email</span>
+                                <span class="creditcard__rate">&#8358;2 per email</span>
+                            </span>
+                        </div>
+                        <p class="creditcard__value creditcard__value--email">8,500</p>
+                        <p class="creditcard__note">8,500 credits remaining</p>
+                        <p class="creditcard__usage">
+                            <span>Used this month</span>
+                            <span>1,500</span>
+                        </p>
+                        <span class="meter"><span class="meter__fill meter__fill--email" data-fill="15"></span></span>
+                        <p class="creditcard__note u-mt-5">100 credits = 100 email sends</p>
+                        <a class="btn btn--outline btn--block u-mt-5" href="#buy-title"
+                           data-buycredits="Email">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Buy Credits
+                        </a>
+                    </article>
+                </div>
+
+                <section class="panel u-mt-6" id="buy-credits" aria-labelledby="buy-title">
+                    <div class="panel__head">
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="buy-title">Buy Credits</h2>
+                            <p class="panel__meta">
+                                Charged to the card on file, or added to your next invoice
+                            </p>
+                        </div>
+                        <a class="linkmore" href="my-plan.html">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg> Communication wallet
+                        </a>
+                    </div>
+                    <div class="panel__body">
+                        <div class="formgrid formgrid--2">
+                            <div class="form__field">
+                                <label class="field__label" for="credit-channel">Channel</label>
+                                <select class="field__select" id="credit-channel" name="credit-channel" data-buycredits-channel>
+                                    <option>WhatsApp</option>
+                                    <option>Email</option>
+                                </select>
+                            </div>
+                            <div class="form__field">
+                                <label class="field__label" for="credit-package">Credit Package</label>
+                                <select class="field__select" id="credit-package" name="credit-package">
+                                    <option>500 credits &mdash; &#8358;7,500</option>
+                                    <option>1,000 credits &mdash; &#8358;14,000</option>
+                                    <option>5,000 credits &mdash; &#8358;65,000</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary btn--block u-mt-5" type="button"
+                                data-action="Credits purchased &mdash; the new balance is live">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg> Purchase Credits
+                        </button>
+                    </div>
+                </section>
+
+                <section class="panel u-mt-6" aria-labelledby="usage-title">
+                    <div class="panel__head">
+                        <h2 class="panel__title panel__title--lg" id="usage-title">Credit Usage History</h2>
+                        <button class="linkmore" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export</button>
+                    </div>
+                    <div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">WhatsApp blast &mdash; Tech Summit 2025</span>
+                                <span class="histrow__when">Jul 28, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&minus;847</span>
+                                <span class="badge badge--nodot badge--live">WhatsApp</span>
+                            </span>
+                        </div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">Email confirmation &mdash; 847 attendees</span>
+                                <span class="histrow__when">Jul 27, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&minus;847</span>
+                                <span class="badge badge--nodot badge--upcoming">Email</span>
+                            </span>
+                        </div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">WhatsApp reminder &mdash; Afrobeat Night</span>
+                                <span class="histrow__when">Jul 20, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&minus;322</span>
+                                <span class="badge badge--nodot badge--live">WhatsApp</span>
+                            </span>
+                        </div>
+                        <div class="histrow">
+                            <span class="histrow__body">
+                                <span class="histrow__title">Email newsletter &mdash; all subscribers</span>
+                                <span class="histrow__when">Jul 15, 2025</span>
+                            </span>
+                            <span class="histrow__side">
+                                <span class="histrow__amount">&minus;2100</span>
+                                <span class="badge badge--nodot badge--upcoming">Email</span>
+                            </span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div data-section-panel="notifications" hidden>
+                <section class="panel" aria-labelledby="alerts-title">
+                    <div class="panel__head">
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6M13.7 20a2 2 0 0 1-3.4 0" /></svg></span>
+                        <h2 class="panel__title" id="alerts-title">Alert Preferences</h2>
+                        <p class="panel__meta">In-app &amp; email</p>
+                    </div>
+                    <div>
+                        <div class="securow">
+                            <span class="securow__body">
+                                <span class="securow__title" id="alert-1-label">Ticket sales</span>
+                                <span class="securow__text">Every purchase and refund on your events</span>
+                            </span>
+                            <span class="featurerow__state">In-app</span>
+                            <button class="switch switch--brand" type="button" role="switch"
+                                    aria-checked="true" aria-labelledby="alert-1-label"
+                                    data-switch></button>
+                            <span class="featurerow__state">Email</span>
+                            <button class="switch switch--info" type="button" role="switch"
+                                    aria-checked="true" aria-label="Ticket sales email alerts"
+                                    data-switch></button>
+                        </div>
+                        <div class="securow">
+                            <span class="securow__body">
+                                <span class="securow__title" id="alert-2-label">Payout status</span>
+                                <span class="securow__text">When a payout is initiated, sent or fails</span>
+                            </span>
+                            <span class="featurerow__state">In-app</span>
+                            <button class="switch switch--brand" type="button" role="switch"
+                                    aria-checked="true" aria-labelledby="alert-2-label"
+                                    data-switch></button>
+                            <span class="featurerow__state">Email</span>
+                            <button class="switch switch--info" type="button" role="switch"
+                                    aria-checked="true" aria-label="Payout status email alerts"
+                                    data-switch></button>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <div class="form__actions">
+                            <button class="btn btn--primary" type="submit">Save Changes</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div data-section-panel="security" hidden>
+                <section class="panel" aria-labelledby="password-title">
+                    <div class="panel__head panel__head--plain">
+                        <h2 class="panel__title panel__title--lg" id="password-title">Change Password</h2>
+                    </div>
+                    <div class="panel__body">
+                        <div class="formgrid">
+                            <div class="form__field">
+                                <label class="field__label" for="current-password">Current Password</label>
+                                <input class="field__input" id="current-password" name="current-password" type="password" placeholder="Current password">
+                            </div>
+                        </div>
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="new-password">New Password</label>
+                                <input class="field__input" id="new-password" name="new-password" type="password" placeholder="New password">
+                                <span class="field__hint">Min 8 chars, at least one uppercase and one number</span>
+                            </div>
+                        </div>
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="confirm-password">Confirm New Password</label>
+                                <input class="field__input" id="confirm-password" name="confirm-password" type="password" placeholder="Confirm">
+                            </div>
+                        </div>
+                        <div class="form__actions">
+                            <button class="btn btn--primary" type="submit">Update Password</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel u-mt-6" aria-labelledby="sessions-title">
+                    <div class="panel__head">
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="sessions-title">
+                                Active Sessions
+                            </h2>
+                            <p class="panel__meta">Where this account is signed in right now</p>
+                        </div>
+                        <button class="linkmore" type="button"
+                                data-action="Signed out of every other device"
+                                data-action-tone="warn">
+                            Sign out all others
+                        </button>
+                    </div>
+                    <div>
+                        <div class="securow">
+                            <span class="securow__body">
+                                <span class="securow__title">Chrome on macOS &middot; this device</span>
+                                <span class="securow__text">Lagos, Nigeria &middot; Active now</span>
+                            </span>
+                            <span class="badge badge--nodot badge--live">Current</span>
+                        </div>
+                        <div class="securow">
+                            <span class="securow__body">
+                                <span class="securow__title">Safari on iPhone 15</span>
+                                <span class="securow__text">Lagos, Nigeria &middot; Last seen 2 hours ago</span>
+                            </span>
+                            <button class="btn btn--outline btn--sm" type="button" data-action="Signed out of Safari on iPhone 15" data-action-tone="warn">Sign out</button>
+                        </div>
+                        <div class="securow">
+                            <span class="securow__body">
+                                <span class="securow__title">Chrome on Windows</span>
+                                <span class="securow__text">Accra, Ghana &middot; Last seen yesterday</span>
+                            </span>
+                            <button class="btn btn--outline btn--sm" type="button" data-action="Signed out of Chrome on Windows" data-action-tone="warn">Sign out</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </form>
+
+    </div>
+</main>

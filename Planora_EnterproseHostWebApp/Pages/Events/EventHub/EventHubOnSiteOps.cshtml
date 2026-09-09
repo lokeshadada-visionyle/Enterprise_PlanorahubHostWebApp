@@ -1,0 +1,1258 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubOnSiteOpsModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="onsite" data-role-only="admin manager viewer" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> On-Site Operations</h2>
+            <p class="hubhead__text">
+                Registration desk and badge printing. The Entry Staff app does the
+                checking in and the printing &mdash; this configures it and watches it.
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <a class="btn btn--quiet btn--sm" href="badge-flow.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> How badge printing works
+            </a>
+            <a class="btn btn--outline btn--sm" href="check-in.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg> Check-in desk
+            </a>
+        </div>
+    </div>
+
+    <nav class="subtabs subtabs--inner" role="tablist"
+         aria-label="On-site operations" data-pick-group id="onsitetabs">
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="true"
+                aria-pressed="true" data-pick="activity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3v3h6V3" /><path d="M9 12h6M9 16h4" /></svg> Badge Activity
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                aria-pressed="false" data-pick="config" data-role-only="admin manager">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9V3h10v6" /><rect x="3" y="9" width="18" height="7" rx="2" /><path d="M7 16h10v5H7z" /></svg> Badge Printing
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                aria-pressed="false" data-pick="counters" data-role-only="admin manager">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> Counters
+        </button>
+    </nav>
+
+    <div data-pick-panel="activity" data-pick-owner="onsitetabs">
+        <div class="hubhead">
+            <div class="hubhead__body">
+                <h3 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3v3h6V3" /><path d="M9 12h6M9 16h4" /></svg> Badge Activity</h3>
+                <p class="hubhead__text">
+                    Every checked-in guest and the state of their badge. Check-in time is
+                    first, because a failed badge is still a guest who is inside.
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Badge activity exported as CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export activity
+                </button>
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Activity refreshed from the counters">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12a8 8 0 1 1-3-6.2" /><path d="M20 4v5h-5" /></svg> Refresh
+                </button>
+            </div>
+        </div>
+
+        <section class="grid grid--6 u-mb-6" aria-label="Badge summary">
+            <article class="metric metric--tight">
+                <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
+                <span>
+                    <span class="metric__value" data-badge-kpi="checked-in">10</span>
+                    <span class="metric__label">Checked in</span>
+                    <span class="metric__meta">Every guest through a counter</span>
+                </span>
+            </article>
+            <article class="metric metric--tight">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3v3h6V3" /><path d="M9 12h6M9 16h4" /></svg></span>
+                <span>
+                    <span class="metric__value" data-badge-kpi="badges-required">10</span>
+                    <span class="metric__label">Badges required</span>
+                    <span class="metric__meta">Printing is on for this event</span>
+                </span>
+            </article>
+            <article class="metric metric--tight">
+                <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9V3h10v6" /><rect x="3" y="9" width="18" height="7" rx="2" /><path d="M7 16h10v5H7z" /></svg></span>
+                <span>
+                    <span class="metric__value" data-badge-kpi="printed">6</span>
+                    <span class="metric__label">Printed</span>
+                    <span class="metric__meta">6 of 10 checked-in guests</span>
+                </span>
+            </article>
+            <article class="metric metric--tight">
+                <span class="tile tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg></span>
+                <span>
+                    <span class="metric__value" data-badge-kpi="pending">2</span>
+                    <span class="metric__label">Pending</span>
+                    <span class="metric__meta">Checked in, not printed yet</span>
+                </span>
+            </article>
+            <article class="metric metric--tight">
+                <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg></span>
+                <span>
+                    <span class="metric__value" data-badge-kpi="failed">2</span>
+                    <span class="metric__label">Failed</span>
+                    <span class="metric__meta">Guests are inside &mdash; retry at the counter</span>
+                </span>
+            </article>
+            <article class="metric metric--tight">
+                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12a8 8 0 1 1-3-6.2" /><path d="M20 4v5h-5" /></svg></span>
+                <span>
+                    <span class="metric__value" data-badge-kpi="reprints">3</span>
+                    <span class="metric__label">Reprints</span>
+                    <span class="metric__meta">Extra prints beyond the first</span>
+                </span>
+            </article>
+        </section>
+
+
+        <section class="panel" data-badge-live>
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h4 class="panel__title">Guests and badges</h4>
+                    <p class="panel__meta">
+                        Updated as each counter reports in &mdash; the web app watches, the
+                        Entry Staff app prints
+                    </p>
+                </div>
+            </div>
+            <div class="panel__body">
+                <div class="toolbar">
+                    <div class="searchbox">
+                        <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                        <label class="u-visually-hidden" for="badge-search">
+                            Search by guest name, guest ID, ticket number or email
+                        </label>
+                        <input class="searchbox__input" id="badge-search" name="badge-search"
+                               type="search"
+                               placeholder="Guest name, guest ID, ticket number or email"
+                               data-badge-search>
+                    </div>
+                    <span class="segment" id="badgefilter" role="group"
+                          aria-label="Filter by badge status" data-pick-group>
+                        <button class="segment__opt" type="button"
+                                aria-pressed="true" data-pick="all"
+                                data-badge-filter="">
+                            All
+                        </button>
+                        <button class="segment__opt" type="button"
+                                aria-pressed="false" data-pick="printed"
+                                data-badge-filter="printed">
+                            Printed
+                        </button>
+                        <button class="segment__opt" type="button"
+                                aria-pressed="false" data-pick="pending"
+                                data-badge-filter="pending">
+                            Pending
+                        </button>
+                        <button class="segment__opt" type="button"
+                                aria-pressed="false" data-pick="failed"
+                                data-badge-filter="failed">
+                            Failed
+                        </button>
+                        <button class="segment__opt" type="button"
+                                aria-pressed="false" data-pick="reprint"
+                                data-badge-filter="reprint">
+                            Reprinted
+                        </button>
+                    </span>
+                </div>
+
+                <p class="bulkbar u-mt-5">
+                    <span>
+                        <b data-badge-shown>10 guests</b> shown &middot;
+                        <span data-badge-filterlabel>all badge statuses</span>
+                    </span>
+                    <span class="bulkbar__actions">
+                        <span class="badge badge--nodot badge--out">
+                            <b data-badge-failedcount>2</b> need a retry
+                        </span>
+                    </span>
+                </p>
+
+                <div class="tablewrap u-mt-5">
+                    <table class="table table--narrow" id="badge-table">
+                        <caption class="u-visually-hidden">
+                            Checked-in guests with badge status, print count, counter and staff
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Guest</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Checked in</th>
+                                <th scope="col">Badge</th>
+                                <th scope="col" class="u-right">Prints</th>
+                                <th scope="col">Last print</th>
+                                <th scope="col">Counter</th>
+                                <th scope="col">Staff</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-badge-row data-badge="g1"
+                                data-badge-state="printed" data-badge-cat="vip">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">AO</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Amara Osei</span>
+                                            <span class="cellsub">Acme Africa &middot; TSA-4821</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--vip">VIP</span>
+                                </td>
+                                <td><span class="u-nowrap">09:41</span></td>
+                                <td><span class="badge badge--live" data-badge-badge>Printed</span></td>
+                                <td class="u-right"><b data-badge-count>1</b></td>
+                                <td class="u-muted"><span class="u-nowrap">09:41</span></td>
+                                <td class="u-muted">VIP Counter</td>
+                                <td class="u-muted">Seyi Lawal</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g1">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Amara Osei
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g1">
+                                            <span class="u-visually-hidden">
+                                                Print history for Amara Osei
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g2"
+                                data-badge-state="printed" data-badge-cat="delegate">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">TA</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Tunde Alabi</span>
+                                            <span class="cellsub">Acme Africa &middot; TSA-4822</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--delegate">Delegate</span>
+                                </td>
+                                <td><span class="u-nowrap">09:40</span></td>
+                                <td><span class="badge badge--live" data-badge-badge>Printed</span></td>
+                                <td class="u-right"><b data-badge-count>1</b></td>
+                                <td class="u-muted"><span class="u-nowrap">09:40</span></td>
+                                <td class="u-muted">Counter 01</td>
+                                <td class="u-muted">Bayo Ogun</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g2">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Tunde Alabi
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g2">
+                                            <span class="u-visually-hidden">
+                                                Print history for Tunde Alabi
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g3"
+                                data-badge-state="reprint" data-badge-cat="speaker">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">NE</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Dr. Ngozi Eze</span>
+                                            <span class="cellsub">Central Bank of Nigeria &middot; TSA-4823</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--speaker">Speaker</span>
+                                </td>
+                                <td><span class="u-nowrap">09:38</span></td>
+                                <td><span class="badge badge--nodot badge--role" data-badge-badge>Reprint</span></td>
+                                <td class="u-right"><b data-badge-count>3</b></td>
+                                <td class="u-muted"><span class="u-nowrap">10:12</span></td>
+                                <td class="u-muted">Speaker Counter</td>
+                                <td class="u-muted">Chika Eze</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g3">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Dr. Ngozi Eze
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g3">
+                                            <span class="u-visually-hidden">
+                                                Print history for Dr. Ngozi Eze
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g4"
+                                data-badge-state="failed" data-badge-cat="delegate">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">GM</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Grace Mensah</span>
+                                            <span class="cellsub">Partner Group Ghana &middot; TSA-4824</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--delegate">Delegate</span>
+                                </td>
+                                <td><span class="u-nowrap">09:36</span></td>
+                                <td><span class="badge badge--out" data-badge-badge>Failed</span></td>
+                                <td class="u-right"><b data-badge-count>0</b></td>
+                                <td class="u-muted"><span class="u-nowrap">&mdash;</span></td>
+                                <td class="u-muted">Counter 02</td>
+                                <td class="u-muted">Ndidi Musa</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g4">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Grace Mensah
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g4">
+                                            <span class="u-visually-hidden">
+                                                Print history for Grace Mensah
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g5"
+                                data-badge-state="pending" data-badge-cat="vip">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">KA</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Kwame Asante</span>
+                                            <span class="cellsub">Ghana TV &middot; TSA-4825</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--vip">VIP</span>
+                                </td>
+                                <td><span class="u-nowrap">09:35</span></td>
+                                <td><span class="badge badge--paused" data-badge-badge>Pending</span></td>
+                                <td class="u-right"><b data-badge-count>0</b></td>
+                                <td class="u-muted"><span class="u-nowrap">&mdash;</span></td>
+                                <td class="u-muted">VIP Counter</td>
+                                <td class="u-muted">Seyi Lawal</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g5">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Kwame Asante
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g5">
+                                            <span class="u-visually-hidden">
+                                                Print history for Kwame Asante
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g6"
+                                data-badge-state="printed" data-badge-cat="exhibitor">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">FB</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Femi Bello</span>
+                                            <span class="cellsub">Vendor NG &middot; TSA-4826</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--exhibitor">Exhibitor</span>
+                                </td>
+                                <td><span class="u-nowrap">09:33</span></td>
+                                <td><span class="badge badge--live" data-badge-badge>Printed</span></td>
+                                <td class="u-right"><b data-badge-count>1</b></td>
+                                <td class="u-muted"><span class="u-nowrap">09:34</span></td>
+                                <td class="u-muted">Counter 01</td>
+                                <td class="u-muted">Bayo Ogun</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g6">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Femi Bello
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g6">
+                                            <span class="u-visually-hidden">
+                                                Print history for Femi Bello
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g7"
+                                data-badge-state="failed" data-badge-cat="delegate">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">AO</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Ada Obi</span>
+                                            <span class="cellsub">Acme Africa &middot; TSA-4827</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--delegate">Delegate</span>
+                                </td>
+                                <td><span class="u-nowrap">09:31</span></td>
+                                <td><span class="badge badge--out" data-badge-badge>Failed</span></td>
+                                <td class="u-right"><b data-badge-count>1</b></td>
+                                <td class="u-muted"><span class="u-nowrap">09:31</span></td>
+                                <td class="u-muted">Counter 03</td>
+                                <td class="u-muted">Amaka Obi</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g7">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Ada Obi
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g7">
+                                            <span class="u-visually-hidden">
+                                                Print history for Ada Obi
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g8"
+                                data-badge-state="printed" data-badge-cat="staff">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">BA</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Bayo Adeyemi</span>
+                                            <span class="cellsub">TechSphere &middot; TSA-4828</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--staff">Staff</span>
+                                </td>
+                                <td><span class="u-nowrap">09:28</span></td>
+                                <td><span class="badge badge--live" data-badge-badge>Printed</span></td>
+                                <td class="u-right"><b data-badge-count>1</b></td>
+                                <td class="u-muted"><span class="u-nowrap">09:29</span></td>
+                                <td class="u-muted">Counter 02</td>
+                                <td class="u-muted">Ndidi Musa</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g8">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Bayo Adeyemi
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g8">
+                                            <span class="u-visually-hidden">
+                                                Print history for Bayo Adeyemi
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g9"
+                                data-badge-state="reprint" data-badge-cat="staff">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">CE</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Chioma Eze</span>
+                                            <span class="cellsub">TechSphere &middot; TSA-4829</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--staff">Staff</span>
+                                </td>
+                                <td><span class="u-nowrap">09:24</span></td>
+                                <td><span class="badge badge--nodot badge--role" data-badge-badge>Reprint</span></td>
+                                <td class="u-right"><b data-badge-count>2</b></td>
+                                <td class="u-muted"><span class="u-nowrap">09:58</span></td>
+                                <td class="u-muted">Counter 01</td>
+                                <td class="u-muted">Bayo Ogun</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g9">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Chioma Eze
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g9">
+                                            <span class="u-visually-hidden">
+                                                Print history for Chioma Eze
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-badge-row data-badge="g10"
+                                data-badge-state="pending" data-badge-cat="guest">
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">ZS</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Zainab Sule</span>
+                                            <span class="cellsub">Lagos Tech &middot; TSA-4830</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="catchip catchip--guest">Guest</span>
+                                </td>
+                                <td><span class="u-nowrap">09:20</span></td>
+                                <td><span class="badge badge--paused" data-badge-badge>Pending</span></td>
+                                <td class="u-right"><b data-badge-count>0</b></td>
+                                <td class="u-muted"><span class="u-nowrap">&mdash;</span></td>
+                                <td class="u-muted">Counter 03</td>
+                                <td class="u-muted">Amaka Obi</td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgedetail-modal"
+                                                data-badge-open="g10">
+                                            <span class="u-visually-hidden">
+                                                Badge details for Zainab Sule
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn" type="button"
+                                                data-modal-open="badgehistory-modal"
+                                                data-badge-history="g10">
+                                            <span class="u-visually-hidden">
+                                                Print history for Zainab Sule
+                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="emptystate" data-badge-empty hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3v3h6V3" /><path d="M9 12h6M9 16h4" /></svg>
+                    <span class="emptystate__body">
+                        <span class="emptystate__title">No guest matches that</span>
+                        <span class="emptystate__text">
+                            Try a different status, or search by guest ID or ticket number.
+                        </span>
+                    </span>
+                </p>
+
+                <p class="notice notice--alert notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg>
+                    <span>
+                        <b>A failed badge is not a failed check-in.</b><br>
+                        Every guest listed here is inside the building. Retrying a failed print
+                        happens at the counter, on the device holding the printer &mdash; this
+                        screen records what happened, it does not print.
+                    </span>
+                </p>
+            </div>
+        </section>
+
+        <!-- Shown instead of the table when badge printing is off -->
+        <section class="lockcard" data-badge-notrequired hidden>
+            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3v3h6V3" /><path d="M9 12h6M9 16h4" /></svg></span>
+            <div class="lockcard__body">
+                <h3 class="lockcard__title">Badge printing is off for this event</h3>
+                <p class="lockcard__text">
+                    Every guest reads <b>Not Required</b> and the Entry Staff app hides its
+                    print button. Guests still check in exactly as before &mdash; nothing
+                    about the door changes.
+                </p>
+                <p class="lockcard__actions">
+                    <button class="btn btn--outline btn--sm" type="button"
+                            data-pick="config" data-pick-jump="onsitetabs">
+                        Turn badge printing on
+                    </button>
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <div data-pick-panel="config" data-pick-owner="onsitetabs" data-role-only="admin manager" hidden>
+        <div class="hubhead">
+            <div class="hubhead__body">
+                <h3 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9V3h10v6" /><rect x="3" y="9" width="18" height="7" rx="2" /><path d="M7 16h10v5H7z" /></svg> Badge Printing</h3>
+                <p class="hubhead__text">
+                    Configure what prints and who may print it. The printing itself
+                    happens on the Entry Staff app, at the counter.
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-modal-open="badgepreview-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Full preview
+                </button>
+                <button class="btn btn--primary btn--sm" type="button" data-role-only="admin manager"
+                        data-action="Badge configuration saved &mdash; the Entry Staff app picks it up on next sync">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Save configuration
+                </button>
+            </div>
+        </div>
+
+        <!-- The one switch the whole feature hangs off -->
+        <section class="panel" aria-labelledby="badgeon-title">
+            <div class="panel__head">
+                <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9V3h10v6" /><rect x="3" y="9" width="18" height="7" rx="2" /><path d="M7 16h10v5H7z" /></svg></span>
+                <div>
+                    <h4 class="panel__title" id="badgeon-title">Badge printing</h4>
+                    <p class="panel__meta">
+                        Optional per event. Off is a perfectly good answer &mdash; guests
+                        still check in.
+                    </p>
+                </div>
+                <span class="switchcard switchcard--bare">
+                    <span class="switchcard__title" id="badgeon-label">
+                        Enable badge printing
+                    </span>
+                    <button class="switch switch--brand" type="button" role="switch"
+                            aria-checked="true" aria-labelledby="badgeon-label"
+                            data-switch data-badge-enable></button>
+                </span>
+            </div>
+            <div class="panel__body">
+                <p class="statusline" data-badge-status>
+                    <span class="statusline__dot" aria-hidden="true"></span>
+                    <span class="statusline__body">
+                        <span class="statusline__label" data-badge-statuslabel>
+                            Active &mdash; ready to print
+                        </span>
+                        <span class="statusline__text" data-badge-statustext>
+                            3 counters may print &middot; template complete &middot; printer
+                            connection confirmed
+                        </span>
+                    </span>
+                </p>
+
+                <p class="notice notice--info notice--flat u-mt-5" data-badge-off-note hidden>
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    With badge printing off, every guest shows <b>Not Required</b> on the
+                    Badge Activity screen and the Entry Staff app hides its print button.
+                    Check-in is unaffected.
+                </p>
+            </div>
+        </section>
+
+        <!-- Everything below only matters while it is on -->
+        <div data-badge-body>
+
+            <section class="panel u-mt-6" aria-labelledby="mode-title">
+                <div class="panel__head panel__head--plain">
+                    <div>
+                        <h4 class="panel__title" id="mode-title">Printing mode</h4>
+                        <p class="panel__meta">
+                            When the badge is sent to the printer, relative to check-in
+                        </p>
+                    </div>
+                </div>
+                <div class="panel__body">
+                    <div class="radios radios--2">
+                        <label class="radio">
+                            <input type="radio" name="badge-mode" value="manual" checked
+                                   data-badge-mode="manual">
+                            <span class="radio__body">
+                                <span class="radio__title">
+                                    Manual print <span class="autotag">Recommended</span>
+                                </span>
+                                <span class="radio__text">Staff check the guest in, confirm the badge looks right, then print. One tap, and nothing prints by accident when a queue is moving fast.</span>
+                            </span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="badge-mode" value="auto"
+                                   data-badge-mode="auto">
+                            <span class="radio__body">
+                                <span class="radio__title">
+                                    Auto print after check-in
+                                </span>
+                                <span class="radio__text">A badge is sent to the printer the moment check-in succeeds. Faster on a big door, but a mis-scan costs a piece of card and a reprint.</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <p class="notice notice--alert notice--flat u-mt-5">
+                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg>
+                        <span>
+                            <b>Either way, check-in comes first and stands on its own.</b><br>
+                            A guest is checked in the moment the scan succeeds. If the printer
+                            jams, runs out of card or is switched off, the badge is marked
+                            <b>Failed</b> and staff retry it &mdash; the check-in is never
+                            reversed and the guest is never turned away.
+                        </span>
+                    </p>
+                </div>
+            </section>
+
+            <div class="grid grid--main u-mt-6">
+                <section class="panel" aria-labelledby="fields-title">
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h4 class="panel__title" id="fields-title">What prints on the badge</h4>
+                            <p class="panel__meta">
+                                One standard template &mdash; choose which supported fields it shows
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <div class="fieldrows">
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-logo-label">Event logo</span>
+                                    <span class="fieldrow__hint">Top of the badge, from your branding</span>
+                                </span>
+                                <button class="switch switch--brand" type="button"
+                                        role="switch" aria-checked="true"
+                                        aria-labelledby="bf-logo-label" data-switch
+                                        data-badge-field="logo"></button>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-event-label">Event name</span>
+                                    <span class="fieldrow__hint">Under the logo</span>
+                                </span>
+                                <span class="badge badge--nodot badge--role">
+                                    Always printed
+                                </span>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-guest-label">Guest name</span>
+                                    <span class="fieldrow__hint">The largest text on the badge</span>
+                                </span>
+                                <span class="badge badge--nodot badge--role">
+                                    Always printed
+                                </span>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-category-label">Guest category</span>
+                                    <span class="fieldrow__hint">VIP, Speaker, Delegate — drives the colour band</span>
+                                </span>
+                                <span class="badge badge--nodot badge--role">
+                                    Always printed
+                                </span>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-org-label">Organisation</span>
+                                    <span class="fieldrow__hint">Company or organisation the guest gave</span>
+                                </span>
+                                <button class="switch switch--brand" type="button"
+                                        role="switch" aria-checked="true"
+                                        aria-labelledby="bf-org-label" data-switch
+                                        data-badge-field="org"></button>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-date-label">Event date</span>
+                                    <span class="fieldrow__hint">Useful on a multi-day event</span>
+                                </span>
+                                <button class="switch switch--brand" type="button"
+                                        role="switch" aria-checked="true"
+                                        aria-labelledby="bf-date-label" data-switch
+                                        data-badge-field="date"></button>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-seat-label">Seat number</span>
+                                    <span class="fieldrow__hint">Only prints where the guest has an assigned seat</span>
+                                </span>
+                                <button class="switch switch--brand" type="button"
+                                        role="switch" aria-checked="true"
+                                        aria-labelledby="bf-seat-label" data-switch
+                                        data-badge-field="seat"></button>
+                            </div>
+                            <div class="fieldrow">
+                                <span class="fieldrow__body">
+                                    <span class="fieldrow__label" id="bf-qr-label">Guest ID &amp; QR code</span>
+                                    <span class="fieldrow__hint">Scanned at session doors and at food counters</span>
+                                </span>
+                                <span class="badge badge--nodot badge--role">
+                                    Always printed
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            A field with nothing behind it simply does not print &mdash; a guest
+                            with no seat gets a badge with no seat line, not a blank space.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="preview-title">
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h4 class="panel__title" id="preview-title">Badge preview</h4>
+                            <p class="panel__meta">
+                                The template itself, at print size &mdash; switch a category to see
+                                it change
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <div class="form__field">
+                            <label class="field__label" for="badge-cat">Preview as</label>
+                            <select class="field__select" id="badge-cat" name="badge-cat"
+                                    data-badge-catpick>
+                                <option value="vip" data-badge-colour="#5A1D54" selected>VIP</option>
+                                <option value="speaker" data-badge-colour="#8A3B1D">Speaker</option>
+                                <option value="delegate" data-badge-colour="#1D3F5A">Delegate</option>
+                                <option value="staff" data-badge-colour="#1D5A3C">Staff</option>
+                                <option value="exhibitor" data-badge-colour="#3F4653">Exhibitor</option>
+                                <option value="guest" data-badge-colour="#6B7280">Guest</option>
+                            </select>
+                            <span class="field__hint">
+                                The same template reads the guest&rsquo;s own category &mdash; there
+                                is no separate badge per category
+                            </span>
+                        </div>
+
+                        <div class="badgestage u-mt-5">
+                            <div class="badgecard" data-badge-preview>
+                                <span class="badgecard__band" data-badge-band>
+                                    <span data-badge-catlabel>VIP</span>
+                                </span>
+
+                                <div class="badgecard__head" data-badge-part="logo">
+                                    <span class="badgecard__logo" aria-hidden="true">TS</span>
+                                    <span class="badgecard__org">TechSphere Corp</span>
+                                </div>
+
+                                <p class="badgecard__event" data-badge-part="event">
+                                    Tech Summit Africa 2026
+                                </p>
+
+                                <p class="badgecard__name" data-badge-part="guest">Amara Osei</p>
+
+                                <p class="badgecard__company" data-badge-part="org">
+                                    Acme Africa &middot; Head of Product
+                                </p>
+
+                                <p class="badgecard__meta">
+                                    <span data-badge-part="date">6&ndash;7 Aug 2026</span>
+                                    <span data-badge-part="seat">Seat A-06</span>
+                                </p>
+
+                                <div class="badgecard__foot" data-badge-part="qr">
+                                    <span class="badgecard__qr" aria-hidden="true">
+                                        <span class="qrgrid"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span class="on"></span><span></span><span></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></span>
+                                    </span>
+                                    <span class="badgecard__id">
+                                        <span class="badgecard__idlabel">Guest ID</span>
+                                        <span class="badgecard__idvalue">TSA-4821</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="badgestage__note">
+                            Standard event badge &middot; 100 &times; 150 mm &middot; portrait
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+            <section class="panel u-mt-6" aria-labelledby="printer-title">
+                <div class="panel__head">
+                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9V3h10v6" /><rect x="3" y="9" width="18" height="7" rx="2" /><path d="M7 16h10v5H7z" /></svg></span>
+                    <div>
+                        <h4 class="panel__title" id="printer-title">Printer connection</h4>
+                        <p class="panel__meta">
+                            One supported model per event. The phone talks to it directly.
+                        </p>
+                    </div>
+                </div>
+                <div class="panel__body">
+                    <div class="formgrid formgrid--2">
+                        <div class="form__field">
+                            <label class="field__label" for="printer-model">Printer model</label>
+                            <select class="field__select" id="printer-model" name="printer-model">
+                                <option>Zebra ZD421 &middot; badge stock</option>
+                            </select>
+                            <span class="field__hint">
+                                The supported model for this release
+                            </span>
+                        </div>
+                        <div class="form__field">
+                            <label class="field__label" for="printer-conn">Connection</label>
+                            <select class="field__select" id="printer-conn" name="printer-conn">
+                                <option>Bluetooth &middot; paired on the device</option>
+                                <option>Local Wi-Fi &middot; same network as the counter</option>
+                            </select>
+                            <span class="field__hint">
+                                Paired on the Entry Staff device, not here
+                            </span>
+                        </div>
+                    </div>
+
+                    <p class="statusline u-mt-5" data-printer-status>
+                        <span class="statusline__dot" aria-hidden="true"></span>
+                        <span class="statusline__body">
+                            <span class="statusline__label">
+                                Connection confirmed by 3 devices
+                            </span>
+                            <span class="statusline__text">
+                                Counter 01, Counter 02 and VIP Counter reported a successful test
+                                print in the last hour
+                            </span>
+                        </span>
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-action="Test print requested &mdash; it runs on the counter device, not here">
+                            Request a test print
+                        </button>
+                    </p>
+
+                    <p class="notice notice--info notice--flat u-mt-5">
+                        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                        This screen records which printer an event uses. It does not send jobs,
+                        hold a queue or control the device &mdash; the Entry Staff app does all
+                        of that locally, so a dropped web connection cannot stop a door.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <div data-pick-panel="counters" data-pick-owner="onsitetabs" data-role-only="admin manager" hidden>
+        <div class="hubhead">
+            <div class="hubhead__body">
+                <h3 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> Registration Counters</h3>
+                <p class="hubhead__text">
+                    Where guests are processed, who is on each desk, and which of them may
+                    print a badge
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Counter list exported as CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export
+                </button>
+                <button class="btn btn--primary btn--sm" type="button" data-role-only="admin manager"
+                        data-counter-new data-modal-open="counter-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add counter
+                </button>
+            </div>
+        </div>
+
+        <p class="bulkbar">
+            <span>
+                <b data-counter-count>5 counters</b> &middot;
+                <span data-counter-breakdown>4 open, 1 closed</span>
+            </span>
+            <span class="bulkbar__actions">
+                <span class="badge badge--nodot badge--live">
+                    <b data-counter-mayprint>4</b> may print badges
+                </span>
+            </span>
+        </p>
+
+        <section class="panel u-mt-5">
+            <div class="tablewrap">
+                <table class="table table--narrow" id="counters-table">
+                    <caption class="u-visually-hidden">
+                        Registration counters, the staff on them, and their badge-printing
+                        permission
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Counter</th>
+                            <th scope="col">Staff on duty</th>
+                            <th scope="col">State</th>
+                            <th scope="col">May print</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-counter-row data-counter="c1">
+                            <th scope="row">
+                                <span class="cellstack__name">Counter 01</span>
+                                <span class="cellsub">Main entrance &middot; left desk</span>
+                            </th>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">BO</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Bayo Ogun</span>
+                                        <span class="cellsub">Entry scanner</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--live">Open</span></td>
+                            <td>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="true" data-switch
+                                        data-counter-print="c1"
+                                        aria-label="Allow Bayo Ogun at Counter 01 to print badges">
+                                </button>
+                            </td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="iconbtn" type="button"
+                                            data-modal-open="counter-modal" data-counter-edit="c1">
+                                        <span class="u-visually-hidden">Edit Counter 01</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-repeat-remove
+                                            data-action="Counter 01 removed &mdash; its staff can no longer print"
+                                            data-action-tone="warn">
+                                        <span class="u-visually-hidden">Remove Counter 01</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-counter-row data-counter="c2">
+                            <th scope="row">
+                                <span class="cellstack__name">Counter 02</span>
+                                <span class="cellsub">Main entrance &middot; right desk</span>
+                            </th>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">NM</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Ndidi Musa</span>
+                                        <span class="cellsub">Entry scanner</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--live">Open</span></td>
+                            <td>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="true" data-switch
+                                        data-counter-print="c2"
+                                        aria-label="Allow Ndidi Musa at Counter 02 to print badges">
+                                </button>
+                            </td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="iconbtn" type="button"
+                                            data-modal-open="counter-modal" data-counter-edit="c2">
+                                        <span class="u-visually-hidden">Edit Counter 02</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-repeat-remove
+                                            data-action="Counter 02 removed &mdash; its staff can no longer print"
+                                            data-action-tone="warn">
+                                        <span class="u-visually-hidden">Remove Counter 02</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-counter-row data-counter="c3">
+                            <th scope="row">
+                                <span class="cellstack__name">Counter 03</span>
+                                <span class="cellsub">Hall B entrance</span>
+                            </th>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">AO</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Amaka Obi</span>
+                                        <span class="cellsub">Registration desk</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--live">Open</span></td>
+                            <td>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="false" data-switch
+                                        data-counter-print="c3"
+                                        aria-label="Allow Amaka Obi at Counter 03 to print badges">
+                                </button>
+                            </td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="iconbtn" type="button"
+                                            data-modal-open="counter-modal" data-counter-edit="c3">
+                                        <span class="u-visually-hidden">Edit Counter 03</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-repeat-remove
+                                            data-action="Counter 03 removed &mdash; its staff can no longer print"
+                                            data-action-tone="warn">
+                                        <span class="u-visually-hidden">Remove Counter 03</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-counter-row data-counter="vip">
+                            <th scope="row">
+                                <span class="cellstack__name">VIP Counter</span>
+                                <span class="cellsub">VIP Lounge entrance</span>
+                            </th>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">SL</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Seyi Lawal</span>
+                                        <span class="cellsub">Entry scanner</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--live">Open</span></td>
+                            <td>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="true" data-switch
+                                        data-counter-print="vip"
+                                        aria-label="Allow Seyi Lawal at VIP Counter to print badges">
+                                </button>
+                            </td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="iconbtn" type="button"
+                                            data-modal-open="counter-modal" data-counter-edit="vip">
+                                        <span class="u-visually-hidden">Edit VIP Counter</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-repeat-remove
+                                            data-action="VIP Counter removed &mdash; its staff can no longer print"
+                                            data-action-tone="warn">
+                                        <span class="u-visually-hidden">Remove VIP Counter</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-counter-row data-counter="speaker">
+                            <th scope="row">
+                                <span class="cellstack__name">Speaker Counter</span>
+                                <span class="cellsub">Backstage &middot; green room</span>
+                            </th>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">CE</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Chika Eze</span>
+                                        <span class="cellsub">Registration desk</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--draft">Closed</span></td>
+                            <td>
+                                <button class="switch switch--brand" type="button" role="switch"
+                                        aria-checked="true" data-switch
+                                        data-counter-print="speaker"
+                                        aria-label="Allow Chika Eze at Speaker Counter to print badges">
+                                </button>
+                            </td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="iconbtn" type="button"
+                                            data-modal-open="counter-modal" data-counter-edit="speaker">
+                                        <span class="u-visually-hidden">Edit Speaker Counter</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                    </button>
+                                    <button class="iconbtn" type="button" data-repeat-remove
+                                            data-action="Speaker Counter removed &mdash; its staff can no longer print"
+                                            data-action-tone="warn">
+                                        <span class="u-visually-hidden">Remove Speaker Counter</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <p class="notice notice--info notice--flat u-mt-6">
+            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+            Every check-in and every print records the counter and the staff member who
+            did it, which is what makes the Badge Activity screen answerable. Staff and
+            their PINs are managed under <b>Staff</b>; this screen only decides who may
+            print.
+        </p>
+
+    </div>
+</div>

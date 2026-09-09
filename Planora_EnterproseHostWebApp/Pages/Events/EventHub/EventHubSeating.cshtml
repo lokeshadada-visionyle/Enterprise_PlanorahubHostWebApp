@@ -1,0 +1,1512 @@
+﻿@page
+@using Planora_EnterproseHostWebApp.Models
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubSeatingModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+
+}
+
+@* <div data-view-panel="seating" data-role-only="admin manager viewer">
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="notice notice--error u-mb-4">
+            <p>@Model.ApiError</p>
+        </div>
+    }
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Seating by Ticket Type</h2>
+            <p class="hubhead__text">
+                <span data-scope-label>Day 1</span> &middot; each tier shows the price it
+                sells for and the layout it was configured with &mdash; select a seat to
+                reassign, release or check in
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <button class="btn btn--outline btn--sm" type="button" data-action="Seat map exported as a printable sheet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export map
+            </button>
+            <button class="btn btn--outline btn--sm" type="button" data-action="Seat hold mode on &mdash; selected seats are held, not sold">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> Hold seats
+            </button>
+            <button class="btn btn--primary btn--sm" type="button" data-action="Check-in mode on &mdash; a tap now checks the guest in">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check-in mode
+            </button>
+        </div>
+    </div>
+
+    <p class="capbar" data-capbar="Seating Layout">
+        <span class="capbar__figures">
+            <span class="capbar__figure">
+                <b data-cap-total>@seating.TotalSeats</b>
+                <span>Seats configured</span>
+            </span>
+            <span class="capbar__figure">
+                <b>@seating.SeatsSold</b>
+                <span>Taken</span>
+            </span>
+            <span class="capbar__figure capbar__figure--tight">
+                <b data-cap-remaining>@seating.SeatsLeft</b>
+                <span>Left</span>
+            </span>
+        </span>
+        <span class="capbar__body">
+            Filling up. Adding guests keeps the layout you already configured and
+            tells you the charge before anything is committed.
+        </span>
+        <span class="capbar__acts">
+            <a class="btn btn--quiet btn--sm" href="capacity-flow.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> How this works
+            </a>
+            <button class="btn btn--primary btn--sm" type="button"
+                    data-modal-open="addcap-modal" data-cap-from="Seating Layout" data-role-only="admin manager">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add guests
+            </button>
+        </span>
+    </p>
+
+    <section class="grid grid--4" aria-label="Seating by ticket type">
+        @if (seating.TicketTypes != null && seating.TicketTypes.Any())
+        {
+            foreach (var ticket in seating.TicketTypes)
+            {
+                var percentage = ticket.TotalSeats > 0
+                    ? Math.Round((double)ticket.SeatsSold / ticket.TotalSeats * 100)
+                    : 0;
+
+                <article class="tiercard" data-tiercard="@ticket.TypeName.ToLower()">
+                    <div class="tiercard__top">
+                        <span class="tiercard__name">@ticket.TypeName</span>
+                        <span class="tiercard__price">&#8358;@ticket.Price</span>
+                    </div>
+                    <p class="tiercard__kind">@ticket.LayoutType</p>
+                    <p class="tiercard__where">@ticket.HallName</p>
+
+                    @if (ticket.TotalSeats > 0)
+                    {
+                        <span class="meter">
+                            <span class="meter__fill meter__fill--live" style="width: @percentage%;"></span>
+                        </span>
+                        <p class="tiercard__split">
+                            <span>@ticket.SeatsSold of @ticket.TotalSeats seated</span>
+                            <span>@ticket.HeldSeats held</span>
+                        </p>
+                        <button class="btn btn--quiet btn--sm" type="button" data-seatjump="@ticket.LayoutType.ToLower()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg> View layout
+                        </button>
+                    }
+                    else
+                    {
+                        <p class="tiercard__note">
+                            @ticket.SeatsSold sold &middot; no seat block configured, so no seat is issued
+                        </p>
+                    }
+                </article>
+            }
+        }
+        else
+        {
+            <p class="u-text-muted">No ticket tiers found for this event.</p>
+        }
+    </section>
+
+    <div class="hubhead u-mt-6">
+        <div class="hubhead__body">
+            <h3 class="hubhead__title">Layouts</h3>
+            <p class="hubhead__text">
+                This event books the hall in rows and the gala in tables, so both are
+                configured &mdash; switch between them
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <span class="segment" id="seatlayout" role="group"
+                  aria-label="Choose a layout" data-pick-group>
+                <button class="segment__opt" type="button" aria-pressed="true"
+                        data-pick="rows">
+                    Rows &amp; seats
+                </button>
+                <button class="segment__opt" type="button" aria-pressed="false"
+                        data-pick="tables">
+                    Tables &amp; chairs
+                </button>
+            </span>
+        </div>
+    </div>
+
+    <section class="panel" data-pick-panel="rows" data-pick-owner="seatlayout">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title">Main Hall &mdash; rows &amp; seats</h3>
+                <p class="panel__meta">
+                    Theatre layout &middot; 5 rows &times; 16 seats &middot; row A is VIP,
+                    B&ndash;C Standard, D&ndash;E Early Bird
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <div class="seatgrid">
+                <p class="seatgrid__stage">Stage</p>
+                <div class="seatgrid__row" data-row-tier="vip">
+                    <span class="seatgrid__rowhead">
+                        <span class="seatgrid__letter" aria-hidden="true">A</span>
+                        <span class="seatgrid__tier">VIP &middot; &#8358;25,000</span>
+                    </span>
+                    <button class="seatbtn seatbtn--checked" type="button" aria-pressed="false"
+                            data-seat="A-01" data-seat-state="checked"
+                            data-seat-guest="Amara Osei" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-01, VIP, &#8358;25,000,
+                        </span>1
+                    </button>
+                    <button class="seatbtn seatbtn--checked" type="button" aria-pressed="false"
+                            data-seat="A-02" data-seat-state="checked"
+                            data-seat-guest="Tunde Alabi" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-02, VIP, &#8358;25,000,
+                        </span>2
+                    </button>
+                    <button class="seatbtn seatbtn--checked" type="button" aria-pressed="false"
+                            data-seat="A-03" data-seat-state="checked"
+                            data-seat-guest="Grace Mensah" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-03, VIP, &#8358;25,000,
+                        </span>3
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-04" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-04, VIP, &#8358;25,000,
+                        </span>4
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-05" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-05, VIP, &#8358;25,000,
+                        </span>5
+                    </button>
+                    <button class="seatbtn seatbtn--vip" type="button" aria-pressed="false"
+                            data-seat="A-06" data-seat-state="vip"
+                            data-seat-guest="Kwame Asante" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-06, VIP, &#8358;25,000,
+                        </span>6
+                    </button>
+                    <button class="seatbtn seatbtn--vip" type="button" aria-pressed="false"
+                            data-seat="A-07" data-seat-state="vip"
+                            data-seat-guest="Ada Obi" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-07, VIP, &#8358;25,000,
+                        </span>7
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-08" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-08, VIP, &#8358;25,000,
+                        </span>8
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-09" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-09, VIP, &#8358;25,000,
+                        </span>9
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-10" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-10, VIP, &#8358;25,000,
+                        </span>10
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-11" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-11, VIP, &#8358;25,000,
+                        </span>11
+                    </button>
+                    <button class="seatbtn seatbtn--vip" type="button" aria-pressed="false"
+                            data-seat="A-12" data-seat-state="vip"
+                            data-seat-guest="Femi Bello" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-12, VIP, &#8358;25,000,
+                        </span>12
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-13" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-13, VIP, &#8358;25,000,
+                        </span>13
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-14" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-14, VIP, &#8358;25,000,
+                        </span>14
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-15" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-15, VIP, &#8358;25,000,
+                        </span>15
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="A-16" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="VIP"
+                            data-seat-price="25,000">
+                        <span class="u-visually-hidden">
+                            Seat A-16, VIP, &#8358;25,000,
+                        </span>16
+                    </button>
+                </div>
+                <div class="seatgrid__row" data-row-tier="standard">
+                    <span class="seatgrid__rowhead">
+                        <span class="seatgrid__letter" aria-hidden="true">B</span>
+                        <span class="seatgrid__tier">Standard &middot; &#8358;10,000</span>
+                    </span>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-01" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-01, Standard, &#8358;10,000,
+                        </span>1
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-02" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-02, Standard, &#8358;10,000,
+                        </span>2
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-03" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-03, Standard, &#8358;10,000,
+                        </span>3
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-04" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-04, Standard, &#8358;10,000,
+                        </span>4
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-05" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-05, Standard, &#8358;10,000,
+                        </span>5
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-06" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-06, Standard, &#8358;10,000,
+                        </span>6
+                    </button>
+                    <button class="seatbtn seatbtn--taken" type="button" aria-pressed="false"
+                            data-seat="B-07" data-seat-state="taken"
+                            data-seat-guest="Held for press" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-07, Standard, &#8358;10,000,
+                        </span>7
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-08" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-08, Standard, &#8358;10,000,
+                        </span>8
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-09" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-09, Standard, &#8358;10,000,
+                        </span>9
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-10" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-10, Standard, &#8358;10,000,
+                        </span>10
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-11" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-11, Standard, &#8358;10,000,
+                        </span>11
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-12" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-12, Standard, &#8358;10,000,
+                        </span>12
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-13" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-13, Standard, &#8358;10,000,
+                        </span>13
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-14" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-14, Standard, &#8358;10,000,
+                        </span>14
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-15" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-15, Standard, &#8358;10,000,
+                        </span>15
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="B-16" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat B-16, Standard, &#8358;10,000,
+                        </span>16
+                    </button>
+                </div>
+                <div class="seatgrid__row" data-row-tier="standard">
+                    <span class="seatgrid__rowhead">
+                        <span class="seatgrid__letter" aria-hidden="true">C</span>
+                        <span class="seatgrid__tier">Standard &middot; &#8358;10,000</span>
+                    </span>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-01" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-01, Standard, &#8358;10,000,
+                        </span>1
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-02" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-02, Standard, &#8358;10,000,
+                        </span>2
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-03" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-03, Standard, &#8358;10,000,
+                        </span>3
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-04" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-04, Standard, &#8358;10,000,
+                        </span>4
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-05" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-05, Standard, &#8358;10,000,
+                        </span>5
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-06" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-06, Standard, &#8358;10,000,
+                        </span>6
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-07" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-07, Standard, &#8358;10,000,
+                        </span>7
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-08" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-08, Standard, &#8358;10,000,
+                        </span>8
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-09" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-09, Standard, &#8358;10,000,
+                        </span>9
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-10" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-10, Standard, &#8358;10,000,
+                        </span>10
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-11" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-11, Standard, &#8358;10,000,
+                        </span>11
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-12" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-12, Standard, &#8358;10,000,
+                        </span>12
+                    </button>
+                    <button class="seatbtn seatbtn--reserved" type="button" aria-pressed="false"
+                            data-seat="C-13" data-seat-state="reserved"
+                            data-seat-guest="Sponsor hold" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-13, Standard, &#8358;10,000,
+                        </span>13
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-14" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-14, Standard, &#8358;10,000,
+                        </span>14
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-15" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-15, Standard, &#8358;10,000,
+                        </span>15
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="C-16" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Standard"
+                            data-seat-price="10,000">
+                        <span class="u-visually-hidden">
+                            Seat C-16, Standard, &#8358;10,000,
+                        </span>16
+                    </button>
+                </div>
+                <div class="seatgrid__row" data-row-tier="early">
+                    <span class="seatgrid__rowhead">
+                        <span class="seatgrid__letter" aria-hidden="true">D</span>
+                        <span class="seatgrid__tier">Early Bird &middot; &#8358;5,000</span>
+                    </span>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-01" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-01, Early Bird, &#8358;5,000,
+                        </span>1
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-02" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-02, Early Bird, &#8358;5,000,
+                        </span>2
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-03" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-03, Early Bird, &#8358;5,000,
+                        </span>3
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-04" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-04, Early Bird, &#8358;5,000,
+                        </span>4
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-05" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-05, Early Bird, &#8358;5,000,
+                        </span>5
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-06" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-06, Early Bird, &#8358;5,000,
+                        </span>6
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-07" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-07, Early Bird, &#8358;5,000,
+                        </span>7
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-08" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-08, Early Bird, &#8358;5,000,
+                        </span>8
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-09" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-09, Early Bird, &#8358;5,000,
+                        </span>9
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-10" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-10, Early Bird, &#8358;5,000,
+                        </span>10
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-11" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-11, Early Bird, &#8358;5,000,
+                        </span>11
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-12" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-12, Early Bird, &#8358;5,000,
+                        </span>12
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-13" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-13, Early Bird, &#8358;5,000,
+                        </span>13
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-14" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-14, Early Bird, &#8358;5,000,
+                        </span>14
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-15" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-15, Early Bird, &#8358;5,000,
+                        </span>15
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="D-16" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat D-16, Early Bird, &#8358;5,000,
+                        </span>16
+                    </button>
+                </div>
+                <div class="seatgrid__row" data-row-tier="early">
+                    <span class="seatgrid__rowhead">
+                        <span class="seatgrid__letter" aria-hidden="true">E</span>
+                        <span class="seatgrid__tier">Early Bird &middot; &#8358;5,000</span>
+                    </span>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-01" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-01, Early Bird, &#8358;5,000,
+                        </span>1
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-02" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-02, Early Bird, &#8358;5,000,
+                        </span>2
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-03" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-03, Early Bird, &#8358;5,000,
+                        </span>3
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-04" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-04, Early Bird, &#8358;5,000,
+                        </span>4
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-05" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-05, Early Bird, &#8358;5,000,
+                        </span>5
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-06" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-06, Early Bird, &#8358;5,000,
+                        </span>6
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-07" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-07, Early Bird, &#8358;5,000,
+                        </span>7
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-08" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-08, Early Bird, &#8358;5,000,
+                        </span>8
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-09" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-09, Early Bird, &#8358;5,000,
+                        </span>9
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-10" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-10, Early Bird, &#8358;5,000,
+                        </span>10
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-11" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-11, Early Bird, &#8358;5,000,
+                        </span>11
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-12" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-12, Early Bird, &#8358;5,000,
+                        </span>12
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-13" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-13, Early Bird, &#8358;5,000,
+                        </span>13
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-14" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-14, Early Bird, &#8358;5,000,
+                        </span>14
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-15" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-15, Early Bird, &#8358;5,000,
+                        </span>15
+                    </button>
+                    <button class="seatbtn" type="button" aria-pressed="false"
+                            data-seat="E-16" data-seat-state="available"
+                            data-seat-guest="" data-seat-tier="Early Bird"
+                            data-seat-price="5,000">
+                        <span class="u-visually-hidden">
+                            Seat E-16, Early Bird, &#8358;5,000,
+                        </span>16
+                    </button>
+                </div>
+            </div>
+
+            <p class="seatlegend">
+                <span><span class="seatkey" aria-hidden="true"></span> Available</span>
+                <span><span class="seatkey seatkey--checked" aria-hidden="true"></span> Checked-in</span>
+                <span><span class="seatkey seatkey--vip" aria-hidden="true"></span> VIP</span>
+                <span><span class="seatkey seatkey--taken" aria-hidden="true"></span> Taken</span>
+                <span><span class="seatkey seatkey--reserved" aria-hidden="true"></span> Reserved</span>
+            </p>
+        </div>
+    </section>
+
+    <section class="panel" data-pick-panel="tables" data-pick-owner="seatlayout"
+             hidden>
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title">Gala Dinner &mdash; tables &amp; chairs</h3>
+                <p class="panel__meta">
+                    Banquet layout &middot; 10 tables &times; 8 chairs &middot; VIP only at
+                    &#8358;25,000 a seat
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <div class="banquet">
+                <article class="tablecard is-full" data-table="T1">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T1</span>
+                        <span class="tablecard__count">8/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T1-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T1 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">Sponsor table &mdash; Zenith</p>
+                </article>
+                <article class="tablecard" data-table="T2">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T2</span>
+                        <span class="tablecard__count">6/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T2-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T2-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T2-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T2-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T2-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T2-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T2-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T2-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T2 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">2 free</p>
+                </article>
+                <article class="tablecard is-full" data-table="T3">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T3</span>
+                        <span class="tablecard__count">8/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T3-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T3 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">Speakers</p>
+                </article>
+                <article class="tablecard" data-table="T4">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T4</span>
+                        <span class="tablecard__count">5/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T4-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T4-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T4-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T4-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T4-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T4-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T4-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T4-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T4 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">3 free</p>
+                </article>
+                <article class="tablecard is-full" data-table="T5">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T5</span>
+                        <span class="tablecard__count">8/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T5-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T5 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">Sponsor table &mdash; MTN</p>
+                </article>
+                <article class="tablecard" data-table="T6">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T6</span>
+                        <span class="tablecard__count">3/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T6-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T6-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T6-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T6-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T6-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T6-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T6-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T6-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T6 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">5 free</p>
+                </article>
+                <article class="tablecard is-full" data-table="T7">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T7</span>
+                        <span class="tablecard__count">8/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T7-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T7 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">Press</p>
+                </article>
+                <article class="tablecard" data-table="T8">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T8</span>
+                        <span class="tablecard__count">6/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T8-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T8-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T8-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T8-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T8-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T8-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T8-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T8-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T8 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">2 free</p>
+                </article>
+                <article class="tablecard" data-table="T9">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T9</span>
+                        <span class="tablecard__count">4/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T9-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T9-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T9-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T9-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T9-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T9-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T9-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T9-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T9 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">4 free</p>
+                </article>
+                <article class="tablecard" data-table="T10">
+                    <p class="tablecard__head">
+                        <span class="tablecard__name">T10</span>
+                        <span class="tablecard__count">6/8</span>
+                    </p>
+                    <div class="tablecard__chairs">
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T10-1" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 1, VIP, &#8358;25,000,
+                            </span>1
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T10-2" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 2, VIP, &#8358;25,000,
+                            </span>2
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T10-3" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 3, VIP, &#8358;25,000,
+                            </span>3
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T10-4" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 4, VIP, &#8358;25,000,
+                            </span>4
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T10-5" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 5, VIP, &#8358;25,000,
+                            </span>5
+                        </button>
+                        <button class="chairbtn chairbtn--taken" type="button" aria-pressed="false"
+                                data-seat="T10-6" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 6, VIP, &#8358;25,000,
+                            </span>6
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T10-7" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 7, VIP, &#8358;25,000,
+                            </span>7
+                        </button>
+                        <button class="chairbtn" type="button" aria-pressed="false"
+                                data-seat="T10-8" data-seat-tier="VIP"
+                                data-seat-price="25,000">
+                            <span class="u-visually-hidden">
+                                T10 chair 8, VIP, &#8358;25,000,
+                            </span>8
+                        </button>
+                    </div>
+                    <p class="tablecard__note">Overflow</p>
+                </article>
+            </div>
+
+            <p class="seatlegend">
+                <span><span class="seatkey" aria-hidden="true"></span> Free chair</span>
+                <span><span class="seatkey seatkey--checked" aria-hidden="true"></span> Taken</span>
+                <span>A full table is outlined &mdash; seat a late guest elsewhere</span>
+            </p>
+        </div>
+    </section>
+
+    <p class="notice notice--info notice--flat u-mt-6">
+        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+        Only tiers with a seat block configured appear on a layout. A general-admission
+        tier still sells and still checks in &mdash; it simply issues no seat number.
+    </p>
+</div> *@

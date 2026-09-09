@@ -1,0 +1,691 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.AccessControlModel
+@using Planora_EnterproseHostWebApp.Extensions
+@{
+    Layout = "_CreateEventLayout";
+    bool isPrivate = HttpContext.Session.IsPrivateEvent();
+    ViewData["StepIndex"] = 9;
+    ViewData["StepTotal"] = isPrivate ? 12 : 10;
+    ViewData["StepName"] = "Access Control";
+    ViewData["StepHint"] = "Set who can register and how";
+    ViewData["IsPrivate"] = isPrivate;
+}
+
+<div class="wizard__body">
+
+    <main class="wizard__content">
+        <div class="wizard__inner">
+            <p class="lockbar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg>
+                <span class="lockbar__text">
+                    <span data-type-label>@(isPrivate ? "Private Event" : "Public Event")</span> &mdash; some access rules are auto-locked
+                </span>
+                <a class="lockbar__change" asp-page="/CreateEvent/EventType">Change</a>
+            </p>
+
+            <form class="stack" id="accessControlForm" method="post">
+
+                <!-- Is registration required at all? -->
+                <section class="panel" aria-labelledby="regreq-title">
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="regreq-title">
+                                Do you need guest details?
+                            </h2>
+                            <p class="panel__meta">
+                                Registration is how you collect anything beyond the name and email on the
+                                ticket. Turn it off for events where a ticket is all you need.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <div class="radios radios--2">
+                            <label class="radio">
+                                <input type="radio" name="reg-required" value="yes" checked
+                                       data-reveal="reg-config" data-reveal-inverse="reg-off"
+                                       data-reg-flag="on">
+                                <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
+                                <span class="radio__body">
+                                    <span class="radio__title">Yes &mdash; collect guest details</span>
+                                    <span class="radio__text">
+                                        Guests fill in your form before a ticket is issued, every answer is
+                                        stored against them, and the <b>Registrations</b> tab in Event Hub
+                                        unlocks
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="reg-required" value="no"
+                                       data-reg-flag="off">
+                                <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-ticket"></i></span>
+                                <span class="radio__body">
+                                    <span class="radio__title">No &mdash; ticket only</span>
+                                    <span class="radio__text">
+                                        Only the name and email on the ticket are captured. Fastest checkout,
+                                        nothing extra to fill in
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <p class="notice notice--warn notice--flat u-mt-5" id="reg-off" hidden>
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                            With registration off there is no form, so nothing beyond name and email is
+                            on file. The <b>Registrations tab in Event Hub is locked</b> and guests
+                            appear on the Guests tab only.
+                        </p>
+                    </div>
+                </section>
+
+                <div class="stack" id="reg-config">
+                    <!-- Discovery -->
+                    <section class="panel" aria-labelledby="discovery-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title panel__title--lg" id="discovery-title">Event Discovery</h2>
+                                <p class="panel__meta">
+                                    Controls whether your event appears in the Planorahub explore page and search
+                                </p>
+                            </div>
+                        </div>
+                        <div class="panel__body">
+                            <div class="radios radios--2">
+                                <label class="radio">
+                                    <input type="radio" name="discovery" value="listed" @(!isPrivate ? "checked" : "")
+                                           data-type-default="public" data-type-lock="private" @(isPrivate ? "disabled" : "")>
+                                    <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">
+                                            Listed<span class="autotag">Auto-set</span>
+                                        </span>
+                                        <span class="radio__text">Appears in search &amp; event discovery</span>
+                                    </span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="discovery" value="standalone" @(isPrivate ? "checked" : "")
+                                           data-type-default="private" data-type-lock="public">
+                                    <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-earth-africa"></i></span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">
+                                            Standalone<span class="autotag autotag--muted">Auto-set</span>
+                                        </span>
+                                        <span class="radio__text">Direct link only &mdash; not indexed in search</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <p class="notice notice--info notice--flat u-mt-5" data-type-only="private" @(!isPrivate ? "hidden" : "")>
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                Private events are always Standalone &mdash; they are never indexed, and the
+                                landing page is reachable only by its direct link.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Registration access -->
+                    <section class="panel" aria-labelledby="access-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title panel__title--lg" id="access-title">Registration Access</h2>
+                                <p class="panel__meta">Controls who can complete registration</p>
+                            </div>
+                        </div>
+                        <div class="panel__body">
+                            <div class="radios">
+                                <label class="radio">
+                                    <input type="radio" name="access" value="open" @(!isPrivate ? "checked" : "") data-type-default="public">
+                                    <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-earth-africa"></i></span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">
+                                            Open Access<span class="autotag">Auto-set for Public</span>
+                                        </span>
+                                        <span class="radio__text">Anyone can register without verification</span>
+                                    </span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="access" value="invite" @(isPrivate ? "checked" : "") data-type-default="private">
+                                    <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">Invite Only</span>
+                                        <span class="radio__text">Pre-approved invitation list only</span>
+                                    </span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="access" value="rsvp" data-type-lock="public" @(!isPrivate ? "disabled" : "")>
+                                    <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-clipboard-check"></i></span>
+                                    <span class="radio__body">
+                                        <span class="radio__title">
+                                            RSVP Required<span class="autotag autotag--muted">Private events only</span>
+                                        </span>
+                                        <span class="radio__text">Guests must submit RSVP and be approved</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Registration form -->
+                    <section class="panel" aria-labelledby="form-title">
+                        <div class="panel__head panel__head--plain">
+                            <div>
+                                <h2 class="panel__title panel__title--lg" id="form-title">Registration Form</h2>
+                                <p class="panel__meta">
+                                    Customise fields attendees fill at checkout &middot; drag to reorder
+                                </p>
+                            </div>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-form-preview="formpreview-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Preview form
+                            </button>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-repeat-add="rf-list">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add Field
+                            </button>
+                        </div>
+                        <div class="panel__body">
+                            <div class="tplbar">
+                                <span class="tplbar__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                </span>
+                                <div class="tplbar__pick">
+                                    <label class="tplbar__label" for="tplpick-rf-list">
+                                        START FROM A SAVED TEMPLATE
+                                    </label>
+                                    <select class="field__select" id="tplpick-rf-list" name="tplpick-rf-list" data-tplpick="rf-list">
+                                        <option value="">Choose a template&hellip;</option>
+                                        @if (Model.DefaultTemplates != null && Model.DefaultTemplates.Any())
+                                        {
+                                            @foreach (var tpl in Model.DefaultTemplates)
+                                            {
+                                                <option value="@tpl.FormId">@tpl.FormTitle &middot; @tpl.TotalFields fields</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="tplbar__acts" style="display: flex; align-items: center; gap: 8px;">
+                                    <button class="btn btn--outline btn--sm" type="button" id="tplLoadBtn">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Load
+                                    </button>
+                                    
+                                    <button class="btn btn--quiet btn--sm" type="button" data-modal-open="tpllibrary-modal" style="cursor: pointer; text-decoration: underline; background: none; border: none;">
+                                        Manage
+                                    </button>
+                                </div>
+                                <p class="tplbar__note" data-tplnote="rf-list">
+                                    Loading a template replaces the registration fields below. Name and email always stay.
+                                </p>
+                                @if (!string.IsNullOrWhiteSpace(Model.ApiError))
+                                {
+                                    <p class="notice notice--warn notice--flat u-mt-5">@Model.ApiError</p>
+                                }
+                            </div>
+
+                            <div class="fields" id="rf-list">
+                                @if (Model.EventFields.Fields != null && Model.EventFields.Fields.Any())
+                                {
+                                    for (int i = 0; i < Model.EventFields.Fields.Count; i++)
+                                    {
+                                        var f = Model.EventFields.Fields[i];
+                                        <div class="fieldrow" data-repeat-row>
+                                            <span class="fieldrow__grip" aria-hidden="true">#</span>
+                                            <span class="fieldrow__no" aria-hidden="true">@(i + 1)</span>
+                                            <span>
+                                                <input class="fieldrow__input" name="EventFields.Fields[@i].Label" type="text" value="@f.Label">
+                                            </span>
+                                            <span>
+                                                <select class="fieldrow__select" name="EventFields.Fields[@i].FieldType">
+                                                    <option value="Short Text" selected="@(f.FieldType == "Short Text")">Short Text</option>
+                                                    <option value="Email" selected="@(f.FieldType == "Email")">Email</option>
+                                                    <option value="Phone" selected="@(f.FieldType == "Phone")">Phone</option>
+                                                    <option value="Long Text" selected="@(f.FieldType == "Long Text")">Long Text</option>
+                                                    <option value="Dropdown" selected="@(f.FieldType == "Dropdown")">Dropdown</option>
+                                                    <option value="Checkbox" selected="@(f.FieldType == "Checkbox")">Checkbox</option>
+                                                    <option value="Date" selected="@(f.FieldType == "Date")">Date</option>
+                                                    <option value="Number" selected="@(f.FieldType == "Number")">Number</option>
+                                                    <option value="File Upload" selected="@(f.FieldType == "File Upload")">File Upload</option>
+                                                </select>
+                                            </span>
+                                            <label class="fieldrow__req">
+                                                <input name="EventFields.Fields[@i].IsRequired" type="checkbox" value="true" checked="@f.IsRequired">
+                                                <input type="hidden" name="EventFields.Fields[@i].IsRequired" value="false" />
+                                                Req
+                                            </label>
+                                            <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                            </button>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="fieldrow" data-repeat-row>
+                                        <span class="fieldrow__grip" aria-hidden="true">#</span>
+                                        <span class="fieldrow__no" aria-hidden="true">1</span>
+                                        <span><input class="fieldrow__input" name="EventFields.Fields[0].Label" type="text" value="Phone Number"></span>
+                                        <span>
+                                            <select class="fieldrow__select" name="EventFields.Fields[0].FieldType">
+                                                <option value="Short Text">Short Text</option>
+                                                <option value="Email">Email</option>
+                                                <option value="Phone" selected>Phone</option>
+                                                <option value="Long Text">Long Text</option>
+                                                <option value="Dropdown">Dropdown</option>
+                                            </select>
+                                        </span>
+                                        <label class="fieldrow__req">
+                                            <input name="EventFields.Fields[0].IsRequired" type="checkbox" value="true">
+                                            <input type="hidden" name="EventFields.Fields[0].IsRequired" value="false" />
+                                            Req
+                                        </label>
+                                        <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                        </button>
+                                    </div>
+                                    <div class="fieldrow" data-repeat-row>
+                                        <span class="fieldrow__grip" aria-hidden="true">#</span>
+                                        <span class="fieldrow__no" aria-hidden="true">2</span>
+                                        <span><input class="fieldrow__input" name="EventFields.Fields[1].Label" type="text" value="Organization"></span>
+                                        <span>
+                                            <select class="fieldrow__select" name="EventFields.Fields[1].FieldType">
+                                                <option value="Short Text" selected>Short Text</option>
+                                                <option value="Email">Email</option>
+                                                <option value="Phone">Phone</option>
+                                                <option value="Long Text">Long Text</option>
+                                                <option value="Dropdown">Dropdown</option>
+                                            </select>
+                                        </span>
+                                        <label class="fieldrow__req">
+                                            <input name="EventFields.Fields[1].IsRequired" type="checkbox" value="true">
+                                            <input type="hidden" name="EventFields.Fields[1].IsRequired" value="false" />
+                                            Req
+                                        </label>
+                                        <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <span style="display: table-cell; width: 24px; vertical-align: top;">
+                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                </span>
+                                <span style="display: table-cell; vertical-align: top; padding-left: 8px;">
+                                    Every answer is stored against the guest and readable in
+                                    <a class="textlink" data-reg-link href="../../pages/event-hub.html?reg=on#registrations">Event Hub Registrations </a>, where you can also export the lot.
+                                </span>
+                            </p>
+
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                Name and email are always collected and cannot be removed. Every extra
+                                required field measurably reduces completed registrations &mdash; ask only
+                                for what you will act on.
+                            </p>
+                        </div>
+                    </section>
+
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="wizard__foot">
+        @if (isPrivate)
+        {
+            <button type="submit" form="accessControlForm" name="actionType" value="back" class="btn btn--outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back
+            </button>
+            <div class="wizard__foot-end">
+                <button type="submit" form="accessControlForm" name="actionType" value="skip" class="btn btn--quiet">Skip</button>
+                <button type="submit" form="accessControlForm" name="actionType" value="save" class="btn btn--primary">
+                    Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+                </button>
+            </div>
+        }
+        else
+        {
+            <button type="submit" form="accessControlForm" name="actionType" value="back" class="btn btn--outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back
+            </button>
+            <div class="wizard__foot-end">
+                <button type="submit" form="accessControlForm" name="actionType" value="save" class="btn btn--primary">
+                    Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+                </button>
+            </div>
+        }
+    </footer>
+</div>
+
+<!-- Registration form preview modal -->
+<div class="modal" id="formpreview-modal" role="dialog" aria-modal="true" aria-labelledby="formpreview-title" data-modal hidden>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="formpreview-title">Registration Form Preview</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+        <div class="modal__body">
+            <p class="confirmbox">
+                <span class="confirmbox__name">Registration Preview</span>
+                <span class="confirmbox__meta">
+                    What each attendee fills in at checkout
+                </span>
+            </p>
+            <div class="formpreview" data-form-preview-body></div>
+            <p class="modal__note">
+                Read-only preview. Reorder or edit fields behind this dialog and open it again to see the change.
+            </p>
+        </div>
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Save template modal -->
+<div class="modal" id="tplsave-modal" role="dialog" aria-modal="true" aria-labelledby="tplsave-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--sm">
+        <div class="modal__head">
+            <h2 class="modal__title" id="tplsave-title">Save as a template</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+        <form class="modal__body" id="tplsave-form" data-tplsave-form>
+            <div class="form__field">
+                <label class="field__label" for="tplname">Template name</label>
+                <input class="field__input" id="tplname" name="tplname" type="text" placeholder="e.g. Quarterly Partner Briefing" required>
+            </div>
+            <div class="form__field u-mt-5">
+                <label class="field__label" for="tpldesc">Description</label>
+                <input class="field__input" id="tpldesc" name="tpldesc" type="text" placeholder="When should someone reach for this template?">
+            </div>
+        </form>
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Cancel</button>
+            <button class="btn btn--primary" type="button" data-tplsave-confirm data-modal-close>Save template</button>
+        </div>
+    </div>
+</div>
+
+<!-- Manage templates modal -->
+<div class="modal" id="tpllibrary-modal" role="dialog" aria-modal="true" aria-labelledby="tpllibrary-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog">
+        <div class="modal__head">
+            <h2 class="modal__title" id="tpllibrary-title">Form Templates</h2>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+        <div class="modal__body">
+            <p class="confirmbox">
+                <span class="confirmbox__name">Shared across your organisation</span>
+                <span class="confirmbox__meta">
+                    Every Admin and Event Manager can load these templates
+                </span>
+            </p>
+            <div class="tplcards" data-tpllibrary>
+                @if (Model.DefaultTemplates != null && Model.DefaultTemplates.Any())
+                {
+                    @foreach (var tpl in Model.DefaultTemplates)
+                    {
+                        <article class="tplcard">
+                            <div class="tplcard__top">
+                                <span class="tile tile--muted" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                                </span>
+                                <span class="tplcard__body">
+                                    <span class="tplcard__name">@tpl.FormTitle</span>
+                                </span>
+                                <span class="tplcard__count">@tpl.TotalFields fields</span>
+                            </div>
+                            <p class="tplcard__acts" style="margin-top: 12px;">
+                                <button class="btn btn--outline btn--sm" type="button" data-tpluse="@tpl.FormId">
+                                    Use this template
+                                </button>
+                            </p>
+                        </article>
+                    }
+                }
+                else
+                {
+                    <p>No saved templates available.</p>
+                }
+            </div>
+        </div>
+        <div class="modal__foot">
+            <button class="btn btn--primary" type="button" data-modal-close>Done</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Event type is already applied to <body data-event-type> by the
+        // shared layout (from Session) — nothing to rewrite here anymore.
+    });
+
+    function reindexFields() {
+        const rows = document.querySelectorAll('#rf-list [data-repeat-row]');
+
+        rows.forEach((row, index) => {
+            const numberSpan = row.querySelector('.fieldrow__no');
+            if (numberSpan) numberSpan.textContent = index + 1;
+
+            const labelInput = row.querySelector('.fieldrow__input');
+            if (labelInput) {
+                labelInput.name = `EventFields.Fields[${index}].Label`;
+            }
+
+            const typeSelect = row.querySelector('.fieldrow__select');
+            if (typeSelect) {
+                typeSelect.name = `EventFields.Fields[${index}].FieldType`;
+            }
+
+            const reqCheckboxes = row.querySelectorAll('.fieldrow__req input');
+            reqCheckboxes.forEach(input => {
+                input.name = `EventFields.Fields[${index}].IsRequired`;
+            });
+        });
+    }
+
+    function getInferredFieldType(field) {
+        const rawType = (field.fieldType || field.FieldType || "").toString().trim();
+        const label = (field.label || field.Label || "").toLowerCase();
+
+        // If API returns a generic "Short Text", infer from the Label text
+        if (!rawType || rawType.toLowerCase() === "short text") {
+            if (label.includes("phone") || label.includes("mobile")) return "Phone";
+            if (label.includes("email")) return "Email";
+            if (label.includes("dietary") || label.includes("access") || label.includes("notes")) return "Long Text";
+        }
+
+        return rawType || "Short Text";
+    }
+
+    function renderFieldRow(index, field) {
+        const row = document.createElement("div");
+        row.className = "fieldrow";
+        row.setAttribute("data-repeat-row", "");
+
+        const types = [
+            "Short Text",
+            "Email",
+            "Phone",
+            "Long Text",
+            "Dropdown",
+            "Checkbox",
+            "Date",
+            "Number",
+            "File Upload"
+        ];
+
+        // Auto-detect correct field type if API defaults to "Short Text"
+        const currentType = getInferredFieldType(field);
+
+        const options = types.map(t => {
+            const isSelected = t.toLowerCase() === currentType.toLowerCase();
+            return `<option value="${t}"${isSelected ? " selected" : ""}>${t}</option>`;
+        }).join("");
+
+        row.innerHTML = `
+            <span class="fieldrow__grip" aria-hidden="true">#</span>
+            <span class="fieldrow__no" aria-hidden="true">${index + 1}</span>
+            <span>
+                <input class="fieldrow__input" name="EventFields.Fields[${index}].Label" type="text" value="${field.label ?? field.Label ?? ""}">
+            </span>
+            <span>
+                <select class="fieldrow__select" name="EventFields.Fields[${index}].FieldType">${options}</select>
+            </span>
+            <label class="fieldrow__req">
+                <input name="EventFields.Fields[${index}].IsRequired" type="checkbox" value="true" ${(field.isRequired || field.IsRequired) ? "checked" : ""}>
+                <input type="hidden" name="EventFields.Fields[${index}].IsRequired" value="false" />
+                Req
+            </label>
+            <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>`;
+
+        return row;
+    }
+
+    // Comprehensive function to completely unlock page scrolling and hide modals
+    function closeModal(modal) {
+        if (modal) {
+            modal.hidden = true;
+            modal.setAttribute("hidden", "true");
+            modal.style.display = "none";
+        }
+
+        // Hide all open modals as a fallback
+        document.querySelectorAll('.modal').forEach(m => {
+            m.hidden = true;
+            m.setAttribute("hidden", "true");
+            m.style.display = "none";
+        });
+
+        // Restore default body & html scroll behaviors
+        document.documentElement.style.overflow = "";
+        document.documentElement.style.height = "";
+        document.body.style.overflow = "";
+        document.body.style.height = "";
+        document.body.style.position = "";
+
+        // Target container wrappers if layout uses inner scrolling
+        const wizardBody = document.querySelector('.wizard__body');
+        if (wizardBody) {
+            wizardBody.style.overflow = "";
+        }
+
+        // Remove locking utility classes
+        document.documentElement.classList.remove("modal-open", "is-locked", "u-no-scroll");
+        document.body.classList.remove("modal-open", "is-locked", "u-no-scroll");
+    }
+
+    function loadTemplateById(formId) {
+        if (!formId) return;
+
+        fetch(`?handler=TemplateFields&formId=${encodeURIComponent(formId)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    alert("Error loading template: " + (data.message || "Unknown error"));
+                    return;
+                }
+
+                const list = document.getElementById("rf-list");
+                if (list) {
+                    list.innerHTML = "";
+                    data.fields.forEach((field, i) => {
+                        list.appendChild(renderFieldRow(i, field));
+                    });
+                    reindexFields();
+                }
+
+                const select = document.getElementById("tplpick-rf-list");
+                if (select) {
+                    select.value = formId;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Failed to load template.");
+            });
+    }
+
+    // Delegated click handler
+    document.addEventListener("click", function(e) {
+        // Add Field
+        if (e.target.closest('[data-repeat-add="rf-list"]')) {
+            const list = document.getElementById("rf-list");
+            if (list) {
+                const index = list.querySelectorAll('[data-repeat-row]').length;
+                list.appendChild(renderFieldRow(index, { label: "", fieldType: "Short Text", isRequired: false }));
+                reindexFields();
+            }
+        }
+
+        // Remove Field
+        if (e.target.closest('[data-repeat-remove]')) {
+            const row = e.target.closest('[data-repeat-row]');
+            if (row && !row.classList.contains('fieldrow--locked')) {
+                row.remove();
+                reindexFields();
+            }
+        }
+
+        // Open Modal
+        const openBtn = e.target.closest("[data-modal-open]");
+        if (openBtn) {
+            const modalId = openBtn.getAttribute("data-modal-open");
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.removeAttribute("hidden");
+                modal.hidden = false;
+                modal.style.display = "block";
+                document.body.classList.add("modal-open");
+            }
+        }
+
+        // Close Modal
+        const closeBtn = e.target.closest("[data-modal-close]");
+        if (closeBtn) {
+            const modal = closeBtn.closest(".modal");
+            closeModal(modal);
+        }
+
+        // Use Template Action inside Manage Modal
+        const tplUseBtn = e.target.closest("[data-tpluse]");
+        if (tplUseBtn) {
+            const formId = tplUseBtn.getAttribute("data-tpluse");
+
+            // 1. Fetch & populate field template
+            loadTemplateById(formId);
+
+            // 2. Force close modal & unlock page scrolling completely
+            const modal = tplUseBtn.closest(".modal");
+            closeModal(modal);
+        }
+    });
+
+    document.getElementById("tplLoadBtn")?.addEventListener("click", function() {
+        const select = document.getElementById("tplpick-rf-list");
+        if (select?.value) {
+            loadTemplateById(select.value);
+        } else {
+            alert("Choose a template first.");
+        }
+    });
+
+    document.getElementById("tplpick-rf-list")?.addEventListener("change", function(e) {
+        if (e.target.value) {
+            loadTemplateById(e.target.value);
+        }
+    });
+</script>

@@ -1,0 +1,178 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubSettingsModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="settings" data-role-only="admin" hidden>
+    <div class="hubhead">
+        <div class="hubhead__body">
+            <h2 class="hubhead__title">Event Management</h2>
+            <p class="hubhead__text">
+                What you can do to this event depends on where it is in its life
+            </p>
+        </div>
+        <div class="hubhead__actions">
+            <span class="statusflag">
+                <span class="live__pulse" aria-hidden="true"></span>
+                Currently <b data-event-status>Live</b>
+            </span>
+        </div>
+    </div>
+
+    <section class="panel" aria-labelledby="editevent-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="editevent-title">Edit event</h3>
+                <p class="panel__meta">
+                    A live event has guests holding tickets, so only what can change safely
+                    is editable
+                </p>
+            </div>
+            <a class="btn btn--primary btn--sm" href="create-event/basic-details.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg> Open the editor
+            </a>
+        </div>
+        <div class="panel__body">
+            <div class="editgrid">
+                <div class="editgroup editgroup--open">
+                    <p class="editgroup__head"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Editable now</p>
+                    <ul class="editgroup__list">
+                        <li>Description, tagline and cover images</li>
+                        <li>Things to know, terms and FAQ</li>
+                        <li>Speaker profiles &mdash; photo, title, organisation, bio</li>
+                        <li>Branding: logo, colours and background</li>
+                        <li>Food menu, availability and serve limits</li>
+                        <li>Vendors and entry staff</li>
+                        <li>Add-ons stock and promo code status</li>
+                    </ul>
+                </div>
+                <div class="editgroup editgroup--locked">
+                    <p class="editgroup__head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg> Locked while live</p>
+                    <ul class="editgroup__list">
+                        <li>Event type &mdash; public or private</li>
+                        <li>Dates, slots and hall allocation</li>
+                        <li>Ticket prices on tiers already sold</li>
+                        <li>Seating layout and seat maps</li>
+                        <li>Registration form fields already answered</li>
+                        <li>Currency and payout account</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="notice notice--info notice--flat u-mt-5">
+                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                Locked fields open again if you cancel the affected dates first. Editing an
+                unpublished draft has no restrictions at all.
+            </p>
+        </div>
+    </section>
+
+    <section class="panel u-mt-6" aria-labelledby="cancelsec-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="cancelsec-title">Cancel</h3>
+                <p class="panel__meta">
+                    Cancel the whole event, particular dates, or single slots &mdash; refunds
+                    start automatically on anything ticketed
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <div class="dangerlist">
+                <div class="dangerrow">
+                    <span class="dangerrow__body">
+                        <span class="dangerrow__title">Cancel the entire event</span>
+                        <span class="dangerrow__text">
+                            All 3 dates and 6 slots. 1,000 guests notified,
+                            &#8358;127,050,000 refunded, commission reversed.
+                        </span>
+                    </span>
+                    <button class="btn btn--outline btn--sm" type="button"
+                            data-modal-open="cancelevent-modal"
+                            data-event-name="Tech Summit Africa 2025">
+                        Cancel event
+                    </button>
+                </div>
+
+                <div class="dangerrow">
+                    <span class="dangerrow__body">
+                        <span class="dangerrow__title">Cancel a specific date</span>
+                        <span class="dangerrow__text">
+                            The rest of the event goes ahead. Only guests holding tickets for that
+                            date are refunded.
+                        </span>
+                    </span>
+                    <button class="btn btn--outline btn--sm" type="button"
+                            data-modal-open="cancelevent-modal"
+                            data-cancel-preset="dates"
+                            data-event-name="Tech Summit Africa 2025">
+                        Choose dates
+                    </button>
+                </div>
+
+                <div class="dangerrow">
+                    <span class="dangerrow__body">
+                        <span class="dangerrow__title">Cancel a specific slot</span>
+                        <span class="dangerrow__text">
+                            One session only. Reservations for it are released and any
+                            slot-specific tickets refunded.
+                        </span>
+                    </span>
+                    <button class="btn btn--outline btn--sm" type="button"
+                            data-modal-open="cancelevent-modal"
+                            data-cancel-preset="slots"
+                            data-event-name="Tech Summit Africa 2025">
+                        Choose slots
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel u-mt-6" aria-labelledby="closesec-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h3 class="panel__title" id="closesec-title">Close the event down</h3>
+                <p class="panel__meta">
+                    Ending is for events that ran; deleting is only for drafts that never did
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <div class="dangerlist">
+                <div class="dangerrow">
+                    <span class="dangerrow__body">
+                        <span class="dangerrow__title">End event</span>
+                        <span class="dangerrow__text">
+                            Stops check-in, closes food ordering and polls, and makes reports
+                            final. Nobody is refunded.
+                        </span>
+                    </span>
+                    <button class="btn btn--danger btn--sm" type="button"
+                            data-modal-open="endevent-modal"
+                            data-event-name="Tech Summit Africa 2025">
+                        End event
+                    </button>
+                </div>
+
+                <div class="dangerrow dangerrow--off">
+                    <span class="dangerrow__body">
+                        <span class="dangerrow__title">Delete event</span>
+                        <span class="dangerrow__text">
+                            Only available while an event is still a draft. This one is published,
+                            so cancel it instead &mdash; the audit trail has to survive.
+                        </span>
+                    </span>
+                    <button class="btn btn--outline btn--sm" type="button" disabled
+                            aria-disabled="true">
+                        Delete event
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

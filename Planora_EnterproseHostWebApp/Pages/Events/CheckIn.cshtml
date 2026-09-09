@@ -1,0 +1,1132 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.CheckInModel
+@{
+    Layout = "_Layout";
+    ViewData["PageName"] = "Check-in";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<main class="shell__main" data-page-roles="admin manager">
+
+    <div class="page__head">
+        <div>
+            <h1 class="page__title">Check-in</h1>
+            <p class="page__subtitle">
+                Tech Summit Africa 2025 &middot; <span data-scope-label>Day 1</span>
+            </p>
+        </div>
+        <div class="page__actions">
+            <button class="btn btn--outline" type="button"
+                    data-action="Attendance report downloaded">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Attendance report
+            </button>
+            <a class="btn btn--outline" href="event-hub.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg> Door staff</a>
+            <button class="btn btn--primary" type="button" data-ci-focus>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg> Find a guest
+            </button>
+        </div>
+    </div>
+
+    <div class="scopebar">
+        <span class="scopebar__label">Day</span>
+        <div class="scopebar__row" role="group" aria-label="Choose a day">
+            <button class="scopetab" type="button" aria-pressed="true"
+                    data-checkin-day="day1">
+                Day 1 &mdash; Opening Day
+                <span class="scopetab__date">Aug 15</span>
+            </button>
+            <button class="scopetab" type="button" aria-pressed="false"
+                    data-checkin-day="day2">
+                Day 2 &mdash; Workshops
+                <span class="scopetab__date">Aug 16</span>
+            </button>
+            <button class="scopetab" type="button" aria-pressed="false"
+                    data-checkin-day="day3">
+                Day 3 &mdash; Closing
+                <span class="scopetab__date">Aug 17</span>
+            </button>
+        </div>
+    </div>
+
+    <p class="badgestrip">
+        <span class="badgestrip__figures">
+            <span class="badgestrip__figure">
+                <b>6</b><span>Badges printed</span>
+            </span>
+            <span class="badgestrip__figure">
+                <b>2</b><span>Pending</span>
+            </span>
+            <span class="badgestrip__figure badgestrip__figure--warn">
+                <b>2</b><span>Failed</span>
+            </span>
+            <span class="badgestrip__figure">
+                <b>3</b><span>Reprints</span>
+            </span>
+        </span>
+        <span class="badgestrip__body">
+            Badge printing is <b>on</b> for this event. A failed print never affects a
+            check-in &mdash; staff retry from the counter.
+        </span>
+        <a class="btn btn--primary btn--sm" href="event-hub.html#onsite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3v3h6V3" /><path d="M9 12h6M9 16h4" /></svg> Badge activity
+        </a>
+    </p>
+
+    <section class="grid grid--4 u-mt-6 u-mb-6" aria-label="Attendance totals">
+        <article class="metric">
+            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
+            <span>
+                <span class="metric__value">1,000</span>
+                <span class="metric__label">Registered</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
+            <span>
+                <span class="metric__value" data-count="checkedin">847</span>
+                <span class="metric__label">Checked in</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg></span>
+            <span>
+                <span class="metric__value" data-count="remaining">153</span>
+                <span class="metric__label">Not arrived</span>
+            </span>
+        </article>
+        <article class="metric">
+            <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg></span>
+            <span>
+                <span class="metric__value">84.7%</span>
+                <span class="metric__label">Attendance rate</span>
+            </span>
+        </article>
+    </section>
+
+    <div class="grid grid--main">
+        <section class="panel" aria-labelledby="refpanel-title">
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h2 class="panel__title" id="refpanel-title">Ticket Reference</h2>
+                    <p class="panel__meta">
+                        Type the reference from the guest&rsquo;s pass &mdash; the verdict comes
+                        back before you let them through
+                    </p>
+                </div>
+            </div>
+            <div class="panel__body">
+                <div class="form__field">
+                    <label class="field__label" for="scan-ref">
+                        Ticket reference
+                    </label>
+                    <div class="field__control field__control--with-action">
+                        <input class="field__input field__input--ref" id="scan-ref"
+                               name="scan-ref" type="text" autocomplete="off"
+                               placeholder="e.g. TSA-4821" data-scan-ref>
+                        <button class="field__toggle" type="button" data-scan-lookup>
+                            <span class="u-visually-hidden">Look up this reference</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                        </button>
+                    </div>
+                    <span class="field__hint">
+                        Try <b>TSA-4821</b> for a valid pass, <b>TSA-0000</b> for one that is not
+                        on this day
+                    </span>
+                </div>
+
+                <div class="verdict" data-verdict hidden>
+                    <span class="verdict__mark" data-verdict-mark aria-hidden="true"></span>
+                    <span class="verdict__body">
+                        <span class="verdict__name" data-verdict-name></span>
+                        <span class="verdict__meta" data-verdict-meta></span>
+                        <span class="verdict__reason" data-verdict-reason></span>
+                    </span>
+                </div>
+
+                <p class="notice notice--info notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    Every lookup is recorded against you in the scan log below, accepted or
+                    refused &mdash; including the refusals, which are the only record you have
+                    if a guest says they were turned away wrongly.
+                </p>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="doors-title">
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h2 class="panel__title" id="doors-title">Doors</h2>
+                    <p class="panel__meta">Who is on each entrance right now</p>
+                </div>
+            </div>
+            <div class="panel__body">
+                <div class="doorrow">
+                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                    <span class="doorrow__body">
+                        <span class="doorrow__name">Main Hall entrance</span>
+                        <span class="doorrow__meta">Bayo Ogun</span>
+                    </span>
+                    <span class="doorrow__count">
+                        <b>512</b>
+                        <span class="doorrow__unit">scans</span>
+                    </span>
+                    <span class="badge badge--live">Open</span>
+                </div>
+                <div class="doorrow">
+                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                    <span class="doorrow__body">
+                        <span class="doorrow__name">Hall B entrance</span>
+                        <span class="doorrow__meta">Ndidi Musa</span>
+                    </span>
+                    <span class="doorrow__count">
+                        <b>208</b>
+                        <span class="doorrow__unit">scans</span>
+                    </span>
+                    <span class="badge badge--live">Open</span>
+                </div>
+                <div class="doorrow">
+                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                    <span class="doorrow__body">
+                        <span class="doorrow__name">VIP Lounge</span>
+                        <span class="doorrow__meta">Self check-in QR</span>
+                    </span>
+                    <span class="doorrow__count">
+                        <b>96</b>
+                        <span class="doorrow__unit">scans</span>
+                    </span>
+                    <span class="badge badge--live">Open</span>
+                </div>
+                <div class="doorrow">
+                    <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                    <span class="doorrow__body">
+                        <span class="doorrow__name">Registration desk</span>
+                        <span class="doorrow__meta">Unstaffed</span>
+                    </span>
+                    <span class="doorrow__count">
+                        <b>31</b>
+                        <span class="doorrow__unit">scans</span>
+                    </span>
+                    <span class="badge badge--draft">Closed</span>
+                </div>
+                <p class="notice notice--info notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                    Door staff sign in with the PIN issued in
+                    <b><a class="textlink" href="event-hub.html">Event Hub</a></b>. Their scans
+                    are attributed to them in the log below.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <section class="panel u-mt-6" aria-labelledby="manual-title">
+        <div class="panel__head panel__head--plain">
+            <div>
+                <h2 class="panel__title" id="manual-title">Check in by hand</h2>
+                <p class="panel__meta">
+                    For the guest whose QR will not read, or who arrived without their pass
+                </p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <!-- Find one guest fast — reference, name or email, all at once -->
+            <div class="findbox">
+                <div class="searchbox searchbox--lg">
+                    <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                    <label class="u-visually-hidden" for="ci-find">
+                        Find a guest by ticket reference, name or email
+                    </label>
+                    <input class="searchbox__input" id="ci-find" name="ci-find" type="search"
+                           placeholder="Ticket reference, guest name or email"
+                           data-ci-find autocomplete="off">
+                </div>
+                <p class="findbox__hint">
+                    Try <b>TSA-4824</b>, <b>Bayo</b> or <b>grace.mensah@partner.gh</b> &mdash;
+                    matches appear as you type and can be checked in from here
+                </p>
+            </div>
+
+            <div class="findresults" data-ci-results hidden></div>
+
+            <p class="findnone" data-ci-none hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                <span>
+                    Nothing matches that reference, name or email on this event.
+                </span>
+            </p>
+
+            <div class="toolbar u-mt-5">
+                <div class="toolbar__field">
+                    <label class="u-visually-hidden" for="ci-day">Filter by date</label>
+                    <select class="field__select" id="ci-day" name="ci-day" data-ci-filter="day">
+                        <option value="">All dates</option>
+                        <option value="day1">Day 1 &mdash; Opening Day</option>
+                        <option value="day2">Day 2 &mdash; Workshops</option>
+                        <option value="day3">Day 3 &mdash; Closing</option>
+                    </select>
+                </div>
+                <div class="toolbar__field">
+                    <label class="u-visually-hidden" for="ci-slot">Filter by time slot</label>
+                    <select class="field__select" id="ci-slot" name="ci-slot"
+                            data-ci-filter="slot">
+                        <option value="">All time slots</option>
+                    </select>
+                </div>
+                <div class="toolbar__field">
+                    <label class="u-visually-hidden" for="ci-tier">Filter by tier</label>
+                    <select class="field__select" id="ci-tier" name="ci-tier"
+                            data-ci-filter="tier">
+                        <option value="">All tiers</option>
+                        <option>VIP</option>
+                        <option>Standard</option>
+                        <option>Early Bird</option>
+                    </select>
+                </div>
+                <button class="btn btn--quiet btn--sm" type="button" data-ci-clear>
+                    Clear filters
+                </button>
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Guest list exported as CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export list
+                </button>
+            </div>
+
+            <p class="bulkbar u-mt-5">
+                <span>
+                    <b data-ci-count>10 guests</b> shown &middot;
+                    <span data-ci-scopelabel>all dates, all slots, all tiers</span>
+                </span>
+                <span class="bulkbar__actions" data-ci-inout>
+                    <span class="badge badge--nodot badge--live">
+                        <b data-ci-in>0</b> checked in
+                    </span>
+                    <span class="badge badge--nodot badge--role">
+                        <b data-ci-out>0</b> still to arrive
+                    </span>
+                </span>
+            </p>
+
+            <div class="tablewrap u-mt-5">
+                <table class="table table--narrow" id="manual-table">
+                    <caption class="u-visually-hidden">
+                        Guests with their reference, tier, date, slot, seat and check-in state
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Reference</th>
+                            <th scope="col">Guest</th>
+                            <th scope="col">Tier</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Time slot</th>
+                            <th scope="col">Seat</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot1"
+                            data-ci-tier="VIP" data-ci-ref="TSA-4821">
+                            <td><span class="order__ref">TSA-4821</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">AO</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Amara Osei</span>
+                                        <span class="cellsub">amara.osei@acme.africa</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">VIP</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
+                            <td class="u-muted">Morning Keynote</td>
+                            <td><span class="u-nowrap">A-06</span></td>
+                            <td><span class="badge badge--live">Checked-in</span></td>
+                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot1"
+                            data-ci-tier="Standard" data-ci-ref="TSA-4822">
+                            <td><span class="order__ref">TSA-4822</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">TA</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Tunde Alabi</span>
+                                        <span class="cellsub">tunde.alabi@acme.africa</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
+                            <td class="u-muted">Morning Keynote</td>
+                            <td><span class="u-nowrap">B-08</span></td>
+                            <td><span class="badge badge--live">Checked-in</span></td>
+                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot1"
+                            data-ci-tier="Early Bird" data-ci-ref="TSA-4823">
+                            <td><span class="order__ref">TSA-4823</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">AO</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Ada Obi</span>
+                                        <span class="cellsub">ada.obi@acme.africa</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Early Bird</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
+                            <td class="u-muted">Morning Keynote</td>
+                            <td><span class="u-nowrap">E-11</span></td>
+                            <td><span class="badge badge--draft">Not checked-in</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-checkin="Ada Obi" data-checkin-ref="TSA-4823">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot2"
+                            data-ci-tier="Standard" data-ci-ref="TSA-4824">
+                            <td><span class="order__ref">TSA-4824</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">BA</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Bayo Adeyemi</span>
+                                        <span class="cellsub">bayo.a@techsphere.io</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
+                            <td class="u-muted">Fintech Panel</td>
+                            <td><span class="u-nowrap">B-12</span></td>
+                            <td><span class="badge badge--draft">Not checked-in</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-checkin="Bayo Adeyemi" data-checkin-ref="TSA-4824">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot2"
+                            data-ci-tier="Standard" data-ci-ref="TSA-4825">
+                            <td><span class="order__ref">TSA-4825</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">CE</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Chioma Eze</span>
+                                        <span class="cellsub">chioma@techsphere.io</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
+                            <td class="u-muted">Fintech Panel</td>
+                            <td><span class="u-nowrap">B-13</span></td>
+                            <td><span class="badge badge--live">Checked-in</span></td>
+                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot3"
+                            data-ci-tier="VIP" data-ci-ref="TSA-4826">
+                            <td><span class="order__ref">TSA-4826</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">DM</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">David Mensah</span>
+                                        <span class="cellsub">david@accra.co</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">VIP</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
+                            <td class="u-muted">Evening Mixer</td>
+                            <td><span class="u-nowrap">A-03</span></td>
+                            <td><span class="badge badge--draft">Not checked-in</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-checkin="David Mensah" data-checkin-ref="TSA-4826">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day2" data-ci-slot="slot1"
+                            data-ci-tier="Standard" data-ci-ref="TSA-4827">
+                            <td><span class="order__ref">TSA-4827</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">FB</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Fatima Bello</span>
+                                        <span class="cellsub">fatima@vendor.ng</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 2</span></td>
+                            <td class="u-muted">Design Sprint</td>
+                            <td><span class="u-nowrap">B-14</span></td>
+                            <td><span class="badge badge--live">Checked-in</span></td>
+                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day2" data-ci-slot="slot1"
+                            data-ci-tier="Standard" data-ci-ref="TSA-4828">
+                            <td><span class="order__ref">TSA-4828</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">GM</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Grace Mensah</span>
+                                        <span class="cellsub">grace.mensah@partner.gh</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 2</span></td>
+                            <td class="u-muted">Design Sprint</td>
+                            <td><span class="u-nowrap">B-15</span></td>
+                            <td><span class="badge badge--draft">Not checked-in</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-checkin="Grace Mensah" data-checkin-ref="TSA-4828">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day2" data-ci-slot="slot2"
+                            data-ci-tier="VIP" data-ci-ref="TSA-4829">
+                            <td><span class="order__ref">TSA-4829</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">KA</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Kwame Asante</span>
+                                        <span class="cellsub">kwame.asante@partner.gh</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">VIP</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 2</span></td>
+                            <td class="u-muted">Investor Clinic</td>
+                            <td><span class="u-nowrap">A-07</span></td>
+                            <td><span class="badge badge--draft">Not checked-in</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-checkin="Kwame Asante" data-checkin-ref="TSA-4829">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-guest-row data-ci-day="day3" data-ci-slot="slot1"
+                            data-ci-tier="Early Bird" data-ci-ref="TSA-4830">
+                            <td><span class="order__ref">TSA-4830</span></td>
+                            <td>
+                                <div class="cellstack">
+                                    <span class="avatar" aria-hidden="true">NE</span>
+                                    <span class="cellstack__body">
+                                        <span class="cellstack__name">Ngozi Eze</span>
+                                        <span class="cellsub">ngozi.eze@partner.io</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge--nodot badge--role">Early Bird</span></td>
+                            <td class="u-muted"><span class="u-nowrap">Day 3</span></td>
+                            <td class="u-muted">Startup Pitches</td>
+                            <td><span class="u-nowrap">E-04</span></td>
+                            <td><span class="badge badge--draft">Not checked-in</span></td>
+                            <td>
+                                <div class="rowactions">
+                                    <button class="btn btn--outline btn--sm" type="button"
+                                            data-checkin="Ngozi Eze" data-checkin-ref="TSA-4830">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="tablefilter__empty" data-ci-empty hidden>
+                No guest matches those filters.
+            </p>
+        </div>
+    </section>
+
+    <!-- Seating layout and the scan log answer different questions, and a
+             host wants one at a time. Stacked, reaching the log meant scrolling
+             past fifty seats. -->
+    <nav class="subtabs subtabs--inner u-mt-6" role="tablist"
+         aria-label="Check-in views" data-pick-group id="citabs">
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="true"
+                aria-pressed="true" data-pick="seats">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg> Seating Layout
+        </button>
+        <button class="subtabs__tab" type="button" role="tab" aria-selected="false"
+                aria-pressed="false" data-pick="log">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> Scan Log
+        </button>
+    </nav>
+
+    <div data-pick-panel="seats" data-pick-owner="citabs">
+        <!-- ============ Seating layout, read at the door ============ -->
+        <section class="panel" aria-labelledby="ciseat-title">
+            <div class="panel__head">
+                <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
+                <div>
+                    <h2 class="panel__title" id="ciseat-title">Seating Layout</h2>
+                    <p class="panel__meta">
+                        Who is sitting where, and what is still free &mdash; for the date, slot and
+                        tier you are working
+                    </p>
+                </div>
+            </div>
+            <div class="panel__body">
+                <div class="toolbar">
+                    <div class="toolbar__field">
+                        <label class="u-visually-hidden" for="cis-day">Seating date</label>
+                        <select class="field__select" id="cis-day" name="cis-day"
+                                data-cis-filter="day">
+                            <option value="">All dates</option>
+                            <option value="day1">Day 1 &mdash; Opening Day</option>
+                            <option value="day2">Day 2 &mdash; Workshops</option>
+                            <option value="day3">Day 3 &mdash; Closing</option>
+                        </select>
+                    </div>
+                    <div class="toolbar__field">
+                        <label class="u-visually-hidden" for="cis-slot">Seating time slot</label>
+                        <select class="field__select" id="cis-slot" name="cis-slot"
+                                data-cis-filter="slot">
+                            <option value="">All time slots</option>
+                        </select>
+                    </div>
+                    <div class="toolbar__field">
+                        <label class="u-visually-hidden" for="cis-tier">Seating tier</label>
+                        <select class="field__select" id="cis-tier" name="cis-tier"
+                                data-cis-filter="tier">
+                            <option value="">All tiers</option>
+                            <option>VIP</option>
+                            <option>Standard</option>
+                            <option>Early Bird</option>
+                        </select>
+                    </div>
+                </div>
+
+                <p class="bulkbar u-mt-5">
+                    <span>
+                        <b data-cis-occupied>0</b> occupied &middot;
+                        <b data-cis-held>0</b> assigned but not arrived &middot;
+                        <b data-cis-free>0</b> free
+                    </span>
+                    <span class="bulkbar__actions">
+                        <button class="btn btn--outline btn--sm" type="button"
+                                data-action="Seating layout exported as a printable sheet">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export layout
+                        </button>
+                    </span>
+                </p>
+
+                <div class="ciblocks u-mt-5">
+                    <div class="ciblock" data-ci-tierblock="VIP">
+                        <p class="ciblock__head">
+                            <span class="ciblock__tier">VIP</span>
+                            <span class="ciblock__meta">Row A &middot; 16 seats</span>
+                        </p>
+                        <div class="ciseats">
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-01" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-01</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-02" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-02</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat ciseat--held" type="button"
+                                    data-ciseat="A-03" data-ci-tier="VIP" data-ci-day="day1" data-ci-slot="slot3" data-ci-guest="David Mensah" data-ci-state="held">
+                                <span class="ciseat__id">A-03</span>
+                                <span class="ciseat__who">David Mensah &middot; Assigned, not arrived</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-04" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-04</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-05" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-05</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat ciseat--in" type="button"
+                                    data-ciseat="A-06" data-ci-tier="VIP" data-ci-day="day1" data-ci-slot="slot1" data-ci-guest="Amara Osei" data-ci-state="in">
+                                <span class="ciseat__id">A-06</span>
+                                <span class="ciseat__who">Amara Osei &middot; Checked in</span>
+                            </button>
+                            <button class="ciseat ciseat--held" type="button"
+                                    data-ciseat="A-07" data-ci-tier="VIP" data-ci-day="day2" data-ci-slot="slot2" data-ci-guest="Kwame Asante" data-ci-state="held">
+                                <span class="ciseat__id">A-07</span>
+                                <span class="ciseat__who">Kwame Asante &middot; Assigned, not arrived</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-08" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-08</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-09" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-09</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-10" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-10</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-11" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-11</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-12" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-12</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-13" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-13</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-14" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-14</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-15" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-15</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="A-16" data-ci-tier="VIP" data-ci-state="free">
+                                <span class="ciseat__id">A-16</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ciblock" data-ci-tierblock="Standard">
+                        <p class="ciblock__head">
+                            <span class="ciblock__tier">Standard</span>
+                            <span class="ciblock__meta">Row B &middot; 16 seats</span>
+                        </p>
+                        <div class="ciseats">
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-01" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-01</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-02" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-02</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-03" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-03</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-04" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-04</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-05" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-05</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-06" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-06</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-07" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-07</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat ciseat--in" type="button"
+                                    data-ciseat="B-08" data-ci-tier="Standard" data-ci-day="day1" data-ci-slot="slot1" data-ci-guest="Tunde Alabi" data-ci-state="in">
+                                <span class="ciseat__id">B-08</span>
+                                <span class="ciseat__who">Tunde Alabi &middot; Checked in</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-09" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-09</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-10" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-10</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-11" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-11</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat ciseat--held" type="button"
+                                    data-ciseat="B-12" data-ci-tier="Standard" data-ci-day="day1" data-ci-slot="slot2" data-ci-guest="Bayo Adeyemi" data-ci-state="held">
+                                <span class="ciseat__id">B-12</span>
+                                <span class="ciseat__who">Bayo Adeyemi &middot; Assigned, not arrived</span>
+                            </button>
+                            <button class="ciseat ciseat--in" type="button"
+                                    data-ciseat="B-13" data-ci-tier="Standard" data-ci-day="day1" data-ci-slot="slot2" data-ci-guest="Chioma Eze" data-ci-state="in">
+                                <span class="ciseat__id">B-13</span>
+                                <span class="ciseat__who">Chioma Eze &middot; Checked in</span>
+                            </button>
+                            <button class="ciseat ciseat--in" type="button"
+                                    data-ciseat="B-14" data-ci-tier="Standard" data-ci-day="day2" data-ci-slot="slot1" data-ci-guest="Fatima Bello" data-ci-state="in">
+                                <span class="ciseat__id">B-14</span>
+                                <span class="ciseat__who">Fatima Bello &middot; Checked in</span>
+                            </button>
+                            <button class="ciseat ciseat--held" type="button"
+                                    data-ciseat="B-15" data-ci-tier="Standard" data-ci-day="day2" data-ci-slot="slot1" data-ci-guest="Grace Mensah" data-ci-state="held">
+                                <span class="ciseat__id">B-15</span>
+                                <span class="ciseat__who">Grace Mensah &middot; Assigned, not arrived</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="B-16" data-ci-tier="Standard" data-ci-state="free">
+                                <span class="ciseat__id">B-16</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ciblock" data-ci-tierblock="Early Bird">
+                        <p class="ciblock__head">
+                            <span class="ciblock__tier">Early Bird</span>
+                            <span class="ciblock__meta">Row E &middot; 16 seats</span>
+                        </p>
+                        <div class="ciseats">
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-01" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-01</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-02" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-02</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-03" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-03</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat ciseat--held" type="button"
+                                    data-ciseat="E-04" data-ci-tier="Early Bird" data-ci-day="day3" data-ci-slot="slot1" data-ci-guest="Ngozi Eze" data-ci-state="held">
+                                <span class="ciseat__id">E-04</span>
+                                <span class="ciseat__who">Ngozi Eze &middot; Assigned, not arrived</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-05" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-05</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-06" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-06</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-07" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-07</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-08" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-08</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-09" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-09</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-10" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-10</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat ciseat--held" type="button"
+                                    data-ciseat="E-11" data-ci-tier="Early Bird" data-ci-day="day1" data-ci-slot="slot1" data-ci-guest="Ada Obi" data-ci-state="held">
+                                <span class="ciseat__id">E-11</span>
+                                <span class="ciseat__who">Ada Obi &middot; Assigned, not arrived</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-12" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-12</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-13" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-13</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-14" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-14</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-15" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-15</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                            <button class="ciseat" type="button"
+                                    data-ciseat="E-16" data-ci-tier="Early Bird" data-ci-state="free">
+                                <span class="ciseat__id">E-16</span>
+                                <span class="ciseat__who">Available</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="seatlegend">
+                    <span><span class="seatkey" aria-hidden="true"></span> Free</span>
+                    <span>
+                        <span class="seatkey seatkey--reserved" aria-hidden="true"></span>
+                        Assigned, not arrived
+                    </span>
+                    <span>
+                        <span class="seatkey seatkey--checked" aria-hidden="true"></span>
+                        Occupied &mdash; guest checked in
+                    </span>
+                    <span data-cis-scopelabel>All dates, all slots, all tiers</span>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <div data-pick-panel="log" data-pick-owner="citabs" hidden>
+        <section class="panel" aria-labelledby="scanlog-title">
+            <div class="panel__head panel__head--plain">
+                <div>
+                    <h2 class="panel__title" id="scanlog-title">Scan log</h2>
+                    <p class="panel__meta">
+                        Every scan, accepted or refused, with the door and who was on it
+                    </p>
+                </div>
+                <button class="btn btn--outline btn--sm" type="button"
+                        data-action="Scan log exported as CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Export log
+                </button>
+            </div>
+            <div class="panel__body">
+                <div class="tablewrap">
+                    <table class="table table--narrow">
+                        <caption class="u-visually-hidden">
+                            Scan log with time, guest, door, staff member and verdict
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Time</th>
+                                <th scope="col">Guest</th>
+                                <th scope="col">Door</th>
+                                <th scope="col">By</th>
+                                <th scope="col">Verdict</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="u-nowrap">09:41</span></td>
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">AO</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Amara Osei</span>
+                                            <span class="cellsub">VIP &middot; Seat A-06</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>Main Hall entrance</td>
+                                <td class="u-muted">Bayo Ogun</td>
+                                <td><span class="badge badge--live">Checked in</span></td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-action="Scan record for Amara Osei opened">
+                                            <span class="u-visually-hidden">Scan record for Amara Osei</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="btn btn--quiet btn--sm" type="button"
+                                                data-action="Amara Osei check-in reversed"
+                                                data-action-tone="warn">
+                                            Undo
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="u-nowrap">09:40</span></td>
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">TA</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Tunde Alabi</span>
+                                            <span class="cellsub">Standard &middot; Seat C-14</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>Main Hall entrance</td>
+                                <td class="u-muted">Bayo Ogun</td>
+                                <td><span class="badge badge--live">Checked in</span></td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-action="Scan record for Tunde Alabi opened">
+                                            <span class="u-visually-hidden">Scan record for Tunde Alabi</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="btn btn--quiet btn--sm" type="button"
+                                                data-action="Tunde Alabi check-in reversed"
+                                                data-action-tone="warn">
+                                            Undo
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="u-nowrap">09:38</span></td>
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">GM</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Grace Mensah</span>
+                                            <span class="cellsub">Standard &middot; Seat B-02</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>Hall B entrance</td>
+                                <td class="u-muted">Ndidi Musa</td>
+                                <td><span class="badge badge--out">Denied &mdash; wrong day</span></td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-action="Scan record for Grace Mensah opened">
+                                            <span class="u-visually-hidden">Scan record for Grace Mensah</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="u-nowrap">09:36</span></td>
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">KA</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Kwame Asante</span>
+                                            <span class="cellsub">VIP &middot; Seat A-07</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>VIP Lounge</td>
+                                <td class="u-muted">Self check-in</td>
+                                <td><span class="badge badge--live">Checked in</span></td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-action="Scan record for Kwame Asante opened">
+                                            <span class="u-visually-hidden">Scan record for Kwame Asante</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="btn btn--quiet btn--sm" type="button"
+                                                data-action="Kwame Asante check-in reversed"
+                                                data-action-tone="warn">
+                                            Undo
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="u-nowrap">09:35</span></td>
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">FB</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Femi Bello</span>
+                                            <span class="cellsub">VIP &middot; Seat A-12</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>VIP Lounge</td>
+                                <td class="u-muted">Self check-in</td>
+                                <td><span class="badge badge--live">Checked in</span></td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-action="Scan record for Femi Bello opened">
+                                            <span class="u-visually-hidden">Scan record for Femi Bello</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="btn btn--quiet btn--sm" type="button"
+                                                data-action="Femi Bello check-in reversed"
+                                                data-action-tone="warn">
+                                            Undo
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="u-nowrap">09:33</span></td>
+                                <td>
+                                    <div class="cellstack">
+                                        <span class="avatar" aria-hidden="true">NE</span>
+                                        <span class="cellstack__body">
+                                            <span class="cellstack__name">Ngozi Eze</span>
+                                            <span class="cellsub">Standard &middot; Seat D-09</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>Main Hall entrance</td>
+                                <td class="u-muted">Bayo Ogun</td>
+                                <td><span class="badge badge--paused">Already checked in</span></td>
+                                <td>
+                                    <div class="rowactions">
+                                        <button class="iconbtn" type="button"
+                                                data-action="Scan record for Ngozi Eze opened">
+                                            <span class="u-visually-hidden">Scan record for Ngozi Eze</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="notice notice--warn notice--flat u-mt-5">
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+                    A refused scan is kept, not discarded &mdash; it is the only record you have if
+                    a guest says they were turned away wrongly.
+                </p>
+            </div>
+        </section>
+    </div>
+
+</main>

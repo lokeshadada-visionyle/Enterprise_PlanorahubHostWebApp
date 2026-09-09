@@ -1,0 +1,699 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubBrandingModel
+@{
+    Layout = "_Layout";
+    Layout = "_EventHubLayout";
+    ViewData["PageName"] = "Event Hub";
+    ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
+}
+
+<div data-view-panel="brand" data-role-only="admin manager" hidden>
+
+    <!-- Gated: no branded page means nothing to manage -->
+    <section class="lockcard" data-brand-locked hidden>
+        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
+        <div class="lockcard__body">
+            <h2 class="lockcard__title">This event uses the default theme</h2>
+            <p class="lockcard__text">
+                Custom branding was not switched on in <b>Branding &amp; Page</b>, so the
+                event page carries Planorahub&rsquo;s own styling and there is nothing to
+                manage here.
+            </p>
+            <p class="lockcard__actions">
+                <a class="btn btn--outline btn--sm" href="create-event/branding-page.html">
+                    Turn on custom branding
+                </a>
+            </p>
+        </div>
+    </section>
+
+    <div data-brand-live>
+        <div class="hubhead">
+            <div class="hubhead__body">
+                <h2 class="hubhead__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg> Branding &amp; Theme</h2>
+                <p class="hubhead__text">
+                    The same controls as the wizard, editing a page that is already live
+                </p>
+            </div>
+            <div class="hubhead__actions">
+                <a class="btn btn--outline btn--sm" href="#" data-action-link
+                   data-action="Public event page opened in a new tab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg> View public page
+                </a>
+                <button class="btn btn--primary btn--sm" type="button"
+                        data-action="Branding published &mdash; the live page is updated">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Publish changes
+                </button>
+            </div>
+        </div>
+
+        <p class="notice notice--alert notice--flat">
+            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
+            <span>
+                <b>This page is live.</b><br>
+                Anything you publish here is what the next visitor sees, including guests
+                who already hold a ticket. The preview below is exactly what they get.
+            </span>
+        </p>
+
+        <div class="branding">
+
+            <div class="stack">
+                <section class="panel" aria-labelledby="reuse-title">
+                    <div class="panel__head">
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg></span>
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="reuse-title">
+                                Start from branding you already have
+                            </h2>
+                            <p class="panel__meta">
+                                Logo, colours, theme and cover from a previous event &mdash; edit
+                                anything after applying
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel__body">
+                        <div class="savedbrands">
+                            <button class="savedbrand" type="button" data-brandsaved="house"
+                                    data-brand-primary="#5A1D54" data-brand-accent="#C9A227"
+                                    data-brand-theme="light" data-brand-logoname="techsphere-mark.svg"
+                                    data-brand-covername="summit-cover.jpg" data-brand-title="TechSphere house style"
+                                    aria-pressed="false">
+                                <span class="savedbrand__swatches" aria-hidden="true">
+                                    <span class="savedbrand__dot" data-swatch="primary"></span>
+                                    <span class="savedbrand__dot" data-swatch="accent"></span>
+                                </span>
+                                <span class="savedbrand__body">
+                                    <span class="savedbrand__name">TechSphere house style</span>
+                                    <span class="savedbrand__meta">Used on 6 events &middot; set up Mar 2024</span>
+                                    <span class="savedbrand__meta">
+                                        Light theme &middot; techsphere-mark.svg
+                                    </span>
+                                </span>
+                            </button>
+                            <button class="savedbrand" type="button" data-brandsaved="summit"
+                                    data-brand-primary="#5A1D54" data-brand-accent="#E4572E"
+                                    data-brand-theme="dark" data-brand-logoname="techsphere-mark.svg"
+                                    data-brand-covername="summit-2025.jpg" data-brand-title="Tech Summit Africa 2025"
+                                    aria-pressed="false">
+                                <span class="savedbrand__swatches" aria-hidden="true">
+                                    <span class="savedbrand__dot" data-swatch="primary"></span>
+                                    <span class="savedbrand__dot" data-swatch="accent"></span>
+                                </span>
+                                <span class="savedbrand__body">
+                                    <span class="savedbrand__name">Tech Summit Africa 2025</span>
+                                    <span class="savedbrand__meta">Last event &middot; Aug 2025</span>
+                                    <span class="savedbrand__meta">
+                                        Dark theme &middot; techsphere-mark.svg
+                                    </span>
+                                </span>
+                            </button>
+                            <button class="savedbrand" type="button" data-brandsaved="forum"
+                                    data-brand-primary="#1D3F5A" data-brand-accent="#4A90A4"
+                                    data-brand-theme="light" data-brand-logoname="enterprise-mark.png"
+                                    data-brand-covername="forum-cover.jpg" data-brand-title="Enterprise Leadership Forum"
+                                    aria-pressed="false">
+                                <span class="savedbrand__swatches" aria-hidden="true">
+                                    <span class="savedbrand__dot" data-swatch="primary"></span>
+                                    <span class="savedbrand__dot" data-swatch="accent"></span>
+                                </span>
+                                <span class="savedbrand__body">
+                                    <span class="savedbrand__name">Enterprise Leadership Forum</span>
+                                    <span class="savedbrand__meta">Corporate palette &middot; Jul 2025</span>
+                                    <span class="savedbrand__meta">
+                                        Light theme &middot; enterprise-mark.png
+                                    </span>
+                                </span>
+                            </button>
+                            <button class="savedbrand" type="button" data-brandsaved="afro"
+                                    data-brand-primary="#8A3B1D" data-brand-accent="#E4572E"
+                                    data-brand-theme="brand" data-brand-logoname="afrobeat-mark.png"
+                                    data-brand-covername="afrobeat-cover.jpg" data-brand-title="Afrobeat Night Lagos"
+                                    aria-pressed="false">
+                                <span class="savedbrand__swatches" aria-hidden="true">
+                                    <span class="savedbrand__dot" data-swatch="primary"></span>
+                                    <span class="savedbrand__dot" data-swatch="accent"></span>
+                                </span>
+                                <span class="savedbrand__body">
+                                    <span class="savedbrand__name">Afrobeat Night Lagos</span>
+                                    <span class="savedbrand__meta">Concert styling &middot; Sep 2025</span>
+                                    <span class="savedbrand__meta">
+                                        Brand theme &middot; afrobeat-mark.png
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+
+                        <p class="savedapply" data-brandapply-bar hidden>
+                            <span class="savedapply__body">
+                                <b data-brandapply-name>&mdash;</b>
+                                <span data-brandapply-what>&mdash;</span>
+                            </span>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-brandapply-cancel>
+                                Cancel
+                            </button>
+                            <button class="btn btn--primary btn--sm" type="button"
+                                    data-brandapply-go>
+                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg> Apply this branding
+                            </button>
+                        </p>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            Applying copies the settings into this event and leaves them editable.
+                            The original event is untouched, so changing one later does not change
+                            the other.
+                        </p>
+                    </div>
+                </section>
+
+
+                <section class="panel" aria-labelledby="logo-title">
+                    <div class="panel__head panel__head--plain">
+                        <h2 class="panel__title panel__title--lg" id="logo-title">Organiser Logo</h2>
+                    </div>
+                    <div class="panel__body">
+                        <div class="logodrop">
+                            <span class="logodrop__box" data-brand-logo-box>
+                                <span class="logodrop__ph" aria-hidden="true" data-brand-logo-ph>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                                </span>
+                            </span>
+                            <span class="logodrop__body">
+                                <span class="logodrop__name" data-brand-logo-name>No logo yet</span>
+                                <span class="logodrop__hint">
+                                    PNG or SVG &middot; transparent background &middot; at least
+                                    512&times;512
+                                </span>
+                                <span class="logodrop__acts">
+                                    <label class="btn btn--outline btn--sm" for="logo-upload">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> <span data-brand-logo-verb>Upload logo</span>
+                                    </label>
+                                    <input class="u-visually-hidden" id="logo-upload" name="logo-upload"
+                                           type="file" accept="image/png,image/svg+xml,image/jpeg"
+                                           data-brand-logo>
+                                    <button class="btn btn--quiet btn--sm" type="button" hidden
+                                            data-brand-logo-clear>
+                                        Remove
+                                    </button>
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="form__field u-mt-5">
+                            <label class="field__label" for="brand-name">
+                                Organiser name shown on the page
+                            </label>
+                            <input class="field__input" id="brand-name" name="brand-name"
+                                   type="text" value="Acme Global" data-brand-name>
+                            <span class="field__hint">
+                                Sits beside the logo in the page header and footer
+                            </span>
+                        </div>
+
+                        <div class="logodrop u-mt-5">
+                            <span class="logodrop__box logodrop__box--wide" data-brand-cover-box>
+                                <span class="logodrop__ph" aria-hidden="true" data-brand-cover-ph>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                                </span>
+                            </span>
+                            <span class="logodrop__body">
+                                <span class="logodrop__name" data-brand-cover-name>
+                                    No cover image yet
+                                </span>
+                                <span class="logodrop__hint">
+                                    16:9 &middot; shared with Basic Details &middot; used as the hero and
+                                    the social card
+                                </span>
+                                <span class="logodrop__acts">
+                                    <label class="btn btn--outline btn--sm" for="cover-upload">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> <span data-brand-cover-verb>Upload cover</span>
+                                    </label>
+                                    <input class="u-visually-hidden" id="cover-upload" name="cover-upload"
+                                           type="file" accept="image/*" data-brand-cover>
+                                    <button class="btn btn--quiet btn--sm" type="button" hidden
+                                            data-brand-cover-clear>
+                                        Remove
+                                    </button>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="colours-title">
+                    <div class="panel__head panel__head--plain">
+                        <h2 class="panel__title panel__title--lg" id="colours-title">Brand Colours</h2>
+                    </div>
+                    <div class="panel__body">
+                        <div class="form__field">
+                            <label class="field__label" for="primary-colour">Primary Colour</label>
+                            <div class="colorrow">
+                                <input class="swatch" id="primary-swatch" name="primary-swatch"
+                                       type="color" value="#5a1d54"
+                                       aria-label="Pick a primary colour"
+                                       data-brand-colour="primary">
+                                <input class="field__input colorrow__input" id="primary-colour"
+                                       name="primary-colour" type="text" value="#5A1D54"
+                                       data-brand-colour="primary">
+                                <span class="presets" role="group" aria-label="Preset primary colours">
+                                    <button class="preset preset--plum" type="button"
+                                            aria-pressed="true" data-color="#5A1D54"
+                                            data-color-target="primary">
+                                        <span class="u-visually-hidden">Use Plum (#5A1D54)</span>
+                                    </button>
+                                    <button class="preset preset--blue" type="button"
+                                            aria-pressed="false" data-color="#1D3F5A"
+                                            data-color-target="primary">
+                                        <span class="u-visually-hidden">Use Blue (#1D3F5A)</span>
+                                    </button>
+                                    <button class="preset preset--green" type="button"
+                                            aria-pressed="false" data-color="#1D5A3C"
+                                            data-color-target="primary">
+                                        <span class="u-visually-hidden">Use Green (#1D5A3C)</span>
+                                    </button>
+                                    <button class="preset preset--rust" type="button"
+                                            aria-pressed="false" data-color="#8A3B1D"
+                                            data-color-target="primary">
+                                        <span class="u-visually-hidden">Use Rust (#8A3B1D)</span>
+                                    </button>
+                                    <button class="preset preset--slate" type="button"
+                                            aria-pressed="false" data-color="#3F4653"
+                                            data-color-target="primary">
+                                        <span class="u-visually-hidden">Use Slate (#3F4653)</span>
+                                    </button>
+                                </span>
+                            </div>
+                            <span class="field__hint">Used for buttons and headings</span>
+                        </div>
+
+                        <div class="form__field u-mt-5">
+                            <label class="field__label" for="accent-colour">Accent Colour</label>
+                            <div class="colorrow">
+                                <input class="swatch" id="accent-swatch" name="accent-swatch"
+                                       type="color" value="#b583af"
+                                       aria-label="Pick an accent colour"
+                                       data-brand-colour="accent">
+                                <input class="field__input colorrow__input" id="accent-colour"
+                                       name="accent-colour" type="text" value="#B583AF"
+                                       data-brand-colour="accent">
+                            </div>
+                            <span class="field__hint">Badges and secondary highlights</span>
+                        </div>
+
+                        <div class="form__field u-mt-5">
+                            <span class="field__label" id="bg-label">Page Background</span>
+                            <div class="bgpick" role="group" aria-labelledby="bg-label"
+                                 id="bgmode" data-pick-group data-brand-bg>
+                                <button class="bgpick__opt bgpick__opt--light" type="button"
+                                        aria-pressed="true" data-pick="light">
+                                    Light
+                                </button>
+                                <button class="bgpick__opt bgpick__opt--dark" type="button"
+                                        aria-pressed="false" data-pick="dark">
+                                    Dark
+                                </button>
+                                <button class="bgpick__opt bgpick__opt--brand" type="button"
+                                        aria-pressed="false" data-pick="brand">
+                                    Brand
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Standalone page options: only when discovery is Standalone -->
+                <section class="panel" aria-labelledby="standalone-title"
+                         data-type-only="private" hidden>
+                    <div class="panel__head">
+                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg></span>
+                        <h2 class="panel__title" id="standalone-title">Standalone Page</h2>
+                        <p class="panel__meta">Direct link only</p>
+                    </div>
+                    <div class="panel__body">
+                        <div class="formgrid">
+                            <div class="form__field">
+                                <label class="field__label" for="page-slug">Page Link</label>
+                                <input class="field__input" id="page-slug" name="page-slug" type="text" placeholder="tech-summit-2026" value="planorahub.com/e/&lt;link&gt; &mdash; share this directly with invitees">
+                            </div>
+                        </div>
+
+                        <div class="settingrow">
+                            <span class="featurerow__body">
+                                <span class="featurerow__title" id="noindex-label">Block search engines</span>
+                                <span class="featurerow__text">
+                                    Adds noindex so the page never appears in Google
+                                </span>
+                            </span>
+                            <button class="switch switch--brand" type="button" role="switch"
+                                    aria-checked="true" aria-labelledby="noindex-label"
+                                    data-switch></button>
+                        </div>
+
+                        <div class="settingrow">
+                            <span class="featurerow__body">
+                                <span class="featurerow__title" id="passcode-label">Require a passcode</span>
+                                <span class="featurerow__text">
+                                    Guests enter a shared code before they can see the page
+                                </span>
+                            </span>
+                            <button class="switch switch--brand" type="button" role="switch"
+                                    aria-checked="false" aria-labelledby="passcode-label"
+                                    aria-controls="passcode-field" data-switch
+                                    data-reveal="passcode-field"
+                                    data-brand-passcode></button>
+                        </div>
+
+                        <div class="reveal" id="passcode-field" hidden>
+                            <span class="reveal__title">Page passcode</span>
+                            <div class="formgrid">
+                                <div class="form__field">
+                                    <label class="field__label" for="page-passcode">Passcode</label>
+                                    <input class="field__input" id="page-passcode" name="page-passcode" type="text" placeholder="e.g. SUMMIT26" value="Case-insensitive, shown to invitees in the invite email">
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            A standalone page is the right choice whenever the event must not be
+                            discoverable: private galas, internal all-hands, investor days and
+                            invite-only launches. Public events cannot use it &mdash; discovery is
+                            locked to Listed.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="seo-title" data-type-hide="private">
+                    <div class="panel__head">
+                        <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg></span>
+                        <h2 class="panel__title" id="seo-title">Search &amp; Social</h2>
+                        <p class="panel__meta">Listed events only</p>
+                    </div>
+                    <div class="panel__body">
+                        <div class="formgrid">
+                            <div class="form__field">
+                                <label class="field__label" for="page-slug-public">Page Link</label>
+                                <input class="field__input" data-brand-slug id="page-slug-public" name="page-slug-public" type="text" placeholder="tech-summit-africa-2026" value="planorahub.com/e/&lt;link&gt;">
+                            </div>
+                        </div>
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="social-desc">Social Share Description</label>
+                                <input class="field__input" data-brand-social id="social-desc" name="social-desc" type="text" placeholder="Shown when the link is shared" value="Two days of builders, buyers and capital &middot; Lagos, Aug 2026">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="page-preview">
+                <div class="previewwrap">
+                    <div class="previewwrap__head">
+                        <div>
+                            <p class="previewwrap__title">Guest event page</p>
+                            <p class="previewwrap__hint">
+                                Everything a guest sees, in your brand. Updates as you edit.
+                            </p>
+                        </div>
+                        <div class="previewwrap__acts">
+                            <span class="segment" id="epwidth" role="group"
+                                  aria-label="Preview width" data-pick-group>
+                                <button class="segment__opt" type="button" aria-pressed="true"
+                                        data-pick="desktop">
+                                    Desktop
+                                </button>
+                                <button class="segment__opt" type="button" aria-pressed="false"
+                                        data-pick="mobile">
+                                    Mobile
+                                </button>
+                            </span>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-modal-open="fullpreview-modal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Full size
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="epframe" data-ep-frame>
+                        <div class="epframe__chrome">
+                            <span class="preview__dot preview__dot--red" aria-hidden="true"></span>
+                            <span class="preview__dot preview__dot--amber" aria-hidden="true"></span>
+                            <span class="preview__dot preview__dot--green" aria-hidden="true"></span>
+                            <span class="epframe__url">
+                                planorahub.com/e/<span data-ep-slug>tech-summit-africa-2026</span>
+                            </span>
+                            <span class="epframe__lock" data-ep-lock hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg> Passcode</span>
+                        </div>
+
+                        <div class="epframe__viewport">
+                            <div class="ep ep--light" data-ep-page>
+
+                                <header class="ep__bar">
+                                    <span class="ep__logo" data-ep-logo>
+                                        <span class="ep__logomark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg></span>
+                                        <span class="ep__logotext">Acme Global</span>
+                                    </span>
+                                    <nav class="ep__nav" aria-hidden="true">
+                                        <span>About</span><span>Agenda</span><span>Speakers</span>
+                                        <span>Tickets</span>
+                                    </nav>
+                                    <span class="ep__cta">Register</span>
+                                </header>
+
+                                <div class="ep__hero" data-ep-hero>
+                                    <span class="ep__heroph" data-ep-heroph aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+                                        <span>Cover image</span>
+                                    </span>
+                                    <div class="ep__herobody">
+                                        <span class="ep__chip">Tech &amp; Conferences</span>
+                                        <p class="ep__title">Tech Summit Africa 2026</p>
+                                        <p class="ep__tagline">
+                                            Two days of builders, buyers and capital
+                                        </p>
+                                        <p class="ep__facts">
+                                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg> Aug 6&ndash;7, 2026</span>
+                                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg> Eko Hotel Convention Centre, Lagos</span>
+                                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> 09:00 WAT</span>
+                                        </p>
+                                        <p class="ep__actions">
+                                            <span class="ep__btn">Get tickets</span>
+                                            <span class="ep__btnghost">Add to calendar</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">About this event</h3>
+                                    <p class="ep__p">
+                                        Two days of the people building Africa&rsquo;s next decade of
+                                        software. Keynotes from operators who have shipped at scale,
+                                        hands-on workshops, and an investor clinic where capital meets
+                                        founders in the same room.
+                                    </p>
+                                    <p class="ep__p">
+                                        Expect practical sessions on payments infrastructure, product
+                                        design for low-bandwidth markets, and the regulatory shifts
+                                        landing across the continent this year.
+                                    </p>
+                                </section>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">Programme</h3>
+                                    <div class="ep__daytabs" data-ep-daytabs>
+                                        <button class="ep__daytab" type="button"
+                                                aria-pressed="true" data-ep-daytab="day-1">
+                                            Day 1
+                                        </button>
+                                        <button class="ep__daytab" type="button"
+                                                aria-pressed="false" data-ep-daytab="day-2">
+                                            Day 2
+                                        </button>
+                                    </div>
+                                    <div class="ep__day" data-ep-day="day-1">
+                                        <div class="ep__session">
+                                            <span class="ep__stime">09:00 &ndash; 10:30</span>
+                                            <span class="ep__sbody">
+                                                <span class="ep__sname">Morning Keynote</span>
+                                                <span class="ep__smeta">Main Hall &middot; Kofi Asante, Amara Osei</span>
+                                            </span>
+                                            <span class="ep__stag">Keynote</span>
+                                        </div>
+                                        <div class="ep__session">
+                                            <span class="ep__stime">11:00 &ndash; 12:30</span>
+                                            <span class="ep__sbody">
+                                                <span class="ep__sname">Fintech Panel</span>
+                                                <span class="ep__smeta">Hall B &middot; Dr. Ngozi Eze</span>
+                                            </span>
+                                            <span class="ep__stag">Panel</span>
+                                        </div>
+                                        <div class="ep__session">
+                                            <span class="ep__stime">11:00 &ndash; 12:30</span>
+                                            <span class="ep__sbody">
+                                                <span class="ep__sname">Session 3</span>
+                                                <span class="ep__smeta">Breakout Room 1 &middot; Femi Bello</span>
+                                            </span>
+                                            <span class="ep__stag">Workshop</span>
+                                        </div>
+                                    </div>
+                                    <div class="ep__day" data-ep-day="day-2" hidden>
+                                        <div class="ep__session">
+                                            <span class="ep__stime">09:30 &ndash; 11:00</span>
+                                            <span class="ep__sbody">
+                                                <span class="ep__sname">Design Sprint</span>
+                                                <span class="ep__smeta">Main Hall &middot; Amara Osei</span>
+                                            </span>
+                                            <span class="ep__stag">Workshop</span>
+                                        </div>
+                                        <div class="ep__session">
+                                            <span class="ep__stime">13:00 &ndash; 15:00</span>
+                                            <span class="ep__sbody">
+                                                <span class="ep__sname">Investor Clinic</span>
+                                                <span class="ep__smeta">VIP Lounge &middot; Panel &mdash; 4 speakers</span>
+                                            </span>
+                                            <span class="ep__stag">Clinic</span>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">Speakers</h3>
+                                    <div class="ep__speakers">
+                                        <span class="ep__speaker">
+                                            <span class="speakerav" data-speaker-avatar="kofi">
+                                                <span class="speakerav__initials">KA</span>
+                                            </span>
+                                            <span class="ep__spname">Kofi Asante</span>
+                                            <span class="ep__sprole">Chief Technology Officer</span>
+                                            <span class="ep__sporg">Paystack Africa</span>
+                                        </span>
+                                        <span class="ep__speaker">
+                                            <span class="speakerav" data-speaker-avatar="amara">
+                                                <span class="speakerav__initials">AO</span>
+                                            </span>
+                                            <span class="ep__spname">Amara Osei</span>
+                                            <span class="ep__sprole">Head of Product Design</span>
+                                            <span class="ep__sporg">Flutterwave</span>
+                                        </span>
+                                        <span class="ep__speaker">
+                                            <span class="speakerav" data-speaker-avatar="ngozi">
+                                                <span class="speakerav__initials">NE</span>
+                                            </span>
+                                            <span class="ep__spname">Dr. Ngozi Eze</span>
+                                            <span class="ep__sprole">Director of Financial Inclusion</span>
+                                            <span class="ep__sporg">Central Bank of Nigeria</span>
+                                        </span>
+                                        <span class="ep__speaker">
+                                            <span class="speakerav" data-speaker-avatar="femi">
+                                                <span class="speakerav__initials">FB</span>
+                                            </span>
+                                            <span class="ep__spname">Femi Bello</span>
+                                            <span class="ep__sprole">Founder &amp; Managing Partner</span>
+                                            <span class="ep__sporg">Ventures Platform</span>
+                                        </span>
+                                        <span class="ep__speaker">
+                                            <span class="speakerav" data-speaker-avatar="grace">
+                                                <span class="speakerav__initials">GM</span>
+                                            </span>
+                                            <span class="ep__spname">Grace Mensah</span>
+                                            <span class="ep__sprole">VP Engineering</span>
+                                            <span class="ep__sporg">MTN Group</span>
+                                        </span>
+                                    </div>
+                                </section>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">Tickets</h3>
+                                    <div class="ep__tiers">
+                                        <div class="ep__tier ep__tier--sold">
+                                            <span class="ep__tname">Early Bird</span>
+                                            <span class="ep__tprice">&#8358;5,000</span>
+                                            <span class="ep__tdesc">Limited early access</span>
+                                            <span class="ep__tincl">All standard sessions &middot; Expo Floor</span>
+                                            <span class="ep__tstate">Sold out</span>
+                                        </div>
+                                        <div class="ep__tier">
+                                            <span class="ep__tname">Standard</span>
+                                            <span class="ep__tprice">&#8358;10,000</span>
+                                            <span class="ep__tdesc">Regular admission</span>
+                                            <span class="ep__tincl">All standard sessions on Day 1 &middot; Expo Floor</span>
+                                            <span class="ep__tstate">12 left</span>
+                                        </div>
+                                        <div class="ep__tier">
+                                            <span class="ep__tname">VIP</span>
+                                            <span class="ep__tprice">&#8358;25,000</span>
+                                            <span class="ep__tdesc">Premium experience</span>
+                                            <span class="ep__tincl">All sessions &middot; VIP Lounge &middot; Gala Dinner &middot; Networking</span>
+                                            <span class="ep__tstate">Members only</span>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">Venue &amp; facilities</h3>
+                                    <div class="ep__venue">
+                                        <span class="ep__map" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
+                                        <span class="ep__venuebody">
+                                            <span class="ep__vname">Eko Hotel Convention Centre</span>
+                                            <span class="ep__vaddr">
+                                                1415 Adetokunbo Ademola Street, Victoria Island, Lagos
+                                            </span>
+                                            <span class="ep__vhalls">
+                                                Main Hall &middot; Hall B &middot; Breakout Room 1 &middot;
+                                                VIP Lounge
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <ul class="ep__facilities">
+                                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M9.5 17V7h3.2a3 3 0 0 1 0 6H9.5" /></svg> Free on-site parking</li>
+                                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 8.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM5 20v-5H4l1.4-4.2A1.6 1.6 0 0 1 7 9.6c.7 0 1.3.4 1.6 1.2L10 15H9v5M17 8.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM15 20v-4h-1.4l1.2-5a1.6 1.6 0 0 1 1.6-1.2h.2c.8 0 1.4.5 1.6 1.2l1.2 5H19v4" /></svg> VIP restrooms available</li>
+                                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg> Step-free access &amp; accessible washrooms</li>
+                                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" /></svg> Full catering included</li>
+                                    </ul>
+                                </section>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">Know before you go</h3>
+                                    <ul class="ep__bullets">
+                                        <li>Doors open 45 minutes before the first session.</li>
+                                        <li>Bring photo ID matching the name on your ticket.</li>
+                                        <li>Photography and filming take place throughout the venue.</li>
+                                    </ul>
+                                </section>
+
+                                <section class="ep__section">
+                                    <h3 class="ep__h">Frequently asked</h3>
+                                    <ul class="ep__faqs">
+                                        <li>Can I transfer my ticket to someone else? <span aria-hidden="true">+</span></li>
+                                        <li>What happens if the event is cancelled? <span aria-hidden="true">+</span></li>
+                                        <li>Is there parking at the venue? <span aria-hidden="true">+</span></li>
+                                    </ul>
+                                </section>
+
+                                <footer class="ep__foot">
+                                    <span class="ep__logo ep__logo--foot" data-ep-logo>
+                                        <span class="ep__logomark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg></span>
+                                        <span class="ep__logotext">Acme Global</span>
+                                    </span>
+                                    <span class="ep__footmeta" data-ep-social>
+                                        Two days of builders, buyers and capital &middot; Lagos, Aug 2026
+                                    </span>
+                                    <span class="ep__terms">Terms &amp; Conditions</span>
+                                </footer>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="preview__caption">
+                        Title, description, agenda, speakers and tickets come from the earlier
+                        steps &mdash; logo, colours, background and link are live from this one.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

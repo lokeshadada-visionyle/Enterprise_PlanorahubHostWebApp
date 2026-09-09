@@ -1,0 +1,288 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Planora_EnterproseHostWebApp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+
+namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
+{
+    public class ScheduleBuilderModel : PageModel
+    {
+        private static readonly JsonSerializerOptions PreserveCasingJsonOptions =
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = null
+            };
+
+        public List<City> Cities { get; set; } = new();
+
+        public IActionResult OnGet()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            {
+                return RedirectToPage("/Login/Login");
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var response = helper.GetCityResp(userId.Value, string.Empty);
+                if (response?.City != null)
+                {
+                    Cities = response.City;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading cities: {ex.Message}");
+            }
+
+            return Page();
+        }
+
+        public IActionResult OnPostSaveVenue([FromBody] SaveVenuePayload payload)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            int? eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (!userId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid. Please select an event first." });
+            }
+
+            if (payload?.Venues == null || !payload.Venues.Any())
+            {
+                return new JsonResult(new { success = false, message = "Please add at least one venue." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var request = new AddVenueAndHallReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    Venues = payload.Venues
+                };
+
+                var response = helper.AddVenueAndHall(request);
+
+                if (response != null && (response.Status == 1 || response.Status == 200))
+                {
+                    return new JsonResult(new
+                    {
+                        success = true,
+                        message = response.Message ?? "Venue and halls saved successfully."
+                    });
+                }
+
+                return new JsonResult(new { success = false, message = response?.Message ?? "Failed to save venue and halls." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Save Venue Error: {ex}");
+                return new JsonResult(new { success = false, message = "An error occurred while saving venue and hall details." });
+            }
+        }
+
+        public IActionResult OnGetGetVenues()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (!userId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var request = new GenVenueHallReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value
+                };
+
+                var response = helper.GetVenueHallsResp(request);
+
+                if (response != null && (response.Status == 1 || response.Status == 200) && response.Venues != null)
+                {
+                    return new JsonResult(new { success = true, data = response.Venues }, PreserveCasingJsonOptions);
+                }
+
+                return new JsonResult(new { success = false, message = response?.Message ?? "No venues found." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Get Venues Error: {ex}");
+                return new JsonResult(new { success = false, message = "Unable to load saved venues." });
+            }
+        }
+
+        public IActionResult OnGetGetHallsByVenue(int venueId)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (!userId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var response = helper.GetVenueHallsBYIdResp(userId.Value, eventId.Value, venueId);
+
+                if (response != null && (response.Status == 1 || response.Status == 200) && response.Hall != null)
+                {
+                    return new JsonResult(new { success = true, data = response.Hall }, PreserveCasingJsonOptions);
+                }
+
+                return new JsonResult(new { success = false, message = response?.Message ?? "No halls found for this venue." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Get Halls By Venue Error: {ex}");
+                return new JsonResult(new { success = false, message = "Unable to load halls for the selected venue." });
+            }
+        }
+
+        public IActionResult OnGetGetSpeakers()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (!userId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var response = helper.GetSpearkersResp(userId.Value, eventId.Value);
+
+                if (response != null && (response.Status == 1 || response.Status == 200) && response.Speakers != null)
+                {
+                    return new JsonResult(new { success = true, data = response.Speakers }, PreserveCasingJsonOptions);
+                }
+
+                return new JsonResult(new { success = false, message = response?.Message ?? "No speakers found." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Get Speakers Error: {ex}");
+                return new JsonResult(new { success = false, message = "Unable to load speakers." });
+            }
+        }
+
+        public IActionResult OnPostSaveSchedule([FromBody] SaveScheduleRequest request)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (!userId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid." });
+            }
+
+            if (request == null)
+            {
+                return new JsonResult(new { success = false, message = "Invalid schedule request." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+
+                // Save Event Dates and Event Slots
+                if (request.Slots != null && request.Slots.Any())
+                {
+                    var slotRequest = new AddEventDateSlotsReq
+                    {
+                        UserId = userId.Value,
+                        EventId = eventId.Value,
+                        EventDates = request.Slots
+                    };
+
+                    var slotResponse = helper.AddEventDateAndSlots(slotRequest);
+
+                    if (slotResponse == null || (slotResponse.Status != 1 && slotResponse.Status != 200))
+                    {
+                        return new JsonResult(new
+                        {
+                            success = false,
+                            message = slotResponse?.Message ?? "Failed to save schedule."
+                        });
+                    }
+                }
+
+                if (request.Speakers != null && request.Speakers.Any())
+                {
+                    var speakerRequest = new AddSpeakerReq
+                    {
+                        UserId = userId.Value,
+                        EventId = eventId.Value,
+                        Ent_Speaker = request.Speakers
+                    };
+
+                    var speakerResponse = helper.AddSpeaker(speakerRequest);
+
+                    if (speakerResponse == null || (speakerResponse.Status != 1 && speakerResponse.Status != 200))
+                    {
+                        return new JsonResult(new
+                        {
+                            success = false,
+                            message = speakerResponse?.Message ?? "Failed to save speakers."
+                        });
+                    }
+                }
+
+                return new JsonResult(new { success = true, message = "Schedule saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Save Schedule Error: {ex}");
+                return new JsonResult(new { success = false, message = "An error occurred while saving schedule." });
+            }
+        }
+    }
+
+    public class SaveVenuePayload
+    {
+        public List<Venue> Venues { get; set; } = new();
+    }
+}
