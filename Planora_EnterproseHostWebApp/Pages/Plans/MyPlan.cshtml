@@ -406,35 +406,57 @@
             </div>
 
             <div data-view-panel="usage" hidden>
-                <section class="contract">
-                    <div class="contract__body">
-                        <p class="contract__chips">
-                            <span class="contract__chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg> Professional Enterprise</span>
+            <section class="contract">
+                <div class="contract__body">
+                    <p class="contract__chips">
+                        <span class="contract__chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /></svg> @Model.PackageDetails.PackageName</span>
+                        @if (Model.PackageDetails.IsActive)
+                        {
                             <span class="contract__chip contract__chip--active">Active Subscription</span>
-                            <span class="contract__chip contract__chip--renew">Auto-Renew Active</span>
-                        </p>
-                        <h2 class="contract__name">Acme Global Enterprises</h2>
-                        <p class="contract__meta">
-                            Region: Global (USD) &nbsp;&bull;&nbsp; Billing Terms: Milestone (50/50)
-                            &nbsp;&bull;&nbsp; Licence: $50,000 USD / yr
-                        </p>
-                    </div>
+                        }
+                        else
+                        {
+                            <span class="contract__chip">Inactive</span>
+                        }
+                        <span class="contract__chip contract__chip--renew">Auto-Renew Active</span>
+                    </p>
+                    <h2 class="contract__name">@Model.PackageDetails.PackageName</h2>
+                    <p class="contract__meta">
+                        Region: @Model.PackageDetails.Region &nbsp;&bull;&nbsp; Billing Terms: @Model.PackageDetails.BillingTerms
+                        &nbsp;&bull;&nbsp; Licence: @Model.PackageDetails.ContractValue
+                    </p>
+                </div>
 
-                    <div class="contract__expiry">
-                        <p class="contract__expiry-top">
-                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> Contract Expiry</span>
-                            <span class="contract__days">142 Days Left</span>
-                        </p>
-                        <p class="contract__dates">
-                            <span>Start: 2026-01-01</span>
-                            <span>Expiry: 2026-12-31</span>
-                        </p>
-                        <span class="contract__track">
-                            <span class="contract__fill" data-fill="61"></span>
-                        </span>
-                        <p class="contract__note">14 days grace period configured by Admin</p>
-                    </div>
-                </section>
+                <div class="contract__expiry">
+                    <p class="contract__expiry-top">
+                        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> Contract Expiry</span>
+                        @{
+                            DateTime.TryParse(Model.PackageDetails.ContractStartDate, out var contractStart);
+                            DateTime.TryParse(Model.PackageDetails.ContractEndDate, out var contractEnd);
+                            int daysLeft = 0;
+                            double contractFillPct = 0;
+                            if (contractEnd != default)
+                            {
+                                daysLeft = Math.Max(0, (contractEnd.Date - DateTime.Today).Days);
+                            }
+                            if (contractStart != default && contractEnd != default && contractEnd > contractStart)
+                            {
+                                var totalDays = (contractEnd - contractStart).TotalDays;
+                                var elapsedDays = (DateTime.Today - contractStart).TotalDays;
+                                contractFillPct = Math.Clamp((elapsedDays / totalDays) * 100, 0, 100);
+                            }
+                        }
+                        <span class="contract__days">@daysLeft Days Left</span>
+                    </p>
+                    <p class="contract__dates">
+                        <span>Start: @Model.PackageDetails.ContractStartDate</span>
+                        <span>Expiry: @Model.PackageDetails.ContractEndDate</span>
+                    </p>
+                    <span class="contract__track">
+                        <span class="contract__fill" data-fill="@contractFillPct.ToString("0")"></span>
+                    </span>
+                </div>
+            </section>
 
                 <div class="sectionhead">
                     <div class="sectionhead__body">
@@ -449,58 +471,86 @@
                     <button class="sectionhead__action" type="button">Refresh Allocations</button>
                 </div>
 
+            @{
+                (string pillCss, string fillCss) AllocStatus(double pct)
+                {
+                    if (pct >= 95) return ("pill--danger", "alloc__fill--danger");
+                    if (pct >= 80) return ("pill--warn", "alloc__fill--warn");
+                    return ("pill--ok", "alloc__fill--ok");
+                }
+
+                double ParsePer(string per)
+                {
+                    if (string.IsNullOrWhiteSpace(per)) return 0;
+                    var cleaned = per.Replace("%", "").Trim();
+                    return double.TryParse(cleaned, out var val) ? val : 0;
+                }
+
+                var eventsPct = ParsePer(Model.PackageDetails.EventsPer);
+                var guestsPct = ParsePer(Model.PackageDetails.GuestsPer);
+                var usersPct = ParsePer(Model.PackageDetails.UsersPer);
+                var waPct = ParsePer(Model.PackageDetails.WhatsAppCreditsPer);
+                var emailPct = ParsePer(Model.PackageDetails.EmailCreditsPer);
+
+                var eventsStatus = AllocStatus(eventsPct);
+                var guestsStatus = AllocStatus(guestsPct);
+                var usersStatus = AllocStatus(usersPct);
+                var waStatus = AllocStatus(waPct);
+                var emailStatus = AllocStatus(emailPct);
+            }
+
                 <section class="grid grid--3" aria-label="Allocation limits">
-                    <article class="alloc">
-                        <div class="alloc__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></span>
-                            <span class="pill pill--ok">On track</span>
-                        </div>
-                        <p>
-                            <span class="alloc__label">Events Allocation</span>
-                            <span class="alloc__value">10 <span class="alloc__total">/ 20 Events</span></span>
-                        </p>
-                        <span class="alloc__bar">
-                            <span class="alloc__fill alloc__fill--ok" data-fill="50"></span>
-                        </span>
-                        <p class="alloc__foot">
-                            <span>50% Consumed</span>
-                            <span>10 Events Left</span>
-                        </p>
-                    </article>
-                    <article class="alloc">
-                        <div class="alloc__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
-                            <span class="pill pill--warn">Low capacity alert</span>
-                        </div>
-                        <p>
-                            <span class="alloc__label">Annual Guest Registrations</span>
-                            <span class="alloc__value">18,500 <span class="alloc__total">/ 20,000 Guests</span></span>
-                        </p>
-                        <span class="alloc__bar">
-                            <span class="alloc__fill alloc__fill--danger" data-fill="93"></span>
-                        </span>
-                        <p class="alloc__foot">
-                            <span>93% Consumed</span>
-                            <span>1,500 Guests Left</span>
-                        </p>
-                    </article>
-                    <article class="alloc">
-                        <div class="alloc__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
-                            <span class="pill pill--ok">Active</span>
-                        </div>
-                        <p>
-                            <span class="alloc__label">Host Team User Seats</span>
-                            <span class="alloc__value">38 <span class="alloc__total">/ 50 Seats</span></span>
-                        </p>
-                        <span class="alloc__bar">
-                            <span class="alloc__fill alloc__fill--ok" data-fill="76"></span>
-                        </span>
-                        <p class="alloc__foot">
-                            <span>76% Consumed</span>
-                            <span>12 Seats Available</span>
-                        </p>
-                    </article>
+                <article class="alloc">
+                    <div class="alloc__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></span>
+                        <span class="pill @eventsStatus.pillCss">@Model.PackageDetails.EventsPer</span>
+                    </div>
+                    <p>
+                        <span class="alloc__label">Events Allocation</span>
+                        <span class="alloc__value">@Model.PackageDetails.EventsReached <span class="alloc__total">/ @Model.PackageDetails.TotalEvents Events</span></span>
+                    </p>
+                    <span class="alloc__bar">
+                        <span class="alloc__fill @eventsStatus.fillCss" data-fill="@eventsPct.ToString("0")"></span>
+                    </span>
+                    <p class="alloc__foot">
+                        <span>@Model.PackageDetails.EventsPer Consumed</span>
+                        <span>@Model.PackageDetails.EventsLeft Events Left</span>
+                    </p>
+                </article>
+                <article class="alloc">
+                    <div class="alloc__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
+                        <span class="pill @guestsStatus.pillCss">@Model.PackageDetails.GuestsPer</span>
+                    </div>
+                    <p>
+                        <span class="alloc__label">Annual Guest Registrations</span>
+                        <span class="alloc__value">@Model.PackageDetails.GuestsReached <span class="alloc__total">/ @Model.PackageDetails.TotalGuests Guests</span></span>
+                    </p>
+                    <span class="alloc__bar">
+                        <span class="alloc__fill @guestsStatus.fillCss" data-fill="@guestsPct.ToString("0")"></span>
+                    </span>
+                    <p class="alloc__foot">
+                        <span>@Model.PackageDetails.GuestsPer Consumed</span>
+                        <span>@Model.PackageDetails.GuestsLeft Guests Left</span>
+                    </p>
+                </article>
+                <article class="alloc">
+                    <div class="alloc__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 20 6v6c0 4.8-3.3 9-8 10-4.7-1-8-5.2-8-10V6l8-3z" /></svg></span>
+                        <span class="pill @usersStatus.pillCss">@Model.PackageDetails.UsersPer</span>
+                    </div>
+                    <p>
+                        <span class="alloc__label">Host Team User Seats</span>
+                        <span class="alloc__value">@Model.PackageDetails.UsersReached <span class="alloc__total">/ @Model.PackageDetails.TotalUsers Seats</span></span>
+                    </p>
+                    <span class="alloc__bar">
+                        <span class="alloc__fill @usersStatus.fillCss" data-fill="@usersPct.ToString("0")"></span>
+                    </span>
+                    <p class="alloc__foot">
+                        <span>@Model.PackageDetails.UsersPer Consumed</span>
+                        <span>@Model.PackageDetails.UsersLeft Seats Available</span>
+                    </p>
+                </article>
                     <article class="alloc">
                         <div class="alloc__top">
                             <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
@@ -518,50 +568,50 @@
                             <span>200 Guests Headroom</span>
                         </p>
                     </article>
-                    <article class="alloc">
-                        <div class="alloc__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.7a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.4-4.6A8.4 8.4 0 1 1 20.5 11.7z" /><path d="M9 9.2c0 3 2.4 5.4 5.3 5.4l.6-1.4-1.8-.8-.9.9a4.7 4.7 0 0 1-2-2l.9-.9-.8-1.8L9 9.2z" /></svg></span>
-                            <span class="pill pill--ok">WhatsApp active</span>
-                        </div>
-                        <p>
-                            <span class="alloc__label">WhatsApp Message Credits</span>
-                            <span class="alloc__value">12,100 <span class="alloc__total">/ 53,528 Messages</span></span>
-                        </p>
-                        <span class="alloc__bar">
-                            <span class="alloc__fill alloc__fill--ok" data-fill="23"></span>
-                        </span>
-                        <p class="alloc__foot">
-                            <span>23% Consumed</span>
-                            <span>41,428 Messages Left</span>
-                        </p>
-                    </article>
-                    <article class="alloc">
-                        <div class="alloc__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6.5 8.5 6 8.5-6" /></svg></span>
-                            <span class="pill pill--ok">Email active</span>
-                        </div>
-                        <p>
-                            <span class="alloc__label">Email Send Credits</span>
-                            <span class="alloc__value">45,000 <span class="alloc__total">/ 1,011,666 Emails</span></span>
-                        </p>
-                        <span class="alloc__bar">
-                            <span class="alloc__fill alloc__fill--ok" data-fill="4"></span>
-                        </span>
-                        <p class="alloc__foot">
-                            <span>4% Consumed</span>
-                            <span>966,666 Emails Left</span>
-                        </p>
-                    </article>
+                <article class="alloc">
+                    <div class="alloc__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.7a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.4-4.6A8.4 8.4 0 1 1 20.5 11.7z" /><path d="M9 9.2c0 3 2.4 5.4 5.3 5.4l.6-1.4-1.8-.8-.9.9a4.7 4.7 0 0 1-2-2l.9-.9-.8-1.8L9 9.2z" /></svg></span>
+                        <span class="pill @waStatus.pillCss">@Model.PackageDetails.WhatsAppCreditsPer</span>
+                    </div>
+                    <p>
+                        <span class="alloc__label">WhatsApp Message Credits</span>
+                        <span class="alloc__value">@Model.PackageDetails.WhatsAppCreditesReached <span class="alloc__total">/ @Model.PackageDetails.TotalWhatsAppCredits Messages</span></span>
+                    </p>
+                    <span class="alloc__bar">
+                        <span class="alloc__fill @waStatus.fillCss" data-fill="@waPct.ToString("0")"></span>
+                    </span>
+                    <p class="alloc__foot">
+                        <span>@Model.PackageDetails.WhatsAppCreditsPer Consumed</span>
+                        <span>@Model.PackageDetails.WhatsAppCreditsLeft Messages Left</span>
+                    </p>
+                </article>
+                <article class="alloc">
+                    <div class="alloc__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6.5 8.5 6 8.5-6" /></svg></span>
+                        <span class="pill @emailStatus.pillCss">@Model.PackageDetails.EmailCreditsPer</span>
+                    </div>
+                    <p>
+                        <span class="alloc__label">Email Send Credits</span>
+                        <span class="alloc__value">@Model.PackageDetails.EmailCreditesReached <span class="alloc__total">/ @Model.PackageDetails.TotalEmailAppCredits Emails</span></span>
+                    </p>
+                    <span class="alloc__bar">
+                        <span class="alloc__fill @emailStatus.fillCss" data-fill="@emailPct.ToString("0")"></span>
+                    </span>
+                    <p class="alloc__foot">
+                        <span>@Model.PackageDetails.EmailCreditsPer Consumed</span>
+                        <span>@Model.PackageDetails.EmailCreditsLeft Emails Left</span>
+                    </p>
+                </article>
                 </section>
 
                 <div class="creditstrip">
                     <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 2 4 13.2h5.6L8.9 22 19 10.6h-5.8L13.5 2z" /></svg></span>
                     <span class="creditstrip__body">
                         <span class="creditstrip__label">Applied communication credits</span>
-                        <span class="creditstrip__value">121,496 Credits</span>
-                        <span class="creditstrip__split">
-                            WhatsApp ~41,428 &nbsp;&bull;&nbsp; Email ~966,666
-                        </span>
+                    <span class="creditstrip__value">@Model.PackageDetails.TotalAppliedCredits Credits</span>
+                    <span class="creditstrip__split">
+                        WhatsApp ~@Model.PackageDetails.WhatsAppCreditsLeft &nbsp;&bull;&nbsp; Email ~@Model.PackageDetails.EmailCreditsLeft
+                    </span>
                     </span>
                     <button class="btn btn--primary" type="button" data-view="wallet">
                         Manage &amp; Top Up Credits <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg>
@@ -587,16 +637,16 @@
                             </p>
                         </div>
 
-                        <div class="creditsum wallethead__aside">
-                            <p>
-                                <span class="alloc__label">Total Communication Credits Applied</span>
-                                <span class="creditsum__value">121,496 <span class="alloc__total">Credits</span></span>
-                                <span class="creditsum__split">
-                                    WhatsApp: ~41,428 credits &nbsp;&bull;&nbsp; Email: ~966,666 credits
-                                </span>
-                            </p>
-                            <button class="btn btn--primary btn--block" type="button"
-                                    data-modal-open="topup-modal">
+                    <div class="creditsum wallethead__aside">
+                        <p>
+                            <span class="alloc__label">Total Communication Credits Applied</span>
+                            <span class="creditsum__value">@Model.ChannelCredits.TotalCreditsApplied <span class="alloc__total">Credits</span></span>
+                            <span class="creditsum__split">
+                                WhatsApp: ~@Model.ChannelCredits.WhatsAppCreditsLeft credits &nbsp;&bull;&nbsp; Email: ~@Model.ChannelCredits.EmailCreditsLeft credits
+                            </span>
+                        </p>
+                        <button class="btn btn--primary btn--block" type="button"
+                                data-modal-open="topup-modal">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Apply Additional Credits
                             </button>
                         </div>
@@ -608,92 +658,99 @@
                 </h3>
 
                 <section class="grid grid--3 u-mt-5" aria-label="Channel capacity">
-                    <article class="channel">
-                        <div class="channel__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8z" /></svg></span>
-                            <span class="badge badge--live">WhatsApp active</span>
-                        </div>
-                        <p class="channel__name">WhatsApp Business API</p>
-                        <p class="channel__text">High-deliverability guest alerts &amp; ticket QR delivery</p>
-                        <div class="channel__rates">
-                            <p class="channel__rate">
-                                <span>Messages Sent to Date:</span><b>12,100</b>
-                            </p>
-                            <p class="channel__rate">
-                                <span>Unit Rate (Admin):</span><b>$0.035 / msg</b>
-                            </p>
-                        </div>
-                        <p class="channel__capacity">
-                            Estimated WhatsApp Capacity Left
-                            <span class="channel__left channel__left--wa">~41,428 Messages</span>
+                <article class="channel">
+                    <div class="channel__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8z" /></svg></span>
+                        <span class="badge badge--live">WhatsApp active</span>
+                    </div>
+                    <p class="channel__name">WhatsApp Business API</p>
+                    <p class="channel__text">High-deliverability guest alerts &amp; ticket QR delivery</p>
+                    <div class="channel__rates">
+                        <p class="channel__rate">
+                            <span>Messages Sent to Date:</span><b>@Model.ChannelCredits.WhatsAppCreditesReached</b>
                         </p>
-                    </article>
-                    <article class="channel">
-                        <div class="channel__top">
-                            <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h5l2 3h4l2-3h5" /><path d="M5.5 4h13l2.5 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6l2.5-8z" /></svg></span>
-                            <span class="badge badge--upcoming">Email active</span>
-                        </div>
-                        <p class="channel__name">Enterprise Email Relay</p>
-                        <p class="channel__text">Confirmation receipts, invitations &amp; ICS calendar invites</p>
-                        <div class="channel__rates">
-                            <p class="channel__rate">
-                                <span>Emails Delivered to Date:</span><b>45,000</b>
-                            </p>
-                            <p class="channel__rate">
-                                <span>Unit Rate (Admin):</span><b>$1.50 / 1,000 emails</b>
-                            </p>
-                        </div>
-                        <p class="channel__capacity">
-                            Estimated Email Capacity Left
-                            <span class="channel__left channel__left--email">~966,666 Emails</span>
+                        <p class="channel__rate">
+                            <span>Unit Rate (Admin):</span><b>@Model.ChannelCredits.WhatsAppUnitRate</b>
                         </p>
-                    </article>
+                    </div>
+                    <p class="channel__capacity">
+                        Estimated WhatsApp Capacity Left
+                        <span class="channel__left channel__left--wa">~@Model.ChannelCredits.WhatsAppCreditsLeft Messages</span>
+                    </p>
+                </article>
+                <article class="channel">
+                    <div class="channel__top">
+                        <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h5l2 3h4l2-3h5" /><path d="M5.5 4h13l2.5 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6l2.5-8z" /></svg></span>
+                        <span class="badge badge--upcoming">Email active</span>
+                    </div>
+                    <p class="channel__name">Enterprise Email Relay</p>
+                    <p class="channel__text">Confirmation receipts, invitations &amp; ICS calendar invites</p>
+                    <div class="channel__rates">
+                        <p class="channel__rate">
+                            <span>Emails Delivered to Date:</span><b>@Model.ChannelCredits.EmailCreditesReached</b>
+                        </p>
+                        <p class="channel__rate">
+                            <span>Unit Rate (Admin):</span><b>@Model.ChannelCredits.EmailUnitRate</b>
+                        </p>
+                    </div>
+                    <p class="channel__capacity">
+                        Estimated Email Capacity Left
+                        <span class="channel__left channel__left--email">~@Model.ChannelCredits.EmailCreditsLeft Emails</span>
+                    </p>
+                </article>
                 </section>
 
             </div>
 
             <div data-view-panel="billing" hidden>
-                <section class="grid grid--3" aria-label="Contract billing totals">
-                    <article class="panel">
-                        <div class="panel__body">
-                            <p class="alloc__label">Total Contract Invoiced</p>
-                            <p class="alloc__value">$62,395.38 <span class="alloc__total">USD</span></p>
-                            <p class="channel__text u-mt-5">Includes Licence, Top-ups &amp; Commissions</p>
-                        </div>
-                    </article>
-                    <article class="panel">
-                        <div class="panel__body">
-                            <p class="alloc__label">Total Settled &amp; Paid</p>
-                            <p class="alloc__value figure__value--success">
-                                $62,395.38 <span class="alloc__total">USD</span>
-                            </p>
-                            <p class="u-mt-5"><span class="badge badge--live">Fully Cleared</span></p>
-                        </div>
-                    </article>
-                    <article class="panel">
-                        <div class="panel__body">
-                            <p class="alloc__label">Outstanding Balance Due</p>
-                            <p class="alloc__value">$0 <span class="alloc__total">USD</span></p>
-                            <p class="channel__text u-mt-5">No Overdue Invoices</p>
-                        </div>
-                    </article>
-                </section>
-
-                <section class="commission u-mt-6">
-                    <span class="commission__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.5" /><circle cx="16.5" cy="16.5" r="2.5" /></svg></span>
-                    <div class="commission__body">
-                        <p class="commission__title">Platform Ticket Sales Commission (2%)</p>
-                        <p class="commission__text">
-                            Per Admin specification, a 2% platform commission applies on gross ticket sales
-                            and is automatically itemised on your monthly invoice.
+            <section class="grid grid--3" aria-label="Contract billing totals">
+                <article class="panel">
+                    <div class="panel__body">
+                        <p class="alloc__label">Total Contract Invoiced</p>
+                        <p class="alloc__value">@Model.Billing.TotalContractedRevenue</p>
+                        <p class="channel__text u-mt-5">Includes Licence, Top-ups &amp; Commissions</p>
+                    </div>
+                </article>
+                <article class="panel">
+                    <div class="panel__body">
+                        <p class="alloc__label">Total Settled &amp; Paid</p>
+                        <p class="alloc__value figure__value--success">
+                            @Model.Billing.TotalPaid
                         </p>
                     </div>
-                    <div class="commission__figure">
-                        <span class="commission__label">Total Ticket Revenue Ticketed</span>
-                        <span class="commission__value">$124,500.00 USD</span>
-                        <span class="commission__badge">2% Commission = $2,490.00 USD</span>
+                </article>
+                <article class="panel">
+                    <div class="panel__body">
+                        <p class="alloc__label">Outstanding Balance Due</p>
+                        <p class="alloc__value">@Model.Billing.BalanceAmount</p>
+                        @{
+                            bool hasBalance = decimal.TryParse(
+                                new string((Model.Billing.BalanceAmount ?? "").Where(c => char.IsDigit(c) || c == '.').ToArray()),
+                                out var balanceVal) && balanceVal > 0;
+                        }
+                        @if (!hasBalance)
+                        {
+                            <p class="channel__text u-mt-5">No Overdue Invoices</p>
+                        }
                     </div>
-                </section>
+                </article>
+            </section>
+
+            <section class="commission u-mt-6">
+                <span class="commission__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.5" /><circle cx="16.5" cy="16.5" r="2.5" /></svg></span>
+                <div class="commission__body">
+                    <p class="commission__title">Platform Ticket Sales Commission (@Model.Billing.TicketCommissionPer)</p>
+                    <p class="commission__text">
+                        Per Admin specification, a @Model.Billing.TicketCommissionPer platform commission applies on gross ticket sales
+                        and is automatically itemised on your monthly invoice.
+                    </p>
+                </div>
+                <div class="commission__figure">
+                    <span class="commission__label">Total Ticket Revenue Ticketed</span>
+                    <span class="commission__value">@Model.Billing.TicketedRevenue</span>
+                    <span class="commission__badge">@Model.Billing.TicketCommissionPer Commission = @Model.Billing.PlatformCommission</span>
+                </div>
+            </section>
 
                 <section class="panel u-mt-6" aria-labelledby="invoices-title">
                     <div class="panel__head panel__head--plain">
@@ -708,108 +765,98 @@
                         </div>
                     </div>
 
-                    <div class="panel__body">
-                        <article class="invoicecard">
-                            <button class="invoicecard__head" type="button" aria-expanded="true"
-                                    aria-controls="inv-001" data-accordion>
-                                <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
-                                <span class="invoicecard__body">
-                                    <span class="invoicecard__ref">
-                                        INV-2026-ACME-001 <span class="badge badge--live">Paid</span>
+                <div class="panel__body">
+                    @if (Model.Billing.Invoices != null && Model.Billing.Invoices.Any())
+                    {
+                        @for (int i = 0; i < Model.Billing.Invoices.Count; i++)
+                        {
+                            var inv = Model.Billing.Invoices[i];
+                            var invId = "inv-" + i;
+                            string invBadgeCss = (inv.PaymentStatus ?? "").ToLower() switch
+                            {
+                                "paid" => "badge--live",
+                                "pending" => "badge--paused",
+                                "overdue" => "badge--out",
+                                _ => "badge--default"
+                            };
+
+                            decimal chargesSum = 0;
+                            if (inv.Charges != null)
+                            {
+                                foreach (var c in inv.Charges)
+                                {
+                                    var cleaned = new string((c.Amount ?? "").Where(ch => char.IsDigit(ch) || ch == '.').ToArray());
+                                    if (decimal.TryParse(cleaned, out var amt)) chargesSum += amt;
+                                }
+                            }
+
+                            <article class="invoicecard">
+                                <button class="invoicecard__head" type="button" aria-expanded="@(i == 0 ? "true" : "false")"
+                                        aria-controls="@invId" data-accordion>
+                                    <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                                    <span class="invoicecard__body">
+                                        <span class="invoicecard__ref">
+                                            @inv.InvoiceNo <span class="badge @invBadgeCss">@inv.PaymentStatus</span>
+                                        </span>
+                                        <span class="invoicecard__dates">
+                                            Issued Date: @inv.IssuedDate &bull; Due Date: @inv.DueDate
+                                        </span>
                                     </span>
-                                    <span class="invoicecard__dates">
-                                        Issued Date: 2026-01-02 &bull; Due Date: 2026-01-30
+                                    <span class="invoicecard__amount">
+                                        <span class="alloc__label">Total Amount</span>
+                                        <span class="invoicecard__total">@inv.TotalAmount</span>
                                     </span>
-                                </span>
-                                <span class="invoicecard__amount">
-                                    <span class="alloc__label">Total Amount</span>
-                                    <span class="invoicecard__total">$62,395.38 USD</span>
-                                </span>
-                                <svg class="accordion__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
-                            </button>
+                                    <svg class="accordion__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                                </button>
 
-                            <div class="invoicecard__panel" id="inv-001">
-                                <p class="auditbar">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
-                                    <b>Multi-Date &amp; Multi-Slot Audit Itemization Active</b>
-                                    &mdash; Commissions, platform fees, and slot allocations are billed per
-                                    event day and time slot.
-                                    <span class="auditbar__tag">Synchronized</span>
-                                </p>
+                                <div class="invoicecard__panel" id="@invId">
+                                    <table class="lineitems">
+                                        <caption>Itemized charges &amp; slot breakdown</caption>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (inv.Charges != null)
+                                            {
+                                                @foreach (var charge in inv.Charges)
+                                                {
+                                                    <tr>
+                                                        <td>@charge.Description</td>
+                                                        <td><span class="itemtype">@charge.Type</span></td>
+                                                        <td><b>@charge.Amount</b></td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
 
-                                <table class="lineitems">
-                                    <caption>Itemized charges &amp; slot breakdown</caption>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Type</th>
-                                            <th scope="col">Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Professional Enterprise Annual Licence (50 Events / 20k Guests)</td>
-                                            <td><span class="itemtype itemtype--subscription">Subscription</span></td>
-                                            <td><b>$50,000 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Event: Cloud Summit 2026 | Day 1 (Oct 12) - Morning Slot (09:00-12:00: Keynote) | 2% Platform Commission ($35,000 Sales)</td>
-                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
-                                            <td><b>$700 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Event: Cloud Summit 2026 | Day 1 (Oct 12) - Afternoon Slot (13:00-17:00: Dev Labs) | 2% Platform Commission ($28,000 Sales)</td>
-                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
-                                            <td><b>$560 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Event: Cloud Summit 2026 | Day 2 (Oct 13) - Morning Slot (09:00-12:00: Security) | 2% Platform Commission ($22,000 Sales)</td>
-                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
-                                            <td><b>$440 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Event: Cloud Summit 2026 | Day 2 (Oct 13) - Evening Slot (18:00-22:00: Gala) | 2% Platform Commission ($39,500 Sales)</td>
-                                            <td><span class="itemtype itemtype--commission">TicketCommission</span></td>
-                                            <td><b>$790 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>WhatsApp &amp; SMS Communication Wallet Top-up (Applied Credits)</td>
-                                            <td><span class="itemtype itemtype--addon">Addon</span></td>
-                                            <td><b>$1,200 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Guest Allocation Overage Surcharge (3 extra event slots)</td>
-                                            <td><span class="itemtype itemtype--overage">Overage</span></td>
-                                            <td><b>$450 USD</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Custom API Development &amp; Data Migration Support</td>
-                                            <td><span class="itemtype itemtype--service">ProfessionalService</span></td>
-                                            <td><b>$3,500 USD</b></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    <div class="totalsblock">
+                                        <p class="totalsblock__row">
+                                            <span>Subtotal:</span><span>@chargesSum.ToString("N2")</span>
+                                        </p>
+                                        <p class="totalsblock__row totalsblock__row--grand">
+                                            <span>Total Due:</span><span>@inv.TotalAmount</span>
+                                        </p>
+                                    </div>
 
-                                <div class="totalsblock">
-                                    <p class="totalsblock__row">
-                                        <span>Subtotal:</span><span>$57,640 USD</span>
-                                    </p>
-                                    <p class="totalsblock__row">
-                                        <span>Applicable Tax (8.25%):</span><span>$4,755.38 USD</span>
-                                    </p>
-                                    <p class="totalsblock__row totalsblock__row--grand">
-                                        <span>Total Due:</span><span>$62,395.38 USD</span>
+                                    <p class="invoicecard__foot">
+                                        <button class="btn btn--outline btn--sm" type="button">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Download PDF Receipt
+                                        </button>
                                     </p>
                                 </div>
-
-                                <p class="invoicecard__foot">
-                                    <button class="btn btn--outline btn--sm" type="button">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Download PDF Receipt
-                                    </button>
-                                </p>
-                            </div>
-                        </article>
-                    </div>
+                            </article>
+                        }
+                    }
+                    else if (string.IsNullOrEmpty(Model.ApiError))
+                    {
+                        <p class="u-muted">No invoices yet.</p>
+                    }
+                </div>
                 </section>
             </div>
 
@@ -852,44 +899,26 @@
                                 <th scope="col">Admin configuration</th>
                             </tr>
                         </thead>
-                        <tbody>
+                    <tbody>
+                        @if (Model.AuditReportData.AuditReport != null && Model.AuditReportData.AuditReport.Any())
+                        {
+                            @foreach (var row in Model.AuditReportData.AuditReport)
+                            {
+                                <tr>
+                                    <td><b>@row.Metric</b></td>
+                                    <td>@row.Consumed</td>
+                                    <td>@row.ConsumedValue</td>
+                                    <td class="u-muted">@row.AdminConfiguration</td>
+                                </tr>
+                            }
+                        }
+                        else if (string.IsNullOrEmpty(Model.ApiError))
+                        {
                             <tr>
-                                <td><b>Events created</b></td>
-                                <td>42 of 50</td>
-                                <td>84%</td>
-                                <td class="u-muted">Admin cap: 50 / contract year</td>
+                                <td colspan="4" class="u-muted">No usage data available.</td>
                             </tr>
-                            <tr>
-                                <td><b>Guest registrations</b></td>
-                                <td>18,500 of 20,000</td>
-                                <td>93%</td>
-                                <td class="u-muted">Admin cap: 20,000 / contract year</td>
-                            </tr>
-                            <tr>
-                                <td><b>Team user seats</b></td>
-                                <td>38 of 50</td>
-                                <td>76%</td>
-                                <td class="u-muted">Admin cap: 50 accounts</td>
-                            </tr>
-                            <tr>
-                                <td><b>WhatsApp messages</b></td>
-                                <td>12,100 sent</td>
-                                <td>$423.50</td>
-                                <td class="u-muted">Admin rate: $0.035 / msg</td>
-                            </tr>
-                            <tr>
-                                <td><b>Emails delivered</b></td>
-                                <td>45,000 sent</td>
-                                <td>$67.50</td>
-                                <td class="u-muted">Admin rate: $1.50 / 1,000</td>
-                            </tr>
-                            <tr>
-                                <td><b>Ticket commission</b></td>
-                                <td>$124,500 gross</td>
-                                <td>$2,490.00</td>
-                                <td class="u-muted">Admin rate: 2% of gross sales</td>
-                            </tr>
-                        </tbody>
+                        }
+                    </tbody>
                     </table>
                 </div>
 

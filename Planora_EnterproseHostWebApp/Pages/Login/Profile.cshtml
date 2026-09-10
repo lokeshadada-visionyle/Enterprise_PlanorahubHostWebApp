@@ -40,7 +40,7 @@
                 </span>
                 <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
             </a>
-            <a class="secnav__link" href="#organization" aria-current="false"
+            @* <a class="secnav__link" href="#organization" aria-current="false"
                data-section="organization">
                 <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
                 <span class="secnav__body">
@@ -48,7 +48,7 @@
                     <span class="secnav__text">Company &amp; currency</span>
                 </span>
                 <svg class="secnav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
-            </a>
+            </a> *@
             <a class="secnav__link" href="#bank" aria-current="false"
                data-section="bank">
                 <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
@@ -128,19 +128,67 @@
                                 <label class="field__label" for="phone">Phone</label>
                                 <input class="field__input" id="phone" name="phone" type="tel" value="@Model.Enterprise.PhoneNo">
                             </div>
-                            <div class="form__field">
+                            @* <div class="form__field">
                                 <label class="field__label" for="job-title">Job Title</label>
                                 <input class="field__input" id="job-title" name="job-title" type="text" value="CEO &amp; Founder">
+                            </div> *@
+
+                            <div class="form__field">
+                                <label class="field__label" for="org-name">Organization Name</label>
+                                <input class="field__input"
+                                       id="org-name"
+                                       name="org-name"
+                                       type="text"
+                                       value="@Model.Enterprise.CompanyName">
                             </div>
                         </div>
 
-                        <div class="formgrid u-mt-5">
+                        @* <div class="formgrid u-mt-5">
                             <div class="form__field">
                                 <label class="field__label" for="bio">Bio (optional)</label>
                                 <textarea class="field__input" id="bio" name="bio" rows="3"
                                           placeholder="A short introduction shown on event pages"></textarea>
                             </div>
+                        </div> *@
+
+
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="website">Website</label>
+                                <input class="field__input"
+                                       id="website"
+                                       name="website"
+                                       type="url"
+                                       value="@Model.Enterprise.Website">
+                            </div>
                         </div>
+
+                        <div class="formgrid u-mt-5">
+                            <div class="form__field">
+                                <label class="field__label" for="settlement">Settlement Currency</label>
+
+                                <select class="field__select"
+                                        id="settlement"
+                                        name="settlement">
+                                    <option selected>@Model.Enterprise.SettlementCurrency</option>
+                                </select>
+
+                                <span class="field__hint">Locked after first payout</span>
+                            </div>
+                        </div>
+
+                        <p class="notice notice--warn notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true" focusable="false">
+                                <circle cx="12" cy="12" r="9" />
+                                <path d="M12 8v4.5M12 16h.01" />
+                            </svg>
+
+                            Settlement currency is locked after your first approved payout.
+                            Contact support to change it.
+                        </p>
 
                         <div class="form__actions">
                             <button class="btn btn--primary" type="submit">Save Changes</button>
@@ -148,7 +196,9 @@
                     </div>
                 </section>
             </div>
-            <div data-section-panel="organization" hidden>
+
+            </form>
+            @* <div data-section-panel="organization" hidden>
                 <section class="panel" aria-labelledby="org-title">
                     <h2 class="u-visually-hidden" id="org-title">Organization details</h2>
                     <div class="panel__body">
@@ -193,10 +243,10 @@
                                 <label class="field__label" for="settlement">Settlement Currency</label>
                                 <select class="field__select" id="settlement" name="settlement">
                                     <option selected>@Model.Enterprise.SettlementCurrency</option>
-                                    @* <option>NGN &middot; Nigerian Naira</option>
+                                    <option>NGN &middot; Nigerian Naira</option>
                                     <option>USD &middot; US Dollar</option>
                                     <option>GHS &middot; Ghanaian Cedi</option>
-                                    <option>GBP &middot; Pound Sterling</option> *@
+                                    <option>GBP &middot; Pound Sterling</option>
                                 </select>
                                 <span class="field__hint">Locked after first payout</span>
                             </div>
@@ -213,7 +263,8 @@
                         </div>
                     </div>
                 </section>
-            </div>
+            </div> *@
+            <form>
             <div data-section-panel="bank" hidden>
                 <p class="notice notice--alert notice--flat">
                     <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg>

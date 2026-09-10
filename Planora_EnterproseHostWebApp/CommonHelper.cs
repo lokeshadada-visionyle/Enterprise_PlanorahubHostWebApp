@@ -1528,6 +1528,164 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+
+        public EnterprisePackageDetailsResp GetEnterprisePackageDetails(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEnterprisePackageDetails?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EnterprisePackageDetailsResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public EnterpriseChannelCreditsDashResp GetEnterpriseChannelCreditsDash(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEnterpriseChannelCreditsDash?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EnterpriseChannelCreditsDashResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public EnterpriseBillingResp GetEnterpriseBilling(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEnterpriseBilling?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EnterpriseBillingResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public EnterpriseAuditReportResp GetEnterpriseAuditReport(long userId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEnterpriseAuditReport?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EnterpriseAuditReportResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        #endregion
+
+        #region checckin
+        public GuestCheckInsDashboardResp GetGuestCheckInsDashboard(long userId, int eventId, int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetGuestCheckInsDashboard?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<GuestCheckInsDashboardResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public Response ManualCheckIn(long userId, int eventId, int slotId, string reference)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new ManualCheckInReq
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                EventId = eventId,
+                SlotId = slotId,
+                Reference = reference,
+            };
+            string url = SERVICE_URL + "/Ent_ManualCheckIn";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public ManualCheckInGuestsResp GetManualCheckInGuests(long userId, int eventId, int slotId, int eventDateId, int ticketTypeId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("EventDateId", eventDateId.ToString()),
+                ("TicketTypeId", ticketTypeId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_ManualCheckInGuests?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<ManualCheckInGuestsResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public Response CheckInGuest(long userId, int eventId, int slotId, int guestId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new CheckInGuestsReq
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                EventId = eventId,
+                SlotId = slotId,
+                GuestId = guestId,
+            };
+            string url = SERVICE_URL + "/Ent_CheckInGuests";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public SeatingLayoutResp GetSeatingLayout(long userId, int eventId, int slotId, int eventDateId, int ticketTypeId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("EventDateId", eventDateId.ToString()),
+                ("TicketTypeId", ticketTypeId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_SeatingLayout?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<SeatingLayoutResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
+        public EventScanLogsResp GetEventScanLogs(long userId, int eventId, int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_EventScanLogs?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EventScanLogsResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         #endregion
     }
 }
