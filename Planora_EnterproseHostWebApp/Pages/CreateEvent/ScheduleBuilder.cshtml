@@ -14,8 +14,116 @@
             @Html.AntiForgeryToken()
             <form class="stack" id="scheduleForm" action="content-sections.html" method="post">
 
-                <!-- Venues & halls: one venue by default, several on request -->
-                <div>
+                <!-- STEP 1: Speakers section: visible by default. Fill a speaker in once, then attach them to any session later. -->
+                <section class="panel" id="section-speakers" aria-labelledby="speakers-title">
+                    <div class="panel__head panel__head--plain">
+                        <div>
+                            <h2 class="panel__title panel__title--lg" id="speakers-title">
+                                Speakers
+                            </h2>
+                            <p class="panel__meta">
+                                Fill a speaker in once, then attach them to any session. Photo, title,
+                                organisation and bio all appear on the event page.
+                            </p>
+                        </div>
+                        <button class="btn btn--outline btn--sm" type="button" style="white-space: nowrap;"
+                                data-repeat-add="speaker-list">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add speaker
+                        </button>
+                    </div>
+                    <div class="panel__body">
+                        <div class="speakers" id="speaker-list">
+                            <article class="speaker" data-speaker-row data-repeat-row
+                                     data-speaker-key="kofi">
+                                <div class="speaker__top">
+                                    <span class="speakerav" data-speaker-avatar="kofi">
+                                        <span class="speakerav__initials">KA</span>
+                                    </span>
+                                    @* <span class="speaker__photoact">
+                                        <label class="btn btn--outline btn--sm" for="sp-1-photo">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg> Photo
+                                        </label>
+                                        <input class="u-visually-hidden" id="sp-1-photo" name="sp-1-photo"
+                                               type="file" accept="image/*"
+                                               data-speaker-photo="kofi">
+                                        <span class="speaker__photohint">Square, at least 400&times;400</span>
+                                    </span> *@
+                                    <span class="speaker__tools">
+                                        <button class="iconbtn" type="button"
+                                                data-speaker-preview="kofi"
+                                                data-modal-open="speakerpreview-modal">
+                                            <span class="u-visually-hidden">Preview Kofi Asante as guests see it</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                        </button>
+                                        <button class="iconbtn iconbtn--danger" type="button"
+                                                data-repeat-remove
+                                                data-action="Kofi Asante removed from the speaker directory"
+                                                data-action-tone="warn">
+                                            <span class="u-visually-hidden">Remove Kofi Asante</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                        </button>
+                                    </span>
+                                </div>
+
+                                <div class="formgrid formgrid--3">
+                                    <div class="form__field">
+                                        <label class="field__label" for="sp-1-name">
+                                            Full name<span class="field__required" aria-hidden="true">*</span>
+                                            <span class="u-visually-hidden">(required)</span>
+                                        </label>
+                                        <input class="field__input" id="sp-1-name" name="sp-1-name"
+                                               type="text" value="" placeholder="Speaker name"
+                                               data-speaker-field="name" required>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="sp-1-title">Job title<span class="field__required" aria-hidden="true">*</span></label>
+                                        <input class="field__input" id="sp-1-title" name="sp-1-title"
+                                               type="text" value=""
+                                               placeholder="e.g. Chief Technology Officer"
+                                               data-speaker-field="title" required>
+                                    </div>
+                                    <div class="form__field">
+                                        <label class="field__label" for="sp-1-org">Organisation<span class="field__required" aria-hidden="true">*</span></label>
+                                        <input class="field__input" id="sp-1-org" name="sp-1-org"
+                                               type="text" value="" placeholder="Company or institution"
+                                               data-speaker-field="org" required>
+                                    </div>
+                                </div>
+
+                                <div class="form__field u-mt-5">
+                                    <label class="field__label" for="sp-1-bio">Short bio</label>
+                                    <textarea class="field__input" id="sp-1-bio" name="sp-1-bio" rows="3"
+                                              placeholder="Two or three sentences. Shown on the event page and the session detail."
+                                              data-speaker-field="bio"></textarea>
+                                    <span class="field__hint">
+                                        <span data-speaker-count="kofi">0</span> characters &middot; about 300
+                                        reads best on a session card
+                                    </span>
+                                </div>
+
+                                <p class="speaker__sessions">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                                    <span data-speaker-sessions="kofi">Not assigned to a session yet</span>
+                                </p>
+                            </article>
+                        </div>
+
+                        <p class="notice notice--info notice--flat u-mt-5">
+                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                            A speaker with no title or organisation still works &mdash; the event page
+                            simply shows their name. Only the name is required.
+                        </p>
+
+                        <div class="u-mt-5" style="text-align: right;">
+                            <button type="button" class="btn btn--primary btn--sm" id="btnSaveSpeakers">
+                                Save Speakers &amp; Continue to Venue
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 2: Venues & halls: hidden until Speakers are saved. One venue by default, several on request -->
+                <div id="section-venues" data-venue-section hidden>
                     <div class="dashbox" style="margin-bottom: 10px;">
                         <span class="dashbox__tag">Venue mode</span>
                         <div class="optin">
@@ -43,7 +151,7 @@
                                 <div class="formgrid formgrid--2">
                                     <div class="form__field">
                                         <label class="field__label" for="sv-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Eko Hotel Convention Centre" required>
+                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="" required oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sv-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
@@ -64,14 +172,14 @@
 
                                 <div class="formgrid u-mt-5">
                                     <div class="form__field">
-                                        <label class="field__label" for="sv-address">Address</label>
-                                        <input class="field__input" id="sv-address" name="sv-address" type="text" placeholder="Full street address" value="Plot 1415 Adetokunbo Ademola St, Victoria Island">
+                                        <label class="field__label" for="sv-address">Address<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="sv-address" name="sv-address" type="text" placeholder="Full street address" value="">
                                     </div>
                                 </div>
 
                                 <div class="formgrid u-mt-5">
                                     <div class="form__field">
-                                        <label class="field__label" for="sv-map-url">Map URL</label>
+                                        <label class="field__label" for="sv-map-url">Map URL<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                         <input class="field__input" id="sv-map-url" name="sv-map-url" type="text" placeholder="Map URL" value="https://www.google.com/maps">
                                     </div>
                                 </div>
@@ -128,6 +236,13 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Single "home" for the Save Venue action, regardless of single/multi mode -->
+                            <div class="u-mt-5" style="text-align: right;">
+                                <button type="button" class="btn btn--primary btn--sm" id="btnSaveVenues">
+                                    Save Venue &amp; Load Schedule
+                                </button>
                             </div>
                         </section>
 
@@ -262,16 +377,10 @@
                         </section>
                     </div>
 
-                    <!-- Single "home" for the Save Venue action, regardless of single/multi mode -->
-                    <div class="u-mt-5" style="text-align: right;">
-                        <button type="button" class="btn btn--primary btn--sm" id="btnSaveVenues">
-                            Save Venue &amp; Load Schedule
-                        </button>
-                    </div>
                 </div>
 
-                <!-- Hidden by default: revealed once venues/halls have been saved (or already exist) -->
-                <section class="panel" aria-labelledby="date-title" data-schedule hidden>
+                <!-- STEP 3: Date & Schedule: hidden until venues/halls have been saved (or already exist) -->
+                <section class="panel" id="section-schedule" aria-labelledby="date-title" data-schedule-section hidden>
                     <div class="panel__head">
                         <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></span>
                         <h2 class="panel__title" id="date-title">Date &amp; Schedule</h2>
@@ -305,28 +414,28 @@
                         <div class="formgrid formgrid--2" data-pick-panel="range"
                              data-pick-owner="schedmode" hidden>
                             <div class="form__field">
-                                <label class="field__label" for="range-start">Start Date</label>
-                                <input class="field__input" id="range-start" name="range-start" type="date" value="2026-08-06">
+                                <label class="field__label" for="range-start">Start Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <input class="field__input" id="range-start" name="range-start" type="date" value="" required>
                             </div>
                             <div class="form__field">
-                                <label class="field__label" for="range-end">End Date</label>
-                                <input class="field__input" id="range-end" name="range-end" type="date" value="2026-08-07">
+                                <label class="field__label" for="range-end">End Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <input class="field__input" id="range-end" name="range-end" type="date" value="" required>
                             </div>
                         </div>
 
                         <div id="schedule-days" class="u-mt-5">
                             <div class="day" data-day data-repeat-row>
-                                <div class="day__head">
+                                <div class="day__head"> 
                                     <span class="day__no" aria-hidden="true">1</span>
                                     <span class="day__date">
-                                        <label class="slotcard__label" for="day-1-name">Session name</label>
+                                        <label class="slotcard__label" for="day-1-name">Session name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                         <input class="field__input" id="day-1-name" name="day-1-name"
-                                               type="text" value="Opening Day" data-autoname="Session">
+                                               type="text" value="" data-autoname="Session" placeholder="eg:- Session Name" required>
                                     </span>
                                     <span class="day__date">
-                                        <label class="slotcard__label" for="day-1-date">Date</label>
+                                        <label class="slotcard__label" for="day-1-date">Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                         <input class="field__input" id="day-1-date" name="day-1-date"
-                                               type="date" value="2026-08-06" data-day-date>
+                                               type="date" value="" data-day-date required>
                                     </span>
                                 </div>
 
@@ -334,9 +443,9 @@
                                     <div class="slotcard" data-slot data-repeat-row>
                                         <div class="slotcard__top">
                                             <span class="slotcard__no" aria-hidden="true">1</span>
-                                            <label class="u-visually-hidden" for="slot-1-1-name">Slot name</label>
+                                            <label class="u-visually-hidden" for="slot-1-1-name">Slot name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                             <input class="slotcard__name" id="slot-1-1-name" name="slot-1-1-name"
-                                                   type="text" value="Morning Keynote" data-autoname="Slot">
+                                                   type="text" value="" placeholder="eg:-slotName" data-autoname="Slot" required>
                                             <button class="line__remove" type="button" data-repeat-remove>
                                                 <span class="u-visually-hidden">Remove this slot</span>
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
@@ -345,43 +454,43 @@
 
                                         <div class="slotcard__grid">
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-start">Start</label>
+                                                <label class="slotcard__label" for="slot-1-1-start">Start<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-start" name="slot-1-1-start"
-                                                       type="time" value="09:00" data-slot-start>
+                                                       type="time" value="" data-slot-start required>
                                             </div>
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-end">End</label>
+                                                <label class="slotcard__label" for="slot-1-1-end">End<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-end" name="slot-1-1-end"
-                                                       type="time" value="10:30" data-slot-end>
+                                                       type="time" value="" data-slot-end required>
                                             </div>
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-venue">Venues</label>
-                                                <select class="slot__select" id="slot-1-1-venue" name="slot-1-1-venue" data-slot-venue-select>
+                                                <label class="slotcard__label" for="slot-1-1-venue">Venues<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <select class="slot__select" id="slot-1-1-venue" name="slot-1-1-venue" data-slot-venue-select required>
                                                     <option value="">Select Venues...</option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-hall">Halls</label>
+                                                <label class="slotcard__label" for="slot-1-1-hall">Halls<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <select class="slot__select" id="slot-1-1-hall" name="slot-1-1-hall"
-                                                        data-slot-hall disabled>
+                                                        data-slot-hall disabled required>
                                                     <option value="">Select a venue first...</option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-cap">Max capacity</label>
+                                                <label class="slotcard__label" for="slot-1-1-cap">Max capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-cap" name="slot-1-1-cap"
                                                        type="text" inputmode="numeric" value=""
-                                                       placeholder="0" data-cap-input>
+                                                       placeholder="0" data-cap-input required>
                                             </div>
                                             <div class="slotcard__speakers">
-                                                <span class="slotcard__label" id="slot-1-1-splabel">Speakers</span>
+                                                <span class="slotcard__label" id="slot-1-1-splabel">Speakers<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></span>
                                                 <div class="speakerchips" data-speaker-chips="slot-1-1"></div>
                                                 <label class="u-visually-hidden" for="slot-1-1-speakeradd">
                                                     Add a speaker to this session
                                                 </label>
                                                 <select class="slot__select" id="slot-1-1-speakeradd"
                                                         data-speaker-add="slot-1-1"
-                                                        aria-describedby="slot-1-1-splabel">
+                                                        aria-describedby="slot-1-1-splabel" required>
                                                     <option value="">Add a speaker&hellip;</option>
                                                 </select>
                                             </div>
@@ -422,108 +531,6 @@
                         <p class="notice notice--warn notice--flat" data-cap-warning hidden>
                             <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
                             <span data-cap-warning-text></span>
-                        </p>
-                    </div>
-                </section>
-
-                <!-- Speakers section: also hidden until venue/halls are saved, since speakers get attached to sessions -->
-                <section class="panel" aria-labelledby="speakers-title" data-schedule hidden>
-                    <div class="panel__head panel__head--plain">
-                        <div>
-                            <h2 class="panel__title panel__title--lg" id="speakers-title">
-                                Speakers
-                            </h2>
-                            <p class="panel__meta">
-                                Fill a speaker in once, then attach them to any session. Photo, title,
-                                organisation and bio all appear on the event page.
-                            </p>
-                        </div>
-                        <button class="btn btn--outline btn--sm" type="button" style="white-space: nowrap;"
-                                data-repeat-add="speaker-list">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add speaker
-                        </button>
-                    </div>
-                    <div class="panel__body">
-                        <div class="speakers" id="speaker-list">
-                            <article class="speaker" data-speaker-row data-repeat-row
-                                     data-speaker-key="kofi">
-                                <div class="speaker__top">
-                                    <span class="speakerav" data-speaker-avatar="kofi">
-                                        <span class="speakerav__initials">KA</span>
-                                    </span>
-                                    @* <span class="speaker__photoact">
-                                        <label class="btn btn--outline btn--sm" for="sp-1-photo">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg> Photo
-                                        </label>
-                                        <input class="u-visually-hidden" id="sp-1-photo" name="sp-1-photo"
-                                               type="file" accept="image/*"
-                                               data-speaker-photo="kofi">
-                                        <span class="speaker__photohint">Square, at least 400&times;400</span>
-                                    </span> *@
-                                    <span class="speaker__tools">
-                                        <button class="iconbtn" type="button"
-                                                data-speaker-preview="kofi"
-                                                data-modal-open="speakerpreview-modal">
-                                            <span class="u-visually-hidden">Preview Kofi Asante as guests see it</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                        <button class="iconbtn iconbtn--danger" type="button"
-                                                data-repeat-remove
-                                                data-action="Kofi Asante removed from the speaker directory"
-                                                data-action-tone="warn">
-                                            <span class="u-visually-hidden">Remove Kofi Asante</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                        </button>
-                                    </span>
-                                </div>
-
-                                <div class="formgrid formgrid--3">
-                                    <div class="form__field">
-                                        <label class="field__label" for="sp-1-name">
-                                            Full name<span class="field__required" aria-hidden="true">*</span>
-                                            <span class="u-visually-hidden">(required)</span>
-                                        </label>
-                                        <input class="field__input" id="sp-1-name" name="sp-1-name"
-                                               type="text" value="Kofi Asante" placeholder="Speaker name"
-                                               data-speaker-field="name" required>
-                                    </div>
-                                    <div class="form__field">
-                                        <label class="field__label" for="sp-1-title">Job title</label>
-                                        <input class="field__input" id="sp-1-title" name="sp-1-title"
-                                               type="text" value="Chief Technology Officer"
-                                               placeholder="e.g. Chief Technology Officer"
-                                               data-speaker-field="title">
-                                    </div>
-                                    <div class="form__field">
-                                        <label class="field__label" for="sp-1-org">Organisation</label>
-                                        <input class="field__input" id="sp-1-org" name="sp-1-org"
-                                               type="text" value="Paystack Africa" placeholder="Company or institution"
-                                               data-speaker-field="org">
-                                    </div>
-                                </div>
-
-                                <div class="form__field u-mt-5">
-                                    <label class="field__label" for="sp-1-bio">Short bio</label>
-                                    <textarea class="field__input" id="sp-1-bio" name="sp-1-bio" rows="3"
-                                              placeholder="Two or three sentences. Shown on the event page and the session detail."
-                                              data-speaker-field="bio">Kofi has spent fifteen years building payment infrastructure across West Africa. He led the team behind Paystack&rsquo;s multi-currency settlement engine and now runs its platform organisation.</textarea>
-                                    <span class="field__hint">
-                                        <span data-speaker-count="kofi">0</span> characters &middot; about 300
-                                        reads best on a session card
-                                    </span>
-                                </div>
-
-                                <p class="speaker__sessions">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
-                                    <span data-speaker-sessions="kofi">Not assigned to a session yet</span>
-                                </p>
-                            </article>
-                        </div>
-
-                        <p class="notice notice--info notice--flat u-mt-5">
-                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                            A speaker with no title or organisation still works &mdash; the event page
-                            simply shows their name. Only the name is required.
                         </p>
                     </div>
                 </section>
@@ -607,371 +614,207 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const btnSaveVenues = document.getElementById("btnSaveVenues");
-        const btnContinue = document.getElementById("btnContinue");
-        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
-        const token = tokenInput ? tokenInput.value : "";
+    document.addEventListener("DOMContentLoaded", async function () {
+        const venueSection = document.getElementById("section-venues");
+        const scheduleSection = document.getElementById("section-schedule");
 
-        const gatedSections = document.querySelectorAll("[data-schedule]");
-
-        // Store fetched venues & speakers globally for dynamically added rows
         let globalVenuesCache = [];
         let globalSpeakersCache = [];
 
-        function showGatedSections() {
-            gatedSections.forEach(section => {
-                if (section.hasAttribute("hidden")) {
-                    section.hidden = false;
-                }
-            });
-            if (gatedSections.length) {
-                gatedSections[0].scrollIntoView({ behavior: "smooth", block: "start" });
+        // Reveal Functions
+        function revealVenueSection() {
+            if (venueSection) {
+                venueSection.removeAttribute("hidden");
+                venueSection.hidden = false;
             }
         }
 
-        // Populate Speaker Dropdowns globally across time slots
-        function populateSpeakerDropdowns(speakers) {
-            globalSpeakersCache = speakers || [];
-            const speakerSelects = document.querySelectorAll("[data-speaker-add]");
-
-            speakerSelects.forEach(select => {
-                const currentVal = select.value;
-                select.innerHTML = '<option value="">Select a speaker…</option>';
-
-                globalSpeakersCache.forEach(sp => {
-                    const spId = sp.SpeakerId ?? sp.speakerId;
-                    const spName = sp.Name ?? sp.name;
-
-                    if (spId && spName) {
-                        const option = document.createElement("option");
-                        option.value = spId;
-                        option.textContent = spName;
-                        select.appendChild(option);
-                    }
-                });
-
-                if (currentVal) {
-                    select.value = currentVal;
-                }
-            });
+        function revealScheduleSection() {
+            if (scheduleSection) {
+                scheduleSection.removeAttribute("hidden");
+                scheduleSection.hidden = false;
+            }
         }
 
-        // Fetch Speakers from Ent_Speaker API via Razor Handler
-        async function loadSpeakers() {
+        // 1. LOAD & BIND SPEAKERS
+        async function loadAndBindSpeakers() {
             try {
                 const response = await fetch('?handler=GetSpeakers', { method: 'GET' });
                 const result = await response.json();
 
-                if (result && result.success && Array.isArray(result.data)) {
+                if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    globalSpeakersCache = result.data;
+                    const speakerListContainer = document.getElementById("speaker-list");
+
+                    const templateRow = speakerListContainer.querySelector(".speaker")?.cloneNode(true);
+                    if (templateRow) {
+                        speakerListContainer.innerHTML = ""; // Clear placeholders
+
+                        result.data.forEach(sp => {
+                            const row = templateRow.cloneNode(true);
+                            row.dataset.speakerId = sp.SpeakerId ?? sp.speakerId ?? "0";
+
+                            const nameInput = row.querySelector("[data-speaker-field='name']");
+                            const titleInput = row.querySelector("[data-speaker-field='title']");
+                            const orgInput = row.querySelector("[data-speaker-field='org']");
+                            const bioInput = row.querySelector("[data-speaker-field='bio']");
+
+                            if (nameInput) nameInput.value = sp.Name ?? sp.name ?? "";
+                            if (titleInput) titleInput.value = sp.JobTitle ?? sp.jobTitle ?? "";
+                            if (orgInput) orgInput.value = sp.Organization ?? sp.organization ?? "";
+                            if (bioInput) bioInput.value = sp.Bio ?? sp.bio ?? "";
+
+                            speakerListContainer.appendChild(row);
+                        });
+                    }
+
                     populateSpeakerDropdowns(result.data);
-                } else {
-                    console.warn("No speakers found or API error:", result?.message);
+
+                    // Reveal venue section if speakers exist
+                    revealVenueSection();
+                    return true;
                 }
             } catch (err) {
                 console.error("Failed to load speakers:", err);
             }
+            return false;
         }
 
-        // Helper to populate Venue dropdowns cleanly
-        function populateVenueDropdowns(venues) {
-            globalVenuesCache = venues || [];
-            const venueSelects = document.querySelectorAll("[data-slot-venue-select]");
-            const singleVenue = globalVenuesCache.length === 1 ? globalVenuesCache[0] : null;
-
-            venueSelects.forEach(select => {
-                const currentVal = select.value;
-                select.innerHTML = '<option value="">Select Venues...</option>';
-
-                globalVenuesCache.forEach(v => {
-                    const vId = v.VenueId ?? v.venueId;
-                    const vName = v.VenueName ?? v.venueName;
-
-                    if (vId && vName) {
-                        const option = document.createElement("option");
-                        option.value = vId;
-                        option.textContent = vName;
-                        select.appendChild(option);
-                    }
-                });
-
-                if (currentVal) {
-                    select.value = currentVal;
-                } else if (singleVenue) {
-                    const autoVenueId = singleVenue.VenueId ?? singleVenue.venueId;
-                    select.value = autoVenueId;
-
-                    const slotCard = select.closest("[data-slot]");
-                    if (slotCard) {
-                        const hallSelect = slotCard.querySelector("[data-slot-hall]");
-                        loadHallsForVenue(hallSelect, autoVenueId);
-                    }
-                }
-            });
-        }
-
-        // Fetch halls for selected venue
-        async function loadHallsForVenue(hallSelect, venueId) {
-            if (!hallSelect) return;
-
-            if (!venueId) {
-                hallSelect.innerHTML = '<option value="">Select a venue first...</option>';
-                hallSelect.disabled = true;
-                return;
-            }
-
-            hallSelect.disabled = true;
-            hallSelect.innerHTML = '<option value="">Loading halls...</option>';
-
-            try {
-                const res = await fetch(`?handler=GetHallsByVenue&venueId=${venueId}`);
-                const result = await res.json();
-
-                if (result.success && result.data && result.data.length > 0) {
-                    hallSelect.innerHTML = '<option value="">Select Hall...</option>';
-                    result.data.forEach(h => {
-                        const hId = h.HallId ?? h.hallId;
-                        const hName = h.HallName ?? h.hallName;
-                        const hCap = h.Capacity ?? h.capacity ?? 0;
-
-                        const opt = document.createElement("option");
-                        opt.value = hId;
-                        opt.textContent = `${hName} (Cap: ${hCap})`;
-                        opt.dataset.capacity = hCap;
-                        hallSelect.appendChild(opt);
-                    });
-                    hallSelect.disabled = false;
-                } else {
-                    hallSelect.innerHTML = '<option value="">No halls found for this venue</option>';
-                }
-            } catch (err) {
-                console.error("Error loading halls:", err);
-                hallSelect.innerHTML = '<option value="">Error loading halls</option>';
-            }
-        }
-
-        // Fetch venues from OnGetGetVenues Razor Handler
-        async function loadVenues() {
+        // 2. LOAD & BIND VENUES
+        async function loadAndBindVenues() {
             try {
                 const response = await fetch('?handler=GetVenues', { method: 'GET' });
                 const result = await response.json();
 
-                if (result && result.success && Array.isArray(result.data)) {
-                    populateVenueDropdowns(result.data);
-                    if (result.data.length > 0) {
-                        showGatedSections();
+                if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    globalVenuesCache = result.data;
+                    const firstVenue = result.data[0];
+
+                    // Bind single venue fields
+                    const nameInput = document.getElementById("sv-name");
+                    const citySelect = document.getElementById("sv-city");
+                    const addressInput = document.getElementById("sv-address");
+
+                    if (nameInput) nameInput.value = firstVenue.VenueName ?? firstVenue.venueName ?? "";
+                    if (citySelect) citySelect.value = firstVenue.City ?? firstVenue.cityName ?? "";
+                    if (addressInput) addressInput.value = firstVenue.Address ?? firstVenue.address ?? "";
+
+                    // Bind halls list
+                    const halls = firstVenue.Halls ?? firstVenue.halls;
+                    if (Array.isArray(halls) && halls.length > 0) {
+                        const hallContainer = document.getElementById("sv-halls");
+                        const templateHall = hallContainer.querySelector(".hall")?.cloneNode(true);
+
+                        if (templateHall) {
+                            hallContainer.innerHTML = "";
+                            halls.forEach(h => {
+                                const hRow = templateHall.cloneNode(true);
+                                const hNameInput = hRow.querySelector(".hall__name");
+                                const hCapInput = hRow.querySelector(".hall__cap");
+
+                                if (hNameInput) hNameInput.value = h.HallName ?? h.hallName ?? "";
+                                if (hCapInput) hCapInput.value = h.Capacity ?? h.capacity ?? 0;
+
+                                hallContainer.appendChild(hRow);
+                            });
+                        }
                     }
-                } else {
-                    console.warn("No venues found or API error:", result?.message);
+
+                    populateVenueDropdowns(result.data);
+
+                    // Reveal schedule section if venues exist
+                    revealScheduleSection();
+                    return true;
                 }
             } catch (err) {
                 console.error("Failed to load venues:", err);
             }
+            return false;
         }
 
-        // Dynamic Hall Loading on Venue Select Change
-        document.addEventListener("change", function(e) {
-            if (e.target && e.target.matches("[data-slot-venue-select]")) {
-                const venueId = e.target.value;
-                const slotCard = e.target.closest("[data-slot]");
-                if (slotCard) {
-                    const hallSelect = slotCard.querySelector("[data-slot-hall]");
-                    loadHallsForVenue(hallSelect, venueId);
+        // 3. LOAD & BIND SCHEDULE
+        async function loadAndBindSchedule() {
+            try {
+                const response = await fetch('?handler=GetSchedule', { method: 'GET' });
+                const result = await response.json();
+
+                if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    const daysContainer = document.getElementById("schedule-days");
+                    const dayTemplate = daysContainer.querySelector(".day")?.cloneNode(true);
+
+                    if (!dayTemplate) return;
+                    daysContainer.innerHTML = "";
+
+                    for (const day of result.data) {
+                        const dayRow = dayTemplate.cloneNode(true);
+                        const nameInput = dayRow.querySelector("input[name*='name']");
+                        const dateInput = dayRow.querySelector("[data-day-date]");
+
+                        if (nameInput) nameInput.value = day.SessionName ?? day.sessionName ?? "";
+                        if (dateInput && day.EventDate) {
+                            dateInput.value = day.EventDate.split('T')[0];
+                        }
+
+                        const slotsContainer = dayRow.querySelector(".slots");
+                        const slotTemplate = slotsContainer.querySelector(".slotcard")?.cloneNode(true);
+
+                        if (slotTemplate) {
+                            slotsContainer.innerHTML = "";
+
+                            const slots = day.EventSlots ?? day.eventSlots ?? [];
+                            for (const slot of slots) {
+                                const slotRow = slotTemplate.cloneNode(true);
+
+                                const slotNameInput = slotRow.querySelector(".slotcard__name");
+                                const startInput = slotRow.querySelector("[data-slot-start]");
+                                const endInput = slotRow.querySelector("[data-slot-end]");
+                                const venueSelect = slotRow.querySelector("[data-slot-venue-select]");
+                                const hallSelect = slotRow.querySelector("[data-slot-hall]");
+                                const capInput = slotRow.querySelector("[data-cap-input]");
+                                const speakerSelect = slotRow.querySelector("[data-speaker-add]");
+
+                                if (slotNameInput) slotNameInput.value = slot.SlotName ?? slot.slotName ?? "";
+                                if (startInput) startInput.value = slot.StartTime ?? slot.startTime ?? "";
+                                if (endInput) endInput.value = slot.EndTime ?? slot.endTime ?? "";
+                                if (capInput) capInput.value = slot.Capacity ?? slot.capacity ?? "";
+
+                                populateVenueDropdowns(globalVenuesCache);
+
+                                const selectedVenueId = slot.VenueId ?? slot.venueId;
+                                if (venueSelect && selectedVenueId) {
+                                    venueSelect.value = selectedVenueId;
+                                    await loadHallsForVenue(hallSelect, selectedVenueId);
+                                    if (hallSelect) hallSelect.value = slot.HallId ?? slot.hallId ?? "";
+                                }
+
+                                populateSpeakerDropdowns(globalSpeakersCache);
+                                if (speakerSelect) {
+                                    speakerSelect.value = slot.SpeakersId ?? slot.speakersId ?? "";
+                                }
+
+                                slotsContainer.appendChild(slotRow);
+                            }
+                        }
+
+                        daysContainer.appendChild(dayRow);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load schedule:", err);
+            }
+        }
+
+        // INITIALIZATION RUNNER
+        async function init() {
+            const hasSpeakers = await loadAndBindSpeakers();
+            if (hasSpeakers) {
+                const hasVenues = await loadAndBindVenues();
+                if (hasVenues) {
+                    await loadAndBindSchedule();
                 }
             }
-        });
-
-        // Automatically populate venue & speaker dropdowns when new time slots are added dynamically
-        document.addEventListener("click", function(e) {
-            if (e.target && e.target.matches("[data-repeat-add]")) {
-                setTimeout(() => {
-                    if (globalVenuesCache.length > 0) {
-                        populateVenueDropdowns(globalVenuesCache);
-                    }
-                    if (globalSpeakersCache.length > 0) {
-                        populateSpeakerDropdowns(globalSpeakersCache);
-                    }
-                }, 50);
-            }
-        });
-
-        // Initial loads
-        loadVenues();
-        loadSpeakers();
-
-        // Save Venue Listener
-        if (btnSaveVenues) {
-            btnSaveVenues.addEventListener("click", async function() {
-                const isMultiVenue = document.getElementById("multivenue")?.checked;
-                const venues = [];
-
-                if (isMultiVenue) {
-                    document.querySelectorAll("#venue-list .venue").forEach(row => {
-                        const venueName = row.querySelector("input[name*='name']")?.value || "";
-                        const city = row.querySelector("input[name*='city']")?.value || "";
-                        const address = row.querySelector("input[name*='address']")?.value || "";
-                        const halls = [];
-
-                        row.querySelectorAll(".hall").forEach(h => {
-                            const hallName = h.querySelector(".hall__name")?.value || "";
-                            const cap = parseInt(h.querySelector(".hall__cap")?.value || "0", 10);
-                            if (hallName) halls.push({ HallName: hallName, Capacity: cap });
-                        });
-
-                        if (venueName) venues.push({ VenueName: venueName, City: city, Address: address, Halls: halls });
-                    });
-                } else {
-                    const venueName = document.getElementById("sv-name")?.value || "";
-                    const city = document.getElementById("sv-city")?.value || "";
-                    const address = document.getElementById("sv-address")?.value || "";
-                    const halls = [];
-
-                    document.querySelectorAll("#sv-halls .hall").forEach(h => {
-                        const hallName = h.querySelector(".hall__name")?.value || "";
-                        const cap = parseInt(h.querySelector(".hall__cap")?.value || "0", 10);
-                        if (hallName) halls.push({ HallName: hallName, Capacity: cap });
-                    });
-
-                    if (venueName) venues.push({ VenueName: venueName, City: city, Address: address, Halls: halls });
-                }
-
-                if (venues.length === 0) {
-                    alert("Please add at least one venue with at least one hall before continuing.");
-                    return;
-                }
-
-                try {
-                    const response = await fetch("?handler=SaveVenue", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "RequestVerificationToken": token
-                        },
-                        body: JSON.stringify({ Venues: venues })
-                    });
-
-                    const result = await response.json();
-                    if (result.success) {
-                        alert("Venues saved successfully!");
-                        await loadVenues();
-                    } else {
-                        alert("Failed to save venues: " + (result.message || "Unknown error"));
-                    }
-                } catch (err) {
-                    console.error("Save Venue Error:", err);
-                    alert("An error occurred while saving venue information.");
-                }
-            });
         }
 
-        if (btnContinue) {
-            btnContinue.addEventListener("click", async function() {
-                if (gatedSections.length && gatedSections[0].hasAttribute("hidden")) {
-                    alert("Please save your venue and halls first.");
-                    return;
-                }
-
-                const eventDateList = [];
-                let hasInvalidSlots = false;
-
-                document.querySelectorAll("#schedule-days .day").forEach((dayRow, dayIdx) => {
-                    const sessionNameInput = dayRow.querySelector("input[name*='name']");
-                    const sessionName = sessionNameInput?.value?.trim() || `Session ${dayIdx + 1}`;
-
-                    const dateInput = dayRow.querySelector("[data-day-date]");
-                    const eventDate = dateInput?.value || "";
-
-                    const eventSlots = [];
-                    const slotCards = dayRow.querySelectorAll("[data-slot]");
-
-                    slotCards.forEach((slot, slotIdx) => {
-                        const slotNameInput = slot.querySelector(".slotcard__name");
-                        const slotName = slotNameInput?.value?.trim() || `Slot ${slotIdx + 1}`;
-
-                        const hallIdVal = slot.querySelector("[data-slot-hall]")?.value;
-                        const startTime = slot.querySelector("[data-slot-start]")?.value || "";
-                        const endTime = slot.querySelector("[data-slot-end]")?.value || "";
-                        const capacityVal = slot.querySelector("[data-cap-input]")?.value;
-
-                        const speakerSelect = slot.querySelector("[data-speaker-add]");
-                        const speakersIdVal = speakerSelect?.value || "0";
-
-                        eventSlots.push({
-                            SlotName: slotName,
-                            StartTime: startTime,
-                            EndTime: endTime,
-                            HallId: parseInt(hallIdVal, 10) || 0,
-                            Capacity: parseInt(capacityVal, 10) || 0,
-                            SpeakersId: parseInt(speakersIdVal, 10) || 0
-                        });
-                    });
-
-                    if (eventSlots.length === 0) {
-                        hasInvalidSlots = true;
-                    }
-
-                    if (eventDate) {
-                        eventDateList.push({
-                            SessionName: sessionName,
-                            EventDate: eventDate,
-                            EventSlots: eventSlots
-                        });
-                    }
-                });
-
-                if (eventDateList.length === 0) {
-                    alert("Please add at least one date with a schedule.");
-                    return;
-                }
-
-                if (hasInvalidSlots) {
-                    alert("Each date must contain at least one time slot before continuing.");
-                    return;
-                }
-
-                const speakersList = [];
-                document.querySelectorAll("#speaker-list .speaker").forEach(sp => {
-                    const speakerIdVal = sp.dataset.speakerId || "0";
-                    const name = sp.querySelector("[data-speaker-field='name']")?.value || "";
-                    const jobTitle = sp.querySelector("[data-speaker-field='title']")?.value || "";
-                    const organization = sp.querySelector("[data-speaker-field='org']")?.value || "";
-                    const bio = sp.querySelector("[data-speaker-field='bio']")?.value || "";
-
-                    if (name.trim().length > 0) {
-                        speakersList.push({
-                            SpeakerId: parseInt(speakerIdVal, 10) || 0,
-                            Name: name,
-                            JobTitle: jobTitle,
-                            Organization: organization,
-                            Bio: bio
-                        });
-                    }
-                });
-
-                try {
-                    const response = await fetch("?handler=SaveSchedule", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "RequestVerificationToken": token
-                        },
-                        body: JSON.stringify({
-                            Slots: eventDateList,
-                            Speakers: speakersList
-                        })
-                    });
-
-                    const result = await response.json();
-                    if (result.success) {
-                        window.location.href = "/CreateEvent/ContentSection";
-                    } else {
-                        alert("Save Error: " + (result.message || "Could not save schedule."));
-                    }
-                } catch (err) {
-                    console.error("Save Schedule Error:", err);
-                    alert("An error occurred while saving the schedule.");
-                }
-            });
-        }
+        init();
     });
 </script>

@@ -1200,6 +1200,10 @@
        spinner.
        ------------------------------------------------------------------------ */
 
+    /* ------------------------------------------------------------------------
+       25. Wizard step loader (shimmer)
+       ------------------------------------------------------------------------ */
+
     function initWizardLoader() {
         var overlay = document.getElementById('wizard-loading');
         if (!overlay) return;
@@ -1213,9 +1217,15 @@
         all('[data-wizard-link]').forEach(function (link) {
             link.addEventListener('click', function (event) {
                 var href = link.getAttribute('href');
-                // Only real navigations — not JS-only buttons or anchors.
-                if (!href || href.indexOf('#') === 0) return;
+
+                if (link.getAttribute('aria-disabled') === 'true' || link.classList.contains('wizard__step--disabled')) {
+                    event.preventDefault();
+                    return;
+                }
+
+                if (!href || href === '' || href.indexOf('#') === 0) return;
                 if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
+
                 show();
             });
         });
@@ -1223,22 +1233,40 @@
         // Wizard step forms (Continue/Save buttons that POST).
         all('.wizard__body form, .wizard__foot form').forEach(function (form) {
             form.addEventListener('submit', function (event) {
+                // Check form validity before showing loading state
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    return;
+                }
+
                 if (event.defaultPrevented) return;
                 show();
             });
         });
 
-        // Buttons that submit a form via the "form" attribute rather than
-        // being nested inside it (used throughout the wizard footers).
+        // Buttons that submit a form via the "form" attribute
         all('button[type="submit"][form]').forEach(function (button) {
             button.addEventListener('click', function (event) {
-                if (event.defaultPrevented || button.disabled) return;
+                if (button.disabled) return;
+
+                var formId = button.getAttribute('form');
+                var form = document.getElementById(formId);
+
+                if (form) {
+                    // If the form has missing required fields, block submission and trigger validation
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        form.reportValidity();
+                        return;
+                    }
+                }
+
+                if (event.defaultPrevented) return;
                 show();
             });
         });
 
-        // Restore the page instantly if the user navigates back into it
-        // from cache (bfcache) so the overlay never gets stuck on.
+        // Restore the page instantly if navigating back from cache (bfcache)
         window.addEventListener('pageshow', function (event) {
             if (event.persisted) {
                 overlay.classList.remove('is-active');

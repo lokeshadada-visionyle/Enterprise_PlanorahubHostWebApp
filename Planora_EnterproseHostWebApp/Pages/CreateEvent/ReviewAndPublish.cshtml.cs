@@ -11,12 +11,14 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
         public IActionResult OnGet()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
             int eventId = HttpContext.Session.GetInt32("createdEventId") ?? 0;
-
-            if (userId is null ||
-                HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 12;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -52,12 +54,14 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         }
         public IActionResult OnPostPublish(bool isPublish)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
             int? eventId = HttpContext.Session.GetInt32("createdEventId");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (userId is null ||
-                HttpContext.Session.GetString("IsLoggedIn") != "true")
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -90,7 +94,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     : (isPublish ? "Unable to publish this event." : "Unable to save as draft.");
                 return Page();
             }
-
+            int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 0));
             return RedirectToPage("/Dashboard/HostDashboard");
         }
     }

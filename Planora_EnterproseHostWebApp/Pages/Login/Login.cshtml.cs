@@ -37,7 +37,15 @@ namespace Planora_EnterproseHostWebApp.Pages.Login
             HttpContext.Session.SetString("UserEmail", email);
             HttpContext.Session.SetString("IsLoggedIn", "true");
         }
+        public IActionResult OnPostLogout()
+        {
+            HttpContext.Session.Remove("UserId");
+            HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("UserEmail");
+            HttpContext.Session.Remove("IsLoggedIn");
 
+            return RedirectToPage("/Login/Login");
+        }
         public IActionResult OnPost()
         {
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
@@ -68,7 +76,9 @@ namespace Planora_EnterproseHostWebApp.Pages.Login
                 if (result != null && result.Status == 1)
                 {
                     var userName = Email.Split('@')[0];
+
                     SetSession(result.UserId, userName, Email);
+
                     return RedirectToPage("/Dashboard/HostDashboard");
                 }
 

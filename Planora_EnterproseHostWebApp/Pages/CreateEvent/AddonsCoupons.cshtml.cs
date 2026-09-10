@@ -22,8 +22,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 6;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -48,8 +52,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public IActionResult OnPost()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -110,7 +118,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 ApiError = "Unable to reach the event service. Please try again.";
                 return Page();
             }
-
+            int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 7));
             bool isPrivate = HttpContext.Session.IsPrivateEvent();
             return isPrivate
                 ? RedirectToPage("/CreateEvent/FoodBeverage")

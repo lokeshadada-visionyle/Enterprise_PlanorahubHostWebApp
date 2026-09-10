@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -41,18 +42,63 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
         public string ApiError { get; private set; }
 
+        public bool IsEditMode { get; set; }
+
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 2;
 
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
                 return RedirectToPage("/Login/Login");
             }
 
             EventType = HttpContext.Session.GetEventType();
-
             LoadDropdownData(userId.Value);
+
+            var createdEventId = HttpContext.Session.GetInt32("createdEventId");
+            IsEditMode = createdEventId.HasValue && createdEventId.Value > 0;
+
+            if (createdEventId.HasValue && createdEventId.Value > 0)
+            {
+                var helper = new CommonHelper();
+
+                try
+                {
+                    var eventDetails = helper.GetEventDetailsById(userId.Value, createdEventId.Value);
+                    var eventThinkToKnow = helper.GetEventThinksToKnowById(userId.Value, createdEventId.Value);
+
+                    if (eventDetails != null)
+                    {
+                        ViewData["EventName"] = eventDetails.EventName;
+                        ViewData["EventCategory"] = eventDetails.EventCategory; // Will be empty if API returns ""
+                        ViewData["TagLine"] = eventDetails.TagLine;
+                        ViewData["CityId"] = eventDetails.CityId;
+                        ViewData["Description"] = eventDetails.Description;
+                        ViewData["ImageUrl"] = eventDetails.ImageUrl;
+                    }
+
+                    if (eventThinkToKnow != null && eventThinkToKnow.Things != null)
+                    {
+                        string GetValue(string categoryName) =>
+                            eventThinkToKnow.Things
+                                .FirstOrDefault(t => string.Equals(t.Category, categoryName, StringComparison.OrdinalIgnoreCase))?.Value;
+
+                        LayoutType = GetValue("LayoutType");
+                        AgeRestriction = GetValue("AgeRestriction");
+                        Parking = GetValue("Parking");
+                        Washrooms = GetValue("Washrooms");
+                        Accessibility = GetValue("Accessibility");
+                        Catering = GetValue("Catering");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ApiError = "Could not reload existing event details: " + ex.Message;
+                }
+            }
 
             return Page();
         }
@@ -62,20 +108,28 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public IActionResult OnPost(AddBasicDetailsReq model)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
             EventType = HttpContext.Session.GetEventType();
-
+            int currentMaxProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 3));
             var helper = new CommonHelper();
+
+            var existingEventId = HttpContext.Session.GetInt32("createdEventId");
+            IsEditMode = existingEventId.HasValue && existingEventId.Value > 0;
 
             model.UserId = userId.Value;
             model.hashValue = "";
 
             var coverFile = CoverUpload ?? Request.Form.Files.GetFile("CoverUpload");
+            string newlyUploadedImageUrl = null;
 
             if (coverFile != null && coverFile.Length > 0)
             {
@@ -95,14 +149,58 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                         throw new Exception($"Invalid image format for '{coverFile.FileName}'. Only JPG, JPEG, and PNG are allowed.");
                     }
 
+                    string imageBase64;
+
                     using (var ms = new MemoryStream())
                     {
                         coverFile.CopyTo(ms);
                         byte[] fileBytes = ms.ToArray();
-                        model.ImageBase64 = Convert.ToBase64String(fileBytes);
+                        imageBase64 = Convert.ToBase64String(fileBytes);
                     }
 
-                    model.FileName = coverFile.FileName;
+                    if (IsEditMode)
+                    {
+                        // Edit mode: upload the new cover image immediately so we get a URL back,
+                        // which then gets passed into UpdateEventDetails below (instead of ImageBase64/FileName).
+                        var uploadReq = new UploadCoverImageReq
+                        {
+                            UserId = userId.Value,
+                            EventId = existingEventId.Value,
+                            FileName = coverFile.FileName,
+                            ImageBase64 = imageBase64
+                        };
+
+                        UploadCoverImageResp uploadResp;
+
+                        try
+                        {
+                            uploadResp = helper.UploadCoverImage(uploadReq);
+                        }
+                        catch (Exception ex)
+                        {
+                            ApiError = "Unable to reach the image upload service. " + ex.Message;
+                            LoadDropdownData(userId.Value);
+                            return Page();
+                        }
+
+                        // NOTE: verify the actual property name for the returned URL on your
+                        // UploadCoverImageResp model - assumed "ImageUrl" here, adjust if different.
+                        if (uploadResp == null || uploadResp.Status != 1 || string.IsNullOrWhiteSpace(uploadResp.ImageURL))
+                        {
+                            ApiError = !string.IsNullOrWhiteSpace(uploadResp?.Message)
+                                ? uploadResp.Message
+                                : "Unable to upload the new cover image.";
+                            LoadDropdownData(userId.Value);
+                            return Page();
+                        }
+
+                        newlyUploadedImageUrl = uploadResp.ImageURL;
+                    }
+                    else
+                    {
+                        model.ImageBase64 = imageBase64;
+                        model.FileName = coverFile.FileName;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -111,53 +209,109 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     return Page();
                 }
             }
-            Response basicResponse;
-
-            try
-            {
-                basicResponse = helper.AddEventDetails(model);
-            }
-            catch (Exception ex)
-            {
-                ApiError = "Unable to reach the event service. " + ex.Message;
-                LoadDropdownData(userId.Value);
-                return Page();
-            }
-
-            if (basicResponse == null)
-            {
-                ApiError = "Unable to save event details. No response received.";
-                LoadDropdownData(userId.Value);
-                return Page();
-            }
-
-            if (basicResponse.Status != 1)
-            {
-                ApiError = !string.IsNullOrWhiteSpace(basicResponse.Message)
-                    ? basicResponse.Message
-                    : "Unable to save event details.";
-                LoadDropdownData(userId.Value);
-                return Page();
-            }
 
             int eventId;
 
-            try
+            if (IsEditMode)
             {
-                eventId = Convert.ToInt32(basicResponse.EventId);
-            }
-            catch
-            {
-                ApiError = "Event was created but EventId is invalid.";
-                LoadDropdownData(userId.Value);
-                return Page();
-            }
+                eventId = existingEventId.Value;
 
-            if (eventId <= 0)
+                var postedExistingImageUrl = Request.Form["existingImageUrl"].ToString();
+                var finalImageUrl = !string.IsNullOrWhiteSpace(newlyUploadedImageUrl)
+                    ? newlyUploadedImageUrl
+                    : postedExistingImageUrl;
+
+                var updateReq = new UpdateEventDetailsRequest
+                {
+                    UserId = userId.Value,
+                    EventId = eventId,
+                    EventType = EventType,
+                    EventName = model.EventName,
+                    EventCategory = model.EventCategory.ToString(),
+                    TagLine = model.TagLine,
+                    CityId = model.CityId,
+                    TimeZone = model.TimeZone,
+                    description = model.description,
+                    ImageUrl = finalImageUrl
+                };
+
+                Response updateResponse;
+
+                try
+                {
+                    updateResponse = helper.UpdateEventDetails(updateReq);
+                }
+                catch (Exception ex)
+                {
+                    ApiError = "Unable to reach the event service. " + ex.Message;
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (updateResponse == null)
+                {
+                    ApiError = "Unable to update event details. No response received.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (updateResponse.Status != 1)
+                {
+                    ApiError = !string.IsNullOrWhiteSpace(updateResponse.Message)
+                        ? updateResponse.Message
+                        : "Unable to update event details.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+            }
+            else
             {
-                ApiError = "Event was created but a valid EventId was not returned.";
-                LoadDropdownData(userId.Value);
-                return Page();
+                Response basicResponse;
+
+                try
+                {
+                    basicResponse = helper.AddEventDetails(model);
+                }
+                catch (Exception ex)
+                {
+                    ApiError = "Unable to reach the event service. " + ex.Message;
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (basicResponse == null)
+                {
+                    ApiError = "Unable to save event details. No response received.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (basicResponse.Status != 1)
+                {
+                    ApiError = !string.IsNullOrWhiteSpace(basicResponse.Message)
+                        ? basicResponse.Message
+                        : "Unable to save event details.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                try
+                {
+                    eventId = Convert.ToInt32(basicResponse.EventId);
+                }
+                catch
+                {
+                    ApiError = "Event was created but EventId is invalid.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (eventId <= 0)
+                {
+                    ApiError = "Event was created but a valid EventId was not returned.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
             }
 
             HttpContext.Session.SetInt32("createdEventId", eventId);
@@ -166,62 +320,97 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (!string.IsNullOrWhiteSpace(LayoutType))
             {
-                things.Add(new ThingToKnow { Category = "LayoutType", value = LayoutType });
+                things.Add(new ThingToKnow { Category = "LayoutType", Value = LayoutType });
             }
 
             if (!string.IsNullOrWhiteSpace(AgeRestriction))
             {
-                things.Add(new ThingToKnow { Category = "AgeRestriction", value = AgeRestriction });
+                things.Add(new ThingToKnow { Category = "AgeRestriction", Value = AgeRestriction });
             }
 
-            things.Add(new ThingToKnow { Category = "Parking", value = Parking });
+            things.Add(new ThingToKnow { Category = "Parking", Value = Parking });
 
             if (!string.IsNullOrWhiteSpace(Washrooms))
             {
-                things.Add(new ThingToKnow { Category = "Washrooms", value = Washrooms });
+                things.Add(new ThingToKnow { Category = "Washrooms", Value = Washrooms });
             }
 
-            things.Add(new ThingToKnow { Category = "Accessibility", value = Accessibility });
+            things.Add(new ThingToKnow { Category = "Accessibility", Value = Accessibility });
 
             if (!string.IsNullOrWhiteSpace(Catering))
             {
-                things.Add(new ThingToKnow { Category = "Catering", value = Catering });
+                things.Add(new ThingToKnow { Category = "Catering", Value = Catering });
             }
 
-            var thingsReq = new AddThingToKnowReq
+            if (IsEditMode)
             {
-                UserId = userId.Value,
-                EventId = eventId,
-                Things = things
-            };
+                var updateThingsReq = new AddThingToKnowReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId,
+                    Things = things
+                };
 
-            AddThingToKnowResp thingsResponse;
+                AddThingToKnowResp updateThingsResponse;
 
-            try
-            {
-                thingsResponse = helper.AddThingsToKnow(thingsReq);
+                try
+                {
+                    // Make sure this calls HostUpdateThingsToKnow on your helper class
+                    updateThingsResponse = helper.UpdateThingsToKnow(updateThingsReq);
+                }
+                catch (Exception ex)
+                {
+                    ApiError = "Event details were updated, but we couldn't reach the service to update facility details. " + ex.Message;
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (updateThingsResponse == null || updateThingsResponse.Status != 1)
+                {
+                    ApiError = !string.IsNullOrWhiteSpace(updateThingsResponse?.Message)
+                        ? updateThingsResponse.Message
+                        : "Event details were updated, but facility details could not be updated.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
             }
-            catch (Exception ex)
+            else
             {
-                ApiError = "Event was created, but we couldn't reach the service to save facility details. " + ex.Message;
-                LoadDropdownData(userId.Value);
-                return Page();
-            }
+                var thingsReq = new AddThingToKnowReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId,
+                    Things = things
+                };
 
-            if (thingsResponse == null)
-            {
-                ApiError = "Event was created, but no response was received while saving facility details.";
-                LoadDropdownData(userId.Value);
-                return Page();
-            }
+                AddThingToKnowResp thingsResponse;
 
-            if (thingsResponse.Status != 1)
-            {
-                ApiError = !string.IsNullOrWhiteSpace(thingsResponse.Message)
-                    ? thingsResponse.Message
-                    : "Event was created, but facility details could not be saved.";
-                LoadDropdownData(userId.Value);
-                return Page();
+                try
+                {
+                    thingsResponse = helper.AddThingsToKnow(thingsReq);
+                }
+                catch (Exception ex)
+                {
+                    ApiError = "Event was created, but we couldn't reach the service to save facility details. " + ex.Message;
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (thingsResponse == null)
+                {
+                    ApiError = "Event was created, but no response was received while saving facility details.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
+
+                if (thingsResponse.Status != 1)
+                {
+                    ApiError = !string.IsNullOrWhiteSpace(thingsResponse.Message)
+                        ? thingsResponse.Message
+                        : "Event was created, but facility details could not be saved.";
+                    LoadDropdownData(userId.Value);
+                    return Page();
+                }
             }
 
             TempData["EventId"] = eventId;

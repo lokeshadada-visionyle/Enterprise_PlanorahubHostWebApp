@@ -23,9 +23,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
-
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 3;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -50,10 +53,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             int? eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (!userId.HasValue)
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
 
             if (!eventId.HasValue)
@@ -100,10 +106,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (!userId.HasValue)
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
 
             if (!eventId.HasValue)
@@ -140,10 +149,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (!userId.HasValue)
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
 
             if (!eventId.HasValue)
@@ -170,14 +182,71 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
         }
 
+        public IActionResult OnPostSaveSpeakers([FromBody] SaveScheduleRequest request)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid. Please select an event first." });
+            }
+
+            if (request?.Speakers == null || !request.Speakers.Any())
+            {
+                return new JsonResult(new { success = false, message = "Please add at least one speaker." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var speakerRequest = new AddSpeakerReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    Ent_Speaker = request.Speakers
+                };
+
+                var speakerResponse = helper.AddSpeaker(speakerRequest);
+
+                if (speakerResponse != null && (speakerResponse.Status == 1 || speakerResponse.Status == 200))
+                {
+                    return new JsonResult(new
+                    {
+                        success = true,
+                        message = speakerResponse.Message ?? "Speakers saved successfully."
+                    });
+                }
+
+                return new JsonResult(new { success = false, message = speakerResponse?.Message ?? "Failed to save speakers." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Save Speakers Error: {ex}");
+                return new JsonResult(new { success = false, message = "An error occurred while saving speaker details." });
+            }
+        }
+
         public IActionResult OnGetGetSpeakers()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
-            if (!userId.HasValue)
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
 
             if (!eventId.HasValue)
@@ -209,9 +278,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
-            if (!userId.HasValue)
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { success = false, message = "User session has expired. Please login again." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
 
             if (!eventId.HasValue)
@@ -270,13 +343,41 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                         });
                     }
                 }
-
+                int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+                HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 4));
                 return new JsonResult(new { success = true, message = "Schedule saved successfully." });
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Save Schedule Error: {ex}");
                 return new JsonResult(new { success = false, message = "An error occurred while saving schedule." });
+            }
+        }
+        public IActionResult OnGetGetSchedule()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            if (!userId.HasValue || !eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Session expired." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var response = helper.GetEventDateAndSlots(userId.Value, eventId.Value);
+
+                if (response != null && (response.Status == 1 || response.Status == 200) && response.EventDates != null)
+                {
+                    return new JsonResult(new { success = true, data = response.EventDates }, PreserveCasingJsonOptions);
+                }
+
+                return new JsonResult(new { success = false, message = "No saved schedule found." });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = ex.Message });
             }
         }
     }

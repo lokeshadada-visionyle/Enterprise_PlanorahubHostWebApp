@@ -15,12 +15,15 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
         public IActionResult OnGet()
         {
-            if (HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 10;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
-
-            var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
             if (userId is not null && eventId != 0)
@@ -47,15 +50,18 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             return Page();
         }
 
-        public JsonResult OnGetLoadTemplate([FromQuery(Name = "formTitle")] string formTitle)
+        public IActionResult OnGetLoadTemplate([FromQuery(Name = "formTitle")] string formTitle)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
+           
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            // Check if parameter is null or whitespace
-            if (userId is null || string.IsNullOrWhiteSpace(formTitle))
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { status = 0, message = "FormTitle is required." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
 
             var helper = new CommonHelper();
@@ -74,9 +80,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public IActionResult OnPost()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (userId is null)
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -121,7 +130,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
                 return Page();
             }
-
+            int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 11));
             return RedirectToPage("/CreateEvent/BrandingPage");
         }
 

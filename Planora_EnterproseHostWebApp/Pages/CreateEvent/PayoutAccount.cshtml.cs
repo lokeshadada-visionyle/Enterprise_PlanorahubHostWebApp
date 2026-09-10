@@ -8,15 +8,15 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
     {
         public IActionResult OnGet()
         {
-            if (HttpContext.Session.GetInt32("UserId") is null ||
-                HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 6;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
-
-            // Private events never settle ticket money through this step —
-            // bounce straight to Add-ons & Coupons even if someone reaches
-            // this URL directly (sidebar link, back button, bookmark).
             if (HttpContext.Session.IsPrivateEvent())
             {
                 return RedirectToPage("/CreateEvent/AddonsCoupons");

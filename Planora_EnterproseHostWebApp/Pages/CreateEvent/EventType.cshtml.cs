@@ -16,10 +16,25 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateHost
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 1;
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
                 return RedirectToPage("/Login/Login");
             }
+
+            // --- FIX 1: Restore saved selection from session ---
+            var savedType = HttpContext.Session.GetEventType();
+            if (!string.IsNullOrEmpty(savedType))
+            {
+                EventType = savedType;
+            }
+
+            // --- FIX 2: Ensure progress tracks highest step reached ---
+            int currentMaxProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 2));
 
             try
             {
@@ -45,20 +60,21 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateHost
             return Page();
         }
 
-        // The wizard's single write point for the event type. Saved to
-        // Session here (not the URL) so every later step, and the shared
-        // layout, can trust it — including across RedirectToPage() hops,
-        // which drop query strings.
         public IActionResult OnPost()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId is null || HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
             HttpContext.Session.SetEventType(EventType);
-
+            int currentMaxProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 1));
             return RedirectToPage("/CreateEvent/BasicDetails");
         }
 

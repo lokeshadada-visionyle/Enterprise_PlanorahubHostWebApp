@@ -14,10 +14,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-
-            if (userId is null ||
-                HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 11;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -155,7 +157,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     : "Unable to save your branding and page settings.";
                 return Page();
             }
-
+            int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 12));
             return RedirectToPage("/CreateEvent/ReviewAndPublish");
         }
     }

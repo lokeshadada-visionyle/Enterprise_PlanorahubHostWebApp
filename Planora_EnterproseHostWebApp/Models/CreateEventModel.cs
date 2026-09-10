@@ -72,6 +72,34 @@ namespace Planora_EnterproseHostWebApp.Models
         public string ImageBase64 { get; set; }
 
     }
+    public class EventDetails
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public int EventId { get; set; }
+        public string EventType { get; set; } = string.Empty;
+        public string EventName { get; set; } = string.Empty;
+        public string EventCategory { get; set; } = string.Empty;
+        public string TagLine { get; set; } = string.Empty;
+        public int CityId { get; set; }
+        public string TimeZone { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+    }
+    public class UpdateEventDetailsRequest
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; } = string.Empty;
+        public int EventId { get; set; }
+        public string EventType { get; set; } = string.Empty;
+        public string EventName { get; set; } = string.Empty;
+        public string EventCategory { get; set; } = string.Empty;
+        public string TagLine { get; set; } = string.Empty;
+        public int CityId { get; set; }
+        public string TimeZone { get; set; } = string.Empty;
+        public string description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+    }
     public class AddThingToKnowReq
     {
         public long UserId { get; set; }
@@ -82,8 +110,17 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class ThingToKnow
     {
+        public int? ThingToKnowItemId { get; set; }
         public string Category { get; set; }
-        public string value { get; set; } = "";
+        public string Value { get; set; } = "";
+    }
+    public class UpdateThingToKnowReq
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; } = "";
+        public int EventId { get; set; }
+        public int ImageURL { get; set; }
+        public List<ThingToKnow> Things { get; set; }
     }
     public class AddThingToKnowResp
     {
@@ -98,6 +135,25 @@ namespace Planora_EnterproseHostWebApp.Models
 
         public string EventChargeType { get; set; }
         public bool IsFirstFreeEvent { get; set; }
+    }
+    public class ThingsToKnowResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public int InsertedCount { get; set; }
+        public int EventId { get; set; }
+        public string ImageURL { get; set; } = string.Empty;
+        public bool IsEnterprise { get; set; }
+        public bool Ispublicfreefirst { get; set; }
+        public string EventChargeType { get; set; } = string.Empty;
+        public bool IsFirstFreeEvent { get; set; }
+        public List<ThingToKnowItem> Things { get; set; } = new();
+    }
+    public class ThingToKnowItem
+    {
+        public int ThingToKnowItemId { get; set; }
+        public string Category { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
     }
     public class UploadCoverImageReq
     {

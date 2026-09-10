@@ -192,6 +192,48 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public EventDetails GetEventDetailsById(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new 
+            {
+                UserId = userId,
+                EventId = eventId,
+                hashValue = hashValue,
+            };
+            string url = SERVICE_URL + "/Ent_GetEventById";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<EventDetails>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateEventDetails(UpdateEventDetailsRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateEventDetailsRequest
+            {
+                UserId = req.UserId,
+                description = req.description,
+                EventCategory = req.EventCategory,
+                EventName = req.EventName,
+                EventType = req.EventType,
+                hashValue = hashValue,
+                TagLine = req.TagLine,
+                TimeZone = req.TimeZone,
+                CityId = req.CityId,
+                EventId = req.EventId,
+                ImageUrl = req.ImageUrl,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateEvent";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public AddThingToKnowResp AddThingsToKnow(AddThingToKnowReq req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
@@ -208,6 +250,38 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(url);
             Debug.WriteLine(jsonData);
             var response = _serialized_json_data<AddThingToKnowResp>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public AddThingToKnowResp UpdateThingsToKnow(AddThingToKnowReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateThingToKnowReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                ImageURL = req.ImageURL,
+                Things = req.Things,
+            };
+            string url = SERVICE_URL + "/HostUpdateThingsToKnow";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<AddThingToKnowResp>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public ThingsToKnowResponse GetEventThinksToKnowById(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/HostGetThingsToKnowByEventId?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<ThingsToKnowResponse>(url);
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }

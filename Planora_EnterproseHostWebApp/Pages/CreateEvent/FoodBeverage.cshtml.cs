@@ -16,12 +16,15 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
         public IActionResult OnGet()
         {
-            if (HttpContext.Session.GetString("IsLoggedIn") != "true")
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            ViewData["StepIndex"] = 8;
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
-
-            var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
             if (userId is not null && eventId.HasValue && eventId.Value != 0)
@@ -64,15 +67,18 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             return Page();
         }
 
-        public JsonResult OnGetDateAndSlots()
+        public IActionResult OnGetDateAndSlots()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
-            if (userId is null || eventId is null || eventId == 0)
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                return new JsonResult(new { success = false, message = "Your session has expired. Please log in again." });
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
             }
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
 
             try
             {
@@ -109,8 +115,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public IActionResult OnPost()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId is null)
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+            int currentProg = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
                 return RedirectToPage("/Login/Login");
             }
 
@@ -145,6 +156,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (!isFoodEnabled)
             {
+                
+                HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProg, 9));
                 return RedirectToPage("/CreateEvent/AccessControl");
             }
 
@@ -228,6 +241,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 }
             }
 
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProg, 8));
             return RedirectToPage("/CreateEvent/AccessControl");
         }
 

@@ -3,7 +3,7 @@
 @{
     Layout = "_CreateEventLayout";
     ViewData["StepIndex"] = 1;
-    ViewData["StepTotal"] = 10;
+    ViewData["StepTotal"] = 12;
     ViewData["StepName"] = "Event Type";
     ViewData["StepHint"] = "Choose your event format to get started";
 }
@@ -32,8 +32,8 @@
             <div class="choices" role="radiogroup" aria-label="Event format"
                  id="event-format" data-choice-group data-choice-field="event-type-value"
                  data-choice-link="basic-details.html">
-                <button class="choice choice--public choice--selected" type="button" role="radio"
-                        aria-checked="true" data-choice="public">
+                    <button class="choice choice--public @(Model.EventType == "public" ? "choice--selected" : "")" type="button" role="radio" aria-checked="@(Model.EventType == "public" ? "true" : "false")"
+                            data-choice="public">
                     <span class="choice__flag" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
                     <span class="choice__head">
                         <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg></span>
@@ -57,8 +57,8 @@
                         </span>
                     </span>
                 </button>
-                <button class="choice choice--private" type="button" role="radio"
-                        aria-checked="false" data-choice="private">
+                    <button class="choice choice--private @(Model.EventType == "private" ? "choice--selected" : "")" type="button" role="radio"
+                            aria-checked="@(Model.EventType == "private" ? "true" : "false")" data-choice="private">
                     <span class="choice__flag" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
                     <span class="choice__head choice__head--private">
                         <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
@@ -83,7 +83,7 @@
                 </button>
             </div>
             <input class="u-visually-hidden" id="event-type-value" name="EventType"
-                   type="text" value="public" readonly tabindex="-1"
+                       type="text" value="@Model.EventType" readonly tabindex="-1"
                    aria-hidden="true">
 
             <p class="notice notice--alert notice--flat" style="margin-bottom:10px;">
@@ -177,9 +177,6 @@
 </div>
 @section Scripts {
     <script>
-        // Selecting a card just updates the hidden EventType field and the
-        // visual selected state — the actual choice is saved server-side
-        // (Session) when the form posts on "Continue", not via the URL.
         document.addEventListener('DOMContentLoaded', function() {
             var choices = document.querySelectorAll('[data-choice]');
             var hiddenField = document.getElementById('event-type-value');
@@ -189,15 +186,17 @@
                 choices.forEach(function (btn) {
                     var selected = btn.getAttribute('data-choice') === type;
                     btn.classList.toggle('choice--selected', selected);
-                    btn.classList.toggle('choice--public', btn.getAttribute('data-choice') === 'public');
-                    btn.classList.toggle('choice--private', btn.getAttribute('data-choice') === 'private');
                     btn.setAttribute('aria-checked', selected ? 'true' : 'false');
                 });
             }
 
+            if (hiddenField && hiddenField.value) {
+                selectType(hiddenField.value);
+            }
+
             choices.forEach(function(btn) {
                 btn.addEventListener('click', function() {
-                    selectType(btn.getAttribute('data-choice')); // "public" or "private"
+                    selectType(btn.getAttribute('data-choice'));
                 });
             });
         });

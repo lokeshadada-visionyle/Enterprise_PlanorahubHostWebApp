@@ -3,9 +3,18 @@
 @{
     Layout = "_CreateEventLayout";
     ViewData["StepIndex"] = 2;
-    ViewData["StepTotal"] = 10;
+    ViewData["StepTotal"] = 12;
     ViewData["StepName"] = "Basic Details";
     ViewData["StepHint"] = "Add the essential details attendees need to know";
+
+    var existingName = ViewData["EventName"]?.ToString() ?? "";
+    var existingCategory = ViewData["EventCategory"]?.ToString() ?? "";
+    var existingTagLine = ViewData["TagLine"]?.ToString() ?? "";
+    var existingCityId = ViewData["CityId"]?.ToString() ?? "";
+    var existingDescription = ViewData["Description"]?.ToString() ?? "";
+    var existingImageUrl = ViewData["ImageUrl"]?.ToString() ?? "";
+    bool hasExistingImage = !string.IsNullOrEmpty(existingImageUrl);
+    bool isEdit = Model.IsEditMode;
 }
 
 <div class="wizard__body">
@@ -15,217 +24,232 @@
             <div class="typebar">
                 <span class="typepill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg> <span data-type-label>@(string.Equals(Model.EventType, "private", StringComparison.OrdinalIgnoreCase) ? "Private Event" : "Public Event")</span></span>
                 <a class="typebar__change" asp-page="/CreateEvent/EventType">Change type</a>
+                @if (isEdit)
+                {
+                    <button type="button" class="btn btn--outline" id="btn-toggle-edit">Edit Form</button>
+                }
             </div>
 
             <form class="stack" id="basicDetailsForm" method="post" enctype="multipart/form-data">
 
                 <input type="hidden" name="EventType" value="@Model.EventType" />
+                <input type="hidden" name="existingImageUrl" id="existingImageUrl" value="@existingImageUrl" />
 
-                @if (!string.IsNullOrWhiteSpace(Model.ApiError))
-                {
-                    <p class="notice notice--warn notice--flat">@Model.ApiError</p>
-                }
+                <!-- Toast Notification Area -->
+                <div id="toast-container" class="toast-container"></div>
 
-                <section class="panel" aria-labelledby="info-title">
-                    <div class="panel__head">
-                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
-                        <h2 class="panel__title" id="info-title">Event Information</h2>
-                        <p class="panel__meta">All fields with * are required</p>
-                    </div>
-                    <div class="panel__body">
-                        <div class="formgrid">
-                            <div class="form__field">
-                                <label class="field__label" for="event-title">Event Title<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <input class="field__input" id="event-title" name="EventName" type="text" placeholder="e.g. Tech Summit Africa 2025" maxlength="120" required>
-                                <span class="field__hint">24/120 characters</span>
-                            </div>
+                <fieldset id="form-fieldset" @(isEdit ? "disabled" : "") style="border:none; padding:0; margin:0;">
+                    <section class="panel" aria-labelledby="info-title">
+                        <div class="panel__head">
+                            <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                            <h2 class="panel__title" id="info-title">Event Information</h2>
+                            <p class="panel__meta">All fields with * are required</p>
                         </div>
-
-                        <div class="formgrid formgrid--2 u-mt-5">
-                            <div class="form__field">
-                                <label class="field__label" for="category">Category<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <select class="field__select" id="category" name="EventCategory" required>
-                                    <option value="">Select Category...</option>
-                                    @if (Model.Categories != null && Model.Categories.Any())
-                                    {
-                                        @foreach (var category in Model.Categories)
-                                        {
-                                            <option value="@category.CategoryId">@category.CategoryName</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                            <div class="form__field">
-                                <label class="field__label" for="tagline">Tagline / Subtitle<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <input class="field__input" id="tagline" name="TagLine" type="text" placeholder="One line that sells the event" maxlength="160" required>
-                            </div>
-                        </div>
-
-                        <div class="formgrid formgrid--2 u-mt-5">
-                            <div class="form__field">
-                                <label class="field__label" for="event-city">
-                                    Primary City<span class="field__required" aria-hidden="true">*</span>
-                                    <span class="u-visually-hidden">(required)</span>
-                                </label>
-                                <select class="field__select" id="event-city" name="CityId" data-city="event-timezone" required>
-                                    <option value="">Select City...</option>
-                                    @if (Model.Cities != null && Model.Cities.Any())
-                                    {
-                                        @foreach (var city in Model.Cities)
-                                        {
-                                            <option value="@city.CityId" data-country="@city.CountryCode">
-                                                @city.CityName@(string.IsNullOrWhiteSpace(city.CountryCode) ? "" : $", {city.CountryCode}")
-                                            </option>
-                                        }
-                                    }
-                                </select>
-                                <span class="field__hint">Sets the event timezone automatically</span>
-                            </div>
-                            <div class="form__field">
-                                <label class="field__label" for="event-timezone">Timezone</label>
-                                <input class="field__input" id="event-timezone" name="TimeZone" type="text" readonly>
-                                <span class="field__hint">
-                                    Applied from the primary city &mdash; no manual selection needed
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form__field u-mt-5">
-                            <label class="field__label" for="description">Full Description</label>
-                            <div class="editor">
-                                <div class="editor__toolbar" role="toolbar" aria-label="Text formatting">
-                                    <button class="editor__tool" type="button" data-editor-tool="bold" data-editor-target="description">Bold</button>
-                                    <button class="editor__tool" type="button" data-editor-tool="italic" data-editor-target="description">Italic</button>
-                                    <button class="editor__tool" type="button" data-editor-tool="link" data-editor-target="description">Link</button>
-                                    <button class="editor__tool" type="button" data-editor-tool="h2" data-editor-target="description">H2</button>
-                                    <button class="editor__tool" type="button" data-editor-tool="list" data-editor-target="description">Bullet List</button>
-                                    <button class="editor__tool" type="button" data-editor-tool="quote" data-editor-target="description">Quote</button>
+                        <div class="panel__body">
+                            <div class="formgrid">
+                                <div class="form__field">
+                                    <label class="field__label" for="event-title">Event Title<span class="field__required" aria-hidden="true">*</span></label>
+                                    <input class="field__input" id="event-title" name="EventName" type="text"
+                                           value="@existingName"
+                                           placeholder="e.g. Tech Summit Africa 2025" maxlength="60" required
+                                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
                                 </div>
-                                <textarea class="editor__area" id="description" name="description" placeholder="Describe what attendees can expect, the agenda, key speakers, and who should attend..."></textarea>
                             </div>
-                            <span class="field__hint">Describe the agenda, speakers, and what attendees will gain</span>
-                        </div>
-                    </div>
-                </section>
 
-                <section class="panel" aria-labelledby="fac-title">
-                    <div class="panel__head">
-                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
-                        <h2 class="panel__title" id="fac-title">Layout &amp; Facilities</h2>
-                        <p class="panel__meta">Shown on the event page &amp; tickets</p>
-                    </div>
-                    <div class="panel__body">
-                        <div class="formgrid formgrid--2">
-                            <div class="form__field">
-                                <label class="field__label" for="layout-type">Layout Type</label>
-                                <select class="field__select" id="layout-type" asp-for="LayoutType">
-                                    <option value="">Select layout...</option>
-                                    <option value="Theatre">Theatre</option>
-                                    <option value="Banquet rounds">Banquet rounds</option>
-                                    <option value="Standing / general admission">Standing / general admission</option>
-                                </select>
+                            <div class="formgrid formgrid--2 u-mt-5">
+                                <div class="form__field">
+                                    <label class="field__label" for="category">Category<span class="field__required" aria-hidden="true">*</span></label>
+                                    <select class="field__select" id="category" name="EventCategory" required>
+                                        <option value="">Select Category...</option>
+                                        @if (Model.Categories != null && Model.Categories.Any())
+                                        {
+                                            @foreach (var category in Model.Categories)
+                                            {
+                                                <option value="@category.CategoryId" selected="@(category.CategoryId.ToString() == existingCategory ? "selected" : null)">
+                                                    @category.CategoryName
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form__field">
+                                    <label class="field__label" for="tagline">Tagline / Subtitle<span class="field__required" aria-hidden="true">*</span></label>
+                                    <input class="field__input" id="tagline" name="TagLine" type="text"
+                                           value="@existingTagLine"
+                                           placeholder="One line that sells the event" maxlength="60" required
+                                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
+                                </div>
                             </div>
-                            <div class="form__field">
-                                <label class="field__label" for="age-restriction">Age Restriction</label>
-                                <select class="field__select" id="age-restriction" asp-for="AgeRestriction">
-                                    <option value="All ages">All ages</option>
-                                    <option value="13+">13+</option>
-                                    <option value="16+">16+</option>
-                                    <option value="18+">18+</option>
-                                    <option value="21+">21+</option>
-                                </select>
-                            </div>
-                        </div>
 
-                        <div class="formgrid formgrid--2 u-mt-5">
-                            <div class="form__field">
-                                <label class="field__label" for="parking">Parking Options<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <select class="field__select" id="parking" asp-for="Parking">
-                                    <option value="Free on-site">Free on-site</option>
-                                    <option value="No parking">No parking</option>
-                                    <option value="Paid parking">Paid parking</option>
-                                    <option value="Valet parking">Valet parking</option>
-                                </select>
+                            <div class="formgrid formgrid--2 u-mt-5">
+                                <div class="form__field">
+                                    <label class="field__label" for="event-city">Primary City<span class="field__required" aria-hidden="true">*</span></label>
+                                    <select class="field__select" id="event-city" name="CityId" data-city="event-timezone" required>
+                                        <option value="">Select City...</option>
+                                        @if (Model.Cities != null && Model.Cities.Any())
+                                        {
+                                            @foreach (var city in Model.Cities)
+                                            {
+                                                <option value="@city.CityId" data-country="@city.CountryCode" selected="@(city.CityId.ToString() == existingCityId ? "selected" : null)">
+                                                    @city.CityName@(string.IsNullOrWhiteSpace(city.CountryCode) ? "" : $", {city.CountryCode}")
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                    <span class="field__hint">Sets the event timezone automatically</span>
+                                </div>
+                                <div class="form__field">
+                                    <label class="field__label" for="event-timezone">Timezone</label>
+                                    <input class="field__input" id="event-timezone" name="TimeZone" type="text" readonly>
+                                </div>
                             </div>
-                            <div class="form__field">
-                                <label class="field__label" for="washrooms">Washroom Facilities</label>
-                                <select class="field__select" id="washrooms" asp-for="Washrooms">
-                                    <option value="Available">Available</option>
-                                    <option value="UnAvailable">UnAvailable</option>
-                                    <option value="Standard">Standard</option>
-                                    <option value="VIP restrooms">VIP restrooms</option>
-                                </select>
-                            </div>
-                        </div>
 
-                        <div class="formgrid formgrid--2 u-mt-5">
-                            <div class="form__field">
-                                <label class="field__label" for="accessibility">Accessibility<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <select class="field__select" id="accessibility" asp-for="Accessibility">
-                                    <option value="Step-free access &amp; accessible washrooms">Step-free access &amp; accessible washrooms</option>
-                                    <option value="Step-free access only">Step-free access only</option>
-                                    <option value="Sign-language interpretation on request">Sign-language interpretation on request</option>
-                                    <option value="Not accessible &mdash; stairs only">Not accessible &mdash; stairs only</option>
-                                </select>
-                            </div>
-                            <div class="form__field">
-                                <label class="field__label" for="catering">Catering</label>
-                                <select class="field__select" id="catering" asp-for="Catering">
-                                    <option value="Full catering included">Full catering included</option>
-                                    <option value="Refreshments only">Refreshments only</option>
-                                    <option value="Food available for purchase">Food available for purchase</option>
-                                    <option value="No catering">No catering</option>
-                                </select>
+                            <div class="form__field u-mt-5">
+                                <label class="field__label" for="description">Full Description</label>
+                                <div class="editor">
+                                    <textarea class="editor__area" id="description" name="description" placeholder="Describe what attendees can expect...">@existingDescription</textarea>
+                                </div>
                             </div>
                         </div>
+                    </section>
 
-                    </div>
-                </section>
-
-                <section class="panel" aria-labelledby="cover-title">
-                    <div class="panel__head">
-                        <span class="tile tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg></span>
-                        <h2 class="panel__title" id="cover-title">Cover Image</h2>
-                    </div>
-                    <div class="panel__body">
-                        <div class="dropzone" id="cover-dropzone">
-                            <span class="tile tile--xl tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg></span>
-                            <p class="dropzone__title">Upload a cover image</p>
-                            <p class="dropzone__text">
-                                PNG, JPG &middot; 16:9 recommended &middot; min 1200 px wide &middot; max 5 MB
-                            </p>
-                            <label class="btn btn--primary" for="cover-upload">Browse Files</label>
-                            <input class="u-visually-hidden"
-                                   id="cover-upload"
-                                   name="CoverUpload"
-                                   type="file"
-                                   accept="image/png,image/jpeg"
-                                   data-image-dropzone="cover-dropzone">
+                    <section class="panel" aria-labelledby="fac-title">
+                        <div class="panel__head">
+                            <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
+                            <h2 class="panel__title" id="fac-title">Layout &amp; Facilities</h2>
                         </div>
+                        <div class="panel__body">
+                            <div class="formgrid formgrid--2">
+                                <div class="form__field">
+                                    <label class="field__label" for="layout-type">Layout Type<span class="field__required" aria-hidden="true">*</span></label>
+                                    <select class="field__select" id="layout-type" asp-for="LayoutType" required>
+                                        <option value="">Select layout...</option>
+                                        <option value="Theatre">Theatre</option>
+                                        <option value="Banquet rounds">Banquet rounds</option>
+                                        <option value="Standing / general admission">Standing / general admission</option>
+                                    </select>
+                                </div>
+                                <div class="form__field">
+                                    <label class="field__label" for="age-restriction">Age Restriction<span class="field__required" aria-hidden="true">*</span></label>
+                                    <select class="field__select" id="age-restriction" asp-for="AgeRestriction" required>
+                                        <option value="All ages">All ages</option>
+                                        <option value="13+">13+</option>
+                                        <option value="16+">16+</option>
+                                        <option value="18+">18+</option>
+                                        <option value="21+">21+</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                        <div class="covers" id="cover-gallery" hidden></div>
-                    </div>
-                </section>
+                            <div class="formgrid formgrid--2 u-mt-5">
+                                <div class="form__field">
+                                    <label class="field__label" for="parking">Parking Options</label>
+                                    <select class="field__select" id="parking" asp-for="Parking">
+                                        <option value="Free on-site">Free on-site</option>
+                                        <option value="No parking">No parking</option>
+                                        <option value="Paid parking">Paid parking</option>
+                                        <option value="Valet parking">Valet parking</option>
+                                    </select>
+                                </div>
+                                <div class="form__field">
+                                    <label class="field__label" for="washrooms">Washroom Facilities</label>
+                                    <select class="field__select" id="washrooms" asp-for="Washrooms">
+                                        <option value="Available">Available</option>
+                                        <option value="UnAvailable">UnAvailable</option>
+                                        <option value="Standard">Standard</option>
+                                        <option value="VIP restrooms">VIP restrooms</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                <p class="notice notice--info notice--flat">
-                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                    Venues, halls and their capacities are set in the next step, where each time
-                    slot is allocated to a hall.
-                </p>
+                            <div class="formgrid formgrid--2 u-mt-5">
+                                <div class="form__field">
+                                    <label class="field__label" for="accessibility">Accessibility</label>
+                                    <select class="field__select" id="accessibility" asp-for="Accessibility">
+                                        <option value="Step-free access &amp; accessible washrooms">Step-free access &amp; accessible washrooms</option>
+                                        <option value="Step-free access only">Step-free access only</option>
+                                        <option value="Sign-language interpretation on request">Sign-language interpretation on request</option>
+                                        <option value="Not accessible &mdash; stairs only">Not accessible &mdash; stairs only</option>
+                                    </select>
+                                </div>
+                                <div class="form__field">
+                                    <label class="field__label" for="catering">Catering</label>
+                                    <select class="field__select" id="catering" asp-for="Catering">
+                                        <option value="Full catering included">Full catering included</option>
+                                        <option value="Refreshments only">Refreshments only</option>
+                                        <option value="Food available for purchase">Food available for purchase</option>
+                                        <option value="No catering">No catering</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
+                    <section class="panel" aria-labelledby="cover-title">
+                        <div class="panel__head">
+                            <span class="tile tile--accent" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg></span>
+                            <h2 class="panel__title" id="cover-title">Cover Image<span class="field__required" aria-hidden="true">*</span></h2>
+                        </div>
+                        <div class="panel__body">
+                            <div class="dropzone" id="cover-dropzone">
+                                <p class="dropzone__title">Upload a cover image</p>
+                                <label class="btn btn--primary" for="cover-upload">Browse Files</label>
+                                <!-- Required attribute is conditionally added only when no existing image exists -->
+                                <input class="u-visually-hidden"
+                                       id="cover-upload"
+                                       name="CoverUpload"
+                                       type="file"
+                                       accept="image/png,image/jpeg"
+                                       data-image-dropzone="cover-dropzone" @(hasExistingImage ? "" : "required")>
+                            </div>
+
+                            <div class="covers" id="cover-gallery" @(hasExistingImage ? "" : "hidden")>
+                                @if (hasExistingImage)
+                                {
+                                    <div class="cover-preview">
+                                        <img src="@existingImageUrl" id="img-cover-preview" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
+                                        <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove / Replace</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </section>
+                </fieldset>
             </form>
         </div>
     </main>
     <footer class="wizard__foot">
-        <a class="btn btn--outline" asp-page="/CreateEvent/EventType" data-wizard-link><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
+        <a class="btn btn--outline" asp-page="/CreateEvent/EventType" data-wizard-link>Back</a>
         <div class="wizard__foot-end">
-            <button type="submit" form="basicDetailsForm" class="btn btn--primary">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+            <button type="submit" form="basicDetailsForm" class="btn btn--primary" id="btn-submit">@(isEdit ? "Update & Continue" : "Continue")</button>
         </div>
     </footer>
 </div>
 
 @section Scripts {
     <script>
+        // Global Toast Notification Helper
+        function showToast(message, type = 'error', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast-card toast-card--${type}`;
+
+            toast.innerHTML = `
+                        <span>${message}</span>
+                        <button type="button" class="toast-card__close" onclick="this.parentElement.remove()">&times;</button>
+                    `;
+
+            container.appendChild(toast);
+
+            // Auto-dismiss after duration
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                toast.addEventListener('animationend', () => toast.remove());
+            }, duration);
+        }
+
         const COUNTRY_TIMEZONES = {
             NG: "Africa/Lagos · WAT (UTC+1)",
             GH: "Africa/Accra · GMT (UTC+0)",
@@ -250,17 +274,112 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll("[data-city]").forEach((citySelect) => {
-                const timezoneInput = document.getElementById(citySelect.dataset.city);
-                if (!timezoneInput) return;
 
-                citySelect.addEventListener("change", () => applyTimezone(citySelect, timezoneInput));
-                applyTimezone(citySelect, timezoneInput);
-            });
+            // -------------------------------------------------------------
+            // 0. EDIT MODE TOGGLE
+            // -------------------------------------------------------------
+            const toggleEditBtn = document.getElementById('btn-toggle-edit');
+            const fieldset = document.getElementById('form-fieldset');
 
+            if (toggleEditBtn && fieldset) {
+                toggleEditBtn.addEventListener('click', () => {
+                    fieldset.removeAttribute('disabled');
+                    toggleEditBtn.style.display = 'none';
+                    showToast("Edit mode enabled.", "info");
+                });
+            }
+
+            // -------------------------------------------------------------
+            // 1. SERVER-SIDE TOAST TRIGGER
+            // -------------------------------------------------------------
+            @if (!string.IsNullOrWhiteSpace(Model.ApiError))
+                {
+                    <text>
+                            showToast("@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(Model.ApiError))", "error", 6000);
+                    </text>
+            }
+
+                    // -------------------------------------------------------------
+                    // 2. CLIENT-SIDE FORM VALIDATION
+                    // -------------------------------------------------------------
+
+const form = document.getElementById('basicDetailsForm');
+
+form.addEventListener('submit', (e) => {
+    // 1. Un-disable fieldset so browser includes all inputs in the POST payload
+    const fieldset = document.getElementById('form-fieldset');
+    if (fieldset && fieldset.hasAttribute('disabled')) {
+        fieldset.removeAttribute('disabled');
+    }
+
+    const eventTitle = document.getElementById('event-title').value.trim();
+    const category = document.getElementById('category').value;
+    const tagline = document.getElementById('tagline').value.trim();
+    const city = document.getElementById('event-city').value;
+
+    if (!eventTitle) {
+        e.preventDefault();
+        if (fieldset) fieldset.setAttribute('disabled', 'disabled'); // Re-disable if client validation fails
+        showToast("Please enter an Event Title.", "warning");
+        return;
+    }
+
+    if (!category) {
+        e.preventDefault();
+        if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+        showToast("Please select a Category.", "warning");
+        return;
+    }
+
+    if (!tagline) {
+        e.preventDefault();
+        if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+        showToast("Please enter a Tagline.", "warning");
+        return;
+    }
+
+    if (!city) {
+        e.preventDefault();
+        if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+        showToast("Please select a Primary City.", "warning");
+        return;
+    }
+});
+
+            // -------------------------------------------------------------
+            // 3. FILE UPLOAD & VALIDATION (Size & Type)
+            // -------------------------------------------------------------
             const dropzone = document.getElementById('cover-dropzone');
             const fileInput = document.getElementById('cover-upload');
             const gallery = document.getElementById('cover-gallery');
+
+            function validateAndProcessFile(file) {
+                if (!file) {
+                    gallery.hidden = true;
+                    gallery.innerHTML = "";
+                    return false;
+                }
+
+                // File type validation
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                if (!allowedTypes.includes(file.type)) {
+                    showToast(`Invalid file format: '${file.name}'. Only JPG, JPEG, and PNG are allowed.`, 'error');
+                    fileInput.value = "";
+                    renderPreview(null);
+                    return false;
+                }
+
+                // File size validation (5 MB)
+                const maxBytes = 5 * 1024 * 1024;
+                if (file.size > maxBytes) {
+                    showToast(`File '${file.name}' exceeds the maximum allowed size of 5 MB.`, 'error');
+                    fileInput.value = "";
+                    renderPreview(null);
+                    return false;
+                }
+
+                return true;
+            }
 
             function renderPreview(file) {
                 if (!file) {
@@ -272,10 +391,10 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     gallery.innerHTML = `
-                        <div class="cover-preview">
-                            <img src="${e.target.result}" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
-                            <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove</button>
-                        </div>`;
+                                <div class="cover-preview">
+                                    <img src="${e.target.result}" id="img-cover-preview" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
+                                    <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove</button>
+                                </div>`;
                     gallery.hidden = false;
 
                     document.getElementById('cover-remove').addEventListener('click', () => {
@@ -287,24 +406,36 @@
             }
 
             if (dropzone && fileInput) {
-                // Handles selection via "Browse Files" click
                 fileInput.addEventListener('change', () => {
                     const file = fileInput.files && fileInput.files[0];
-                    renderPreview(file);
+                    if (validateAndProcessFile(file)) {
+                        renderPreview(file);
+                    }
                 });
 
-                // Handles drag-and-drop
                 dropzone.addEventListener('dragover', (e) => e.preventDefault());
                 dropzone.addEventListener('drop', (e) => {
                     e.preventDefault();
                     if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                        const dt = new DataTransfer();
-                        dt.items.add(e.dataTransfer.files[0]); // only the first file — single cover image
-                        fileInput.files = dt.files;
-                        renderPreview(fileInput.files[0]);
+                        const file = e.dataTransfer.files[0];
+                        if (validateAndProcessFile(file)) {
+                            const dt = new DataTransfer();
+                            dt.items.add(file);
+                            fileInput.files = dt.files;
+                            renderPreview(file);
+                        }
                     }
                 });
             }
+
+            // Timezone Sync
+            document.querySelectorAll("[data-city]").forEach((citySelect) => {
+                const timezoneInput = document.getElementById(citySelect.dataset.city);
+                if (!timezoneInput) return;
+
+                citySelect.addEventListener("change", () => applyTimezone(citySelect, timezoneInput));
+                applyTimezone(citySelect, timezoneInput);
+            });
         });
     </script>
 }
