@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Linq
 @model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubBroadcastModel
 @{
     Layout = "_Layout";
@@ -8,6 +9,12 @@
 }
 
 <div data-view-panel="broadcast" data-role-only="admin manager" hidden>
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="notice notice--error u-mb-4">
+            <p>@Model.ApiError</p>
+        </div>
+    }
     <div class="hubhead">
         <div class="hubhead__body">
             <h2 class="hubhead__title">Broadcast</h2>
@@ -79,96 +86,433 @@
             </button>
         </div>
         <div class="panel__body">
-            <div class="msg">
-                <span class="msg__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg></span>
-                <span class="msg__body">
-                    <span class="msg__title">Hall B has moved to the second floor</span>
-                    <span class="msg__meta">WhatsApp + Email &middot; 14 minutes ago</span>
-                </span>
-                <span class="msg__stats">
-                    <span class="msg__stat">
-                        <span class="msg__num">847</span>
-                        <span class="msg__unit">sent</span>
-                    </span>
-                    <span class="msg__stat">
-                        <span class="msg__num msg__num--opened">612</span>
-                        <span class="msg__unit">opened</span>
-                    </span>
-                </span>
-                <span class="rowactions">
-                    <button class="iconbtn" type="button"
-                            data-action="Delivery report for &ldquo;Hall B has moved to the second floor&rdquo; opened">
-                        <span class="u-visually-hidden">Delivery report for Hall B has moved to the second floor</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
-                    </button>
-                    <button class="iconbtn" type="button"
-                            data-broadcast-template="Hall B has moved to the second floor"
-                            data-modal-open="broadcast-modal">
-                        <span class="u-visually-hidden">Send Hall B has moved to the second floor again</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
-                    </button>
-                </span>
-            </div>
-            <div class="msg">
-                <span class="msg__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg></span>
-                <span class="msg__body">
-                    <span class="msg__title">Lunch is now being served in the atrium</span>
-                    <span class="msg__meta">WhatsApp &middot; 1 hour ago</span>
-                </span>
-                <span class="msg__stats">
-                    <span class="msg__stat">
-                        <span class="msg__num">847</span>
-                        <span class="msg__unit">sent</span>
-                    </span>
-                    <span class="msg__stat">
-                        <span class="msg__num msg__num--opened">731</span>
-                        <span class="msg__unit">opened</span>
-                    </span>
-                </span>
-                <span class="rowactions">
-                    <button class="iconbtn" type="button"
-                            data-action="Delivery report for &ldquo;Lunch is now being served in the atrium&rdquo; opened">
-                        <span class="u-visually-hidden">Delivery report for Lunch is now being served in the atrium</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
-                    </button>
-                    <button class="iconbtn" type="button"
-                            data-broadcast-template="Lunch is now being served in the atrium"
-                            data-modal-open="broadcast-modal">
-                        <span class="u-visually-hidden">Send Lunch is now being served in the atrium again</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
-                    </button>
-                </span>
-            </div>
-            <div class="msg">
-                <span class="msg__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg></span>
-                <span class="msg__body">
-                    <span class="msg__title">Doors open &mdash; welcome to Tech Summit</span>
-                    <span class="msg__meta">Email &middot; Yesterday, 08:30</span>
-                </span>
-                <span class="msg__stats">
-                    <span class="msg__stat">
-                        <span class="msg__num">1,000</span>
-                        <span class="msg__unit">sent</span>
-                    </span>
-                    <span class="msg__stat">
-                        <span class="msg__num msg__num--opened">884</span>
-                        <span class="msg__unit">opened</span>
-                    </span>
-                </span>
-                <span class="rowactions">
-                    <button class="iconbtn" type="button"
-                            data-action="Delivery report for &ldquo;Doors open &mdash; welcome to Tech Summit&rdquo; opened">
-                        <span class="u-visually-hidden">Delivery report for Doors open &mdash; welcome to Tech Summit</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
-                    </button>
-                    <button class="iconbtn" type="button"
-                            data-broadcast-template="Doors open &mdash; welcome to Tech Summit"
-                            data-modal-open="broadcast-modal">
-                        <span class="u-visually-hidden">Send Doors open &mdash; welcome to Tech Summit again</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
-                    </button>
-                </span>
-            </div>
+            @if (Model.broadcastResp.Broadcasts == null || !Model.broadcastResp.Broadcasts.Any())
+            {
+                <p class="u-text-muted">No broadcasts sent yet.</p>
+            }
+            else
+            {
+                @foreach (var broadcast in Model.broadcastResp.Broadcasts)
+                {
+                    var channelLabel = broadcast.Channels != null && broadcast.Channels.Any()
+                        ? string.Join(" + ", broadcast.Channels)
+                        : "—";
+                    <div class="msg">
+                        <span class="msg__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg></span>
+                        <span class="msg__body">
+                            <span class="msg__title">@broadcast.Message</span>
+                            <span class="msg__meta">@channelLabel &middot; @broadcast.SentAgo</span>
+                        </span>
+                        <span class="msg__stats">
+                            <span class="msg__stat">
+                                <span class="msg__num">@broadcast.Sent.ToString("N0")</span>
+                                <span class="msg__unit">sent</span>
+                            </span>
+                            <span class="msg__stat">
+                                <span class="msg__num msg__num--opened">@broadcast.Opened.ToString("N0")</span>
+                                <span class="msg__unit">opened</span>
+                            </span>
+                        </span>
+                        <span class="rowactions">
+                            <button class="iconbtn" type="button"
+                                    data-action="Delivery report for &ldquo;@broadcast.Message&rdquo; opened">
+                                <span class="u-visually-hidden">Delivery report for @broadcast.Message</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg>
+                            </button>
+                            <button class="iconbtn" type="button"
+                                    data-broadcast-template="@broadcast.Message"
+                                    data-modal-open="broadcast-modal">
+                                <span class="u-visually-hidden">Send @broadcast.Message again</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                            </button>
+                        </span>
+                    </div>
+                }
+            }
         </div>
     </section>
+</div>
+<div class="modal" id="broadcast-modal" role="dialog" aria-modal="true"
+     aria-labelledby="broadcast-title" data-modal hidden>
+    <div class="modal__scrim" data-modal-close></div>
+    <div class="modal__dialog modal__dialog--wide">
+        <div class="modal__head">
+            <div>
+                <h2 class="modal__title" id="broadcast-title">Compose Broadcast</h2>
+                <p class="modal__sub">
+                    Write the message on the left, choose who gets it on the right
+                </p>
+            </div>
+            <button class="iconbtn" type="button" data-modal-close>
+                <span class="u-visually-hidden">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+        </div>
+
+        <div class="modal__body">
+            <div class="composegrid">
+                <div class="composegrid__col">
+                    <fieldset class="fieldset">
+                        <legend class="fieldset__legend">How it goes out</legend>
+                        <div class="channelpick">
+                            <label class="sendcard">
+                                <input type="checkbox" name="bc-whatsapp" checked>
+                                <span class="sendcard__body">
+                                    <span class="sendcard__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.7a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.4-4.6A8.4 8.4 0 1 1 20.5 11.7z" /><path d="M9 9.2c0 3 2.4 5.4 5.3 5.4l.6-1.4-1.8-.8-.9.9a4.7 4.7 0 0 1-2-2l.9-.9-.8-1.8L9 9.2z" /></svg> WhatsApp</span>
+                                    <span class="sendcard__text">Arrives instantly, highest open rate</span>
+                                </span>
+                                <span class="sendcard__cost">&#8358;35 each</span>
+                            </label>
+                            <label class="sendcard">
+                                <input type="checkbox" name="bc-email" checked>
+                                <span class="sendcard__body">
+                                    <span class="sendcard__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6.5 8.5 6 8.5-6" /></svg> Email</span>
+                                    <span class="sendcard__text">Better for longer notices and attachments</span>
+                                </span>
+                                <span class="sendcard__cost">&#8358;1.50 / 1,000</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <div class="formgrid u-mt-5">
+                        <div class="form__field">
+                            <label class="field__label" for="bc-when">When</label>
+                            <select class="field__select" id="bc-when" name="bc-when">
+                                <option>Send now</option>
+                                <option>In 15 minutes</option>
+                                <option>At the start of the next session</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form__field u-mt-5">
+                        <label class="field__label" for="bc-message">Message</label>
+                        <textarea class="field__input field__input--tall" id="bc-message"
+                                  name="bc-message" rows="7"
+                                  placeholder="What do you want guests to know?"
+                                  data-broadcast-body></textarea>
+                        <span class="field__hint">
+                            Guest name and session name are merged in automatically.
+                        </span>
+                    </div>
+
+                    <p class="confirmbox u-mt-5">
+                        <span class="confirmbox__name">
+                            <b data-segcount>1,000</b> guests will receive this
+                        </span>
+                        <span class="confirmbox__meta" data-segcost>
+                            Cost is estimated from the segment beside it
+                        </span>
+                    </p>
+                </div>
+
+                <div class="composegrid__col composegrid__col--audience">
+                    <div class="segbuilder">
+                        <div class="segbuilder__head">
+                            <div>
+                                <p class="segbuilder__title">Who receives this</p>
+                                <p class="segbuilder__hint">
+                                    Pick nothing in a group to mean <b>any</b>. Options inside a group are
+                                    combined with OR, groups are combined with AND.
+                                </p>
+                            </div>
+                            <div class="segbuilder__saved">
+                                <label class="u-visually-hidden" for="seg-saved">Load a saved segment</label>
+                                <select class="field__select" id="seg-saved" name="seg-saved" data-segsaved>
+                                    <option value="">Saved segments&hellip;</option>
+                                    <option value="vip:yes checkin:out">VIPs not yet arrived</option>
+                                    <option value="hall:b checkin:in">Everyone in Hall B right now</option>
+                                    <option value="day:day2 session:sprint">Day 2 workshop attendees</option>
+                                    <option value="food:yes checkin:in">Ordered food, not yet collected</option>
+                                    <option value="rsvp:pending">Awaiting an RSVP reply</option>
+                                </select>
+                                <button class="btn btn--quiet btn--sm" type="button" data-segclear>
+                                    Clear all
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="seggroups">
+                            <fieldset class="seggroup" data-seggroup="tier">
+                                <legend class="seggroup__legend">
+                                    Ticket tier
+                                    <span class="seggroup__any" data-segany="tier">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-tier" value="tier:early"
+                                               data-segopt="tier">
+                                        <span>Early Bird</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-tier" value="tier:standard"
+                                               data-segopt="tier">
+                                        <span>Standard</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-tier" value="tier:vip"
+                                               data-segopt="tier">
+                                        <span>VIP</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-tier" value="tier:comp"
+                                               data-segopt="tier">
+                                        <span>Complimentary</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="vip">
+                                <legend class="seggroup__legend">
+                                    VIP status
+                                    <span class="seggroup__any" data-segany="vip">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-vip" value="vip:yes"
+                                               data-segopt="vip">
+                                        <span>VIP guests</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-vip" value="vip:no"
+                                               data-segopt="vip">
+                                        <span>General guests</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="checkin">
+                                <legend class="seggroup__legend">
+                                    Attendance
+                                    <span class="seggroup__any" data-segany="checkin">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-checkin" value="checkin:in"
+                                               data-segopt="checkin">
+                                        <span>Checked in</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-checkin" value="checkin:out"
+                                               data-segopt="checkin">
+                                        <span>Not yet arrived</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-checkin" value="checkin:noshow"
+                                               data-segopt="checkin">
+                                        <span>No-show on a past day</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="day">
+                                <legend class="seggroup__legend">
+                                    Day
+                                    <span class="seggroup__any" data-segany="day">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-day" value="day:day1"
+                                               data-segopt="day">
+                                        <span>Day 1 &middot; Opening Day</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-day" value="day:day2"
+                                               data-segopt="day">
+                                        <span>Day 2 &middot; Workshops</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="session">
+                                <legend class="seggroup__legend">
+                                    Session
+                                    <span class="seggroup__any" data-segany="session">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-session" value="session:keynote"
+                                               data-segopt="session">
+                                        <span>Morning Keynote</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-session" value="session:fintech"
+                                               data-segopt="session">
+                                        <span>Fintech Panel</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-session" value="session:breakout"
+                                               data-segopt="session">
+                                        <span>Breakout 1</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-session" value="session:sprint"
+                                               data-segopt="session">
+                                        <span>Design Sprint</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-session" value="session:clinic"
+                                               data-segopt="session">
+                                        <span>Investor Clinic</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="hall">
+                                <legend class="seggroup__legend">
+                                    Hall
+                                    <span class="seggroup__any" data-segany="hall">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-hall" value="hall:main"
+                                               data-segopt="hall">
+                                        <span>Main Hall</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-hall" value="hall:b"
+                                               data-segopt="hall">
+                                        <span>Hall B</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-hall" value="hall:breakout"
+                                               data-segopt="hall">
+                                        <span>Breakout Room 1</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-hall" value="hall:vip"
+                                               data-segopt="hall">
+                                        <span>VIP Lounge</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="rsvp">
+                                <legend class="seggroup__legend">
+                                    RSVP
+                                    <span class="seggroup__any" data-segany="rsvp">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-rsvp" value="rsvp:accepted"
+                                               data-segopt="rsvp">
+                                        <span>Accepted</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-rsvp" value="rsvp:pending"
+                                               data-segopt="rsvp">
+                                        <span>Awaiting reply</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-rsvp" value="rsvp:declined"
+                                               data-segopt="rsvp">
+                                        <span>Declined</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="food">
+                                <legend class="seggroup__legend">
+                                    Food orders
+                                    <span class="seggroup__any" data-segany="food">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-food" value="food:yes"
+                                               data-segopt="food">
+                                        <span>Has ordered</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-food" value="food:no"
+                                               data-segopt="food">
+                                        <span>Has not ordered</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="addon">
+                                <legend class="seggroup__legend">
+                                    Add-ons
+                                    <span class="seggroup__any" data-segany="addon">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-addon" value="addon:tote"
+                                               data-segopt="addon">
+                                        <span>Conference Tote Bag</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-addon" value="addon:workshop"
+                                               data-segopt="addon">
+                                        <span>Workshop Pass</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-addon" value="addon:none"
+                                               data-segopt="addon">
+                                        <span>No add-on</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="seggroup" data-seggroup="seat">
+                                <legend class="seggroup__legend">
+                                    Seating
+                                    <span class="seggroup__any" data-segany="seat">Any</span>
+                                </legend>
+                                <div class="segchips">
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-seat" value="seat:yes"
+                                               data-segopt="seat">
+                                        <span>Has an assigned seat</span>
+                                    </label>
+                                    <label class="segchip">
+                                        <input type="checkbox" name="seg-seat" value="seat:no"
+                                               data-segopt="seat">
+                                        <span>Unseated</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <p class="segmatch" data-segmatch>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                            <span class="segmatch__body">
+                                <span class="segmatch__count"><b data-segcount>1,000</b> of 1,000 guests match</span>
+                                <span class="segmatch__detail" data-segdetail>
+                                    No filters &mdash; this reaches everyone registered
+                                </span>
+                            </span>
+                            <button class="btn btn--outline btn--sm" type="button"
+                                    data-modal-open="segsave-modal">
+                                Save this segment
+                            </button>
+                        </p>
+
+                        <p class="segchannels" data-segchannels>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg>
+                            <span>
+                                Reachable on the channels you picked:
+                                <b data-segwa>0</b> by WhatsApp &middot; <b data-segemail>0</b> by email
+                            </span>
+                        </p>
+
+                        <span class="u-visually-hidden" data-cohorts>
+                            <span data-cohort data-count="60" data-tokens="tier:vip vip:yes checkin:in day:day1 day:day2 session:keynote session:clinic hall:main hall:vip rsvp:accepted food:yes addon:tote seat:yes" data-label="VIP, arrived, keynote + clinic, ordered food, tote"></span>
+                            <span data-cohort data-count="25" data-tokens="tier:vip vip:yes checkin:in day:day1 session:keynote hall:main rsvp:accepted food:no addon:none seat:yes" data-label="VIP, arrived, keynote only, no order"></span>
+                            <span data-cohort data-count="15" data-tokens="tier:vip vip:yes checkin:out day:day1 day:day2 session:keynote session:clinic hall:main hall:vip rsvp:accepted food:no addon:tote seat:yes" data-label="VIP, not arrived"></span>
+                            <span data-cohort data-count="140" data-tokens="tier:early vip:no checkin:in day:day1 session:keynote session:fintech hall:main hall:b rsvp:accepted food:yes addon:tote seat:yes" data-label="Early Bird, arrived, keynote + fintech, ordered"></span>
+                            <span data-cohort data-count="60" data-tokens="tier:early vip:no checkin:in day:day1 session:keynote hall:main rsvp:accepted food:no addon:none seat:yes" data-label="Early Bird, arrived, keynote only"></span>
+                            <span data-cohort data-count="210" data-tokens="tier:standard vip:no checkin:in day:day1 day:day2 session:keynote session:sprint hall:main rsvp:accepted food:yes addon:workshop seat:yes" data-label="Standard, arrived, keynote + sprint, ordered, workshop pass"></span>
+                            <span data-cohort data-count="130" data-tokens="tier:standard vip:no checkin:in day:day1 session:fintech session:breakout hall:b hall:breakout rsvp:accepted food:yes addon:none seat:yes" data-label="Standard, arrived, fintech + breakout"></span>
+                            <span data-cohort data-count="90" data-tokens="tier:standard vip:no checkin:in day:day2 session:sprint hall:main rsvp:accepted food:no addon:none seat:no" data-label="Standard, arrived, sprint only, unseated"></span>
+                            <span data-cohort data-count="118" data-tokens="tier:standard vip:no checkin:out day:day1 day:day2 session:keynote session:sprint hall:main rsvp:accepted food:no addon:none seat:yes" data-label="Standard, not arrived yet"></span>
+                            <span data-cohort data-count="35" data-tokens="tier:standard vip:no checkin:noshow day:day1 session:keynote hall:main rsvp:accepted food:no addon:none seat:yes" data-label="Standard, no-show on Day 1"></span>
+                            <span data-cohort data-count="22" data-tokens="tier:comp vip:no checkin:in day:day1 session:keynote hall:main rsvp:accepted food:yes addon:none seat:no" data-label="Complimentary guests, arrived"></span>
+                            <span data-cohort data-count="68" data-tokens="tier:standard vip:no checkin:out day:day1 session:keynote hall:main rsvp:pending food:no addon:none seat:no" data-label="Invited, awaiting reply"></span>
+                            <span data-cohort data-count="27" data-tokens="tier:standard vip:no checkin:out rsvp:declined food:no addon:none seat:no" data-label="Invited, declined"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal__foot">
+            <button class="btn btn--outline" type="button" data-modal-close>Cancel</button>
+            <button class="btn btn--primary" type="button" data-modal-close
+                    data-action="Broadcast sent to 847 guests">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3z" /><path d="M10 13 21 3" /></svg> Send broadcast
+            </button>
+        </div>
+    </div>
 </div>

@@ -17,7 +17,7 @@
     EventHubDatesAndSlotsResp scopeData;
     try
     {
-        scopeData = helper.GetEventHubDateAndSlot(userId, eventId, slotId);
+        scopeData = helper.GetEventHubDateAndSlot(userId, eventId);
     }
     catch (Exception ex)
     {
@@ -27,9 +27,6 @@
     var eventDates = scopeData?.EventDates ?? new List<EventHubDates>();
     var totalSlots = eventDates.Sum(d => d.Slots?.Count ?? 0);
 
-    // Which day/slot is "current" is derived from the slotId in the URL,
-    // not assumed to be the first one — this is what keeps the bar in
-    // sync across every panel page instead of resetting on navigation.
     var currentDay = eventDates.FirstOrDefault(d => d.Slots != null && d.Slots.Any(s => s.SlotId == slotId))
                       ?? eventDates.FirstOrDefault();
     var currentDayKey = currentDay != null ? "day" + currentDay.EventDateId : null;
@@ -150,11 +147,11 @@
            asp-page="/Events/EventHub/EventHubInsights" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg> Insights
         </a>
-        <a class="subtabs__tab @(IsActiveTab("/Log") ? "active" : "")"
+        @* <a class="subtabs__tab @(IsActiveTab("/Log") ? "active" : "")"
            role="tab" aria-selected="@(IsActiveTab("/Log") ? "true" : "false")"
            asp-page="/Events/EventHub/EventHubLog" asp-route-eventId="@eventId" asp-route-slotId="@slotId">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg> Activity Log
-        </a>
+        </a> *@
         <a class="subtabs__tab @(IsActiveTab("/Settings") ? "active" : "")"
            role="tab" aria-selected="@(IsActiveTab("/Settings") ? "true" : "false")"
            data-role-only="admin"

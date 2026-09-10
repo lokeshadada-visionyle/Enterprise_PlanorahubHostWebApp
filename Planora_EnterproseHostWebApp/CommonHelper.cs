@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
 using Planora_EnterproseHostWebApp.Models;
 using Planora_EnterproseHostWebApp.Pages.Dashboard;
+using System.Data;
 using System.Diagnostics;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Xml.Linq;
 using LoginRequest = Planora_EnterproseHostWebApp.Models.LoginRequest;
 
 namespace Planora_EnterproseHostWebApp
@@ -885,7 +887,7 @@ namespace Planora_EnterproseHostWebApp
                 ("UserId", userId.ToString()),
                 ("PageNo", pageNo.ToString()),
                 ("PageSize", pageSize.ToString()),
-                ("Search", search.ToString()),
+                ("Search", search),
                 ("Status", status.ToString()),
                 ("hashValue", hashValue));
             string url = SERVICE_URL + "/Ent_GetMyEvents?" + query;
@@ -924,15 +926,14 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubDatesAndSlotsResp GetEventHubDateAndSlot(long userId, int eventId, int soltId)
+        public EventHubDatesAndSlotsResp GetEventHubDateAndSlot(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
                 ("UserId", userId.ToString()),
                 ("EventId", eventId.ToString()),
-                ("SlotId", soltId.ToString()),
                 ("hashValue", hashValue));
-            string url = SERVICE_URL + "/Ent_GetEventDatesAndSlots?" + query;
+            string url = SERVICE_URL + "/Ent_GetEventDatesAndSlotsDash?" + query;
             Debug.WriteLine(url);
             var response = _download_serialized_json_data<EventHubDatesAndSlotsResp>(url);
             Debug.WriteLine(JsonSerializer.Serialize(response));
@@ -1048,9 +1049,298 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public EventHubFoodMenuResponse GetEventHubFoodMenuResp(long userId, int eventId, int sloId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", sloId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_ViewSeatingLayout?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EventHubFoodMenuResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateReadyToOrder(EventHubFoodReadyToOrderreq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new EventHubFoodReadyToOrderreq
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                SLotId = req.SLotId,
+                Ready = req.Ready
+            };
+            string url = SERVICE_URL + "/Ent_ReadyToOrder";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubServingLogResponse GetEventHubServingListResp(long userId, int eventId, int sloId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", sloId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetServingList?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EventHubServingLogResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubVendorResponse GetVendorsAndStaffListResp(long userId, int eventId, int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetVendorsAndStaff?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubVendorResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response RegenerateVendorPin(long userId, int eventId, int vendorId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+
+            var payload = new
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                EventId = eventId,
+                VendorId = vendorId
+            };
+
+            string url = SERVICE_URL + "/Ent_RegenerateVendorPin";
+            Debug.WriteLine(url);
+            string jsonData = JsonSerializer.Serialize(payload);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventResponse GetEventListResp(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetEvent?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response AddVendorSatff(AddVendorRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+
+            var payload = new AddVendorRequest
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                Name = req.Name,
+                PhoneNo = req.PhoneNo,
+                Role = req.Role,
+                VendorId = req.VendorId,
+                Pin = req.Pin,
+                TicketTypeId = req.TicketTypeId,
+                WholeEvent = req.WholeEvent,
+                SlotIds = req.SlotIds ?? new List<int>()
+            };
+
+            string url = SERVICE_URL + "/Ent_AddVendorOrStaff";
+            string jsonData = JsonSerializer.Serialize(payload);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateVendor(EditVendorRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+
+            var payload = new EditVendorRequest
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                VendorId = req.VendorId,
+                VendorName = req.VendorName,
+                PhoneNo = req.PhoneNo,
+                Pin = req.Pin,
+                WholeEvent = req.WholeEvent,
+                SlotIds = req.SlotIds ?? new List<int>()
+            };
+
+            string url = SERVICE_URL + "/Ent_EditVendor";
+            string jsonData = JsonSerializer.Serialize(payload);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response RemoveVendor(long userId, int eventId, int vendorId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+
+            var payload = new
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                EventId = eventId,
+                VendorId = vendorId
+            };
+
+            string url = SERVICE_URL + "/Ent_RemoveVendor";
+            string jsonData = JsonSerializer.Serialize(payload);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubPollResponse GetEventHubPollResp(long userId, int eventId, int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetPolls?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubPollResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response AddPollsRequest(AddPollRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+
+            var payload = new AddPollRequest
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                Options = req.Options,
+                Question = req.Question,
+                SlotId = req.SlotId,
+                VisibleTo = req.VisibleTo,
+            };
+
+            string url = SERVICE_URL + "/Ent_AddPoll";
+            string jsonData = JsonSerializer.Serialize(payload);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubBroadcastResponse GetEventHubBroadCastResp(long userId, int eventId, int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetBroadcastsHistory?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubBroadcastResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubSalesResponse GetEventHubSalesResp(long userId, int eventId,int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetTotalSales?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubSalesResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubInsightResponse GetEventHubInsightsResp(long userId, int eventId, int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetEventInsights?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubInsightResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubPollAnalyticsResponse GetEventHubSalesSummaryResp(long userId, int eventId,int slotId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetPollsSummary?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubPollAnalyticsResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public EventHubAddonReportResponse GetEventHubAddonsPromoResp(long userId, int eventId, int slotId,string search = "")
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("Search",search.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetAddonsDashboard?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubAddonReportResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         #endregion
 
-        #region HostEvents
+        #region SalesAndRevenueEvents
         public SalesAndRevenueResp GetSalesAndRevenue(long userId)
         {
             string hashValue = GetSHA265(userId.ToString());

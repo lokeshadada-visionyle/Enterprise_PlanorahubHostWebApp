@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Linq
 @model Planora_EnterproseHostWebApp.Pages.Events.EventHub.EventHubSalesModel
 @{
     Layout = "_Layout";
@@ -8,6 +9,12 @@
 }
 
 <div data-view-panel="sales" data-role-only="admin finance viewer" hidden>
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="notice notice--error u-mb-4">
+            <p>@Model.ApiError</p>
+        </div>
+    }
     <div class="hubhead">
         <div class="hubhead__body">
             <h2 class="hubhead__title">Sales</h2>
@@ -30,15 +37,15 @@
     <p class="capbar" data-capbar="Ticket management">
         <span class="capbar__figures">
             <span class="capbar__figure">
-                <b data-cap-total>1000</b>
+                <b data-cap-total>@Model.salesResp.TotalTickets.ToString("N0")</b>
                 <span>Seats configured</span>
             </span>
             <span class="capbar__figure">
-                <b>847</b>
+                <b>@Model.salesResp.TicketsSold.ToString("N0")</b>
                 <span>Taken</span>
             </span>
             <span class="capbar__figure capbar__figure--tight">
-                <b data-cap-remaining>153</b>
+                <b data-cap-remaining>@((Model.salesResp.TotalTickets - Model.salesResp.TicketsSold).ToString("N0"))</b>
                 <span>Left</span>
             </span>
         </span>
@@ -60,43 +67,40 @@
     <section class="grid grid--4 u-mb-6" aria-label="Sales totals">
         <article class="figure">
             <h3 class="figure__label">Gross revenue</h3>
-            <p class="figure__value figure__value--success">&#8358;127,050,000</p>
+            <p class="figure__value figure__value--success">&#8358;@Model.salesResp.GrossRevenue</p>
         </article>
         <article class="figure">
             <h3 class="figure__label">Tickets sold</h3>
-            <p class="figure__value figure__value--brand">847 / 1,000</p>
+            <p class="figure__value figure__value--brand">@Model.salesResp.TicketsSold.ToString("N0") / @Model.salesResp.TotalTickets.ToString("N0")</p>
         </article>
         <article class="figure">
             <h3 class="figure__label">Add-on revenue</h3>
-            <p class="figure__value figure__value--info">&#8358;14,200,000</p>
+            <p class="figure__value figure__value--info">&#8358;@Model.salesResp.AddOnRev</p>
         </article>
         <article class="figure">
             <h3 class="figure__label">Refunds</h3>
-            <p class="figure__value figure__value--accent">&#8358;450,000</p>
+            <p class="figure__value figure__value--accent">&#8358;@Model.salesResp.Refunds</p>
         </article>
     </section>
 
     <section class="panel">
-        <div class="kv">
-            <span class="kv__body">
-                <span class="kv__value">Early Bird</span>
-                <span class="kv__key">200 of 200 sold &middot; closed</span>
-            </span>
-            <span><b>&#8358;1,000,000</b></span>
-        </div>
-        <div class="kv">
-            <span class="kv__body">
-                <span class="kv__value">Standard</span>
-                <span class="kv__key">547 of 500 sold &middot; overselling blocked</span>
-            </span>
-            <span><b>&#8358;5,470,000</b></span>
-        </div>
-        <div class="kv">
-            <span class="kv__body">
-                <span class="kv__value">VIP</span>
-                <span class="kv__key">100 of 100 sold &middot; closed</span>
-            </span>
-            <span><b>&#8358;2,500,000</b></span>
-        </div>
+        @if (Model.salesResp.TicketTypes == null || !Model.salesResp.TicketTypes.Any())
+        {
+            <p class="u-text-muted">No ticket types configured yet.</p>
+        }
+        else
+        {
+            @foreach (var type in Model.salesResp.TicketTypes)
+            {
+                var statusLabel = type.SoldTickets >= type.TotalTickets ? "sold out" : "on sale";
+                <div class="kv">
+                    <span class="kv__body">
+                        <span class="kv__value">@type.TypeName</span>
+                        <span class="kv__key">@type.SoldTickets.ToString("N0") of @type.TotalTickets.ToString("N0") sold &middot; @statusLabel</span>
+                    </span>
+                    <span><b>&#8358;@type.Revenue</b></span>
+                </div>
+            }
+        }
     </section>
 </div>

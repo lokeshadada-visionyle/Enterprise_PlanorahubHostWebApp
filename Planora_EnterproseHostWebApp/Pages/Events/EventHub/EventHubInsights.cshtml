@@ -7,7 +7,13 @@
     ViewData["PageDesc"] = "Tech Summit Africa 2025 &middot; Live";
 }
 
-<div data-view-panel="insights" hidden>
+<div data-view-panel="insights">
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="notice notice--error u-mb-4">
+            <p>@Model.ApiError</p>
+        </div>
+    }
     <div class="hubhead">
         <div class="hubhead__body">
             <h2 class="hubhead__title">Insights</h2>
@@ -27,6 +33,7 @@
         </div>
     </div>
 
+    <!-- Insights Metric Cards -->
     <section class="panel">
         <div class="insight" data-scope="all">
             <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg></span>
@@ -35,30 +42,30 @@
                 <span class="insight__meta">Checked in vs registered</span>
             </span>
             <span class="insight__figure">
-                <span class="insight__value">847 / 1,000</span>
-                <span class="insight__meta">84.7%</span>
+                <span class="insight__value">@Model.insightsResp.TotalCheckins.ToString("N0") / @Model.insightsResp.Registered.ToString("N0")</span>
+                <span class="insight__meta">@Model.insightsResp.AttendancePer%</span>
             </span>
         </div>
         <div class="insight" data-scope="day1:slot1">
             <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg></span>
             <span class="insight__body">
                 <span class="insight__name">Peak arrival</span>
-                <span class="insight__meta">Busiest 15-minute window</span>
+                <span class="insight__meta">Busiest check-in time</span>
             </span>
             <span class="insight__figure">
-                <span class="insight__value">09:15</span>
-                <span class="insight__meta">218 scans</span>
+                <span class="insight__value">@Model.insightsResp.BusiestTime</span>
+                <span class="insight__meta">@Model.insightsResp.TotalScans.ToString("N0") scans total</span>
             </span>
         </div>
         <div class="insight" data-scope="day1:slot1">
             <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /></svg></span>
             <span class="insight__body">
                 <span class="insight__name">Session rating</span>
-                <span class="insight__meta">Average of 4 live polls</span>
+                <span class="insight__meta">Average of @Model.insightsResp.TotalPolls live polls</span>
             </span>
             <span class="insight__figure">
-                <span class="insight__value">4.6 / 5</span>
-                <span class="insight__meta">738 votes</span>
+                <span class="insight__value">@Model.insightsResp.AvgRating / 5</span>
+                <span class="insight__meta">@Model.insightsResp.TotalVotes.ToString("N0") votes</span>
             </span>
         </div>
         <div class="insight" data-scope="day1:slot2">
@@ -68,8 +75,8 @@
                 <span class="insight__meta">Against 1 base + extras</span>
             </span>
             <span class="insight__figure">
-                <span class="insight__value">1,204</span>
-                <span class="insight__meta">92% of allowance</span>
+                <span class="insight__value">&mdash;</span>
+                <span class="insight__meta">Not returned by current API</span>
             </span>
         </div>
         <div class="insight" data-scope="day2:slot1">
@@ -79,8 +86,8 @@
                 <span class="insight__meta">Paid but never scanned</span>
             </span>
             <span class="insight__figure">
-                <span class="insight__value">153</span>
-                <span class="insight__meta">15.3%</span>
+                <span class="insight__value">@((Model.insightsResp.Registered - Model.insightsResp.TotalCheckins).ToString("N0"))</span>
+                <span class="insight__meta">@(100 - Model.insightsResp.AttendancePer)%</span>
             </span>
         </div>
         <div class="insight" data-scope="all">
@@ -90,14 +97,13 @@
                 <span class="insight__meta">Tote bags &amp; workshop passes</span>
             </span>
             <span class="insight__figure">
-                <span class="insight__value">210</span>
-                <span class="insight__meta">&#8358;855,000</span>
+                <span class="insight__value">@Model.insightsResp.AddonSalesCount.ToString("N0")</span>
+                <span class="insight__meta">&#8358;@Model.insightsResp.AddonRevenue</span>
             </span>
         </div>
     </section>
 
-    <!-- Three reports, one at a time. Stacked they were four screens of
-               scrolling to reach the payment summary. -->
+    <!-- Sub Navigation Tabs -->
     <nav class="subtabs subtabs--inner u-mt-6" role="tablist"
          aria-label="Insight reports" data-pick-group id="insighttabs">
         <button class="subtabs__tab" type="button" role="tab" aria-selected="true"
@@ -114,6 +120,7 @@
         </button>
     </nav>
 
+    <!-- Tab 1: Polls Panel -->
     <div data-pick-panel="polls" data-pick-owner="insighttabs">
         <section class="panel u-mt-6" aria-labelledby="pollreport-title">
             <div class="panel__head panel__head--plain">
@@ -133,19 +140,19 @@
             <div class="panel__body">
                 <div class="reportstats">
                     <span class="reportstat">
-                        <span class="reportstat__value">4</span>
+                        <span class="reportstat__value">@Model.pollAnalyticsResp.TotalPolls.ToString("N0")</span>
                         <span class="reportstat__label">Polls run</span>
                     </span>
                     <span class="reportstat">
-                        <span class="reportstat__value">2,632</span>
+                        <span class="reportstat__value">@Model.pollAnalyticsResp.TotalResponses.ToString("N0")</span>
                         <span class="reportstat__label">Total responses</span>
                     </span>
                     <span class="reportstat">
-                        <span class="reportstat__value">78%</span>
+                        <span class="reportstat__value">@Model.pollAnalyticsResp.VotesPer%</span>
                         <span class="reportstat__label">Of checked-in guests voted</span>
                     </span>
                     <span class="reportstat">
-                        <span class="reportstat__value">4.6<span class="reportstat__unit">/5</span></span>
+                        <span class="reportstat__value">@Model.pollAnalyticsResp.AvgRating<span class="reportstat__unit">/5</span></span>
                         <span class="reportstat__label">Average rating</span>
                     </span>
                 </div>
@@ -164,50 +171,38 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">Which session topic was most valuable?</th>
-                                <td>738</td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="42"></span>
-                                    </span>
-                                    <span class="reportbar__label">AI &amp; Machine Learning &middot; 42%</span>
-                                </td>
-                                <td><span class="badge badge--draft">Closed</span></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">How did you hear about Tech Summit?</th>
-                                <td>694</td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="52"></span>
-                                    </span>
-                                    <span class="reportbar__label">Social media &middot; 52%</span>
-                                </td>
-                                <td><span class="badge badge--draft">Closed</span></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Rate the venue and facilities</th>
-                                <td>612</td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="61"></span>
-                                    </span>
-                                    <span class="reportbar__label">5 stars &middot; 61%</span>
-                                </td>
-                                <td><span class="badge badge--draft">Closed</span></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Would you attend next year?</th>
-                                <td>588</td>
-                                <td>
-                                    <span class="reportbar">
-                                        <span class="reportbar__fill" data-fill="74"></span>
-                                    </span>
-                                    <span class="reportbar__label">Definitely &middot; 74%</span>
-                                </td>
-                                <td><span class="badge badge--live">Live</span></td>
-                            </tr>
+                            @if (Model.pollAnalyticsResp.Polls != null && Model.pollAnalyticsResp.Polls.Any())
+                            {
+                                @foreach (var poll in Model.pollAnalyticsResp.Polls)
+                                {
+                                    <tr>
+                                        <th scope="row">@poll.Question</th>
+                                        <td>@poll.TotalResponses.ToString("N0")</td>
+                                        <td>
+                                            <span class="reportbar">
+                                                <span class="reportbar__fill" data-fill="@poll.TopAnswerPer"></span>
+                                            </span>
+                                            <span class="reportbar__label">@poll.TopAnswer &middot; @poll.TopAnswerPer%</span>
+                                        </td>
+                                        <td>
+                                            @if (string.Equals(poll.Status, "Live", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <span class="badge badge--live">Live</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge--draft">@poll.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="u-text-center">No polls recorded yet.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -215,6 +210,7 @@
         </section>
     </div>
 
+    <!-- Tab 2: Food Orders Panel -->
     <div data-pick-panel="food" data-pick-owner="insighttabs" hidden>
         <section class="panel u-mt-6" aria-labelledby="foodreport-title">
             <div class="panel__head panel__head--plain">
@@ -371,6 +367,7 @@
         </section>
     </div>
 
+    <!-- Tab 3: Payments Panel -->
     <div data-pick-panel="pay" data-pick-owner="insighttabs" hidden>
         <section class="panel u-mt-6" aria-labelledby="payreport-title">
             <div class="panel__head panel__head--plain">
@@ -390,20 +387,20 @@
             <div class="panel__body">
                 <div class="reportstats">
                     <span class="reportstat">
-                        <span class="reportstat__value">&#8358;9.83M</span>
+                        <span class="reportstat__value">&#8358;@Model.salesResp.GrossRevenue</span>
                         <span class="reportstat__label">Gross collected</span>
                     </span>
                     <span class="reportstat reportstat--warn">
-                        <span class="reportstat__value">&minus;&#8358;450K</span>
+                        <span class="reportstat__value">&minus;&#8358;@Model.salesResp.Refunds</span>
                         <span class="reportstat__label">Refunded</span>
                     </span>
-                    <span class="reportstat reportstat--warn">
-                        <span class="reportstat__value">&minus;&#8358;187K</span>
-                        <span class="reportstat__label">Commission at 2%</span>
+                    <span class="reportstat">
+                        <span class="reportstat__value">@Model.salesResp.TicketsSold.ToString("N0") / @Model.salesResp.TotalTickets.ToString("N0")</span>
+                        <span class="reportstat__label">Tickets sold vs total</span>
                     </span>
                     <span class="reportstat reportstat--good">
-                        <span class="reportstat__value">&#8358;9.19M</span>
-                        <span class="reportstat__label">Net to your account</span>
+                        <span class="reportstat__value">&#8358;@Model.salesResp.AddOnRev</span>
+                        <span class="reportstat__label">Add-on revenue</span>
                     </span>
                 </div>
 
@@ -415,41 +412,30 @@
                         <thead>
                             <tr>
                                 <th scope="col">Tier</th>
+                                <th scope="col">Total Tickets</th>
                                 <th scope="col">Sold</th>
-                                <th scope="col">Gross</th>
-                                <th scope="col">Refunded</th>
-                                <th scope="col">Net</th>
+                                <th scope="col">Revenue</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">Early Bird</th>
-                                <td>200</td>
-                                <td>&#8358;1,000,000</td>
-                                <td>&mdash;</td>
-                                <td><b>&#8358;1,000,000</b></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Standard</th>
-                                <td>547</td>
-                                <td>&#8358;5,470,000</td>
-                                <td>&minus;&#8358;450,000</td>
-                                <td><b>&#8358;5,020,000</b></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">VIP</th>
-                                <td>100</td>
-                                <td>&#8358;2,500,000</td>
-                                <td>&mdash;</td>
-                                <td><b>&#8358;2,500,000</b></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Add-ons</th>
-                                <td>210</td>
-                                <td>&#8358;855,000</td>
-                                <td>&mdash;</td>
-                                <td><b>&#8358;855,000</b></td>
-                            </tr>
+                            @if (Model.salesResp.TicketTypes != null && Model.salesResp.TicketTypes.Any())
+                            {
+                                @foreach (var tier in Model.salesResp.TicketTypes)
+                                {
+                                    <tr>
+                                        <th scope="row">@tier.TypeName</th>
+                                        <td>@tier.TotalTickets.ToString("N0")</td>
+                                        <td>@tier.SoldTickets.ToString("N0")</td>
+                                        <td><b>&#8358;@tier.Revenue</b></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="u-text-center">No ticket sales data available.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
