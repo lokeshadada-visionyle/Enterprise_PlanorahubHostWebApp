@@ -8,11 +8,25 @@
 
 <main class="shell__main" data-page-roles="admin manager">
 
+    @if (!string.IsNullOrEmpty(Model.ApiError))
+    {
+        <div class="alert alert-danger mb-4" role="alert">
+            @Model.ApiError
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success mb-4" role="alert">
+            @Model.SuccessMessage
+        </div>
+    }
+
     <div class="page__head">
         <div>
             <h1 class="page__title">Check-in</h1>
             <p class="page__subtitle">
-                Tech Summit Africa 2025 &middot; <span data-scope-label>Day 1</span>
+                @Model.DatesAndSlots.EventName &middot; <span data-scope-label>@(Model.DatesAndSlots.EventDates?.SelectMany(d => d.Slots).FirstOrDefault(s => s.SlotId == Model.SlotId)?.SessionName ?? "")</span>
             </p>
         </div>
         <div class="page__actions">
@@ -30,37 +44,39 @@
     <div class="scopebar">
         <span class="scopebar__label">Day</span>
         <div class="scopebar__row" role="group" aria-label="Choose a day">
-            <button class="scopetab" type="button" aria-pressed="true"
-                    data-checkin-day="day1">
-                Day 1 &mdash; Opening Day
-                <span class="scopetab__date">Aug 15</span>
-            </button>
-            <button class="scopetab" type="button" aria-pressed="false"
-                    data-checkin-day="day2">
-                Day 2 &mdash; Workshops
-                <span class="scopetab__date">Aug 16</span>
-            </button>
-            <button class="scopetab" type="button" aria-pressed="false"
-                    data-checkin-day="day3">
-                Day 3 &mdash; Closing
-                <span class="scopetab__date">Aug 17</span>
-            </button>
+            @if (Model.DatesAndSlots.EventDates != null)
+            {
+                @foreach (var day in Model.DatesAndSlots.EventDates)
+                {
+                    @foreach (var slot in day.Slots)
+                    {
+                        bool isActive = slot.SlotId == Model.SlotId && day.EventDateId == Model.EventDateId;
+                        <a class="scopetab" asp-page="/Events/CheckIn"
+                           asp-route-eventId="@Model.EventId" asp-route-slotId="@slot.SlotId"
+                           asp-route-eventDateId="@day.EventDateId"
+                           aria-pressed="@(isActive ? "true" : "false")">
+                            @day.SessionName &mdash; @slot.SessionName
+                            <span class="scopetab__date">@day.Date</span>
+                        </a>
+                    }
+                }
+            }
         </div>
     </div>
 
     <p class="badgestrip">
         <span class="badgestrip__figures">
             <span class="badgestrip__figure">
-                <b>6</b><span>Badges printed</span>
+                <b>@Model.Dashboard.TotalBadges</b><span>Badges printed</span>
             </span>
             <span class="badgestrip__figure">
-                <b>2</b><span>Pending</span>
+                <b>@Model.Dashboard.PendingBadges</b><span>Pending</span>
             </span>
             <span class="badgestrip__figure badgestrip__figure--warn">
-                <b>2</b><span>Failed</span>
+                <b>@Model.Dashboard.FailedBadges</b><span>Failed</span>
             </span>
             <span class="badgestrip__figure">
-                <b>3</b><span>Reprints</span>
+                <b>@Model.Dashboard.BadgesReprinted</b><span>Reprints</span>
             </span>
         </span>
         <span class="badgestrip__body">
@@ -76,28 +92,28 @@
         <article class="metric">
             <span class="tile tile--lg tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
             <span>
-                <span class="metric__value">1,000</span>
+                <span class="metric__value">@Model.Dashboard.Registered</span>
                 <span class="metric__label">Registered</span>
             </span>
         </article>
         <article class="metric">
             <span class="tile tile--lg tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
             <span>
-                <span class="metric__value" data-count="checkedin">847</span>
+                <span class="metric__value" data-count="checkedin">@Model.Dashboard.TotalCheckIns</span>
                 <span class="metric__label">Checked in</span>
             </span>
         </article>
         <article class="metric">
             <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7.5V12l3 2" /></svg></span>
             <span>
-                <span class="metric__value" data-count="remaining">153</span>
+                <span class="metric__value" data-count="remaining">@Model.Dashboard.NotArrived</span>
                 <span class="metric__label">Not arrived</span>
             </span>
         </article>
         <article class="metric">
             <span class="tile tile--lg tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5 7 5-14L17 12h4" /></svg></span>
             <span>
-                <span class="metric__value">84.7%</span>
+                <span class="metric__value">@Model.Dashboard.AttendancePer</span>
                 <span class="metric__label">Attendance rate</span>
             </span>
         </article>
@@ -115,24 +131,27 @@
                 </div>
             </div>
             <div class="panel__body">
-                <div class="form__field">
-                    <label class="field__label" for="scan-ref">
-                        Ticket reference
-                    </label>
-                    <div class="field__control field__control--with-action">
-                        <input class="field__input field__input--ref" id="scan-ref"
-                               name="scan-ref" type="text" autocomplete="off"
-                               placeholder="e.g. TSA-4821" data-scan-ref>
-                        <button class="field__toggle" type="button" data-scan-lookup>
-                            <span class="u-visually-hidden">Look up this reference</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
-                        </button>
+                <form method="post" asp-page-handler="ManualCheckIn">
+                    <input type="hidden" name="eventId" value="@Model.EventId" />
+                    <input type="hidden" name="slotId" value="@Model.SlotId" />
+                    <div class="form__field">
+                        <label class="field__label" for="scan-ref">
+                            Ticket reference
+                        </label>
+                        <div class="field__control field__control--with-action">
+                            <input class="field__input field__input--ref" id="scan-ref"
+                                   name="reference" type="text" autocomplete="off"
+                                   placeholder="e.g. TSA-4821" required>
+                            <button class="field__toggle" type="submit">
+                                <span class="u-visually-hidden">Check in this reference</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                            </button>
+                        </div>
+                        <span class="field__hint">
+                            Type the guest&rsquo;s ticket reference and press check-in
+                        </span>
                     </div>
-                    <span class="field__hint">
-                        Try <b>TSA-4821</b> for a valid pass, <b>TSA-0000</b> for one that is not
-                        on this day
-                    </span>
-                </div>
+                </form>
 
                 <div class="verdict" data-verdict hidden>
                     <span class="verdict__mark" data-verdict-mark aria-hidden="true"></span>
@@ -160,54 +179,29 @@
                 </div>
             </div>
             <div class="panel__body">
-                <div class="doorrow">
-                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
-                    <span class="doorrow__body">
-                        <span class="doorrow__name">Main Hall entrance</span>
-                        <span class="doorrow__meta">Bayo Ogun</span>
-                    </span>
-                    <span class="doorrow__count">
-                        <b>512</b>
-                        <span class="doorrow__unit">scans</span>
-                    </span>
-                    <span class="badge badge--live">Open</span>
-                </div>
-                <div class="doorrow">
-                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
-                    <span class="doorrow__body">
-                        <span class="doorrow__name">Hall B entrance</span>
-                        <span class="doorrow__meta">Ndidi Musa</span>
-                    </span>
-                    <span class="doorrow__count">
-                        <b>208</b>
-                        <span class="doorrow__unit">scans</span>
-                    </span>
-                    <span class="badge badge--live">Open</span>
-                </div>
-                <div class="doorrow">
-                    <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
-                    <span class="doorrow__body">
-                        <span class="doorrow__name">VIP Lounge</span>
-                        <span class="doorrow__meta">Self check-in QR</span>
-                    </span>
-                    <span class="doorrow__count">
-                        <b>96</b>
-                        <span class="doorrow__unit">scans</span>
-                    </span>
-                    <span class="badge badge--live">Open</span>
-                </div>
-                <div class="doorrow">
-                    <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
-                    <span class="doorrow__body">
-                        <span class="doorrow__name">Registration desk</span>
-                        <span class="doorrow__meta">Unstaffed</span>
-                    </span>
-                    <span class="doorrow__count">
-                        <b>31</b>
-                        <span class="doorrow__unit">scans</span>
-                    </span>
-                    <span class="badge badge--draft">Closed</span>
-                </div>
+                @if (Model.Dashboard.Halls != null && Model.Dashboard.Halls.Any())
+                {
+                    @foreach (var hall in Model.Dashboard.Halls)
+                    {
+                        bool isOpen = (hall.Status ?? "").ToLower() == "open";
+                        <div class="doorrow">
+                            <span class="tile @(isOpen ? "tile--info" : "tile--muted")" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg></span>
+                            <span class="doorrow__body">
+                                <span class="doorrow__name">@hall.HallName</span>
+                                <span class="doorrow__meta">@hall.StaffName</span>
+                            </span>
+                            <span class="doorrow__count">
+                                <b>@hall.TotalScans</b>
+                                <span class="doorrow__unit">scans</span>
+                            </span>
+                            <span class="badge @(isOpen ? "badge--live" : "badge--draft")">@hall.Status</span>
+                        </div>
+                    }
+                }
+                else if (string.IsNullOrEmpty(Model.ApiError))
+                {
+                    <p class="u-muted">No doors configured for this slot.</p>
+                }
                 <p class="notice notice--info notice--flat u-mt-5">
                     <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
                     Door staff sign in with the PIN issued in
@@ -271,16 +265,22 @@
                         <option value="">All time slots</option>
                     </select>
                 </div>
-                <div class="toolbar__field">
+                <form method="get" class="toolbar__field">
+                    <input type="hidden" name="eventId" value="@Model.EventId" />
+                    <input type="hidden" name="slotId" value="@Model.SlotId" />
+                    <input type="hidden" name="eventDateId" value="@Model.EventDateId" />
                     <label class="u-visually-hidden" for="ci-tier">Filter by tier</label>
-                    <select class="field__select" id="ci-tier" name="ci-tier"
-                            data-ci-filter="tier">
-                        <option value="">All tiers</option>
-                        <option>VIP</option>
-                        <option>Standard</option>
-                        <option>Early Bird</option>
+                    <select class="field__select" id="ci-tier" name="ticketTypeId" onchange="this.form.submit()">
+                        <option value="0" selected="@(Model.TicketTypeId == 0)">All tiers</option>
+                        @if (Model.TicketTypes.TicketTypes != null)
+                        {
+                            @foreach (var tier in Model.TicketTypes.TicketTypes)
+                            {
+                                <option value="@tier.TicketTypeId" selected="@(tier.TicketTypeId == Model.TicketTypeId)">@tier.TypeName</option>
+                            }
+                        }
                     </select>
-                </div>
+                </form>
                 <button class="btn btn--quiet btn--sm" type="button" data-ci-clear>
                     Clear filters
                 </button>
@@ -292,8 +292,7 @@
 
             <p class="bulkbar u-mt-5">
                 <span>
-                    <b data-ci-count>10 guests</b> shown &middot;
-                    <span data-ci-scopelabel>all dates, all slots, all tiers</span>
+                    <b>@(Model.GuestList.Guests?.Count ?? 0) guests</b> shown
                 </span>
                 <span class="bulkbar__actions" data-ci-inout>
                     <span class="badge badge--nodot badge--live">
@@ -323,238 +322,68 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot1"
-                            data-ci-tier="VIP" data-ci-ref="TSA-4821">
-                            <td><span class="order__ref">TSA-4821</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">AO</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Amara Osei</span>
-                                        <span class="cellsub">amara.osei@acme.africa</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">VIP</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
-                            <td class="u-muted">Morning Keynote</td>
-                            <td><span class="u-nowrap">A-06</span></td>
-                            <td><span class="badge badge--live">Checked-in</span></td>
-                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot1"
-                            data-ci-tier="Standard" data-ci-ref="TSA-4822">
-                            <td><span class="order__ref">TSA-4822</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">TA</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Tunde Alabi</span>
-                                        <span class="cellsub">tunde.alabi@acme.africa</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
-                            <td class="u-muted">Morning Keynote</td>
-                            <td><span class="u-nowrap">B-08</span></td>
-                            <td><span class="badge badge--live">Checked-in</span></td>
-                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot1"
-                            data-ci-tier="Early Bird" data-ci-ref="TSA-4823">
-                            <td><span class="order__ref">TSA-4823</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">AO</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Ada Obi</span>
-                                        <span class="cellsub">ada.obi@acme.africa</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Early Bird</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
-                            <td class="u-muted">Morning Keynote</td>
-                            <td><span class="u-nowrap">E-11</span></td>
-                            <td><span class="badge badge--draft">Not checked-in</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <button class="btn btn--outline btn--sm" type="button"
-                                            data-checkin="Ada Obi" data-checkin-ref="TSA-4823">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot2"
-                            data-ci-tier="Standard" data-ci-ref="TSA-4824">
-                            <td><span class="order__ref">TSA-4824</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">BA</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Bayo Adeyemi</span>
-                                        <span class="cellsub">bayo.a@techsphere.io</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
-                            <td class="u-muted">Fintech Panel</td>
-                            <td><span class="u-nowrap">B-12</span></td>
-                            <td><span class="badge badge--draft">Not checked-in</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <button class="btn btn--outline btn--sm" type="button"
-                                            data-checkin="Bayo Adeyemi" data-checkin-ref="TSA-4824">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot2"
-                            data-ci-tier="Standard" data-ci-ref="TSA-4825">
-                            <td><span class="order__ref">TSA-4825</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">CE</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Chioma Eze</span>
-                                        <span class="cellsub">chioma@techsphere.io</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
-                            <td class="u-muted">Fintech Panel</td>
-                            <td><span class="u-nowrap">B-13</span></td>
-                            <td><span class="badge badge--live">Checked-in</span></td>
-                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day1" data-ci-slot="slot3"
-                            data-ci-tier="VIP" data-ci-ref="TSA-4826">
-                            <td><span class="order__ref">TSA-4826</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">DM</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">David Mensah</span>
-                                        <span class="cellsub">david@accra.co</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">VIP</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 1</span></td>
-                            <td class="u-muted">Evening Mixer</td>
-                            <td><span class="u-nowrap">A-03</span></td>
-                            <td><span class="badge badge--draft">Not checked-in</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <button class="btn btn--outline btn--sm" type="button"
-                                            data-checkin="David Mensah" data-checkin-ref="TSA-4826">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day2" data-ci-slot="slot1"
-                            data-ci-tier="Standard" data-ci-ref="TSA-4827">
-                            <td><span class="order__ref">TSA-4827</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">FB</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Fatima Bello</span>
-                                        <span class="cellsub">fatima@vendor.ng</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 2</span></td>
-                            <td class="u-muted">Design Sprint</td>
-                            <td><span class="u-nowrap">B-14</span></td>
-                            <td><span class="badge badge--live">Checked-in</span></td>
-                            <td><div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div></td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day2" data-ci-slot="slot1"
-                            data-ci-tier="Standard" data-ci-ref="TSA-4828">
-                            <td><span class="order__ref">TSA-4828</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">GM</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Grace Mensah</span>
-                                        <span class="cellsub">grace.mensah@partner.gh</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Standard</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 2</span></td>
-                            <td class="u-muted">Design Sprint</td>
-                            <td><span class="u-nowrap">B-15</span></td>
-                            <td><span class="badge badge--draft">Not checked-in</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <button class="btn btn--outline btn--sm" type="button"
-                                            data-checkin="Grace Mensah" data-checkin-ref="TSA-4828">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day2" data-ci-slot="slot2"
-                            data-ci-tier="VIP" data-ci-ref="TSA-4829">
-                            <td><span class="order__ref">TSA-4829</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">KA</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Kwame Asante</span>
-                                        <span class="cellsub">kwame.asante@partner.gh</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">VIP</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 2</span></td>
-                            <td class="u-muted">Investor Clinic</td>
-                            <td><span class="u-nowrap">A-07</span></td>
-                            <td><span class="badge badge--draft">Not checked-in</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <button class="btn btn--outline btn--sm" type="button"
-                                            data-checkin="Kwame Asante" data-checkin-ref="TSA-4829">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-guest-row data-ci-day="day3" data-ci-slot="slot1"
-                            data-ci-tier="Early Bird" data-ci-ref="TSA-4830">
-                            <td><span class="order__ref">TSA-4830</span></td>
-                            <td>
-                                <div class="cellstack">
-                                    <span class="avatar" aria-hidden="true">NE</span>
-                                    <span class="cellstack__body">
-                                        <span class="cellstack__name">Ngozi Eze</span>
-                                        <span class="cellsub">ngozi.eze@partner.io</span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="badge badge--nodot badge--role">Early Bird</span></td>
-                            <td class="u-muted"><span class="u-nowrap">Day 3</span></td>
-                            <td class="u-muted">Startup Pitches</td>
-                            <td><span class="u-nowrap">E-04</span></td>
-                            <td><span class="badge badge--draft">Not checked-in</span></td>
-                            <td>
-                                <div class="rowactions">
-                                    <button class="btn btn--outline btn--sm" type="button"
-                                            data-checkin="Ngozi Eze" data-checkin-ref="TSA-4830">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @if (Model.GuestList.Guests != null && Model.GuestList.Guests.Any())
+                        {
+                            @foreach (var guest in Model.GuestList.Guests)
+                            {
+                                bool isCheckedIn = (guest.Status ?? "").ToLower() == "checked-in" || (guest.Status ?? "").ToLower() == "checked in";
+                                string initials = string.Concat((guest.GuestName ?? "").Split(' ').Where(p => p.Length > 0).Select(p => p[0])).ToUpper();
+
+                                <tr data-guest-row data-ci-ref="@guest.TIcketReference">
+                                    <td><span class="order__ref">@guest.TIcketReference</span></td>
+                                    <td>
+                                        <div class="cellstack">
+                                            <span class="avatar" aria-hidden="true">@initials</span>
+                                            <span class="cellstack__body">
+                                                <span class="cellstack__name">@guest.GuestName</span>
+                                                <span class="cellsub">@guest.GuestEmail</span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge--nodot badge--role">@guest.TicketTypeName</span></td>
+                                    <td class="u-muted"><span class="u-nowrap">@guest.Date</span></td>
+                                    <td class="u-muted">@guest.SlotName</td>
+                                    <td><span class="u-nowrap">@guest.SeatNo</span></td>
+                                    <td>
+                                        @if (isCheckedIn)
+                                        {
+                                            <span class="badge badge--live">@guest.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge--draft">@guest.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (isCheckedIn)
+                                        {
+                                            <div class="rowactions"><span class="badge badge--nodot badge--live">Checked in</span></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="rowactions">
+                                                <form method="post" asp-page-handler="CheckInGuest">
+                                                    <input type="hidden" name="eventId" value="@Model.EventId" />
+                                                    <input type="hidden" name="slotId" value="@Model.SlotId" />
+                                                    <input type="hidden" name="eventDateId" value="@Model.EventDateId" />
+                                                    <input type="hidden" name="ticketTypeId" value="@Model.TicketTypeId" />
+                                                    <input type="hidden" name="guestId" value="@guest.GuestId" />
+                                                    <button class="btn btn--outline btn--sm" type="submit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10" /></svg> Check in
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (string.IsNullOrEmpty(Model.ApiError))
+                        {
+                            <tr>
+                                <td colspan="8" class="u-muted">No guests match this date/slot.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -612,16 +441,22 @@
                             <option value="">All time slots</option>
                         </select>
                     </div>
-                    <div class="toolbar__field">
+                    <form method="get" class="toolbar__field">
+                        <input type="hidden" name="eventId" value="@Model.EventId" />
+                        <input type="hidden" name="slotId" value="@Model.SlotId" />
+                        <input type="hidden" name="eventDateId" value="@Model.EventDateId" />
                         <label class="u-visually-hidden" for="cis-tier">Seating tier</label>
-                        <select class="field__select" id="cis-tier" name="cis-tier"
-                                data-cis-filter="tier">
-                            <option value="">All tiers</option>
-                            <option>VIP</option>
-                            <option>Standard</option>
-                            <option>Early Bird</option>
+                        <select class="field__select" id="cis-tier" name="ticketTypeId" onchange="this.form.submit()">
+                            <option value="0" selected="@(Model.TicketTypeId == 0)">All tiers</option>
+                            @if (Model.TicketTypes.TicketTypes != null)
+                            {
+                                @foreach (var tier in Model.TicketTypes.TicketTypes)
+                                {
+                                    <option value="@tier.TicketTypeId" selected="@(tier.TicketTypeId == Model.TicketTypeId)">@tier.TypeName</option>
+                                }
+                            }
                         </select>
-                    </div>
+                    </form>
                 </div>
 
                 <p class="bulkbar u-mt-5">
@@ -639,270 +474,53 @@
                 </p>
 
                 <div class="ciblocks u-mt-5">
-                    <div class="ciblock" data-ci-tierblock="VIP">
-                        <p class="ciblock__head">
-                            <span class="ciblock__tier">VIP</span>
-                            <span class="ciblock__meta">Row A &middot; 16 seats</span>
-                        </p>
-                        <div class="ciseats">
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-01" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-01</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-02" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-02</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat ciseat--held" type="button"
-                                    data-ciseat="A-03" data-ci-tier="VIP" data-ci-day="day1" data-ci-slot="slot3" data-ci-guest="David Mensah" data-ci-state="held">
-                                <span class="ciseat__id">A-03</span>
-                                <span class="ciseat__who">David Mensah &middot; Assigned, not arrived</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-04" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-04</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-05" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-05</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat ciseat--in" type="button"
-                                    data-ciseat="A-06" data-ci-tier="VIP" data-ci-day="day1" data-ci-slot="slot1" data-ci-guest="Amara Osei" data-ci-state="in">
-                                <span class="ciseat__id">A-06</span>
-                                <span class="ciseat__who">Amara Osei &middot; Checked in</span>
-                            </button>
-                            <button class="ciseat ciseat--held" type="button"
-                                    data-ciseat="A-07" data-ci-tier="VIP" data-ci-day="day2" data-ci-slot="slot2" data-ci-guest="Kwame Asante" data-ci-state="held">
-                                <span class="ciseat__id">A-07</span>
-                                <span class="ciseat__who">Kwame Asante &middot; Assigned, not arrived</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-08" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-08</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-09" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-09</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-10" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-10</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-11" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-11</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-12" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-12</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-13" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-13</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-14" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-14</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-15" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-15</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="A-16" data-ci-tier="VIP" data-ci-state="free">
-                                <span class="ciseat__id">A-16</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="ciblock" data-ci-tierblock="Standard">
-                        <p class="ciblock__head">
-                            <span class="ciblock__tier">Standard</span>
-                            <span class="ciblock__meta">Row B &middot; 16 seats</span>
-                        </p>
-                        <div class="ciseats">
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-01" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-01</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-02" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-02</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-03" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-03</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-04" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-04</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-05" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-05</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-06" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-06</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-07" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-07</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat ciseat--in" type="button"
-                                    data-ciseat="B-08" data-ci-tier="Standard" data-ci-day="day1" data-ci-slot="slot1" data-ci-guest="Tunde Alabi" data-ci-state="in">
-                                <span class="ciseat__id">B-08</span>
-                                <span class="ciseat__who">Tunde Alabi &middot; Checked in</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-09" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-09</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-10" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-10</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-11" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-11</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat ciseat--held" type="button"
-                                    data-ciseat="B-12" data-ci-tier="Standard" data-ci-day="day1" data-ci-slot="slot2" data-ci-guest="Bayo Adeyemi" data-ci-state="held">
-                                <span class="ciseat__id">B-12</span>
-                                <span class="ciseat__who">Bayo Adeyemi &middot; Assigned, not arrived</span>
-                            </button>
-                            <button class="ciseat ciseat--in" type="button"
-                                    data-ciseat="B-13" data-ci-tier="Standard" data-ci-day="day1" data-ci-slot="slot2" data-ci-guest="Chioma Eze" data-ci-state="in">
-                                <span class="ciseat__id">B-13</span>
-                                <span class="ciseat__who">Chioma Eze &middot; Checked in</span>
-                            </button>
-                            <button class="ciseat ciseat--in" type="button"
-                                    data-ciseat="B-14" data-ci-tier="Standard" data-ci-day="day2" data-ci-slot="slot1" data-ci-guest="Fatima Bello" data-ci-state="in">
-                                <span class="ciseat__id">B-14</span>
-                                <span class="ciseat__who">Fatima Bello &middot; Checked in</span>
-                            </button>
-                            <button class="ciseat ciseat--held" type="button"
-                                    data-ciseat="B-15" data-ci-tier="Standard" data-ci-day="day2" data-ci-slot="slot1" data-ci-guest="Grace Mensah" data-ci-state="held">
-                                <span class="ciseat__id">B-15</span>
-                                <span class="ciseat__who">Grace Mensah &middot; Assigned, not arrived</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="B-16" data-ci-tier="Standard" data-ci-state="free">
-                                <span class="ciseat__id">B-16</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="ciblock" data-ci-tierblock="Early Bird">
-                        <p class="ciblock__head">
-                            <span class="ciblock__tier">Early Bird</span>
-                            <span class="ciblock__meta">Row E &middot; 16 seats</span>
-                        </p>
-                        <div class="ciseats">
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-01" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-01</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-02" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-02</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-03" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-03</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat ciseat--held" type="button"
-                                    data-ciseat="E-04" data-ci-tier="Early Bird" data-ci-day="day3" data-ci-slot="slot1" data-ci-guest="Ngozi Eze" data-ci-state="held">
-                                <span class="ciseat__id">E-04</span>
-                                <span class="ciseat__who">Ngozi Eze &middot; Assigned, not arrived</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-05" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-05</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-06" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-06</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-07" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-07</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-08" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-08</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-09" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-09</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-10" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-10</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat ciseat--held" type="button"
-                                    data-ciseat="E-11" data-ci-tier="Early Bird" data-ci-day="day1" data-ci-slot="slot1" data-ci-guest="Ada Obi" data-ci-state="held">
-                                <span class="ciseat__id">E-11</span>
-                                <span class="ciseat__who">Ada Obi &middot; Assigned, not arrived</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-12" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-12</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-13" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-13</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-14" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-14</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-15" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-15</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                            <button class="ciseat" type="button"
-                                    data-ciseat="E-16" data-ci-tier="Early Bird" data-ci-state="free">
-                                <span class="ciseat__id">E-16</span>
-                                <span class="ciseat__who">Available</span>
-                            </button>
-                        </div>
-                    </div>
+                    @if (Model.SeatingLayout.TicketTypes != null && Model.SeatingLayout.TicketTypes.Any())
+                    {
+                        @foreach (var tier in Model.SeatingLayout.TicketTypes)
+                        {
+                            <div class="ciblock" data-ci-tierblock="@tier.TypeName">
+                                <p class="ciblock__head">
+                                    <span class="ciblock__tier">@tier.TypeName</span>
+                                    <span class="ciblock__meta">@tier.TotalSeats seats</span>
+                                </p>
+                                <div class="ciseats">
+                                    @if (tier.Seats != null)
+                                    {
+                                        @foreach (var seat in tier.Seats)
+                                        {
+                                            string stateLower = (seat.Status ?? "").ToLower();
+                                            string seatCss = stateLower switch
+                                            {
+                                                "in" => "ciseat ciseat--in",
+                                                "checked-in" => "ciseat ciseat--in",
+                                                "held" => "ciseat ciseat--held",
+                                                "free" => "ciseat",
+                                                _ => "ciseat"
+                                            };
+                                            string whoText = stateLower switch
+                                            {
+                                                "free" => "Available",
+                                                "held" => $"{seat.GuestName} \u00b7 Assigned, not arrived",
+                                                "in" => $"{seat.GuestName} \u00b7 Checked in",
+                                                "checked-in" => $"{seat.GuestName} \u00b7 Checked in",
+                                                _ => string.IsNullOrWhiteSpace(seat.GuestName) ? seat.Status : $"{seat.GuestName} \u00b7 {seat.Status}"
+                                            };
+
+                                            <button class="@seatCss" type="button"
+                                                    data-ciseat="@seat.SeatNo" data-ci-tier="@tier.TypeName" data-ci-state="@stateLower">
+                                                <span class="ciseat__id">@seat.SeatNo</span>
+                                                <span class="ciseat__who">@whoText</span>
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else if (string.IsNullOrEmpty(Model.ApiError))
+                    {
+                        <p class="u-muted">No seating layout configured for this slot.</p>
+                    }
                 </div>
 
                 <p class="seatlegend">
@@ -952,170 +570,52 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="u-nowrap">09:41</span></td>
-                                <td>
-                                    <div class="cellstack">
-                                        <span class="avatar" aria-hidden="true">AO</span>
-                                        <span class="cellstack__body">
-                                            <span class="cellstack__name">Amara Osei</span>
-                                            <span class="cellsub">VIP &middot; Seat A-06</span>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>Main Hall entrance</td>
-                                <td class="u-muted">Bayo Ogun</td>
-                                <td><span class="badge badge--live">Checked in</span></td>
-                                <td>
-                                    <div class="rowactions">
-                                        <button class="iconbtn" type="button"
-                                                data-action="Scan record for Amara Osei opened">
-                                            <span class="u-visually-hidden">Scan record for Amara Osei</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                        <button class="btn btn--quiet btn--sm" type="button"
-                                                data-action="Amara Osei check-in reversed"
-                                                data-action-tone="warn">
-                                            Undo
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="u-nowrap">09:40</span></td>
-                                <td>
-                                    <div class="cellstack">
-                                        <span class="avatar" aria-hidden="true">TA</span>
-                                        <span class="cellstack__body">
-                                            <span class="cellstack__name">Tunde Alabi</span>
-                                            <span class="cellsub">Standard &middot; Seat C-14</span>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>Main Hall entrance</td>
-                                <td class="u-muted">Bayo Ogun</td>
-                                <td><span class="badge badge--live">Checked in</span></td>
-                                <td>
-                                    <div class="rowactions">
-                                        <button class="iconbtn" type="button"
-                                                data-action="Scan record for Tunde Alabi opened">
-                                            <span class="u-visually-hidden">Scan record for Tunde Alabi</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                        <button class="btn btn--quiet btn--sm" type="button"
-                                                data-action="Tunde Alabi check-in reversed"
-                                                data-action-tone="warn">
-                                            Undo
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="u-nowrap">09:38</span></td>
-                                <td>
-                                    <div class="cellstack">
-                                        <span class="avatar" aria-hidden="true">GM</span>
-                                        <span class="cellstack__body">
-                                            <span class="cellstack__name">Grace Mensah</span>
-                                            <span class="cellsub">Standard &middot; Seat B-02</span>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>Hall B entrance</td>
-                                <td class="u-muted">Ndidi Musa</td>
-                                <td><span class="badge badge--out">Denied &mdash; wrong day</span></td>
-                                <td>
-                                    <div class="rowactions">
-                                        <button class="iconbtn" type="button"
-                                                data-action="Scan record for Grace Mensah opened">
-                                            <span class="u-visually-hidden">Scan record for Grace Mensah</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="u-nowrap">09:36</span></td>
-                                <td>
-                                    <div class="cellstack">
-                                        <span class="avatar" aria-hidden="true">KA</span>
-                                        <span class="cellstack__body">
-                                            <span class="cellstack__name">Kwame Asante</span>
-                                            <span class="cellsub">VIP &middot; Seat A-07</span>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>VIP Lounge</td>
-                                <td class="u-muted">Self check-in</td>
-                                <td><span class="badge badge--live">Checked in</span></td>
-                                <td>
-                                    <div class="rowactions">
-                                        <button class="iconbtn" type="button"
-                                                data-action="Scan record for Kwame Asante opened">
-                                            <span class="u-visually-hidden">Scan record for Kwame Asante</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                        <button class="btn btn--quiet btn--sm" type="button"
-                                                data-action="Kwame Asante check-in reversed"
-                                                data-action-tone="warn">
-                                            Undo
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="u-nowrap">09:35</span></td>
-                                <td>
-                                    <div class="cellstack">
-                                        <span class="avatar" aria-hidden="true">FB</span>
-                                        <span class="cellstack__body">
-                                            <span class="cellstack__name">Femi Bello</span>
-                                            <span class="cellsub">VIP &middot; Seat A-12</span>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>VIP Lounge</td>
-                                <td class="u-muted">Self check-in</td>
-                                <td><span class="badge badge--live">Checked in</span></td>
-                                <td>
-                                    <div class="rowactions">
-                                        <button class="iconbtn" type="button"
-                                                data-action="Scan record for Femi Bello opened">
-                                            <span class="u-visually-hidden">Scan record for Femi Bello</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                        <button class="btn btn--quiet btn--sm" type="button"
-                                                data-action="Femi Bello check-in reversed"
-                                                data-action-tone="warn">
-                                            Undo
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="u-nowrap">09:33</span></td>
-                                <td>
-                                    <div class="cellstack">
-                                        <span class="avatar" aria-hidden="true">NE</span>
-                                        <span class="cellstack__body">
-                                            <span class="cellstack__name">Ngozi Eze</span>
-                                            <span class="cellsub">Standard &middot; Seat D-09</span>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>Main Hall entrance</td>
-                                <td class="u-muted">Bayo Ogun</td>
-                                <td><span class="badge badge--paused">Already checked in</span></td>
-                                <td>
-                                    <div class="rowactions">
-                                        <button class="iconbtn" type="button"
-                                                data-action="Scan record for Ngozi Eze opened">
-                                            <span class="u-visually-hidden">Scan record for Ngozi Eze</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            @if (Model.ScanLogs.Guests != null && Model.ScanLogs.Guests.Any())
+                            {
+                                @foreach (var log in Model.ScanLogs.Guests)
+                                {
+                                    string initials = string.Concat((log.GuestName ?? "").Split(' ').Where(p => p.Length > 0).Select(p => p[0])).ToUpper();
+                                    string statusLower = (log.Status ?? "").ToLower();
+                                    string verdictBadgeCss = statusLower switch
+                                    {
+                                        "checked in" => "badge--live",
+                                        "already checked in" => "badge--paused",
+                                        _ when statusLower.StartsWith("denied") => "badge--out",
+                                        _ => "badge--default"
+                                    };
+
+                                    <tr>
+                                        <td><span class="u-nowrap">@log.Time</span></td>
+                                        <td>
+                                            <div class="cellstack">
+                                                <span class="avatar" aria-hidden="true">@initials</span>
+                                                <span class="cellstack__body">
+                                                    <span class="cellstack__name">@log.GuestName</span>
+                                                    <span class="cellsub">@log.TicketTypeName &middot; Seat @log.SeatNo</span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>@log.HallName</td>
+                                        <td class="u-muted">@log.CheckInBy</td>
+                                        <td><span class="badge @verdictBadgeCss">@log.Status</span></td>
+                                        <td>
+                                            <div class="rowactions">
+                                                <button class="iconbtn" type="button"
+                                                        data-action="Scan record for @log.GuestName opened">
+                                                    <span class="u-visually-hidden">Scan record for @log.GuestName</span>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else if (string.IsNullOrEmpty(Model.ApiError))
+                            {
+                                <tr>
+                                    <td colspan="6" class="u-muted">No scans recorded yet.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
