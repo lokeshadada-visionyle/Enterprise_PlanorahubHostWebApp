@@ -22,7 +22,6 @@ namespace Planora_EnterproseHostWebApp.Pages.Events.EventHub
 
             var helper = new CommonHelper();
 
-            // Fetch General Insights
             try
             {
                 var resp = helper.GetEventHubInsightsResp(userId.Value, eventId, slotId);
@@ -36,7 +35,6 @@ namespace Planora_EnterproseHostWebApp.Pages.Events.EventHub
                 ApiError = "Failed to load insights: " + ex.Message;
             }
 
-            // Fetch Sales Summary
             try
             {
                 var resp = helper.GetEventHubSalesSummaryResp(userId.Value, eventId, slotId);

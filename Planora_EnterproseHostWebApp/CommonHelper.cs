@@ -1314,16 +1314,33 @@ namespace Planora_EnterproseHostWebApp
                 ("SlotId", slotId.ToString()),
                 ("hashValue", hashValue));
 
-            string url = SERVICE_URL + "/Ent_GetTotalSales?" + query;
+            string url = SERVICE_URL + "/Ent_GetPollsSummary?" + query;
             Debug.WriteLine(url);
 
             var response = _download_serialized_json_data<EventHubPollAnalyticsResponse>(url);
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public EventHubAddonReportResponse GetEventHubAddonsPromoResp(long userId, int eventId, int slotId,string search = "")
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("SlotId", slotId.ToString()),
+                ("Search",search.ToString()),
+                ("hashValue", hashValue));
+
+            string url = SERVICE_URL + "/Ent_GetAddonsDashboard?" + query;
+            Debug.WriteLine(url);
+
+            var response = _download_serialized_json_data<EventHubAddonReportResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         #endregion
 
-        #region HostEvents
+        #region SalesAndRevenueEvents
         public SalesAndRevenueResp GetSalesAndRevenue(long userId)
         {
             string hashValue = GetSHA265(userId.ToString());

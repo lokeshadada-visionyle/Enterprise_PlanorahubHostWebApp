@@ -478,4 +478,28 @@ namespace Planora_EnterproseHostWebApp.Models
         public string TopAnswerPer { get; set; }
         public string Status { get; set; }
     }
+    public class EventHubAddonReportResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int TotalAddonsSold { get; set; }
+        public int TotalAddons { get; set; }
+        public string AddOnRev { get; set; }
+        public int PromoCodeUsed { get; set; }
+        public int TotalPromoCodes { get; set; }
+        public string Discount { get; set; }
+        public List<AddOnDetail> AddOns { get; set; } = new List<AddOnDetail>();
+    }
+    public class AddOnDetail
+    {
+        public int AddOnId { get; set; }
+        public string AddOnName { get; set; }
+        public string Price { get; set; }
+        public string SlotName { get; set; }
+        public int TotalAddons { get; set; }
+        public int SoldAddons { get; set; }
+        public string Revenue { get; set; }
+        public int StockLeft { get; set; }
+        public string AddOnStatus { get; set; }
+    }
 }
