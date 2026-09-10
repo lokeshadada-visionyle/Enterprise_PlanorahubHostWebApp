@@ -353,33 +353,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return new JsonResult(new { success = false, message = "An error occurred while saving schedule." });
             }
         }
-        public IActionResult OnGetGetSchedule()
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            var eventId = HttpContext.Session.GetInt32("createdEventId");
-
-            if (!userId.HasValue || !eventId.HasValue)
-            {
-                return new JsonResult(new { success = false, message = "Session expired." });
-            }
-
-            try
-            {
-                var helper = new CommonHelper();
-                var response = helper.GetEventDateAndSlots(userId.Value, eventId.Value);
-
-                if (response != null && (response.Status == 1 || response.Status == 200) && response.EventDates != null)
-                {
-                    return new JsonResult(new { success = true, data = response.EventDates }, PreserveCasingJsonOptions);
-                }
-
-                return new JsonResult(new { success = false, message = "No saved schedule found." });
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(new { success = false, message = ex.Message });
-            }
-        }
     }
 
     public class SaveVenuePayload

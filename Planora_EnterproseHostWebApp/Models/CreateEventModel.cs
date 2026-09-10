@@ -172,17 +172,23 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class GetCitiesResp
     {
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
         public string Message { get; set; }
-        public List<City> City {  get; set; }
+        public List<City> City { get; set; }
     }
+
     public class City
     {
         public int CityId { get; set; }
         public string CityName { get; set; }
-        public string CountryCode { get; set; }
+        [JsonPropertyName("CountryName")]
+        public string CountryName { get; set; }
+        [JsonPropertyName("CountryCode")]
+        private string CountryCode
+        {
+            set { if (string.IsNullOrEmpty(CountryName)) CountryName = value; }
+        }
     }
-
     public class SaveScheduleRequest
     {
         public int UserId { get; set; }

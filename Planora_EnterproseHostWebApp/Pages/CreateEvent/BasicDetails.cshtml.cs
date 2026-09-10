@@ -73,7 +73,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     if (eventDetails != null)
                     {
                         ViewData["EventName"] = eventDetails.EventName;
-                        ViewData["EventCategory"] = eventDetails.EventCategory; // Will be empty if API returns ""
+                        ViewData["EventCategory"] = eventDetails.EventCategory;
                         ViewData["TagLine"] = eventDetails.TagLine;
                         ViewData["CityId"] = eventDetails.CityId;
                         ViewData["Description"] = eventDetails.Description;
@@ -112,8 +112,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
 
@@ -160,8 +158,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
                     if (IsEditMode)
                     {
-                        // Edit mode: upload the new cover image immediately so we get a URL back,
-                        // which then gets passed into UpdateEventDetails below (instead of ImageBase64/FileName).
                         var uploadReq = new UploadCoverImageReq
                         {
                             UserId = userId.Value,
@@ -182,9 +178,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                             LoadDropdownData(userId.Value);
                             return Page();
                         }
-
-                        // NOTE: verify the actual property name for the returned URL on your
-                        // UploadCoverImageResp model - assumed "ImageUrl" here, adjust if different.
                         if (uploadResp == null || uploadResp.Status != 1 || string.IsNullOrWhiteSpace(uploadResp.ImageURL))
                         {
                             ApiError = !string.IsNullOrWhiteSpace(uploadResp?.Message)
@@ -248,16 +241,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     return Page();
                 }
 
-                if (updateResponse == null)
+                if (updateResponse == null || updateResponse.Status != 1)
                 {
-                    ApiError = "Unable to update event details. No response received.";
-                    LoadDropdownData(userId.Value);
-                    return Page();
-                }
-
-                if (updateResponse.Status != 1)
-                {
-                    ApiError = !string.IsNullOrWhiteSpace(updateResponse.Message)
+                    ApiError = !string.IsNullOrWhiteSpace(updateResponse?.Message)
                         ? updateResponse.Message
                         : "Unable to update event details.";
                     LoadDropdownData(userId.Value);
@@ -279,16 +265,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     return Page();
                 }
 
-                if (basicResponse == null)
+                if (basicResponse == null || basicResponse.Status != 1)
                 {
-                    ApiError = "Unable to save event details. No response received.";
-                    LoadDropdownData(userId.Value);
-                    return Page();
-                }
-
-                if (basicResponse.Status != 1)
-                {
-                    ApiError = !string.IsNullOrWhiteSpace(basicResponse.Message)
+                    ApiError = !string.IsNullOrWhiteSpace(basicResponse?.Message)
                         ? basicResponse.Message
                         : "Unable to save event details.";
                     LoadDropdownData(userId.Value);
@@ -344,6 +323,29 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (IsEditMode)
             {
+                // ATTACH EXISTING ITEM IDs BEFORE UPDATING
+                try
+                {
+                    var existingThingsResp = helper.GetEventThinksToKnowById(userId.Value, eventId);
+                    if (existingThingsResp != null && existingThingsResp.Things != null)
+                    {
+                        foreach (var thing in things)
+                        {
+                            var existingItem = existingThingsResp.Things.FirstOrDefault(t =>
+                                string.Equals(t.Category, thing.Category, StringComparison.OrdinalIgnoreCase));
+
+                            if (existingItem != null)
+                            {
+                                thing.ThingToKnowItemId = existingItem.ThingToKnowItemId;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Fail gracefully if fetching existing item IDs encounters an issue
+                }
+
                 var updateThingsReq = new AddThingToKnowReq
                 {
                     UserId = userId.Value,
@@ -355,7 +357,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
                 try
                 {
-                    // Make sure this calls HostUpdateThingsToKnow on your helper class
                     updateThingsResponse = helper.UpdateThingsToKnow(updateThingsReq);
                 }
                 catch (Exception ex)
@@ -396,16 +397,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     return Page();
                 }
 
-                if (thingsResponse == null)
+                if (thingsResponse == null || thingsResponse.Status != 1)
                 {
-                    ApiError = "Event was created, but no response was received while saving facility details.";
-                    LoadDropdownData(userId.Value);
-                    return Page();
-                }
-
-                if (thingsResponse.Status != 1)
-                {
-                    ApiError = !string.IsNullOrWhiteSpace(thingsResponse.Message)
+                    ApiError = !string.IsNullOrWhiteSpace(thingsResponse?.Message)
                         ? thingsResponse.Message
                         : "Event was created, but facility details could not be saved.";
                     LoadDropdownData(userId.Value);

@@ -65,7 +65,10 @@
                                         {
                                             @foreach (var category in Model.Categories)
                                             {
-                                                <option value="@category.CategoryId" selected="@(category.CategoryId.ToString() == existingCategory ? "selected" : null)">
+                                                bool isSelected = category.CategoryId.ToString() == existingCategory ||
+                                                                 string.Equals(category.CategoryName, existingCategory, StringComparison.OrdinalIgnoreCase);
+
+                                                <option value="@category.CategoryId" selected="@(isSelected ? "selected" : null)">
                                                     @category.CategoryName
                                                 </option>
                                             }
@@ -90,8 +93,8 @@
                                         {
                                             @foreach (var city in Model.Cities)
                                             {
-                                                <option value="@city.CityId" data-country="@city.CountryCode" selected="@(city.CityId.ToString() == existingCityId ? "selected" : null)">
-                                                    @city.CityName@(string.IsNullOrWhiteSpace(city.CountryCode) ? "" : $", {city.CountryCode}")
+                                                <option value="@city.CityId" data-country="@city.CountryName" selected="@(city.CityId.ToString() == existingCityId ? "selected" : null)">
+                                                    @city.CityName@(string.IsNullOrWhiteSpace(city.CountryName) ? "" : $", {city.CountryName}")
                                                 </option>
                                             }
                                         }
@@ -194,7 +197,6 @@
                             <div class="dropzone" id="cover-dropzone">
                                 <p class="dropzone__title">Upload a cover image</p>
                                 <label class="btn btn--primary" for="cover-upload">Browse Files</label>
-                                <!-- Required attribute is conditionally added only when no existing image exists -->
                                 <input class="u-visually-hidden"
                                        id="cover-upload"
                                        name="CoverUpload"
@@ -228,7 +230,6 @@
 
 @section Scripts {
     <script>
-        // Global Toast Notification Helper
         function showToast(message, type = 'error', duration = 4000) {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -237,13 +238,12 @@
             toast.className = `toast-card toast-card--${type}`;
 
             toast.innerHTML = `
-                        <span>${message}</span>
-                        <button type="button" class="toast-card__close" onclick="this.parentElement.remove()">&times;</button>
-                    `;
+                                        <span>${message}</span>
+                                        <button type="button" class="toast-card__close" onclick="this.parentElement.remove()">&times;</button>
+                                    `;
 
             container.appendChild(toast);
 
-            // Auto-dismiss after duration
             setTimeout(() => {
                 toast.style.animation = 'fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
                 toast.addEventListener('animationend', () => toast.remove());
@@ -251,14 +251,84 @@
         }
 
         const COUNTRY_TIMEZONES = {
-            NG: "Africa/Lagos · WAT (UTC+1)",
-            GH: "Africa/Accra · GMT (UTC+0)",
-            KE: "Africa/Nairobi · EAT (UTC+3)",
-            ZA: "Africa/Johannesburg · SAST (UTC+2)",
-            EG: "Africa/Cairo · EET (UTC+2)",
-            GB: "Europe/London · BST (UTC+1)",
-            AE: "Asia/Dubai · GST (UTC+4)",
+            "Algeria": "Africa/Algiers",
+            "Angola": "Africa/Luanda",
+            "Benin": "Africa/Porto-Novo",
+            "Botswana": "Africa/Gaborone",
+            "Burkina Faso": "Africa/Ouagadougou",
+            "Burundi": "Africa/Bujumbura",
+            "Cabo Verde": "Atlantic/Cape_Verde",
+            "Cameroon": "Africa/Douala",
+            "Central African Republic": "Africa/Bangui",
+            "Chad": "Africa/Ndjamena",
+            "Comoros": "Indian/Comoro",
+            "Côte d'Ivoire": "Africa/Abidjan",
+            "Democratic Republic of the Congo": "Africa/Kinshasa",
+            "Djibouti": "Africa/Djibouti",
+            "Egypt": "Africa/Cairo",
+            "Equatorial Guinea": "Africa/Malabo",
+            "Eritrea": "Africa/Asmara",
+            "Eswatini": "Africa/Mbabane",
+            "Ethiopia": "Africa/Addis_Ababa",
+            "Gabon": "Africa/Libreville",
+            "Gambia": "Africa/Banjul",
+            "Ghana": "Africa/Accra",
+            "Guinea": "Africa/Conakry",
+            "Guinea-Bissau": "Africa/Bissau",
+            "Kenya": "Africa/Nairobi",
+            "Lesotho": "Africa/Maseru",
+            "Liberia": "Africa/Monrovia",
+            "Libya": "Africa/Tripoli",
+            "Madagascar": "Indian/Antananarivo",
+            "Malawi": "Africa/Blantyre",
+            "Mali": "Africa/Bamako",
+            "Mauritania": "Africa/Nouakchott",
+            "Mauritius": "Indian/Mauritius",
+            "Morocco": "Africa/Casablanca",
+            "Mozambique": "Africa/Maputo",
+            "Namibia": "Africa/Windhoek",
+            "Niger": "Africa/Niamey",
+            "Nigeria": "Africa/Lagos",
+            "Republic of the Congo": "Africa/Brazzaville",
+            "Rwanda": "Africa/Kigali",
+            "Sao Tome and Principe": "Africa/Sao_Tome",
+            "Senegal": "Africa/Dakar",
+            "Seychelles": "Indian/Mahe",
+            "Sierra Leone": "Africa/Freetown",
+            "Somalia": "Africa/Mogadishu",
+            "South Africa": "Africa/Johannesburg",
+            "South Sudan": "Africa/Juba",
+            "Sudan": "Africa/Khartoum",
+            "Tanzania": "Africa/Dar_es_Salaam",
+            "Togo": "Africa/Lome",
+            "Tunisia": "Africa/Tunis",
+            "Uganda": "Africa/Kampala",
+            "Zambia": "Africa/Lusaka",
+            "Zimbabwe": "Africa/Harare",
+            "United Kingdom": "Europe/London",
+            "United Arab Emirates": "Asia/Dubai",
         };
+
+        function formatTimezoneLabel(ianaZone) {
+            if (!ianaZone) return "";
+
+            try {
+                const now = new Date();
+                const shortName = new Intl.DateTimeFormat("en-US", {
+                    timeZone: ianaZone,
+                    timeZoneName: "short"
+                }).formatToParts(now).find(p => p.type === "timeZoneName")?.value || "";
+
+                const offset = new Intl.DateTimeFormat("en-US", {
+                    timeZone: ianaZone,
+                    timeZoneName: "shortOffset"
+                }).formatToParts(now).find(p => p.type === "timeZoneName")?.value || "";
+
+                return `${ianaZone} · ${shortName} (${offset})`;
+            } catch (e) {
+                return ianaZone;
+            }
+        }
 
         function applyTimezone(citySelect, timezoneInput) {
             if (!citySelect || !timezoneInput) return;
@@ -269,15 +339,12 @@
                 return;
             }
 
-            const countryCode = selectedOption.getAttribute("data-country") || "";
-            timezoneInput.value = COUNTRY_TIMEZONES[countryCode] || "";
+            const countryName = selectedOption.getAttribute("data-country") || "";
+            const ianaZone = COUNTRY_TIMEZONES[countryName] || "";
+            timezoneInput.value = formatTimezoneLabel(ianaZone);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-
-            // -------------------------------------------------------------
-            // 0. EDIT MODE TOGGLE
-            // -------------------------------------------------------------
             const toggleEditBtn = document.getElementById('btn-toggle-edit');
             const fieldset = document.getElementById('form-fieldset');
 
@@ -289,9 +356,6 @@
                 });
             }
 
-            // -------------------------------------------------------------
-            // 1. SERVER-SIDE TOAST TRIGGER
-            // -------------------------------------------------------------
             @if (!string.IsNullOrWhiteSpace(Model.ApiError))
                 {
                     <text>
@@ -299,56 +363,48 @@
                     </text>
             }
 
-                    // -------------------------------------------------------------
-                    // 2. CLIENT-SIDE FORM VALIDATION
-                    // -------------------------------------------------------------
+                    const form = document.getElementById('basicDetailsForm');
 
-const form = document.getElementById('basicDetailsForm');
+            form.addEventListener('submit', (e) => {
+                const fieldset = document.getElementById('form-fieldset');
+                if (fieldset && fieldset.hasAttribute('disabled')) {
+                    fieldset.removeAttribute('disabled');
+                }
 
-form.addEventListener('submit', (e) => {
-    // 1. Un-disable fieldset so browser includes all inputs in the POST payload
-    const fieldset = document.getElementById('form-fieldset');
-    if (fieldset && fieldset.hasAttribute('disabled')) {
-        fieldset.removeAttribute('disabled');
-    }
+                const eventTitle = document.getElementById('event-title').value.trim();
+                const category = document.getElementById('category').value;
+                const tagline = document.getElementById('tagline').value.trim();
+                const city = document.getElementById('event-city').value;
 
-    const eventTitle = document.getElementById('event-title').value.trim();
-    const category = document.getElementById('category').value;
-    const tagline = document.getElementById('tagline').value.trim();
-    const city = document.getElementById('event-city').value;
+                if (!eventTitle) {
+                    e.preventDefault();
+                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+                    showToast("Please enter an Event Title.", "warning");
+                    return;
+                }
 
-    if (!eventTitle) {
-        e.preventDefault();
-        if (fieldset) fieldset.setAttribute('disabled', 'disabled'); // Re-disable if client validation fails
-        showToast("Please enter an Event Title.", "warning");
-        return;
-    }
+                if (!category) {
+                    e.preventDefault();
+                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+                    showToast("Please select a Category.", "warning");
+                    return;
+                }
 
-    if (!category) {
-        e.preventDefault();
-        if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-        showToast("Please select a Category.", "warning");
-        return;
-    }
+                if (!tagline) {
+                    e.preventDefault();
+                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+                    showToast("Please enter a Tagline.", "warning");
+                    return;
+                }
 
-    if (!tagline) {
-        e.preventDefault();
-        if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-        showToast("Please enter a Tagline.", "warning");
-        return;
-    }
+                if (!city) {
+                    e.preventDefault();
+                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
+                    showToast("Please select a Primary City.", "warning");
+                    return;
+                }
+            });
 
-    if (!city) {
-        e.preventDefault();
-        if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-        showToast("Please select a Primary City.", "warning");
-        return;
-    }
-});
-
-            // -------------------------------------------------------------
-            // 3. FILE UPLOAD & VALIDATION (Size & Type)
-            // -------------------------------------------------------------
             const dropzone = document.getElementById('cover-dropzone');
             const fileInput = document.getElementById('cover-upload');
             const gallery = document.getElementById('cover-gallery');
@@ -360,7 +416,6 @@ form.addEventListener('submit', (e) => {
                     return false;
                 }
 
-                // File type validation
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
                 if (!allowedTypes.includes(file.type)) {
                     showToast(`Invalid file format: '${file.name}'. Only JPG, JPEG, and PNG are allowed.`, 'error');
@@ -369,7 +424,6 @@ form.addEventListener('submit', (e) => {
                     return false;
                 }
 
-                // File size validation (5 MB)
                 const maxBytes = 5 * 1024 * 1024;
                 if (file.size > maxBytes) {
                     showToast(`File '${file.name}' exceeds the maximum allowed size of 5 MB.`, 'error');
@@ -391,10 +445,10 @@ form.addEventListener('submit', (e) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     gallery.innerHTML = `
-                                <div class="cover-preview">
-                                    <img src="${e.target.result}" id="img-cover-preview" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
-                                    <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove</button>
-                                </div>`;
+                                                <div class="cover-preview">
+                                                    <img src="${e.target.result}" id="img-cover-preview" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
+                                                    <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove</button>
+                                                </div>`;
                     gallery.hidden = false;
 
                     document.getElementById('cover-remove').addEventListener('click', () => {
@@ -428,7 +482,6 @@ form.addEventListener('submit', (e) => {
                 });
             }
 
-            // Timezone Sync
             document.querySelectorAll("[data-city]").forEach((citySelect) => {
                 const timezoneInput = document.getElementById(citySelect.dataset.city);
                 if (!timezoneInput) return;

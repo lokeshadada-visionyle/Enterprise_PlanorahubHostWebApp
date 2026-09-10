@@ -7,7 +7,6 @@
     ViewData["StepName"] = "Schedule Builder";
     ViewData["StepHint"] = "Set your venue, halls, dates and time slots";
 }
-
 <div class="wizard__body">
     <main class="wizard__content">
         <div class="wizard__inner">
@@ -162,7 +161,7 @@
                                                 @foreach (var city in Model.Cities)
                                                 {
                                                     <option value="@city.CityName">
-                                                        @city.CityName@(string.IsNullOrWhiteSpace(city.CountryCode) ? "" : $", {city.CountryCode}")
+                                                        @city.CityName@(string.IsNullOrWhiteSpace(city.CountryName) ? "" : $", {city.CountryName}")
                                                     </option>
                                                 }
                                             }
