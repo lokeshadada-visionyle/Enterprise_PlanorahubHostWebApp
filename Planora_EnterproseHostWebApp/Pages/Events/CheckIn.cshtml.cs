@@ -47,7 +47,7 @@ namespace Planora_EnterproseHostWebApp.Pages.Events
                 SlotId = firstDay?.Slots?.FirstOrDefault()?.SlotId ?? 0;
             }
 
-            if (SlotId != 0)
+                        if (SlotId != 0)
             {
                 LoadDashboard(userId.Value, eventId, SlotId);
                 LoadTicketTypes(userId.Value, eventId, SlotId);
@@ -66,7 +66,7 @@ namespace Planora_EnterproseHostWebApp.Pages.Events
 
             try
             {
-                var response = helper.GetEventHubDateAndSlot(userId, eventId, 0);
+                var response = helper.GetEventHubDateAndSlot(userId, eventId);
 
                 if (response != null && response.Status == 1)
                 {
