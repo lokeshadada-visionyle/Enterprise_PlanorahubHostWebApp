@@ -134,53 +134,79 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 : "paid";
 
 
-            List<AddTicketTypeReq> ticketTypes;
+            List<ParsedTier> parsedTiers = PricingMode == "free"
+                ? BuildFreeTier(eventId.Value)
+                : BuildPaidTiers(eventId.Value);
 
-            if (PricingMode == "free")
-            {
-                ticketTypes = BuildFreeTicketType(eventId.Value);
-            }
-            else
-            {
-                ticketTypes = BuildPaidTicketTypes(eventId.Value);
-            }
-
-
-            if (ticketTypes.Count == 0)
+            if (parsedTiers.Count == 0)
             {
                 ErrorMessage = "Please add at least one ticket tier.";
                 return Page();
             }
 
-
-            var request = new CreateTicketTypeRequest
-            {
-                UserId = userId.Value,
-                EventId = eventId.Value,
-                TicketTypes = ticketTypes
-            };
+            // TicketTypeId <= 0 means this tier didn't exist before this submit (new tier,
+            // or a plain Add flow with no existing data at all) -> goes through Ent_AddTicketTypeTiers.
+            // TicketTypeId > 0 means it was rehydrated from an existing tier -> goes through
+            // Ent_UpdateTicketTypeTiers so the downstream service updates it in place instead
+            // of creating a duplicate.
+            var newTiers = parsedTiers.Where(t => t.TicketTypeId <= 0).ToList();
+            var existingTiers = parsedTiers.Where(t => t.TicketTypeId > 0).ToList();
 
             var helper = new CommonHelper();
             try
             {
-                var response = helper.AddTicketTypeTierReq(request);
-
-                if (response == null)
+                if (newTiers.Count > 0)
                 {
-                    ErrorMessage = "The ticket service returned an empty response.";
-                    return Page();
+                    var addRequest = new CreateTicketTypeRequest
+                    {
+                        UserId = userId.Value,
+                        EventId = eventId.Value,
+                        TicketTypes = newTiers.Select(MapToAddRequest).ToList()
+                    };
+
+                    var addResponse = helper.AddTicketTypeTierReq(addRequest);
+
+                    if (addResponse == null)
+                    {
+                        ErrorMessage = "The ticket service returned an empty response while adding new tiers.";
+                        return Page();
+                    }
+
+                    if (addResponse.Status != 0 && addResponse.Status != 1 && addResponse.Status != 200)
+                    {
+                        ErrorMessage = string.IsNullOrWhiteSpace(addResponse.Message)
+                            ? "Unable to save new ticket tiers."
+                            : addResponse.Message;
+                        return Page();
+                    }
                 }
 
-                if (response.Status != 0 &&
-                    response.Status != 1 &&
-                    response.Status != 200)
+                if (existingTiers.Count > 0)
                 {
-                    ErrorMessage = string.IsNullOrWhiteSpace(response.Message)
-                        ? "Unable to save ticket types."
-                        : response.Message;
+                    var updateRequest = new UpdateTicketTypeRequest
+                    {
+                        UserId = (int)userId.Value,
+                        EventId = eventId.Value,
+                        TicketTypes = existingTiers.Select(MapToUpdateRequest).ToList()
+                    };
 
-                    return Page();
+                    var updateResponse = helper.UpdateTicketTypeTierReq(updateRequest);
+
+                    if (updateResponse == null)
+                    {
+                        ErrorMessage = "The ticket service returned an empty response while updating existing tiers.";
+                        return Page();
+                    }
+
+                    if (updateResponse.Status != 0 && updateResponse.Status != 1 && updateResponse.Status != 200)
+                    {
+                        ErrorMessage = string.IsNullOrWhiteSpace(updateResponse.Message)
+                            ? "Unable to update existing ticket tiers."
+                            : updateResponse.Message;
+                        return Page();
+                    }
                 }
+
                 int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
                 HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 6));
 
@@ -200,6 +226,103 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return Page();
             }
         }
+
+        // =========================
+        // PARSED TIER (shared shape for both Add and Update paths)
+        // =========================
+        private class ParsedTier
+        {
+            public int TicketTypeId { get; set; }
+            public bool IsVisible { get; set; }
+            public string TypeName { get; set; } = string.Empty;
+            public string Price { get; set; } = string.Empty;
+            public int Quantity { get; set; }
+            public string SaleStart { get; set; } = string.Empty;
+            public string SaleEnd { get; set; } = string.Empty;
+            public string Description { get; set; } = string.Empty;
+            public bool AutoExpireEnabled { get; set; }
+            public string AutoExpireMode { get; set; } = string.Empty;
+            public string MemberListUrl { get; set; } = string.Empty;
+            public string ExpiryDate { get; set; } = string.Empty;
+            public string ExpiryTime { get; set; } = string.Empty;
+            public int AllocationLimit { get; set; }
+            public bool MemberOnly { get; set; }
+            public int StandingCapacity { get; set; }
+            public int OpenSeatingCapacity { get; set; }
+            public int NumberOfTables { get; set; }
+            public int ChairsPerTable { get; set; }
+            public bool IsSeating { get; set; }
+            public int Rows { get; set; }
+            public int Columns { get; set; }
+            public string AccessMode { get; set; } = string.Empty;
+            public List<int> SelectedDateIds { get; set; } = new List<int>();
+            public List<int> SelectedSlotIds { get; set; } = new List<int>();
+            public List<Inclusions> Inclusions { get; set; } = new List<Inclusions>();
+        }
+
+        private static AddTicketTypeReq MapToAddRequest(ParsedTier t) => new AddTicketTypeReq
+        {
+            IsVisible = t.IsVisible,
+            TypeName = t.TypeName,
+            Price = t.Price,
+            Quantity = t.Quantity,
+            SaleStart = t.SaleStart,
+            SaleEnd = t.SaleEnd,
+            Description = t.Description,
+            AutoExpireEnabled = t.AutoExpireEnabled,
+            AutoExpireMode = t.AutoExpireMode,
+            MemberListUrl = t.MemberListUrl,
+            ExpiryDate = t.ExpiryDate,
+            ExpiryTime = t.ExpiryTime,
+            AllocationLimit = t.AllocationLimit,
+            MemberOnly = t.MemberOnly,
+            StandingCapacity = t.StandingCapacity,
+            OpenSeatingCapacity = t.OpenSeatingCapacity,
+            NumberOfTables = t.NumberOfTables,
+            ChairsPerTable = t.ChairsPerTable,
+            IsSeating = t.IsSeating,
+            Rows = t.Rows,
+            Columns = t.Columns,
+            AccessMode = t.AccessMode,
+            SelectedDateIds = t.SelectedDateIds,
+            SelectedSlotIds = t.SelectedSlotIds,
+            Inclusions = t.Inclusions
+        };
+
+        private static UpdateTicketTypes MapToUpdateRequest(ParsedTier t) => new UpdateTicketTypes
+        {
+            TicketTypeId = t.TicketTypeId,
+            IsVisible = t.IsVisible,
+            TypeName = t.TypeName,
+            Price = t.Price,
+            Quantity = t.Quantity,
+            SaleStart = t.SaleStart,
+            SaleEnd = t.SaleEnd,
+            Description = t.Description,
+            AutoExpireEnabled = t.AutoExpireEnabled,
+            AutoExpireMode = t.AutoExpireMode,
+            ExpiryDate = t.ExpiryDate,
+            ExpiryTime = t.ExpiryTime,
+            AllocationLimit = t.AllocationLimit,
+            MemberOnly = t.MemberOnly,
+            StandingCapacity = t.StandingCapacity,
+            OpenSeatingCapacity = t.OpenSeatingCapacity,
+            NumberOfTables = t.NumberOfTables,
+            ChairsPerTable = t.ChairsPerTable,
+            IsSeating = t.IsSeating,
+            Rows = t.Rows,
+            Coulmns = t.Columns,
+            AccessMode = t.AccessMode,
+            SelectedDateIds = t.SelectedDateIds,
+            SelectedSlotIds = t.SelectedSlotIds,
+            Inclusions = t.Inclusions.Select(i => new UpdateInclusions
+            {
+                InclusionId = 0, // Set to existing inclusion ID if available, otherwise 0 for new inclusions
+                InclusionName = i.InclusionName,
+                Description = i.Description,
+                SortOrder = i.SortOrder
+            }).ToList()
+        };
 
         public IActionResult OnPostUploadMembers([FromBody] UploadMembersRequestDto req)
         {
@@ -482,9 +605,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         }
 
 
-        private List<AddTicketTypeReq> BuildPaidTicketTypes(int eventId)
+        private List<ParsedTier> BuildPaidTiers(int eventId)
         {
-            var result = new List<AddTicketTypeReq>();
+            var result = new List<ParsedTier>();
 
             if (!Request.HasFormContentType)
                 return result;
@@ -516,8 +639,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 // Parse Inclusions for this tier
                 var inclusions = BuildInclusionsForTier(form, suffix);
 
-                result.Add(new AddTicketTypeReq
+                result.Add(new ParsedTier
                 {
+                    // 0 (default) means "no existing tier" -> Add. See tier-id-{suffix},
+                    // written by the client at submit time from data-ticket-type-id on the
+                    // rehydrated tier node.
+                    TicketTypeId = GetInt(form, $"tier-id-{suffix}"),
                     IsVisible = GetBool(form, $"tier-visible-{suffix}", true),
                     TypeName = typeName.Trim(),
                     Price = GetForm(form, $"price-{suffix}", "0"),
@@ -560,10 +687,10 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             return result;
         }
 
-        private List<AddTicketTypeReq> BuildFreeTicketType(int eventId)
+        private List<ParsedTier> BuildFreeTier(int eventId)
         {
             if (!Request.HasFormContentType)
-                return new List<AddTicketTypeReq>();
+                return new List<ParsedTier>();
 
             var form = Request.Form;
             var quantity = GetInt(form, "free-qty");
@@ -577,10 +704,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             // Parse Inclusions for Free tier
             var inclusions = BuildInclusionsForTier(form, "free");
 
-            return new List<AddTicketTypeReq>
+            return new List<ParsedTier>
             {
-                new AddTicketTypeReq
+                new ParsedTier
                 {
+                    // 0 means no existing Free tier yet -> Add. See free-tier-id, written by
+                    // the rehydrate script when an existing Free tier was loaded on OnGet.
+                    TicketTypeId = GetInt(form, "free-tier-id"),
                     IsVisible = true,
                     TypeName = "Free",
                     Price = "0",

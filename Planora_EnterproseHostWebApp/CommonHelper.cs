@@ -505,6 +505,25 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public Response UpdateTicketTypeTierReq(UpdateTicketTypeRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateTicketTypeRequest
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                TicketTypes = req.TicketTypes,
+
+            };
+            string url = SERVICE_URL + "/Ent_UpdateTicketTypeTiers";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public TicketTypesResponse GetTicketTypeTierResp(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
