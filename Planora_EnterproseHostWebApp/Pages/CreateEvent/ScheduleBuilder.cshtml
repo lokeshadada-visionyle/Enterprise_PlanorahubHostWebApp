@@ -621,6 +621,15 @@
         let globalVenuesCache = [];
         let globalSpeakersCache = [];
 
+        // Edit-mode tracking: once GetVenues/GetSpeakers/GetSchedule come back with
+        // existing records for this event, further "Save" clicks must go through the
+        // Update APIs (Ent_UpdateVenueAndHall / Ent_UpdateSpeaker / Ent_UpdateEventDateAndSlots)
+        // instead of re-adding (Ent_AddVenueAndHall / Ent_AddSpeaker / Ent_AddEventDateAndSlots),
+        // otherwise the host would end up with duplicate records every time they revisit this step.
+        let hasSavedVenues = false;
+        let hasSavedSpeakers = false;
+        let hasSavedSchedule = false;
+
         function revealVenueSection() {
             if (venueSection) {
                 venueSection.removeAttribute("hidden");
@@ -700,6 +709,7 @@
 
                 if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
                     globalSpeakersCache = result.data;
+                    hasSavedSpeakers = true;
                     const speakerListContainer = document.getElementById("speaker-list");
                     const templateRow = speakerListContainer.querySelector(".speaker")?.cloneNode(true);
 
@@ -708,6 +718,13 @@
                         result.data.forEach(sp => {
                             const row = templateRow.cloneNode(true);
                             row.dataset.speakerId = sp.SpeakerId ?? sp.speakerId ?? "0";
+                            // FIX: mark this row as a real, previously-saved speaker.
+                            // Only rows carrying this flag are eligible to be sent to
+                            // the Update endpoint. Rows created later via "Add speaker"
+                            // (cloned from this one) must NOT keep this flag or the id,
+                            // otherwise they'll be mistaken for an existing speaker and
+                            // silently overwrite it instead of creating a new record.
+                            row.dataset.loadedFromServer = "true";
 
                             const nameInput = row.querySelector("[data-speaker-field='name']");
                             const titleInput = row.querySelector("[data-speaker-field='title']");
@@ -741,11 +758,15 @@
 
                 if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
                     globalVenuesCache = result.data;
+                    hasSavedVenues = true;
                     const firstVenue = result.data[0];
+                    const firstVenueId = firstVenue.VenueId ?? firstVenue.venueId ?? 0;
 
                     const nameInput = document.getElementById("sv-name");
                     const citySelect = document.getElementById("sv-city");
                     const addressInput = document.getElementById("sv-address");
+                    const singleVenuePanel = document.getElementById("single-venue");
+                    if (singleVenuePanel) singleVenuePanel.dataset.venueId = firstVenueId;
 
                     if (nameInput) nameInput.value = firstVenue.VenueName ?? firstVenue.venueName ?? "";
                     if (citySelect) citySelect.value = firstVenue.City ?? firstVenue.cityName ?? "";
@@ -763,6 +784,7 @@
                                 const hNameInput = hRow.querySelector(".hall__name");
                                 const hCapInput = hRow.querySelector(".hall__cap");
 
+                                hRow.dataset.hallId = h.HallId ?? h.hallId ?? 0;
                                 if (hNameInput) hNameInput.value = h.HallName ?? h.hallName ?? "";
                                 if (hCapInput) hCapInput.value = h.Capacity ?? h.capacity ?? 0;
 
@@ -788,6 +810,7 @@
                 const result = await response.json();
 
                 if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    hasSavedSchedule = true;
                     const daysContainer = document.getElementById("schedule-days");
                     const dayTemplate = daysContainer.querySelector(".day")?.cloneNode(true);
 
@@ -799,6 +822,7 @@
                         const nameInput = dayRow.querySelector("input[name*='name']");
                         const dateInput = dayRow.querySelector("[data-day-date]");
 
+                        dayRow.dataset.eventDateId = day.EventDateId ?? day.eventDateId ?? 0;
                         if (nameInput) nameInput.value = day.SessionName ?? day.sessionName ?? "";
                         if (dateInput && day.EventDate) {
                             dateInput.value = day.EventDate.split('T')[0];
@@ -814,6 +838,7 @@
                             for (const slot of slots) {
                                 const slotRow = slotTemplate.cloneNode(true);
 
+                                slotRow.dataset.slotId = slot.SlotId ?? slot.slotId ?? 0;
                                 const slotNameInput = slotRow.querySelector(".slotcard__name");
                                 const startInput = slotRow.querySelector("[data-slot-start]");
                                 const endInput = slotRow.querySelector("[data-slot-end]");
@@ -838,7 +863,17 @@
 
                                 populateSpeakerDropdowns(globalSpeakersCache);
                                 if (speakerSelect) {
-                                    speakerSelect.value = slot.SpeakersId ?? slot.speakersId ?? "";
+                                    // NOTE (fix for API #8 naming mismatch): Ent_GetEventDateAndSlots
+                                    // returns the speaker on a slot as "Speakers" (a name string), not
+                                    // "SpeakersId" like the Add/Update request shapes use. Resolve the
+                                    // dropdown selection by matching that name back to a SpeakerId.
+                                    const rawSpeaker = slot.SpeakersId ?? slot.speakersId ?? slot.Speakers ?? slot.speakers ?? "";
+                                    let resolvedSpeakerId = rawSpeaker;
+                                    if (rawSpeaker && isNaN(rawSpeaker)) {
+                                        const match = globalSpeakersCache.find(sp => (sp.Name ?? sp.name ?? "").trim().toLowerCase() === String(rawSpeaker).trim().toLowerCase());
+                                        resolvedSpeakerId = match ? (match.SpeakerId ?? match.speakerId ?? "") : "";
+                                    }
+                                    speakerSelect.value = resolvedSpeakerId ?? "";
                                 }
 
                                 slotsContainer.appendChild(slotRow);
@@ -865,12 +900,47 @@
             }
         });
 
+        // FIX: cleanup for newly-cloned speaker rows added via the "Add speaker" button.
+        // The generic data-repeat-add handler (shared across speakers/venues/halls/slots,
+        // defined elsewhere) clones the last row in the container -- including whatever
+        // data-speaker-id / data-loaded-from-server attributes and input values that row
+        // already had. For speakers this is wrong: a freshly added row is a brand-new
+        // speaker, not a copy of an existing one, so its id/flag/values must be reset.
+        // This listener runs after the generic handler has appended the clone, and wipes
+        // those inherited values so btnSaveSpeakers below can tell new rows apart from
+        // real, previously-saved ones.
+        const addSpeakerBtn = document.querySelector('[data-repeat-add="speaker-list"]');
+        if (addSpeakerBtn) {
+            addSpeakerBtn.addEventListener("click", function() {
+                setTimeout(() => {
+                    const rows = document.querySelectorAll("#speaker-list [data-speaker-row]");
+                    const newRow = rows[rows.length - 1];
+                    if (!newRow) return;
+
+                    // Only touch it if it isn't itself a genuine server-loaded row
+                    // (guards against this running before any row has ever loaded).
+                    newRow.dataset.speakerId = "0";
+                    newRow.removeAttribute("data-loaded-from-server");
+                    newRow.querySelectorAll("input, textarea").forEach(el => el.value = "");
+                    const countEl = newRow.querySelector("[data-speaker-count]");
+                    if (countEl) countEl.textContent = "0";
+                }, 0);
+            });
+        }
+
         // SAVE BUTTON HANDLERS
         const saveSpeakersBtn = document.getElementById("btnSaveSpeakers");
         if (saveSpeakersBtn) {
             saveSpeakersBtn.addEventListener("click", async function() {
                 const speakerRows = document.querySelectorAll("#speaker-list [data-speaker-row]");
-                const speakers = [];
+
+                // FIX: split rows into "existing" (really loaded from the server, has a
+                // real SpeakerId) vs "new" (added via the Add speaker button, no real id
+                // yet). Each group now goes to the endpoint that actually supports it --
+                // sending a brand-new row to UpdateSpeakers has no insert path on the
+                // backend and previously caused it to silently overwrite the first speaker.
+                const existingSpeakers = [];
+                const newSpeakers = [];
 
                 speakerRows.forEach(row => {
                     const name = row.querySelector("[data-speaker-field='name']")?.value;
@@ -878,31 +948,55 @@
                     const org = row.querySelector("[data-speaker-field='org']")?.value;
                     const bio = row.querySelector("[data-speaker-field='bio']")?.value;
 
-                    if (name && name.trim() !== "") {
-                        speakers.push({ Name: name, JobTitle: title, Organization: org, Bio: bio });
+                    if (!name || name.trim() === "") return;
+
+                    const isExistingRow = row.dataset.loadedFromServer === "true";
+                    const speakerId = parseInt(row.dataset.speakerId, 10) || 0;
+
+                    if (isExistingRow && speakerId > 0) {
+                        existingSpeakers.push({ SpeakerId: speakerId, Name: name, JobTitle: title, Organization: org, Bio: bio });
+                    } else {
+                        newSpeakers.push({ Name: name, JobTitle: title, Organization: org, Bio: bio });
                     }
                 });
 
-                if (speakers.length === 0) {
+                if (existingSpeakers.length === 0 && newSpeakers.length === 0) {
                     alert("Please add at least one speaker with a name.");
                     return;
                 }
 
                 try {
-                    const response = await fetch('?handler=SaveSpeakers', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-                        body: JSON.stringify({ Speakers: speakers })
-                    });
-
-                    const result = await response.json();
-                    if (result && result.success) {
-                        await loadAndBindSpeakers();
-                        revealVenueSection();
-                        venueSection.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                        alert(result.message || "Failed to save speakers.");
+                    // Update speakers that already exist for this event.
+                    if (existingSpeakers.length > 0) {
+                        const updateResponse = await fetch(`?handler=UpdateSpeakers`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                            body: JSON.stringify({ Speakers: existingSpeakers })
+                        });
+                        const updateResult = await updateResponse.json();
+                        if (!updateResult || !updateResult.success) {
+                            alert(updateResult?.message || "Failed to update speakers.");
+                            return;
+                        }
                     }
+
+                    // Add speakers that were newly typed in this visit.
+                    if (newSpeakers.length > 0) {
+                        const saveResponse = await fetch(`?handler=SaveSpeakers`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                            body: JSON.stringify({ Speakers: newSpeakers })
+                        });
+                        const saveResult = await saveResponse.json();
+                        if (!saveResult || !saveResult.success) {
+                            alert(saveResult?.message || "Failed to save new speakers.");
+                            return;
+                        }
+                    }
+
+                    await loadAndBindSpeakers();
+                    revealVenueSection();
+                    venueSection.scrollIntoView({ behavior: 'smooth' });
                 } catch (err) {
                     console.error("Error saving speakers:", err);
                 }
@@ -924,10 +1018,24 @@
                     document.querySelectorAll("#sv-halls .hall").forEach(hRow => {
                         const hName = hRow.querySelector(".hall__name")?.value;
                         const hCap = hRow.querySelector(".hall__cap")?.value;
-                        if (hName) halls.push({ HallName: hName, Capacity: parseInt(hCap) || 0 });
+                        const hallId = parseInt(hRow.dataset.hallId, 10) || 0;
+                        if (hName) {
+                            if (hasSavedVenues) {
+                                halls.push({ HallId: hallId, HallName: hName, Capacity: parseInt(hCap) || 0 });
+                            } else {
+                                halls.push({ HallName: hName, Capacity: parseInt(hCap) || 0 });
+                            }
+                        }
                     });
 
-                    if (name) venues.push({ VenueName: name, City: city, Address: address, Halls: halls });
+                    if (name) {
+                        if (hasSavedVenues) {
+                            const venueId = parseInt(document.getElementById("single-venue")?.dataset.venueId, 10) || 0;
+                            venues.push({ VenueId: venueId, VenueName: name, City: city, Address: address, Halls: halls });
+                        } else {
+                            venues.push({ VenueName: name, City: city, Address: address, Halls: halls });
+                        }
+                    }
                 }
 
                 if (venues.length === 0) {
@@ -935,8 +1043,12 @@
                     return;
                 }
 
+                // If venues were already loaded for this event, update the existing
+                // records (Ent_UpdateVenueAndHall) instead of re-adding them (Ent_AddVenueAndHall).
+                const venueHandlerName = hasSavedVenues ? "UpdateVenue" : "SaveVenue";
+
                 try {
-                    const response = await fetch('?handler=SaveVenue', {
+                    const response = await fetch(`?handler=${venueHandlerName}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
                         body: JSON.stringify({ Venues: venues })
@@ -969,6 +1081,7 @@
                 dayRows.forEach(dayRow => {
                     const sessionName = dayRow.querySelector("input[name*='name']")?.value;
                     const eventDate = dayRow.querySelector("[data-day-date]")?.value;
+                    const eventDateId = parseInt(dayRow.dataset.eventDateId, 10) || 0;
                     const slotCards = dayRow.querySelectorAll(".slotcard");
 
                     const slots = [];
@@ -982,26 +1095,53 @@
                         const hallId = slotCard.querySelector("[data-slot-hall]")?.value;
                         const capacity = slotCard.querySelector("[data-cap-input]")?.value;
                         const speakerId = slotCard.querySelector("[data-speaker-add]")?.value;
+                        const slotId = parseInt(slotCard.dataset.slotId, 10) || 0;
 
                         // Push slot object if at least a name OR time is provided
                         if (slotName || startTime || endTime) {
-                            slots.push({
-                                SlotName: slotName || "Slot",
-                                StartTime: startTime ? new Date(startTime).toISOString() : "",
-                                EndTime: endTime ? new Date(endTime).toISOString() : "",
-                                HallId: hallId ? parseInt(hallId) : 0,
-                                Capacity: capacity ? parseInt(capacity) : 0,
-                                SpeakersId: speakerId ? parseInt(speakerId) : 0
-                            });
+                            if (hasSavedSchedule) {
+                                // Update shape: SlotId is required, and the speaker is sent as the
+                                // resolved name string (Ent_UpdateEventDateAndSlots takes "Speakers",
+                                // not "SpeakerId" like the Add call does).
+                                const speakerMatch = globalSpeakersCache.find(sp => String(sp.SpeakerId ?? sp.speakerId) === String(speakerId));
+                                const speakerName = speakerMatch ? (speakerMatch.Name ?? speakerMatch.name ?? "") : "";
+                                slots.push({
+                                    SlotId: slotId,
+                                    SlotName: slotName || "Slot",
+                                    StartTime: startTime ? new Date(startTime).toISOString() : "",
+                                    EndTime: endTime ? new Date(endTime).toISOString() : "",
+                                    HallId: hallId ? parseInt(hallId) : 0,
+                                    Capacity: capacity ? parseInt(capacity) : 0,
+                                    Speakers: speakerName
+                                });
+                            } else {
+                                slots.push({
+                                    SlotName: slotName || "Slot",
+                                    StartTime: startTime ? new Date(startTime).toISOString() : "",
+                                    EndTime: endTime ? new Date(endTime).toISOString() : "",
+                                    HallId: hallId ? parseInt(hallId) : 0,
+                                    Capacity: capacity ? parseInt(capacity) : 0,
+                                    SpeakersId: speakerId ? parseInt(speakerId) : 0
+                                });
+                            }
                         }
                     });
 
                     if (sessionName || eventDate) {
-                        slotsPayload.push({
-                            SessionName: sessionName ?? "",
-                            EventDate: eventDate ?? "",
-                            EventSlots: slots
-                        });
+                        if (hasSavedSchedule) {
+                            slotsPayload.push({
+                                EventDateId: eventDateId,
+                                SessionName: sessionName ?? "",
+                                EventDate: eventDate ?? "",
+                                EventSlots: slots
+                            });
+                        } else {
+                            slotsPayload.push({
+                                SessionName: sessionName ?? "",
+                                EventDate: eventDate ?? "",
+                                EventSlots: slots
+                            });
+                        }
                     }
                 });
 
@@ -1010,8 +1150,12 @@
                     return;
                 }
 
+                // If a schedule was already loaded for this event, update the existing
+                // records (Ent_UpdateEventDateAndSlots) instead of re-adding them (Ent_AddEventDateAndSlots).
+                const scheduleHandlerName = hasSavedSchedule ? "UpdateSchedule" : "SaveSchedule";
+
                 try {
-                    const response = await fetch('?handler=SaveSchedule', {
+                    const response = await fetch(`?handler=${scheduleHandlerName}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
