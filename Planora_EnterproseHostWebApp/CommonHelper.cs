@@ -242,7 +242,6 @@ namespace Planora_EnterproseHostWebApp
                 UserId = req.UserId,
                 hashValue = hashValue,
                 EventId = req.EventId,
-                ImageURL = req.ImageURL,
                 Things = req.Things,
             };
             string url = SERVICE_URL + "/Ent_AddThingsToKnow";
@@ -261,7 +260,6 @@ namespace Planora_EnterproseHostWebApp
                 UserId = req.UserId,
                 hashValue = hashValue,
                 EventId = req.EventId,
-                ImageURL = req.ImageURL,
                 Things = req.Things,
             };
             string url = SERVICE_URL + "/HostUpdateThingsToKnow";

@@ -1233,14 +1233,24 @@
         // Wizard step forms (Continue/Save buttons that POST).
         all('.wizard__body form, .wizard__foot form').forEach(function (form) {
             form.addEventListener('submit', function (event) {
-                // Check form validity before showing loading state
+                // Check native HTML5 validity before showing the loading state.
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     return;
                 }
 
-                if (event.defaultPrevented) return;
-                show();
+                // Some steps (e.g. Basic Details) do their own custom JS
+                // validation on 'submit' and call event.preventDefault()
+                // themselves — but that listener may run AFTER this one.
+                // Defer to the next tick so all other 'submit' listeners
+                // finish first, then only show the loader if nobody
+                // cancelled the submission. Without this, the loader can
+                // flash on screen for a split second before the page's
+                // own validation blocks the submit and shows a toast.
+                setTimeout(function () {
+                    if (event.defaultPrevented) return;
+                    show();
+                }, 0);
             });
         });
 
@@ -1252,17 +1262,18 @@
                 var formId = button.getAttribute('form');
                 var form = document.getElementById(formId);
 
-                if (form) {
+                if (form && !form.checkValidity()) {
                     // If the form has missing required fields, block submission and trigger validation
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        form.reportValidity();
-                        return;
-                    }
+                    event.preventDefault();
+                    form.reportValidity();
+                    return;
                 }
 
-                if (event.defaultPrevented) return;
-                show();
+                // Don't show the loader here. Clicking this button triggers
+                // the form's native "submit" event, and the form-level
+                // listener above already handles showing the loader — after
+                // correctly waiting to see if any page-specific validation
+                // cancels the submission first.
             });
         });
 

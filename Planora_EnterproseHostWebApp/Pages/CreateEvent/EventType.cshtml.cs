@@ -33,8 +33,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateHost
             }
 
             // --- FIX 2: Ensure progress tracks highest step reached ---
-            int currentMaxProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
-            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 2));
+            //int currentMaxProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+            //HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 2));
 
             try
             {
@@ -74,7 +74,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateHost
 
             HttpContext.Session.SetEventType(EventType);
             int currentMaxProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
-            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 1));
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 2));
             return RedirectToPage("/CreateEvent/BasicDetails");
         }
 

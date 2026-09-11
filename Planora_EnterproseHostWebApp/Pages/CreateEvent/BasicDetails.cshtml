@@ -15,7 +15,42 @@
     var existingImageUrl = ViewData["ImageUrl"]?.ToString() ?? "";
     bool hasExistingImage = !string.IsNullOrEmpty(existingImageUrl);
     bool isEdit = Model.IsEditMode;
+
+    // Fallback flags: when the API-backed lists are empty, we still show a usable
+    // static option list below so the dropdown is never left blank/unusable.
+    bool hasCategories = Model.Categories != null && Model.Categories.Any();
+    bool hasCities = Model.Cities != null && Model.Cities.Any();
 }
+
+<style>
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__input.is-invalid,
+    .field__select.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .field__input.is-invalid:focus,
+        .field__select.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
+
+    .dropzone.is-invalid {
+        border-color: var(--color-danger);
+    }
+</style>
 
 <div class="wizard__body">
 
@@ -24,13 +59,9 @@
             <div class="typebar">
                 <span class="typepill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" /></svg> <span data-type-label>@(string.Equals(Model.EventType, "private", StringComparison.OrdinalIgnoreCase) ? "Private Event" : "Public Event")</span></span>
                 <a class="typebar__change" asp-page="/CreateEvent/EventType">Change type</a>
-                @if (isEdit)
-                {
-                    <button type="button" class="btn btn--outline" id="btn-toggle-edit">Edit Form</button>
-                }
             </div>
 
-            <form class="stack" id="basicDetailsForm" method="post" enctype="multipart/form-data">
+            <form class="stack" id="basicDetailsForm" method="post" enctype="multipart/form-data" novalidate>
 
                 <input type="hidden" name="EventType" value="@Model.EventType" />
                 <input type="hidden" name="existingImageUrl" id="existingImageUrl" value="@existingImageUrl" />
@@ -38,7 +69,7 @@
                 <!-- Toast Notification Area -->
                 <div id="toast-container" class="toast-container"></div>
 
-                <fieldset id="form-fieldset" @(isEdit ? "disabled" : "") style="border:none; padding:0; margin:0;">
+                <fieldset id="form-fieldset" style="border:none; padding:0; margin:0;">
                     <section class="panel" aria-labelledby="info-title">
                         <div class="panel__head">
                             <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg></span>
@@ -51,17 +82,19 @@
                                     <label class="field__label" for="event-title">Event Title<span class="field__required" aria-hidden="true">*</span></label>
                                     <input class="field__input" id="event-title" name="EventName" type="text"
                                            value="@existingName"
-                                           placeholder="e.g. Tech Summit Africa 2025" maxlength="60" required
+                                           placeholder="e.g. Tech Summit Africa 2025" maxlength="60"
+                                           aria-describedby="err-event-title"
                                            oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
+                                    <span class="field__error" id="err-event-title" role="alert"></span>
                                 </div>
                             </div>
 
                             <div class="formgrid formgrid--2 u-mt-5">
                                 <div class="form__field">
                                     <label class="field__label" for="category">Category<span class="field__required" aria-hidden="true">*</span></label>
-                                    <select class="field__select" id="category" name="EventCategory" required>
+                                    <select class="field__select" id="category" name="EventCategory" aria-describedby="err-category">
                                         <option value="">Select Category...</option>
-                                        @if (Model.Categories != null && Model.Categories.Any())
+                                        @if (hasCategories)
                                         {
                                             @foreach (var category in Model.Categories)
                                             {
@@ -73,23 +106,42 @@
                                                 </option>
                                             }
                                         }
+                                        else
+                                        {
+                                            <!-- Static fallback list, shown only when the category list could not be loaded -->
+                                            <option value="1" selected="@(existingCategory == "1" ? "selected" : null)">Conference</option>
+                                            <option value="2" selected="@(existingCategory == "2" ? "selected" : null)">Concert / Music</option>
+                                            <option value="3" selected="@(existingCategory == "3" ? "selected" : null)">Workshop / Training</option>
+                                            <option value="4" selected="@(existingCategory == "4" ? "selected" : null)">Networking</option>
+                                            <option value="5" selected="@(existingCategory == "5" ? "selected" : null)">Exhibition</option>
+                                            <option value="6" selected="@(existingCategory == "6" ? "selected" : null)">Sports</option>
+                                            <option value="7" selected="@(existingCategory == "7" ? "selected" : null)">Festival</option>
+                                            <option value="8" selected="@(existingCategory == "8" ? "selected" : null)">Corporate</option>
+                                            <option value="9" selected="@(existingCategory == "9" ? "selected" : null)">Wedding</option>
+                                            <option value="10" selected="@(existingCategory == "10" ? "selected" : null)">Community</option>
+                                            <option value="11" selected="@(existingCategory == "11" ? "selected" : null)">Charity / Fundraiser</option>
+                                            <option value="12" selected="@(existingCategory == "12" ? "selected" : null)">Other</option>
+                                        }
                                     </select>
+                                    <span class="field__error" id="err-category" role="alert"></span>
                                 </div>
                                 <div class="form__field">
                                     <label class="field__label" for="tagline">Tagline / Subtitle<span class="field__required" aria-hidden="true">*</span></label>
                                     <input class="field__input" id="tagline" name="TagLine" type="text"
                                            value="@existingTagLine"
-                                           placeholder="One line that sells the event" maxlength="60" required
+                                           placeholder="One line that sells the event" maxlength="60"
+                                           aria-describedby="err-tagline"
                                            oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
+                                    <span class="field__error" id="err-tagline" role="alert"></span>
                                 </div>
                             </div>
 
                             <div class="formgrid formgrid--2 u-mt-5">
                                 <div class="form__field">
                                     <label class="field__label" for="event-city">Primary City<span class="field__required" aria-hidden="true">*</span></label>
-                                    <select class="field__select" id="event-city" name="CityId" data-city="event-timezone" required>
+                                    <select class="field__select" id="event-city" name="CityId" data-city="event-timezone" aria-describedby="err-city">
                                         <option value="">Select City...</option>
-                                        @if (Model.Cities != null && Model.Cities.Any())
+                                        @if (hasCities)
                                         {
                                             @foreach (var city in Model.Cities)
                                             {
@@ -98,8 +150,23 @@
                                                 </option>
                                             }
                                         }
+                                        else
+                                        {
+                                            <!-- Static fallback list, shown only when the city list could not be loaded -->
+                                            <option value="1" data-country="Nigeria" selected="@(existingCityId == "1" ? "selected" : null)">Lagos, Nigeria</option>
+                                            <option value="2" data-country="Kenya" selected="@(existingCityId == "2" ? "selected" : null)">Nairobi, Kenya</option>
+                                            <option value="3" data-country="Ghana" selected="@(existingCityId == "3" ? "selected" : null)">Accra, Ghana</option>
+                                            <option value="4" data-country="Egypt" selected="@(existingCityId == "4" ? "selected" : null)">Cairo, Egypt</option>
+                                            <option value="5" data-country="South Africa" selected="@(existingCityId == "5" ? "selected" : null)">Johannesburg, South Africa</option>
+                                            <option value="6" data-country="Uganda" selected="@(existingCityId == "6" ? "selected" : null)">Kampala, Uganda</option>
+                                            <option value="7" data-country="Tanzania" selected="@(existingCityId == "7" ? "selected" : null)">Dar es Salaam, Tanzania</option>
+                                            <option value="8" data-country="Morocco" selected="@(existingCityId == "8" ? "selected" : null)">Casablanca, Morocco</option>
+                                            <option value="9" data-country="United Arab Emirates" selected="@(existingCityId == "9" ? "selected" : null)">Dubai, United Arab Emirates</option>
+                                            <option value="10" data-country="United Kingdom" selected="@(existingCityId == "10" ? "selected" : null)">London, United Kingdom</option>
+                                        }
                                     </select>
                                     <span class="field__hint">Sets the event timezone automatically</span>
+                                    <span class="field__error" id="err-city" role="alert"></span>
                                 </div>
                                 <div class="form__field">
                                     <label class="field__label" for="event-timezone">Timezone</label>
@@ -125,22 +192,25 @@
                             <div class="formgrid formgrid--2">
                                 <div class="form__field">
                                     <label class="field__label" for="layout-type">Layout Type<span class="field__required" aria-hidden="true">*</span></label>
-                                    <select class="field__select" id="layout-type" asp-for="LayoutType" required>
+                                    <select class="field__select" id="layout-type" asp-for="LayoutType" aria-describedby="err-layout-type">
                                         <option value="">Select layout...</option>
                                         <option value="Theatre">Theatre</option>
                                         <option value="Banquet rounds">Banquet rounds</option>
                                         <option value="Standing / general admission">Standing / general admission</option>
                                     </select>
+                                    <span class="field__error" id="err-layout-type" role="alert"></span>
                                 </div>
                                 <div class="form__field">
                                     <label class="field__label" for="age-restriction">Age Restriction<span class="field__required" aria-hidden="true">*</span></label>
-                                    <select class="field__select" id="age-restriction" asp-for="AgeRestriction" required>
+                                    <select class="field__select" id="age-restriction" asp-for="AgeRestriction" aria-describedby="err-age-restriction">
+                                        <option value="">Select age restriction...</option>
                                         <option value="All ages">All ages</option>
                                         <option value="13+">13+</option>
                                         <option value="16+">16+</option>
                                         <option value="18+">18+</option>
                                         <option value="21+">21+</option>
                                     </select>
+                                    <span class="field__error" id="err-age-restriction" role="alert"></span>
                                 </div>
                             </div>
 
@@ -148,6 +218,7 @@
                                 <div class="form__field">
                                     <label class="field__label" for="parking">Parking Options</label>
                                     <select class="field__select" id="parking" asp-for="Parking">
+                                        <option value="">Select parking option...</option>
                                         <option value="Free on-site">Free on-site</option>
                                         <option value="No parking">No parking</option>
                                         <option value="Paid parking">Paid parking</option>
@@ -157,6 +228,7 @@
                                 <div class="form__field">
                                     <label class="field__label" for="washrooms">Washroom Facilities</label>
                                     <select class="field__select" id="washrooms" asp-for="Washrooms">
+                                        <option value="">Select washroom facilities...</option>
                                         <option value="Available">Available</option>
                                         <option value="UnAvailable">UnAvailable</option>
                                         <option value="Standard">Standard</option>
@@ -169,6 +241,7 @@
                                 <div class="form__field">
                                     <label class="field__label" for="accessibility">Accessibility</label>
                                     <select class="field__select" id="accessibility" asp-for="Accessibility">
+                                        <option value="">Select accessibility option...</option>
                                         <option value="Step-free access &amp; accessible washrooms">Step-free access &amp; accessible washrooms</option>
                                         <option value="Step-free access only">Step-free access only</option>
                                         <option value="Sign-language interpretation on request">Sign-language interpretation on request</option>
@@ -178,6 +251,7 @@
                                 <div class="form__field">
                                     <label class="field__label" for="catering">Catering</label>
                                     <select class="field__select" id="catering" asp-for="Catering">
+                                        <option value="">Select catering option...</option>
                                         <option value="Full catering included">Full catering included</option>
                                         <option value="Refreshments only">Refreshments only</option>
                                         <option value="Food available for purchase">Food available for purchase</option>
@@ -202,7 +276,9 @@
                                        name="CoverUpload"
                                        type="file"
                                        accept="image/png,image/jpeg"
-                                       data-image-dropzone="cover-dropzone" @(hasExistingImage ? "" : "required")>
+                                       aria-describedby="err-cover"
+                                       data-image-dropzone="cover-dropzone">
+                                <span class="field__error" id="err-cover" role="alert"></span>
                             </div>
 
                             <div class="covers" id="cover-gallery" @(hasExistingImage ? "" : "hidden")>
@@ -238,9 +314,9 @@
             toast.className = `toast-card toast-card--${type}`;
 
             toast.innerHTML = `
-                                        <span>${message}</span>
-                                        <button type="button" class="toast-card__close" onclick="this.parentElement.remove()">&times;</button>
-                                    `;
+                                                <span>${message}</span>
+                                                <button type="button" class="toast-card__close" onclick="this.parentElement.remove()">&times;</button>
+                                            `;
 
             container.appendChild(toast);
 
@@ -345,17 +421,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const toggleEditBtn = document.getElementById('btn-toggle-edit');
-            const fieldset = document.getElementById('form-fieldset');
-
-            if (toggleEditBtn && fieldset) {
-                toggleEditBtn.addEventListener('click', () => {
-                    fieldset.removeAttribute('disabled');
-                    toggleEditBtn.style.display = 'none';
-                    showToast("Edit mode enabled.", "info");
-                });
-            }
-
             @if (!string.IsNullOrWhiteSpace(Model.ApiError))
                 {
                     <text>
@@ -363,45 +428,182 @@
                     </text>
             }
 
-                    const form = document.getElementById('basicDetailsForm');
+                            const form = document.getElementById('basicDetailsForm');
+
+            /* ------------------------------------------------------------
+               Field validation — required checks + input-format checks,
+               inline red error text under each field, live as the user
+               types/selects, and re-checked on submit.
+               ------------------------------------------------------------ */
+
+            const NAME_PATTERN = /^[a-zA-Z0-9 ]+$/;
+
+            const fieldValidators = [
+                {
+                    input: document.getElementById('event-title'),
+                    error: document.getElementById('err-event-title'),
+                    validate: (value) => {
+                        const trimmed = value.trim();
+                        if (!trimmed) return "Event Title is required.";
+                        if (!NAME_PATTERN.test(trimmed)) return "Only letters, numbers, and spaces are allowed.";
+                        return "";
+                    }
+                },
+                {
+                    input: document.getElementById('category'),
+                    error: document.getElementById('err-category'),
+                    validate: (value) => value ? "" : "Please select a Category."
+                },
+                {
+                    input: document.getElementById('tagline'),
+                    error: document.getElementById('err-tagline'),
+                    validate: (value) => {
+                        const trimmed = value.trim();
+                        if (!trimmed) return "Tagline is required.";
+                        if (!NAME_PATTERN.test(trimmed)) return "Only letters, numbers, and spaces are allowed.";
+                        return "";
+                    }
+                },
+                {
+                    input: document.getElementById('event-city'),
+                    error: document.getElementById('err-city'),
+                    validate: (value) => value ? "" : "Please select a Primary City."
+                },
+                {
+                    input: document.getElementById('layout-type'),
+                    error: document.getElementById('err-layout-type'),
+                    validate: (value) => value ? "" : "Please select a Layout Type."
+                },
+                {
+                    input: document.getElementById('age-restriction'),
+                    error: document.getElementById('err-age-restriction'),
+                    validate: (value) => value ? "" : "Please select an Age Restriction."
+                }
+            ];
+
+            function showFieldError(field, message) {
+                field.input.classList.add('is-invalid');
+                if (field.error) {
+                    field.error.textContent = message;
+                    field.error.classList.add('is-visible');
+                }
+            }
+
+            function clearFieldError(field) {
+                field.input.classList.remove('is-invalid');
+                if (field.error) {
+                    field.error.textContent = "";
+                    field.error.classList.remove('is-visible');
+                }
+            }
+
+            function runValidator(field) {
+                const message = field.validate(field.input.value);
+                if (message) {
+                    showFieldError(field, message);
+                } else {
+                    clearFieldError(field);
+                }
+                return !message;
+            }
+
+            fieldValidators.forEach((field) => {
+                if (!field.input) return;
+
+                // Live validation as the user interacts with the field.
+                const liveEvent = (field.input.tagName === 'SELECT') ? 'change' : 'input';
+                field.input.addEventListener(liveEvent, () => runValidator(field));
+                field.input.addEventListener('blur', () => runValidator(field));
+            });
+
+            const coverInput = document.getElementById('cover-upload');
+            const coverError = document.getElementById('err-cover');
+            const coverDropzoneEl = document.getElementById('cover-dropzone');
+            const existingImageHidden = document.getElementById('existingImageUrl');
+
+            function showCoverError(message) {
+                if (coverDropzoneEl) coverDropzoneEl.classList.add('is-invalid');
+                if (coverError) {
+                    coverError.textContent = message;
+                    coverError.classList.add('is-visible');
+                }
+            }
+
+            function clearCoverError() {
+                if (coverDropzoneEl) coverDropzoneEl.classList.remove('is-invalid');
+                if (coverError) {
+                    coverError.textContent = "";
+                    coverError.classList.remove('is-visible');
+                }
+            }
+
+            function validateCover() {
+                if (!coverInput) return true;
+                const hasFile = coverInput.files && coverInput.files.length > 0;
+                const hasExisting = !!(existingImageHidden && existingImageHidden.value);
+
+                if (!hasFile && !hasExisting) {
+                    showCoverError("Please upload a cover image.");
+                    return false;
+                }
+
+                clearCoverError();
+                return true;
+            }
+
+            if (coverInput) {
+                coverInput.addEventListener('change', validateCover);
+            }
+
+            // The "Remove / Replace" button for an already-saved cover image
+            // (edit mode) previously had no click handler at all, so it did
+            // nothing. Wire it up: clear the saved image reference and show
+            // the dropzone again so the user can pick a new file.
+            const existingCoverRemoveBtn = document.getElementById('cover-remove');
+            if (existingCoverRemoveBtn && document.getElementById('img-cover-preview')) {
+                existingCoverRemoveBtn.addEventListener('click', () => {
+                    if (existingImageHidden) existingImageHidden.value = "";
+                    if (coverInput) coverInput.value = "";
+
+                    const gallery = document.getElementById('cover-gallery');
+                    if (gallery) {
+                        gallery.hidden = true;
+                        gallery.innerHTML = "";
+                    }
+
+                    validateCover();
+                });
+            }
+
+            function validateAllFields() {
+                let isValid = true;
+
+                fieldValidators.forEach((field) => {
+                    if (!field.input) return;
+                    if (!runValidator(field)) {
+                        isValid = false;
+                    }
+                });
+
+                if (!validateCover()) {
+                    isValid = false;
+                }
+
+                return isValid;
+            }
 
             form.addEventListener('submit', (e) => {
-                const fieldset = document.getElementById('form-fieldset');
-                if (fieldset && fieldset.hasAttribute('disabled')) {
-                    fieldset.removeAttribute('disabled');
-                }
-
-                const eventTitle = document.getElementById('event-title').value.trim();
-                const category = document.getElementById('category').value;
-                const tagline = document.getElementById('tagline').value.trim();
-                const city = document.getElementById('event-city').value;
-
-                if (!eventTitle) {
+                if (!validateAllFields()) {
                     e.preventDefault();
-                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-                    showToast("Please enter an Event Title.", "warning");
-                    return;
-                }
+                    showToast("Please fix the highlighted fields below.", "warning");
 
-                if (!category) {
-                    e.preventDefault();
-                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-                    showToast("Please select a Category.", "warning");
-                    return;
-                }
-
-                if (!tagline) {
-                    e.preventDefault();
-                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-                    showToast("Please enter a Tagline.", "warning");
-                    return;
-                }
-
-                if (!city) {
-                    e.preventDefault();
-                    if (fieldset) fieldset.setAttribute('disabled', 'disabled');
-                    showToast("Please select a Primary City.", "warning");
-                    return;
+                    const firstInvalid = form.querySelector('.is-invalid, .dropzone.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        if (typeof firstInvalid.focus === 'function') {
+                            firstInvalid.focus({ preventScroll: true });
+                        }
+                    }
                 }
             });
 
@@ -445,10 +647,10 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     gallery.innerHTML = `
-                                                <div class="cover-preview">
-                                                    <img src="${e.target.result}" id="img-cover-preview" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
-                                                    <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove</button>
-                                                </div>`;
+                                                        <div class="cover-preview">
+                                                            <img src="${e.target.result}" id="img-cover-preview" alt="Cover preview" style="max-width:100%;border-radius:8px;" />
+                                                            <button type="button" class="btn btn--outline u-mt-2" id="cover-remove">Remove</button>
+                                                        </div>`;
                     gallery.hidden = false;
 
                     document.getElementById('cover-remove').addEventListener('click', () => {
@@ -465,6 +667,7 @@
                     if (validateAndProcessFile(file)) {
                         renderPreview(file);
                     }
+                    validateCover();
                 });
 
                 dropzone.addEventListener('dragover', (e) => e.preventDefault());
@@ -479,6 +682,7 @@
                             renderPreview(file);
                         }
                     }
+                    validateCover();
                 });
             }
 
