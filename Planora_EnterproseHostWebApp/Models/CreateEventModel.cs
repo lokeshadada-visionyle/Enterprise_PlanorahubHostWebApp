@@ -320,6 +320,44 @@ namespace Planora_EnterproseHostWebApp.Models
         public string Question {  get; set; }
         public string Answer {  get; set; }
     }
+    public class EventFAQResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int EventId { get; set; }
+        public bool IsPollsEnabled { get; set; }
+        public bool IsFeedbackEnabled { get; set; }
+        public bool CanGuestAttactPhoto { get; set; }
+        public bool IsEnterprise { get; set; }
+        public List<string> Description { get; set; } = new List<string>();
+        public List<GetFAQItem> FAQs { get; set; } = new List<GetFAQItem>();
+    }
+    public class GetFAQItem
+    {
+        public int FAQItemId { get; set; }
+        public string Question { get; set; }
+        public string Answer { get; set; }
+    }
+    public class UpdateEventFAQRequest
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+
+        public bool IsPollsEnabled { get; set; }
+        public bool IsFeedbackEnabled { get; set; }
+        public bool CanGuestAttactPhoto { get; set; }
+
+        public List<string> Description { get; set; } = new List<string>();
+
+        public List<UpdateFAQItem> FAQs { get; set; } = new List<UpdateFAQItem>();
+    }
+    public class UpdateFAQItem
+    {
+        public int FAQItemId { get; set; }
+        public string Question { get; set; }
+        public string Answer { get; set; }
+    }
     public class AddEventPolicyResp
     {
         public int Status { get; set; }

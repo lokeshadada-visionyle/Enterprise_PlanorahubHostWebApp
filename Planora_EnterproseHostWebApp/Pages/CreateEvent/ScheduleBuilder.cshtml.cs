@@ -353,7 +353,41 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return new JsonResult(new { success = false, message = "An error occurred while saving schedule." });
             }
         }
+        public IActionResult OnGetGetSchedule()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                return new JsonResult(new { success = false, message = "Unauthorized" });
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                // Call your helper method to fetch saved event dates and slots
+                var response = helper.GetEventDateAndSlots(userId.Value, eventId.Value);
+
+                if (response != null && (response.Status == 1 || response.Status == 200) && response.EventDates != null)
+                {
+                    return new JsonResult(new { success = true, data = response.EventDates }, PreserveCasingJsonOptions);
+                }
+
+                return new JsonResult(new { success = false, message = response?.Message ?? "No schedule found." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Get Schedule Error: {ex}");
+                return new JsonResult(new { success = false, message = "Unable to load schedule." });
+            }
+        }
     }
 
     public class SaveVenuePayload

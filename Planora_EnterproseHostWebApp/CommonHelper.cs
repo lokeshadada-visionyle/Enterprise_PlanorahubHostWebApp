@@ -439,6 +439,41 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public EventFAQResponse GetEventFaqResp(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/HostGetEventPolicy?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<EventFAQResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public UpdateEventFAQRequest UpdateEventPolicyReq(UpdateEventFAQRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateEventFAQRequest
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                IsPollsEnabled = req.IsPollsEnabled,
+                CanGuestAttactPhoto = req.CanGuestAttactPhoto,
+                IsFeedbackEnabled = req.IsFeedbackEnabled,
+                Description = req.Description,
+                FAQs = req.FAQs,
+            };
+            string url = SERVICE_URL + "/HostUpdateEventPolicy";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<UpdateEventFAQRequest>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
 
         public GetEventCurrencyResp GetEventCurrency(long userId,int eventId)
         {
