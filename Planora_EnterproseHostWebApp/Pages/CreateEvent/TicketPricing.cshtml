@@ -2421,14 +2421,16 @@
                         'data-incl-switch',
                         'data-incl-body',
                         'data-incl-off',
-                        'data-includes'
+                        'data-includes',
+                        'data-incl-group'
                     ];
 
                     var scoped = node.querySelectorAll(
                         '[id],[name],[for],[aria-controls],[aria-labelledby],' +
                         '[data-reveal],[data-upload],[data-upload-dropzone],' +
                         '[data-pick-owner],[data-segment-owner],[data-tier-repeat-add],' +
-                        '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes]'
+                        '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes]' + 
+                        '[data-incl-group]'
                     );
 
                     var all = [node].concat(Array.prototype.slice.call(scoped));
@@ -2847,6 +2849,25 @@
                             var expiry = tier.querySelector('[data-pick-group]');
                             var expiryMode = valueOfPressed(expiry, '[data-pick]', 'date');
                             addHidden(form, 'tier-expiry-mode-' + suffix, expiryMode);
+
+                            var inclGroup = tier.querySelector('[data-incl-group="' + CSS.escape(suffix) + '"]');
+                            if (inclGroup) {
+                                var inclIdx = 0;
+                                inclGroup.querySelectorAll('[data-incl-row]').forEach(function (row) {
+                                    var box = row.querySelector('[data-incl-box]');
+                                    if (!box || !box.checked) return;
+
+                                    var nameField = row.querySelector('[data-incl-labelfield]');
+                                    var noteField = row.querySelector('[data-incl-notefield]');
+                                    var name = nameField ? nameField.value.trim() : '';
+                                    var desc = noteField ? noteField.value.trim() : '';
+                                    if (!name) return;
+
+                                    addHidden(form, 'incl-name-' + suffix + '-' + inclIdx, name);
+                                    addHidden(form, 'incl-desc-' + suffix + '-' + inclIdx, desc);
+                                    inclIdx++;
+                                });
+                            }
                         });
 
                         uploadMemberListsForTiers()

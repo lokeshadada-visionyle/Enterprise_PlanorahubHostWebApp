@@ -568,6 +568,21 @@ namespace Planora_EnterproseHostWebApp.Models
         public int StockLimit {  get; set; }
         public int SortOrder { get; set; }
     }
+    public class UpdateAddonsReq
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public List<UpdateAddOns> AddOns { get; set; }
+    }
+    public class UpdateAddOns
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public int StockLimit { get; set; }
+        public int SortOrder { get; set; }
+    }
     public class AddPromoCodeReq
     {
         public long UserId { get; set; }
@@ -576,6 +591,27 @@ namespace Planora_EnterproseHostWebApp.Models
         public List<PromoCodes> PromoCodes { get; set; }
     }
     public class PromoCodes
+    {
+        public string Code { get; set; } = string.Empty;
+        public string DiscountType { get; set; } = string.Empty;
+        public decimal DiscountValue { get; set; }
+        public int MaxUses { get; set; }
+        public int PerUserLimit { get; set; }
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidTo { get; set; }
+        public int ApplicableTicketTypeId { get; set; }
+        public bool CanCombineCodes { get; set; }
+        public bool IsFirstTimeBuyer { get; set; }
+        public string Status { get; set; }
+    }
+    public class UpdatePromoCodeReq
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public List<UpdatePromoCodes> PromoCodes { get; set; }
+    }
+    public class UpdatePromoCodes
     {
         public string Code { get; set; } = string.Empty;
         public string DiscountType { get; set; } = string.Empty;
