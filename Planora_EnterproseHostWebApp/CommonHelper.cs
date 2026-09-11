@@ -182,7 +182,7 @@ namespace Planora_EnterproseHostWebApp
                 TimeZone = req.TimeZone,
                 CityId = req.CityId,
                 FileName = req.FileName,
-                ImageBase64 =req.ImageBase64
+                ImageBase64 = req.ImageBase64
             };
             string url = SERVICE_URL + "/Ent_AddEvent";
             string jsonData = JsonSerializer.Serialize(request);
@@ -195,7 +195,7 @@ namespace Planora_EnterproseHostWebApp
         public EventDetails GetEventDetailsById(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
-            var request = new 
+            var request = new
             {
                 UserId = userId,
                 EventId = eventId,
@@ -302,7 +302,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetCitiesResp GetCityResp(long userId,string search)
+        public GetCitiesResp GetCityResp(long userId, string search)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -334,6 +334,24 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public Response UpdateVenueAndHall(UpdateVenueAndHallReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateVenueAndHallReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                Venues = req.Venues,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateVenueAndHall";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public Response AddEventDateAndSlots(AddEventDateSlotsReq req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
@@ -345,6 +363,24 @@ namespace Planora_EnterproseHostWebApp
                 EventId = req.EventId,
             };
             string url = SERVICE_URL + "/Ent_AddEventDateAndSlots";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateEventDateAndSlots(UpdateEventDateSlotsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateEventDateSlotsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                EventDates = req.EventDates,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateEventDateAndSlots";
             string jsonData = JsonSerializer.Serialize(request);
             Debug.WriteLine(url);
             Debug.WriteLine(jsonData);
@@ -369,7 +405,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetHallByVenueIdResp GetVenueHallsBYIdResp(long userId,int eventId, int venueId)
+        public GetHallByVenueIdResp GetVenueHallsBYIdResp(long userId, int eventId, int venueId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -411,6 +447,24 @@ namespace Planora_EnterproseHostWebApp
             string url = SERVICE_URL + "/Ent_Speakers?" + query;
             Debug.WriteLine(url);
             var response = _download_serialized_json_data<SpeakerResponseModel>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateSpeaker(UpdateSpeakerReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateSpeakerReq
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                Ent_UpdateSpeaker = req.Ent_UpdateSpeaker,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateSpeaker";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
@@ -473,7 +527,7 @@ namespace Planora_EnterproseHostWebApp
             return response;
         }
 
-        public GetEventCurrencyResp GetEventCurrency(long userId,int eventId)
+        public GetEventCurrencyResp GetEventCurrency(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -495,7 +549,7 @@ namespace Planora_EnterproseHostWebApp
                 EventId = req.EventId,
                 hashValue = hashValue,
                 TicketTypes = req.TicketTypes,
-                
+
             };
             string url = SERVICE_URL + "/Ent_AddTicketTypeTiers";
             string jsonData = JsonSerializer.Serialize(request);
@@ -837,7 +891,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetRsvpTemplatesResp GetRsvpDefaultCustomForms(int userId,int eventId)
+        public GetRsvpTemplatesResp GetRsvpDefaultCustomForms(int userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -850,7 +904,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetRsvpTemplateFieldsResp GetDefaultRsvpFormsByTitle(int userId,int eventId, string formTitle)
+        public GetRsvpTemplateFieldsResp GetDefaultRsvpFormsByTitle(int userId, int eventId, string formTitle)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1028,9 +1082,9 @@ namespace Planora_EnterproseHostWebApp
             return response;
         }
 
-        public MyEventResponse GetMyEvents(long userId, int pageNo = 1, int pageSize = 10,string status = "All",string search="")
+        public MyEventResponse GetMyEvents(long userId, int pageNo = 1, int pageSize = 10, string status = "All", string search = "")
         {
-            string hashValue = GetSHA265(userId.ToString());    
+            string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
                 ("UserId", userId.ToString()),
                 ("PageNo", pageNo.ToString()),
@@ -1060,7 +1114,7 @@ namespace Planora_EnterproseHostWebApp
         //    Debug.WriteLine(JsonSerializer.Serialize(response));
         //    return response;
         //}
-        public EventHubOverviewResp GetEventHubOverView(long userId, int eventId,int soltId)
+        public EventHubOverviewResp GetEventHubOverView(long userId, int eventId, int soltId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1087,7 +1141,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubGuestResp GetEventHubGuestResp(long userId, int eventId, int sloId,int ticketTypeId = 0,bool isCheckIn = false)
+        public EventHubGuestResp GetEventHubGuestResp(long userId, int eventId, int sloId, int ticketTypeId = 0, bool isCheckIn = false)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1119,7 +1173,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubGuestRegistrationResp GetEventHubGuestRegistrationResp(long userId, int eventId, int sloId, int ticketTypeId = 0, bool isComplete = false,string search = "")
+        public EventHubGuestRegistrationResp GetEventHubGuestRegistrationResp(long userId, int eventId, int sloId, int ticketTypeId = 0, bool isComplete = false, string search = "")
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1152,7 +1206,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubRsvpResponseResp GetEventHubGuestRsvpResponseResp(long userId, int eventId, int sloId,string search = "", string resp = "")
+        public EventHubRsvpResponseResp GetEventHubGuestRsvpResponseResp(long userId, int eventId, int sloId, string search = "", string resp = "")
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1182,7 +1236,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public SeatResponseModel GetEventHubSeatinLayoutResp(long userId, int eventId, int sloId,int ticketTypeId)
+        public SeatResponseModel GetEventHubSeatinLayoutResp(long userId, int eventId, int sloId, int ticketTypeId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1421,7 +1475,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubSalesResponse GetEventHubSalesResp(long userId, int eventId,int slotId)
+        public EventHubSalesResponse GetEventHubSalesResp(long userId, int eventId, int slotId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1453,7 +1507,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubPollAnalyticsResponse GetEventHubSalesSummaryResp(long userId, int eventId,int slotId)
+        public EventHubPollAnalyticsResponse GetEventHubSalesSummaryResp(long userId, int eventId, int slotId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -1469,14 +1523,14 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public EventHubAddonReportResponse GetEventHubAddonsPromoResp(long userId, int eventId, int slotId,string search = "")
+        public EventHubAddonReportResponse GetEventHubAddonsPromoResp(long userId, int eventId, int slotId, string search = "")
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
                 ("UserId", userId.ToString()),
                 ("EventId", eventId.ToString()),
                 ("SlotId", slotId.ToString()),
-                ("Search",search.ToString()),
+                ("Search", search.ToString()),
                 ("hashValue", hashValue));
 
             string url = SERVICE_URL + "/Ent_GetAddonsDashboard?" + query;

@@ -217,7 +217,7 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class GenVenueHallReq
     {
-        public int UserId { get;set;  }
+        public int UserId { get; set; }
         public int EventId { get; set; }
         public string hashValue { get; set; }
     }
@@ -280,14 +280,14 @@ namespace Planora_EnterproseHostWebApp.Models
         public int UserId { get; set; }
         public int EventId { get; set; }
         public string hashValue { get; set; }
-        public List<Ent_Speaker>Ent_Speaker {  get; set; }  
+        public List<Ent_Speaker> Ent_Speaker { get; set; }
     }
     public class Ent_Speaker
     {
-        public string Name {  get; set; }
-        public string JobTitle{  get; set; }
-        public string Organization {  get; set; }
-        public string Bio {  get; set; }
+        public string Name { get; set; }
+        public string JobTitle { get; set; }
+        public string Organization { get; set; }
+        public string Bio { get; set; }
     }
     public class SpeakerResponseModel
     {
@@ -309,10 +309,10 @@ namespace Planora_EnterproseHostWebApp.Models
         public long UserId { get; set; }
         public string hashValue { get; set; }
         public int EventId { get; set; }
-        public bool IsPollsEnabled{ get; set; }
+        public bool IsPollsEnabled { get; set; }
         public bool IsFeedbackEnabled { get; set; }
         public bool CanGuestAttactPhoto { get; set; }
-        public List<string> Description {  get; set; }
+        public List<string> Description { get; set; }
         public List<FAQItem> FAQs { get; set; }
     }
     public class FAQItem
@@ -410,7 +410,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public string AccessMode { get; set; }
         public List<int> SelectedDateIds { get; set; }
         public List<int> SelectedSlotIds { get; set; }
-        public List<Inclusions> Inclusions {  get; set; }
+        public List<Inclusions> Inclusions { get; set; }
     }
     public class Inclusions
     {
@@ -530,6 +530,12 @@ namespace Planora_EnterproseHostWebApp.Models
         public int Status { get; set; }
         public string Message { get; set; } = string.Empty;
         public int EventId { get; set; }
+
+        // NOTE (fix for API #8 - Ent_GetEventDateAndSlots naming mismatch):
+        // The live API returns this array under the key "EventDate" (singular),
+        // not "EventDates". Without this JsonPropertyName the list always
+        // deserialized as null even though the HTTP call succeeded.
+        [System.Text.Json.Serialization.JsonPropertyName("EventDate")]
         public List<EventDates> EventDates { get; set; }
     }
     public class EventDates
@@ -540,6 +546,9 @@ namespace Planora_EnterproseHostWebApp.Models
         [System.Text.Json.Serialization.JsonPropertyName("EventDate")]
         public string EventDateValue { get; set; } = string.Empty;
 
+        // NOTE (fix for API #8): the live API returns the nested slots array
+        // under the key "EventSlot" (singular), not "EventSlots".
+        [System.Text.Json.Serialization.JsonPropertyName("EventSlot")]
         public List<EventSlot> EventSlots { get; set; } = new List<EventSlot>();
     }
     public class EventSlot
@@ -553,6 +562,74 @@ namespace Planora_EnterproseHostWebApp.Models
         public string Speakers { get; set; } = string.Empty;
     }
 
+    // ===================== Update Venue & Hall (Ent_UpdateVenueAndHall) =====================
+    public class UpdateVenueAndHallReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public List<UpdateVenue> Venues { get; set; } = new();
+    }
+    public class UpdateVenue
+    {
+        public int VenueId { get; set; }
+        public string VenueName { get; set; }
+        public string Address { get; set; }
+        public List<UpdateHall> Halls { get; set; } = new();
+    }
+    public class UpdateHall
+    {
+        public int HallId { get; set; }
+        public string HallName { get; set; }
+        public int Capacity { get; set; }
+    }
+
+    // ===================== Update Event Date & Slots (Ent_UpdateEventDateAndSlots) =====================
+    public class UpdateEventDateSlotsReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public List<UpdateEventDateModel> EventDates { get; set; } = new();
+    }
+    public class UpdateEventDateModel
+    {
+        public int EventDateId { get; set; }
+        public string SessionName { get; set; } = string.Empty;
+        public string EventDate { get; set; } = string.Empty;
+        public List<UpdateEventSlotModel> EventSlots { get; set; } = new List<UpdateEventSlotModel>();
+    }
+    public class UpdateEventSlotModel
+    {
+        public int SlotId { get; set; }
+        public string SlotName { get; set; } = string.Empty;
+        public string StartTime { get; set; } = string.Empty;
+        public string EndTime { get; set; } = string.Empty;
+        public int HallId { get; set; }
+        public int Capacity { get; set; }
+        // NOTE: per the API spec, Update (unlike Add, which uses "int SpeakerId")
+        // takes the speaker as a "string Speakers" value - same shape as the
+        // Ent_GetEventDateAndSlots response. Keep this a string end-to-end.
+        public string Speakers { get; set; } = string.Empty;
+    }
+
+    // ===================== Update Speaker (Ent_UpdateSpeaker) =====================
+    public class UpdateSpeakerReq
+    {
+        public int UserId { get; set; }
+        public int EventId { get; set; }
+        public string hashValue { get; set; }
+        public List<UpdateSpeakerModel> Ent_UpdateSpeaker { get; set; } = new();
+    }
+    public class UpdateSpeakerModel
+    {
+        public int SpeakerId { get; set; }
+        public string Name { get; set; }
+        public string JobTitle { get; set; }
+        public string Organization { get; set; }
+        public string Bio { get; set; }
+    }
+
     public class AddAddonsReq
     {
         public long UserId { get; set; }
@@ -562,10 +639,10 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class AddOns
     {
-        public string Name {  get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Price {  get; set; }
-        public int StockLimit {  get; set; }
+        public decimal Price { get; set; }
+        public int StockLimit { get; set; }
         public int SortOrder { get; set; }
     }
     public class UpdateAddonsReq
@@ -627,27 +704,27 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class GetDiscountExposureResp
     {
-        public List<DiscountExposureItem> Discounts {  get; set; }
-        public decimal MaximumDiscountExposure { get; set; } 
+        public List<DiscountExposureItem> Discounts { get; set; }
+        public decimal MaximumDiscountExposure { get; set; }
     }
     public class DiscountExposureItem
     {
         public string Code { get; set; }
-        public string Description {  get; set; }
-        public int MaxUse {  get; set; }
+        public string Description { get; set; }
+        public int MaxUse { get; set; }
         public bool Ispaused { get; set; }
-        public decimal DiscountExposure {  get; set; }
+        public decimal DiscountExposure { get; set; }
     }
     public class TicketTypeResp
     {
         public int Status { get; set; }
         public string Message { get; set; }
-        public List<TicketType> TicketTypes {  get; set; }
+        public List<TicketType> TicketTypes { get; set; }
     }
     public class TicketType
     {
-        public int TicketTypeId {  get; set; }
-        public string TypeName {  get; set; }
+        public int TicketTypeId { get; set; }
+        public string TypeName { get; set; }
     }
 
     public class AddFoodDetailsReq
@@ -810,15 +887,16 @@ namespace Planora_EnterproseHostWebApp.Models
         public int TotalFields { get; set; }
     }
 
-    public class AddLandingPageReq { 
-        public  int UserId { get; set; }
+    public class AddLandingPageReq
+    {
+        public int UserId { get; set; }
         public string hashValue { get; set; }
         public int EventId { get; set; }
         public string Logo { get; set; }
-        public string PrimaryColour {  get; set; }
-        public string AccentColour {  get; set; }
-        public string BackGroundColour {  get; set; }
-        public string Link {  get; set; }
+        public string PrimaryColour { get; set; }
+        public string AccentColour { get; set; }
+        public string BackGroundColour { get; set; }
+        public string Link { get; set; }
         public string Description { get; set; }
     }
     public class FileUploadModel
@@ -893,21 +971,21 @@ namespace Planora_EnterproseHostWebApp.Models
         public int UserId { get; set; }
         public string hashValue { get; set; }
         public int EventId { get; set; }
-        public bool IsRsvpEnabled {  get; set; }
-        public List<CustomFields> Custom {  get; set; }
+        public bool IsRsvpEnabled { get; set; }
+        public List<CustomFields> Custom { get; set; }
     }
     public class CustomFields
     {
-        public int CustomId {  get; set; }
-        public string CustomName {  get; set; }
+        public int CustomId { get; set; }
+        public string CustomName { get; set; }
         public bool IsRequired { get; set; }
     }
     public class GetRsvpCustomsResp
     {
-        public int Status {  get; set; }
-        public string Message {  get; set; }
+        public int Status { get; set; }
+        public string Message { get; set; }
         public bool IsRsvpEnabled { get; set; }
-        public bool IsEnterprise {  get; set; }
+        public bool IsEnterprise { get; set; }
         public List<CustomFields> Custom { get; set; }
     }
     public class GetRsvpTemplatesResp

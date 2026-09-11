@@ -102,6 +102,59 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
         }
 
+        public IActionResult OnPostUpdateVenue([FromBody] UpdateVenuePayload payload)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            int? eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid. Please select an event first." });
+            }
+
+            if (payload?.Venues == null || !payload.Venues.Any())
+            {
+                return new JsonResult(new { success = false, message = "Please add at least one venue." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var request = new UpdateVenueAndHallReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    Venues = payload.Venues
+                };
+
+                var response = helper.UpdateVenueAndHall(request);
+
+                if (response != null && (response.Status == 1 || response.Status == 200))
+                {
+                    return new JsonResult(new
+                    {
+                        success = true,
+                        message = response.Message ?? "Venue and halls updated successfully."
+                    });
+                }
+
+                return new JsonResult(new { success = false, message = response?.Message ?? "Failed to update venue and halls." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Update Venue Error: {ex}");
+                return new JsonResult(new { success = false, message = "An error occurred while updating venue and hall details." });
+            }
+        }
+
         public IActionResult OnGetGetVenues()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -235,6 +288,59 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
         }
 
+        public IActionResult OnPostUpdateSpeakers([FromBody] UpdateSpeakersPayload payload)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid. Please select an event first." });
+            }
+
+            if (payload?.Speakers == null || !payload.Speakers.Any())
+            {
+                return new JsonResult(new { success = false, message = "Please add at least one speaker." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+                var speakerRequest = new UpdateSpeakerReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    Ent_UpdateSpeaker = payload.Speakers
+                };
+
+                var speakerResponse = helper.UpdateSpeaker(speakerRequest);
+
+                if (speakerResponse != null && (speakerResponse.Status == 1 || speakerResponse.Status == 200))
+                {
+                    return new JsonResult(new
+                    {
+                        success = true,
+                        message = speakerResponse.Message ?? "Speakers updated successfully."
+                    });
+                }
+
+                return new JsonResult(new { success = false, message = speakerResponse?.Message ?? "Failed to update speakers." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Update Speakers Error: {ex}");
+                return new JsonResult(new { success = false, message = "An error occurred while updating speaker details." });
+            }
+        }
+
         public IActionResult OnGetGetSpeakers()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -353,6 +459,63 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return new JsonResult(new { success = false, message = "An error occurred while saving schedule." });
             }
         }
+        public IActionResult OnPostUpdateSchedule([FromBody] UpdateScheduleRequest request)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
+
+                return RedirectToPage("/Login/Login");
+            }
+
+            if (!eventId.HasValue)
+            {
+                return new JsonResult(new { success = false, message = "Event session expired or invalid." });
+            }
+
+            if (request?.Slots == null || !request.Slots.Any())
+            {
+                return new JsonResult(new { success = false, message = "Invalid schedule request." });
+            }
+
+            try
+            {
+                var helper = new CommonHelper();
+
+                var slotRequest = new UpdateEventDateSlotsReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    EventDates = request.Slots
+                };
+
+                var slotResponse = helper.UpdateEventDateAndSlots(slotRequest);
+
+                if (slotResponse == null || (slotResponse.Status != 1 && slotResponse.Status != 200))
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = slotResponse?.Message ?? "Failed to update schedule."
+                    });
+                }
+
+                int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+                HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 4));
+                return new JsonResult(new { success = true, message = "Schedule updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Update Schedule Error: {ex}");
+                return new JsonResult(new { success = false, message = "An error occurred while updating schedule." });
+            }
+        }
+
         public IActionResult OnGetGetSchedule()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -393,5 +556,20 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
     public class SaveVenuePayload
     {
         public List<Venue> Venues { get; set; } = new();
+    }
+
+    public class UpdateVenuePayload
+    {
+        public List<UpdateVenue> Venues { get; set; } = new();
+    }
+
+    public class UpdateSpeakersPayload
+    {
+        public List<UpdateSpeakerModel> Speakers { get; set; } = new();
+    }
+
+    public class UpdateScheduleRequest
+    {
+        public List<UpdateEventDateModel> Slots { get; set; } = new();
     }
 }
