@@ -307,14 +307,20 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 things.Add(new ThingToKnow { Category = "AgeRestriction", Value = AgeRestriction });
             }
 
-            things.Add(new ThingToKnow { Category = "Parking", Value = Parking });
+            if (!string.IsNullOrWhiteSpace(Parking))
+            {
+                things.Add(new ThingToKnow { Category = "Parking", Value = Parking });
+            }
 
             if (!string.IsNullOrWhiteSpace(Washrooms))
             {
                 things.Add(new ThingToKnow { Category = "Washrooms", Value = Washrooms });
             }
 
-            things.Add(new ThingToKnow { Category = "Accessibility", Value = Accessibility });
+            if (!string.IsNullOrWhiteSpace(Accessibility))
+            {
+                things.Add(new ThingToKnow { Category = "Accessibility", Value = Accessibility });
+            }
 
             if (!string.IsNullOrWhiteSpace(Catering))
             {

@@ -105,7 +105,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public long UserId { get; set; }
         public string hashValue { get; set; } = "";
         public int EventId { get; set; }
-        public int ImageURL { get; set; }
+        //public int ImageURL { get; set; }
         public List<ThingToKnow> Things { get; set; }
     }
     public class ThingToKnow
@@ -119,7 +119,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public long UserId { get; set; }
         public string hashValue { get; set; } = "";
         public int EventId { get; set; }
-        public int ImageURL { get; set; }
+        //public int ImageURL { get; set; }
         public List<ThingToKnow> Things { get; set; }
     }
     public class AddThingToKnowResp
@@ -142,7 +142,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public string Message { get; set; } = string.Empty;
         public int InsertedCount { get; set; }
         public int EventId { get; set; }
-        public string ImageURL { get; set; } = string.Empty;
+        //public string ImageURL { get; set; } = string.Empty;
         public bool IsEnterprise { get; set; }
         public bool Ispublicfreefirst { get; set; }
         public string EventChargeType { get; set; } = string.Empty;
