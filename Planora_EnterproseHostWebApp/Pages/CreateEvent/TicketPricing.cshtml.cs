@@ -4,6 +4,7 @@ using Planora_EnterproseHostWebApp.Extensions;
 using Planora_EnterproseHostWebApp.Models;
 using System.Globalization;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 {
@@ -21,7 +22,10 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public string Currency { get; private set; } = "NGN";
 
         public List<EventDates> EventDates { get; private set; } = new List<EventDates>();
+        [BindProperty]
+        public bool HasExistingTicketData { get; set; }
 
+        public string ExistingTicketDataJson { get; private set; } = "[]";
         public string? ErrorMessage { get; private set; }
 
         public string? SuccessMessage { get; private set; }
@@ -69,6 +73,29 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             {
                 ErrorMessage = "Unable to load event dates/slots: " + ex.Message;
             }
+            try
+            {
+                var tierResp = helper.GetTicketTypeTierResp(userId.Value, eventId.Value);
+
+                if (tierResp != null && tierResp.Status == 1 && tierResp.TicketTypes?.Count > 0)
+                {
+                    HasExistingTicketData = true;
+
+                    PricingMode = (tierResp.TicketTypes.Count == 1 &&
+                                   string.Equals(tierResp.TicketTypes[0].TypeName, "Free", StringComparison.OrdinalIgnoreCase))
+                        ? "free"
+                        : "paid";
+
+                    ExistingTicketDataJson = JsonSerializer.Serialize(tierResp.TicketTypes, new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Unable to load existing ticket tiers: " + ex.Message;
+            }
             return Page();
         }
 
@@ -76,7 +103,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
-            
+
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
@@ -111,11 +138,11 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (PricingMode == "free")
             {
-                ticketTypes = BuildFreeTicketType();
+                ticketTypes = BuildFreeTicketType(eventId.Value);
             }
             else
             {
-                ticketTypes = BuildPaidTicketTypes();
+                ticketTypes = BuildPaidTicketTypes(eventId.Value);
             }
 
 
@@ -178,7 +205,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
-            
+
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
@@ -194,9 +221,25 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (req == null ||
                 string.IsNullOrWhiteSpace(req.FileBase64) ||
-                string.IsNullOrWhiteSpace(req.FileName))
+                string.IsNullOrWhiteSpace(req.FileName) ||
+                string.IsNullOrWhiteSpace(req.TierSuffix))
             {
                 return new JsonResult(new { status = 0, message = "No file provided." });
+            }
+
+            var allowedExtensions = new[] { ".csv", ".xlsx" };
+            var ext = System.IO.Path.GetExtension(req.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(ext))
+            {
+                return new JsonResult(new { status = 0, message = "Only .csv or .xlsx files are supported." });
+            }
+
+            // Reject absurdly large uploads before they hit the downstream service.
+            // Base64 is ~4/3 the size of the raw bytes, so this caps the file at ~10MB.
+            const int maxBase64Length = 14_000_000;
+            if (req.FileBase64.Length > maxBase64Length)
+            {
+                return new JsonResult(new { status = 0, message = "File is too large. Please upload a file under 10MB." });
             }
 
             if (eventId <= 0)
@@ -215,6 +258,14 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 if (response == null)
                 {
                     return new JsonResult(new { status = 0, message = "Empty response from upload service." });
+                }
+
+                // Remember which URL we actually issued for this tier, so the final
+                // OnPost submission can be checked against it instead of trusting
+                // whatever value the client posts back in the hidden input.
+                if (response.Status == 1 && !string.IsNullOrWhiteSpace(response.FileURL))
+                {
+                    RememberUploadedMemberListUrl(eventId.Value, req.TierSuffix, response.FileURL);
                 }
 
                 return new JsonResult(new
@@ -237,6 +288,59 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             public string FileName { get; set; } = string.Empty;
             public string FileBase64 { get; set; } = string.Empty;
         }
+        // =========================
+        // MEMBER-LIST URL VERIFICATION
+        // =========================
+        // The upload URL for a "members only" tier is round-tripped through a
+        // client-side hidden input, which anyone can edit before final submit.
+        // To avoid trusting an arbitrary attacker-supplied URL, we remember what
+        // OnPostUploadMembers actually issued for each (eventId, tier) pair in
+        // session, and only accept a submitted URL that matches exactly.
+
+        private const string MemberListUploadsSessionKeyPrefix = "MemberListUploads_";
+
+        private Dictionary<string, string> GetMemberListUploadMap(int eventId)
+        {
+            var raw = HttpContext.Session.GetString(MemberListUploadsSessionKeyPrefix + eventId);
+            if (string.IsNullOrWhiteSpace(raw))
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                return JsonSerializer.Deserialize<Dictionary<string, string>>(raw)
+                       ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+            catch (JsonException)
+            {
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        private void RememberUploadedMemberListUrl(int eventId, string tierSuffix, string fileUrl)
+        {
+            var map = GetMemberListUploadMap(eventId);
+            map[tierSuffix] = fileUrl;
+            HttpContext.Session.SetString(MemberListUploadsSessionKeyPrefix + eventId, JsonSerializer.Serialize(map));
+        }
+
+        /// <summary>
+        /// Returns the submitted member-list URL only if it exactly matches what we
+        /// actually issued for this tier during this session. Otherwise returns
+        /// empty, so a tampered/stale value can never be persisted as the tier's
+        /// member gate list.
+        /// </summary>
+        private string GetVerifiedMemberListUrl(int eventId, string tierSuffix, string submittedUrl)
+        {
+            if (string.IsNullOrWhiteSpace(submittedUrl))
+                return string.Empty;
+
+            var map = GetMemberListUploadMap(eventId);
+            return map.TryGetValue(tierSuffix, out var storedUrl) &&
+                   string.Equals(storedUrl, submittedUrl, StringComparison.Ordinal)
+                ? storedUrl
+                : string.Empty;
+        }
+
         private void ResolveIds()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -378,7 +482,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         }
 
 
-        private List<AddTicketTypeReq> BuildPaidTicketTypes()
+        private List<AddTicketTypeReq> BuildPaidTicketTypes(int eventId)
         {
             var result = new List<AddTicketTypeReq>();
 
@@ -433,7 +537,10 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                         ? GetInt(form, $"expalloc-{suffix}")
                         : 0,
                     MemberOnly = GetBool(form, $"membersonly-{suffix}"),
-                    MemberListUrl = GetForm(form, $"tier-memberfileurl-{suffix}"),
+                    MemberListUrl = GetVerifiedMemberListUrl(
+                        eventId,
+                        suffix,
+                        GetForm(form, $"tier-memberfileurl-{suffix}")),
                     StandingCapacity = GetInt(form, $"standcap-{suffix}"),
                     OpenSeatingCapacity = GetInt(form, $"opencap-{suffix}"),
                     NumberOfTables = GetInt(form, $"tables-{suffix}"),
@@ -453,7 +560,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             return result;
         }
 
-        private List<AddTicketTypeReq> BuildFreeTicketType()
+        private List<AddTicketTypeReq> BuildFreeTicketType(int eventId)
         {
             if (!Request.HasFormContentType)
                 return new List<AddTicketTypeReq>();

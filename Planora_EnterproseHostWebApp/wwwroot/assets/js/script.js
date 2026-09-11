@@ -1249,8 +1249,7 @@
             button.addEventListener('click', function (event) {
                 if (button.disabled) return;
 
-                var formId = button.getAttribute('form');
-                var form = document.getElementById(formId);
+                var form = document.getElementById(button.getAttribute('form'));
 
                 if (form) {
                     // If the form has missing required fields, block submission and trigger validation

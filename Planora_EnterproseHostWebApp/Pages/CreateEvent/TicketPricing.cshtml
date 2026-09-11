@@ -313,6 +313,12 @@
                 <input type="hidden" id="EventId" name="EventId" value="@Model.EventId" />
                 <input type="hidden" id="PricingMode" name="PricingMode" value="@Model.PricingMode" />
 
+                @* Existing ticket tiers (if any) for this event, used to rehydrate the
+                   form below. type="application/json" means the browser never
+                   executes this as script - it's inert data, parsed via
+                   JSON.parse, not interpolated into JS source. *@
+                <script id="existing-ticket-data" type="application/json">@Html.Raw(Model.ExistingTicketDataJson)</script>
+
                 <!-- Free vs paid -->
                 <section class="panel" aria-labelledby="pricing-title">
                     <div class="panel__head panel__head--plain">
@@ -321,11 +327,11 @@
                             <p class="panel__meta">Toggle to offer free or paid tickets</p>
                         </div>
                         <div class="segment" id="paidmode" role="group" aria-label="Pricing mode" data-segment>
-                            <button class="segment__btn" type="button" aria-pressed="false"
+                            <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "true" : "false")"
                                     data-segment-value="free">
                                 Free
                             </button>
-                            <button class="segment__btn" type="button" aria-pressed="true"
+                            <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "false" : "true")"
                                     data-segment-value="paid">
                                 Paid
                             </button>
@@ -337,19 +343,19 @@
                             <div class="form__field">
                                 <label class="field__label" for="display-currency">Display Currency</label>
                                 <select class="field__select" id="display-currency" name="display-currency">
-                                    <option>NGN</option>
-                                    <option>USD</option>
-                                    <option>GHS</option>
-                                    <option>KES</option>
-                                    <option>ZAR</option>
+                                    <option selected="@(Model.Currency == "NGN")">NGN</option>
+                                    <option selected="@(Model.Currency == "USD")">USD</option>
+                                    <option selected="@(Model.Currency == "GHS")">GHS</option>
+                                    <option selected="@(Model.Currency == "KES")">KES</option>
+                                    <option selected="@(Model.Currency == "ZAR")">ZAR</option>
                                 </select>
                                 <span class="field__hint">Prices shown to buyers</span>
                             </div>
                             <div class="form__field">
                                 <label class="field__label" for="settlement-currency">Settlement Currency</label>
                                 <select class="field__select" id="settlement-currency" name="settlement-currency">
-                                    <option>NGN</option>
-                                    <option>USD</option>
+                                    <option selected="@(Model.Currency == "NGN")">NGN</option>
+                                    <option selected="@(Model.Currency == "USD")">USD</option>
                                 </select>
                                 <span class="field__hint">Currency you are paid in</span>
                             </div>
@@ -2375,7 +2381,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-            (function() {
+            (function () {
                 function valueOfPressed(container, selector, fallback) {
                     var el = container ? container.querySelector(selector + '[aria-pressed="true"]') : null;
                     return el ? (el.getAttribute('data-seatmode') || el.getAttribute('data-pick') || fallback) : fallback;
@@ -2427,8 +2433,8 @@
                     var all = [node].concat(Array.prototype.slice.call(scoped));
                     var suffixTail = '-' + oldSuffix;
 
-                    all.forEach(function(el) {
-                        attrs.forEach(function(attr) {
+                    all.forEach(function (el) {
+                        attrs.forEach(function (attr) {
                             var v = el.getAttribute && el.getAttribute(attr);
                             if (!v) return;
 
@@ -2500,23 +2506,23 @@
                         'input[type="radio"][data-reveal], input[type="radio"][data-reveal-inverse],' +
                         'input[type="checkbox"][data-reveal], input[type="checkbox"][data-reveal-inverse],' +
                         '[role="switch"][data-reveal], [role="switch"][data-reveal-inverse]'
-                    ).forEach(function(el) { applyReveal(el, root); });
+                    ).forEach(function (el) { applyReveal(el, root); });
                 }
 
                 // Clears a cloned tier back to a blank/default state (no leftover values,
                 // files, or "members only"/expanded panel state copied from the template).
                 function clearTierValues(node) {
                     node.querySelectorAll('input[type="text"], input[type="date"], input[type="time"]')
-                        .forEach(function(inp) { inp.value = ''; });
-                    node.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                        .forEach(function (inp) { inp.value = ''; });
+                    node.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
                         cb.checked = false;
                         cb.removeAttribute('checked');
                     });
-                    node.querySelectorAll('input[type="file"]').forEach(function(f) { f.value = ''; });
-                    node.querySelectorAll('[data-upload-directory]').forEach(function(d) {
+                    node.querySelectorAll('input[type="file"]').forEach(function (f) { f.value = ''; });
+                    node.querySelectorAll('[data-upload-directory]').forEach(function (d) {
                         d.setAttribute('hidden', '');
                     });
-                    node.querySelectorAll('.upload').forEach(function(d) { d.removeAttribute('hidden'); });
+                    node.querySelectorAll('.upload').forEach(function (d) { d.removeAttribute('hidden'); });
                     var revenue = node.querySelector('.tier__revenue b');
                     if (revenue) revenue.textContent = '\u20a60';
                     var nameInput = node.querySelector('.tier__name');
@@ -2529,10 +2535,10 @@
                     // template tier happened to be left in.
                     var seatWrap = node.querySelector('[data-seatplan]');
                     if (seatWrap) {
-                        seatWrap.querySelectorAll('[data-seatmode]').forEach(function(btn) {
+                        seatWrap.querySelectorAll('[data-seatmode]').forEach(function (btn) {
                             btn.setAttribute('aria-pressed', btn.getAttribute('data-seatmode') === 'rows' ? 'true' : 'false');
                         });
-                        seatWrap.querySelectorAll('[data-seatmode-panel]').forEach(function(panel) {
+                        seatWrap.querySelectorAll('[data-seatmode-panel]').forEach(function (panel) {
                             if (panel.getAttribute('data-seatmode-panel') === 'rows') panel.removeAttribute('hidden');
                             else panel.setAttribute('hidden', '');
                         });
@@ -2544,20 +2550,20 @@
                     // "off" for a clean starting state, then resync every
                     // data-reveal panel in this tier to match.
                     node.querySelectorAll('[role="switch"][data-reveal], [role="switch"][data-reveal-inverse]')
-                        .forEach(function(sw) { sw.setAttribute('aria-checked', 'false'); });
+                        .forEach(function (sw) { sw.setAttribute('aria-checked', 'false'); });
                     syncRevealsIn(node);
                 }
 
                 function fileToBase64(file) {
-                    return new Promise(function(resolve, reject) {
+                    return new Promise(function (resolve, reject) {
                         var reader = new FileReader();
-                        reader.onload = function() { resolve(String(reader.result).split(',')[1]); };
+                        reader.onload = function () { resolve(String(reader.result).split(',')[1]); };
                         reader.onerror = reject;
                         reader.readAsDataURL(file);
                     });
                 }
 
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     // Guards against this whole setup running twice (e.g. if this
                     // step's markup+script is ever re-inserted into the page
                     // without a full reload). Without this guard, every listener
@@ -2570,7 +2576,7 @@
                     // ---- seating switch: generic reveal/hide wiring ------------
                     // Delegated on document so it works for every tier,
                     // including ones added later via "Add Tier".
-                    document.addEventListener('change', function(e) {
+                    document.addEventListener('change', function (e) {
                         var input = e.target;
                         if (!input || (input.tagName !== 'INPUT')) return;
 
@@ -2581,7 +2587,7 @@
                             // "No session access" is mutually exclusive.
                             if (input.name) {
                                 document.querySelectorAll('input[type="radio"][name="' + CSS.escape(input.name) + '"]')
-                                    .forEach(function(radio) { applyReveal(radio); });
+                                    .forEach(function (radio) { applyReveal(radio); });
                             } else {
                                 applyReveal(input);
                             }
@@ -2595,7 +2601,7 @@
 
                     // Custom role="switch" buttons (e.g. "Assign seating for
                     // this tier") use aria-checked instead of a native checkbox.
-                    document.addEventListener('click', function(e) {
+                    document.addEventListener('click', function (e) {
                         var sw = e.target.closest('[role="switch"][data-reveal], [role="switch"][data-reveal-inverse]');
                         if (!sw) return;
                         var on = sw.getAttribute('aria-checked') === 'true';
@@ -2609,7 +2615,7 @@
                     var pricingMode = form.querySelector('#PricingMode');
                     var paidMode = document.querySelector('#paidmode');
                     if (paidMode) {
-                        paidMode.addEventListener('click', function(e) {
+                        paidMode.addEventListener('click', function (e) {
                             var button = e.target.closest('[data-segment-value]');
                             if (button && pricingMode) pricingMode.value = button.getAttribute('data-segment-value') || 'paid';
                         });
@@ -2619,9 +2625,85 @@
                     var tierList = document.getElementById('tier-list');
                     var tierCounter = tierList ? tierList.querySelectorAll('.tier').length : 0;
 
+                    // ---- Rehydrate existing tiers (edit flow) ----------------------
+                    // Runs before the Add Tier wiring below so tierCounter/tierList
+                    // already reflect any tiers created here.
+                    (function rehydrateExistingTiers() {
+                        var dataEl = document.getElementById('existing-ticket-data');
+                        if (!dataEl || !tierList) return;
+
+                        var items;
+                        try {
+                            items = JSON.parse(dataEl.textContent || '[]');
+                        } catch (err) {
+                            console.error('Could not parse existing ticket data:', err);
+                            return;
+                        }
+                        if (!Array.isArray(items) || items.length === 0) return;
+
+                        var isFree = pricingMode && pricingMode.value === 'free';
+
+                        if (isFree) {
+                            // Free events only ever have a single synthetic "Free" tier.
+                            var freeItem = items[0] || {};
+                            setFieldValue('free-qty', freeItem.quantity);
+                            setFieldValue('free-cap', freeItem.standingCapacity || freeItem.openSeatingCapacity);
+                            setFieldValue('free-desc', freeItem.description);
+                            return;
+                        }
+
+                        var template = tierList.querySelector('.tier');
+                        if (!template) return;
+
+                        // NOTE: only the fields common to every tier type are rehydrated
+                        // here (name, price, quantity, description, visibility, sale
+                        // window). Seating layout, auto-expiry, member-list file, access
+                        // mode (day/slot selection) and inclusions are intentionally left
+                        // at their template defaults until the exact TicketTypeTierResp
+                        // shape for those is confirmed - wiring them up blind risked
+                        // silently mis-mapping fields.
+                        var freshTiers = [];
+                        items.forEach(function (item) {
+                            tierCounter += 1;
+                            var suffix = 'existing' + tierCounter;
+
+                            var clone = template.cloneNode(true);
+                            renameTierNode(clone, 'early', suffix);
+                            clearTierValues(clone);
+
+                            setFieldOn(clone, 'tiername-' + suffix, item.typeName);
+                            setFieldOn(clone, 'price-' + suffix, item.price);
+                            setFieldOn(clone, 'qty-' + suffix, item.quantity);
+                            setFieldOn(clone, 'desc-' + suffix, item.description);
+                            setFieldOn(clone, 'salestart-' + suffix, item.saleStart);
+                            setFieldOn(clone, 'saleend-' + suffix, item.saleEnd);
+
+                            freshTiers.push(clone);
+                        });
+
+                        if (freshTiers.length > 0) {
+                            // Replace the shipped placeholder tier(s) with the real ones.
+                            tierList.querySelectorAll('.tier').forEach(function (t) { t.remove(); });
+                            freshTiers.forEach(function (t) { tierList.appendChild(t); });
+                            renumberTiers();
+                        }
+
+                        function setFieldValue(id, value) {
+                            if (value === undefined || value === null) return;
+                            var el = document.getElementById(id);
+                            if (el) el.value = value;
+                        }
+
+                        function setFieldOn(root, name, value) {
+                            if (value === undefined || value === null) return;
+                            var el = root.querySelector('[name="' + name + '"]');
+                            if (el) el.value = value;
+                        }
+                    })();
+
                     function renumberTiers() {
                         if (!tierList) return;
-                        tierList.querySelectorAll('.tier').forEach(function(tier, i) {
+                        tierList.querySelectorAll('.tier').forEach(function (tier, i) {
                             var noEl = tier.querySelector('.tier__no');
                             if (!noEl) return;
                             noEl.textContent = String(i + 1);
@@ -2631,7 +2713,7 @@
 
                     var addTierBtn = document.querySelector('[data-tier-repeat-add="tier-list"]');
                     if (addTierBtn && tierList) {
-                        addTierBtn.addEventListener('click', function() {
+                        addTierBtn.addEventListener('click', function () {
                             // Always clone the FIRST tier as the template: it is guaranteed
                             // to be in the clean/default state (no "members only" data,
                             // no uploaded file) unlike whichever tier happens to be last.
@@ -2654,7 +2736,7 @@
                     }
 
                     if (tierList) {
-                        tierList.addEventListener('click', function(e) {
+                        tierList.addEventListener('click', function (e) {
                             var removeBtn = e.target.closest('[data-repeat-remove]');
                             if (!removeBtn) return;
                             var tiers = tierList.querySelectorAll('.tier');
@@ -2724,14 +2806,14 @@
                     }
 
                     var readyToSubmit = false;
-                    form.addEventListener('submit', function(e) {
+                    form.addEventListener('submit', function (e) {
                         if (readyToSubmit) return;
 
                         e.preventDefault();
 
                         if (pricingMode && !pricingMode.value) pricingMode.value = 'paid';
 
-                        form.querySelectorAll('#tier-list > .tier').forEach(function(tier) {
+                        form.querySelectorAll('#tier-list > .tier').forEach(function (tier) {
                             var nameInput = tier.querySelector('.tier__name');
                             if (!nameInput) return;
                             var nameAttr = nameInput.getAttribute('name') || '';
@@ -2758,8 +2840,8 @@
                         });
 
                         uploadMemberListsForTiers()
-                            .catch(function(err) { console.error('Member list upload step failed:', err); })
-                            .then(function() {
+                            .catch(function (err) { console.error('Member list upload step failed:', err); })
+                            .then(function () {
                                 readyToSubmit = true;
                                 if (form.requestSubmit) form.requestSubmit();
                                 else form.submit();
@@ -2770,12 +2852,12 @@
     </script>
 </div>
 <script>
-    (function() {
+    (function () {
         // Prevent duplicate event handlers if this script is loaded more than once.
         if (window.__inclHandlersBound) return;
         window.__inclHandlersBound = true;
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
 
             // ============================================================
             // Toggle: Seating layout mode (Row/Seat, Table/Chair, Standing,
@@ -2789,14 +2871,14 @@
                 var seatPlanWrap = seatBtn.closest('[data-seatplan]');
 
                 if (seatGroup) {
-                    seatGroup.querySelectorAll('[data-seatmode]').forEach(function(btn) {
+                    seatGroup.querySelectorAll('[data-seatmode]').forEach(function (btn) {
                         btn.setAttribute('aria-pressed', btn === seatBtn ? 'true' : 'false');
                     });
                 }
 
                 if (seatPlanWrap) {
                     var mode = seatBtn.getAttribute('data-seatmode');
-                    seatPlanWrap.querySelectorAll('[data-seatmode-panel]').forEach(function(panel) {
+                    seatPlanWrap.querySelectorAll('[data-seatmode-panel]').forEach(function (panel) {
                         if (panel.getAttribute('data-seatmode-panel') === mode) {
                             panel.removeAttribute('hidden');
                         } else {
@@ -2944,7 +3026,7 @@
             list.appendChild(clone);
         });
     })();
-    document.addEventListener('change', function(e) {
+    document.addEventListener('change', function (e) {
         // Check if the changed element is a member-list file input
         // (identified by the data-upload wiring, not by re-checking .accept -
         // the accept attribute is only a picker *hint*; the browser still lets
@@ -2966,10 +3048,10 @@
 
             if (extension === '.csv') {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     parseAndRenderCSV(event.target.result, directoryEl, file.name);
                 };
-                reader.onerror = function() {
+                reader.onerror = function () {
                     alert('Could not read "' + file.name + '". Please try uploading it again.');
                 };
                 reader.readAsText(file);
@@ -2980,10 +3062,10 @@
                 }
 
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     parseAndRenderXLSX(event.target.result, directoryEl, file.name);
                 };
-                reader.onerror = function() {
+                reader.onerror = function () {
                     alert('Could not read "' + file.name + '". Please try uploading it again.');
                 };
                 // xlsx is a binary/zip format, not text - must be read as
@@ -3072,10 +3154,10 @@
             const rowDiv = document.createElement('div');
             rowDiv.className = 'directory__row';
             rowDiv.innerHTML = `
-                    <span>${escapeHtml(name)}</span>
-                    <span class="directory__email">${escapeHtml(email)}</span>
-                    <span class="badge badge--live">Verified</span>
-                `;
+                        <span>${escapeHtml(name)}</span>
+                        <span class="directory__email">${escapeHtml(email)}</span>
+                        <span class="badge badge--live">Verified</span>
+                    `;
             scrollContainer.appendChild(rowDiv);
         });
 
@@ -3089,7 +3171,7 @@
     }
 
     function escapeHtml(text) {
-        return text.replace(/[&<>"']/g, function(m) {
+        return text.replace(/[&<>"']/g, function (m) {
             return {
                 '&': '&amp;',
                 '<': '&lt;',
@@ -3104,7 +3186,7 @@
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = async function(e) {
+        reader.onload = async function (e) {
             const base64String = e.target.result.split(',')[1];
 
             const payload = {
