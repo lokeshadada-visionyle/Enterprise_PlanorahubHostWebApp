@@ -353,6 +353,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return new JsonResult(new { success = false, message = "An error occurred while saving schedule." });
             }
         }
+
     }
 
     public class SaveVenuePayload

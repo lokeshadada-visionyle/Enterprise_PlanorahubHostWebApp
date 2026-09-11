@@ -455,12 +455,12 @@
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-start">Start<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-start" name="slot-1-1-start"
-                                                       type="time" value="" data-slot-start required>
+                                                       type="datetime-local" value="" data-slot-start required>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-end">End<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-end" name="slot-1-1-end"
-                                                       type="time" value="" data-slot-end required>
+                                                       type="datetime-local" value="" data-slot-end required>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-venue">Venues<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
@@ -613,14 +613,14 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", async function () {
+    document.addEventListener("DOMContentLoaded", async function() {
         const venueSection = document.getElementById("section-venues");
         const scheduleSection = document.getElementById("section-schedule");
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
 
         let globalVenuesCache = [];
         let globalSpeakersCache = [];
 
-        // Reveal Functions
         function revealVenueSection() {
             if (venueSection) {
                 venueSection.removeAttribute("hidden");
@@ -635,6 +635,63 @@
             }
         }
 
+        function populateSpeakerDropdowns(speakers) {
+            const speakerSelects = document.querySelectorAll("[data-speaker-add]");
+            speakerSelects.forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">Add a speaker&hellip;</option>';
+                speakers.forEach(sp => {
+                    const id = sp.SpeakerId ?? sp.speakerId ?? sp.Id;
+                    const name = sp.Name ?? sp.name ?? "Unknown Speaker";
+                    const option = document.createElement("option");
+                    option.value = id;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+                if (currentVal) select.value = currentVal;
+            });
+        }
+
+        function populateVenueDropdowns(venues) {
+            const venueSelects = document.querySelectorAll("[data-slot-venue-select]");
+            venueSelects.forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">Select Venues...</option>';
+                venues.forEach(v => {
+                    const id = v.VenueId ?? v.venueId ?? v.Id;
+                    const name = v.VenueName ?? v.venueName ?? "Unnamed Venue";
+                    const option = document.createElement("option");
+                    option.value = id;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+                if (currentVal) select.value = currentVal;
+            });
+        }
+
+        async function loadHallsForVenue(hallSelectElement, venueId) {
+            if (!hallSelectElement || !venueId) return;
+            try {
+                const response = await fetch(`?handler=GetHallsByVenue&venueId=${venueId}`, { method: 'GET' });
+                const result = await response.json();
+
+                hallSelectElement.innerHTML = '<option value="">Select Hall...</option>';
+                if (result && result.success && Array.isArray(result.data)) {
+                    result.data.forEach(h => {
+                        const hId = h.HallId ?? h.hallId ?? h.Id;
+                        const hName = h.HallName ?? h.hallName;
+                        const option = document.createElement("option");
+                        option.value = hId;
+                        option.textContent = hName;
+                        hallSelectElement.appendChild(option);
+                    });
+                    hallSelectElement.removeAttribute("disabled");
+                }
+            } catch (err) {
+                console.error("Failed to load halls:", err);
+            }
+        }
+
         // 1. LOAD & BIND SPEAKERS
         async function loadAndBindSpeakers() {
             try {
@@ -644,11 +701,10 @@
                 if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
                     globalSpeakersCache = result.data;
                     const speakerListContainer = document.getElementById("speaker-list");
-
                     const templateRow = speakerListContainer.querySelector(".speaker")?.cloneNode(true);
-                    if (templateRow) {
-                        speakerListContainer.innerHTML = ""; // Clear placeholders
 
+                    if (templateRow) {
+                        speakerListContainer.innerHTML = "";
                         result.data.forEach(sp => {
                             const row = templateRow.cloneNode(true);
                             row.dataset.speakerId = sp.SpeakerId ?? sp.speakerId ?? "0";
@@ -668,8 +724,6 @@
                     }
 
                     populateSpeakerDropdowns(result.data);
-
-                    // Reveal venue section if speakers exist
                     revealVenueSection();
                     return true;
                 }
@@ -689,7 +743,6 @@
                     globalVenuesCache = result.data;
                     const firstVenue = result.data[0];
 
-                    // Bind single venue fields
                     const nameInput = document.getElementById("sv-name");
                     const citySelect = document.getElementById("sv-city");
                     const addressInput = document.getElementById("sv-address");
@@ -698,7 +751,6 @@
                     if (citySelect) citySelect.value = firstVenue.City ?? firstVenue.cityName ?? "";
                     if (addressInput) addressInput.value = firstVenue.Address ?? firstVenue.address ?? "";
 
-                    // Bind halls list
                     const halls = firstVenue.Halls ?? firstVenue.halls;
                     if (Array.isArray(halls) && halls.length > 0) {
                         const hallContainer = document.getElementById("sv-halls");
@@ -720,8 +772,6 @@
                     }
 
                     populateVenueDropdowns(result.data);
-
-                    // Reveal schedule section if venues exist
                     revealScheduleSection();
                     return true;
                 }
@@ -759,8 +809,8 @@
 
                         if (slotTemplate) {
                             slotsContainer.innerHTML = "";
-
                             const slots = day.EventSlots ?? day.eventSlots ?? [];
+
                             for (const slot of slots) {
                                 const slotRow = slotTemplate.cloneNode(true);
 
@@ -803,7 +853,186 @@
             }
         }
 
-        // INITIALIZATION RUNNER
+        // DYNAMIC EVENT LISTENERS
+        document.addEventListener("change", async function(e) {
+            if (e.target && e.target.matches("[data-slot-venue-select]")) {
+                const venueId = e.target.value;
+                const slotCard = e.target.closest(".slotcard");
+                const hallSelect = slotCard?.querySelector("[data-slot-hall]");
+                if (hallSelect) {
+                    await loadHallsForVenue(hallSelect, venueId);
+                }
+            }
+        });
+
+        // SAVE BUTTON HANDLERS
+        const saveSpeakersBtn = document.getElementById("btnSaveSpeakers");
+        if (saveSpeakersBtn) {
+            saveSpeakersBtn.addEventListener("click", async function() {
+                const speakerRows = document.querySelectorAll("#speaker-list [data-speaker-row]");
+                const speakers = [];
+
+                speakerRows.forEach(row => {
+                    const name = row.querySelector("[data-speaker-field='name']")?.value;
+                    const title = row.querySelector("[data-speaker-field='title']")?.value;
+                    const org = row.querySelector("[data-speaker-field='org']")?.value;
+                    const bio = row.querySelector("[data-speaker-field='bio']")?.value;
+
+                    if (name && name.trim() !== "") {
+                        speakers.push({ Name: name, JobTitle: title, Organization: org, Bio: bio });
+                    }
+                });
+
+                if (speakers.length === 0) {
+                    alert("Please add at least one speaker with a name.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('?handler=SaveSpeakers', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                        body: JSON.stringify({ Speakers: speakers })
+                    });
+
+                    const result = await response.json();
+                    if (result && result.success) {
+                        await loadAndBindSpeakers();
+                        revealVenueSection();
+                        venueSection.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        alert(result.message || "Failed to save speakers.");
+                    }
+                } catch (err) {
+                    console.error("Error saving speakers:", err);
+                }
+            });
+        }
+
+        const saveVenuesBtn = document.getElementById("btnSaveVenues");
+        if (saveVenuesBtn) {
+            saveVenuesBtn.addEventListener("click", async function() {
+                const isMulti = document.getElementById("multivenue")?.checked;
+                const venues = [];
+
+                if (!isMulti) {
+                    const name = document.getElementById("sv-name")?.value;
+                    const city = document.getElementById("sv-city")?.value;
+                    const address = document.getElementById("sv-address")?.value;
+                    const halls = [];
+
+                    document.querySelectorAll("#sv-halls .hall").forEach(hRow => {
+                        const hName = hRow.querySelector(".hall__name")?.value;
+                        const hCap = hRow.querySelector(".hall__cap")?.value;
+                        if (hName) halls.push({ HallName: hName, Capacity: parseInt(hCap) || 0 });
+                    });
+
+                    if (name) venues.push({ VenueName: name, City: city, Address: address, Halls: halls });
+                }
+
+                if (venues.length === 0) {
+                    alert("Please fill in valid venue and hall details.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('?handler=SaveVenue', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                        body: JSON.stringify({ Venues: venues })
+                    });
+
+                    const result = await response.json();
+                    if (result && result.success) {
+                        await loadAndBindVenues();
+                        revealScheduleSection();
+                        scheduleSection.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        alert(result.message || "Failed to save venue details.");
+                    }
+                } catch (err) {
+                    console.error("Error saving venue:", err);
+                }
+            });
+        }
+        // HANDLER FOR CONTINUE BUTTON
+        // Inside document.addEventListener("DOMContentLoaded", async function() { ... })
+
+        const btnContinue = document.getElementById("btnContinue");
+        if (btnContinue) {
+            btnContinue.addEventListener("click", async function(e) {
+                e.preventDefault();
+
+                const dayRows = document.querySelectorAll("#schedule-days .day");
+                const slotsPayload = [];
+
+                dayRows.forEach(dayRow => {
+                    const sessionName = dayRow.querySelector("input[name*='name']")?.value;
+                    const eventDate = dayRow.querySelector("[data-day-date]")?.value;
+                    const slotCards = dayRow.querySelectorAll(".slotcard");
+
+                    const slots = [];
+                    slotCards.forEach(slotCard => {
+                        // Check if slot name field exists, or fallback to an empty string / default title
+                        const nameInput = slotCard.querySelector(".slotcard__name") || slotCard.querySelector("input[name*='slot']");
+                        const slotName = nameInput ? nameInput.value.trim() : "";
+
+                        const startTime = slotCard.querySelector("[data-slot-start]")?.value;
+                        const endTime = slotCard.querySelector("[data-slot-end]")?.value;
+                        const hallId = slotCard.querySelector("[data-slot-hall]")?.value;
+                        const capacity = slotCard.querySelector("[data-cap-input]")?.value;
+                        const speakerId = slotCard.querySelector("[data-speaker-add]")?.value;
+
+                        // Push slot object if at least a name OR time is provided
+                        if (slotName || startTime || endTime) {
+                            slots.push({
+                                SlotName: slotName || "Slot",
+                                StartTime: startTime ? new Date(startTime).toISOString() : "",
+                                EndTime: endTime ? new Date(endTime).toISOString() : "",
+                                HallId: hallId ? parseInt(hallId) : 0,
+                                Capacity: capacity ? parseInt(capacity) : 0,
+                                SpeakersId: speakerId ? parseInt(speakerId) : 0
+                            });
+                        }
+                    });
+
+                    if (sessionName || eventDate) {
+                        slotsPayload.push({
+                            SessionName: sessionName ?? "",
+                            EventDate: eventDate ?? "",
+                            EventSlots: slots
+                        });
+                    }
+                });
+
+                if (slotsPayload.length === 0) {
+                    alert("Please complete the schedule details before continuing.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('?handler=SaveSchedule', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({ Slots: slotsPayload })
+                    });
+
+                    const result = await response.json();
+                    if (result && result.success) {
+                        window.location.href = '/CreateEvent/ContentSection';
+                    } else {
+                        alert(result.message || "Failed to save schedule.");
+                    }
+                } catch (err) {
+                    console.error("Error saving schedule on continue:", err);
+                    alert("An error occurred while attempting to save and continue.");
+                }
+            });
+        }
+        // INITIALIZATION
         async function init() {
             const hasSpeakers = await loadAndBindSpeakers();
             if (hasSpeakers) {
