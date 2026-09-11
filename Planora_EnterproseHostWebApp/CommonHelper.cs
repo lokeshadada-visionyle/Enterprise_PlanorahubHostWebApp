@@ -504,7 +504,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public UpdateEventFAQRequest UpdateEventPolicyReq(UpdateEventFAQRequest req)
+        public Response UpdateEventPolicyReq(UpdateEventFAQRequest req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
             var request = new UpdateEventFAQRequest
@@ -522,7 +522,7 @@ namespace Planora_EnterproseHostWebApp
             string jsonData = JsonSerializer.Serialize(request);
             Debug.WriteLine(url);
             Debug.WriteLine(jsonData);
-            var response = _serialized_json_data<UpdateEventFAQRequest>(url, jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
@@ -557,6 +557,47 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(jsonData);
             var response = _serialized_json_data<Response>(url, jsonData);
             Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateTicketTypeTierReq(UpdateTicketTypeRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateTicketTypeRequest
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                TicketTypes = req.TicketTypes,
+
+            };
+            string url = SERVICE_URL + "/Ent_UpdateTicketTypeTiers";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public TicketTypesResponse GetTicketTypeTierResp(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string url = SERVICE_URL + "/Ent_GetTicketTypeTiers";
+
+            // Create the payload object matching the POST body expected by your API
+            var requestPayload = new
+            {
+                UserId = userId,
+                EventId = eventId,
+                hashValue = hashValue
+            };
+
+            Debug.WriteLine($"POST URL: {url}");
+            Debug.WriteLine($"POST Body: {JsonSerializer.Serialize(requestPayload)}");
+            string jsonData = JsonSerializer.Serialize(requestPayload);
+            // Execute POST request instead of GET
+            var response = _serialized_json_data<TicketTypesResponse>(url, jsonData);
+
+            Debug.WriteLine($"Response: {JsonSerializer.Serialize(response)}");
             return response;
         }
         public UploadMembersListResp UploadMembersList(long userId, int eventId, string fileName, string fileBase64)

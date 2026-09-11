@@ -317,8 +317,9 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class FAQItem
     {
-        public string Question { get; set; }
-        public string Answer { get; set; }
+        public int FAQItemId { get; set; }
+        public string Question {  get; set; }
+        public string Answer {  get; set; }
     }
     public class EventFAQResponse
     {
@@ -413,6 +414,98 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class Inclusions
     {
+
+        public string InclusionName { get; set; }
+        public string Description { get; set; }
+        public int SortOrder { get; set; }
+    }
+    public class UpdateTicketTypeRequest
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public List<UpdateTicketTypes> TicketTypes { get; set; } = new List<UpdateTicketTypes>();
+    }
+    public class UpdateTicketTypes
+    {
+        public int TicketTypeId { get; set; }
+        public bool IsVisible { get; set; }
+        public string TypeName { get; set; }
+        public string Price { get; set; }
+        public int Quantity { get; set; }
+        public string SaleStart { get; set; }
+        public string SaleEnd { get; set; }
+        public string Description { get; set; }
+
+        public bool AutoExpireEnabled { get; set; }
+        public string AutoExpireMode { get; set; }
+        public string ExpiryDate { get; set; }
+        public string ExpiryTime { get; set; }
+        public int AllocationLimit { get; set; }
+
+        public bool MemberOnly { get; set; }
+
+        public int StandingCapacity { get; set; }
+        public int OpenSeatingCapacity { get; set; }
+        public int NumberOfTables { get; set; }
+        public int ChairsPerTable { get; set; }
+
+        public bool IsSeating { get; set; }
+        public int Rows { get; set; }
+        public int Coulmns { get; set; }
+
+        public string AccessMode { get; set; }
+
+        public List<int> SelectedDateIds { get; set; } = new List<int>();
+        public List<int> SelectedSlotIds { get; set; } = new List<int>();
+
+        public List<UpdateInclusions> Inclusions { get; set; } = new List<UpdateInclusions>();
+    }
+    public class UpdateInclusions
+    {
+        public int InclusionId { get; set; }
+        public string InclusionName { get; set; }
+        public string Description { get; set; }
+        public int SortOrder { get; set; }
+    }
+    public class TicketTypesResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int EventId { get; set; }
+        public List<TicketPricingTypes> TicketTypes { get; set; } = new List<TicketPricingTypes>();
+    }
+    public class TicketPricingTypes
+    {
+        public int TicketTypeId { get; set; }
+        public bool IsVisible { get; set; }
+        public string TypeName { get; set; }
+        public string Price { get; set; }
+        public int Quantity { get; set; }
+        public string SaleStart { get; set; }
+        public string SaleEnd { get; set; }
+        public string Description { get; set; }
+        public bool AutoExpireEnabled { get; set; }
+        public string AutoExpireMode { get; set; }
+        public string ExpiryDate { get; set; }
+        public string ExpiryTime { get; set; }
+        public int AllocationLimit { get; set; }
+        public bool MemberOnly { get; set; }
+        public int StandingCapacity { get; set; }
+        public int OpenSeatingCapacity { get; set; }
+        public int NumberOfTables { get; set; }
+        public int ChairsPerTable { get; set; }
+        public bool IsSeating { get; set; }
+        public int Rows { get; set; }
+        public int Coulmns { get; set; }
+        public string AccessMode { get; set; }
+        public List<int> SelectedDateIds { get; set; } = new List<int>();
+        public List<int> SelectedSlotIds { get; set; } = new List<int>();
+        public List<GetInclusions> Inclusions { get; set; } = new List<GetInclusions>();
+    }
+    public class GetInclusions
+    {
+        public int InclusionId { get; set; }
         public string InclusionName { get; set; }
         public string Description { get; set; }
         public int SortOrder { get; set; }

@@ -12,6 +12,8 @@
     <main class="wizard__content">
         <div class="wizard__inner">
             <form class="stack" id="contentSectionForm" method="post">
+                <!-- IMPORTANT: Preserves HasExistingData across HTTP requests -->
+                <input type="hidden" asp-for="HasExistingData" />
 
                 <!-- Engagement Features Panel -->
                 <section class="panel" aria-labelledby="features-title">
@@ -133,18 +135,43 @@
                     </button>
                     <div class="accordion__panel" id="faq-panel">
                         <div id="faq-list">
-                            <div class="qa" data-repeat-row>
-                                <button class="qa__remove" type="button" data-repeat-remove>
-                                    <span class="u-visually-hidden">Remove this FAQ</span>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                                        <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
-                                    </svg>
-                                </button>
-                                <input class="field__input" name="PolicyRequest.FAQs[0].Question" placeholder="Question" />
-                                <div class="qa__answer">
-                                    <textarea class="field__input" name="PolicyRequest.FAQs[0].Answer" rows="2" placeholder="Answer..."></textarea>
+                            @if (Model.PolicyRequest?.FAQs != null && Model.PolicyRequest.FAQs.Count > 0)
+                            {
+                                @for (int i = 0; i < Model.PolicyRequest.FAQs.Count; i++)
+                                {
+                                    <div class="qa" data-repeat-row>
+                                        <!-- Hidden input to maintain the existing FAQ ID -->
+                                        <input type="hidden" asp-for="PolicyRequest.FAQs[i].FAQItemId" />
+
+                                        <button class="qa__remove" type="button" data-repeat-remove>
+                                            <span class="u-visually-hidden">Remove this FAQ</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                            </svg>
+                                        </button>
+                                        <input class="field__input" asp-for="PolicyRequest.FAQs[i].Question" placeholder="Question" />
+                                        <div class="qa__answer">
+                                            <textarea class="field__input" asp-for="PolicyRequest.FAQs[i].Answer" rows="2" placeholder="Answer..."></textarea>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="qa" data-repeat-row>
+                                    <input type="hidden" name="PolicyRequest.FAQs[0].FAQItemId" value="0" />
+                                    <button class="qa__remove" type="button" data-repeat-remove>
+                                        <span class="u-visually-hidden">Remove this FAQ</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                            <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                        </svg>
+                                    </button>
+                                    <input class="field__input" name="PolicyRequest.FAQs[0].Question" placeholder="Question" />
+                                    <div class="qa__answer">
+                                        <textarea class="field__input" name="PolicyRequest.FAQs[0].Answer" rows="2" placeholder="Answer..."></textarea>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
                         <button class="addline" type="button" id="add-faq-btn">+ Add FAQ</button>
                     </div>
@@ -159,7 +186,15 @@
         </a>
         <div class="wizard__foot-end">
             <button type="submit" class="btn btn--primary" form="contentSectionForm" data-wizard-link>
-                Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
+                @if (Model.HasExistingData)
+                {
+                    <text>Update &amp; Continue</text>
+                }
+                else
+                {
+                    <text>Continue</text>
+                }
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
             </button>
         </div>
     </footer>
@@ -188,11 +223,22 @@
         function reindexFaqs() {
             const rows = faqList.querySelectorAll('[data-repeat-row]');
             rows.forEach((row, index) => {
+                const idInput = row.querySelector('input[name*=".FAQItemId"]');
                 const questionInput = row.querySelector('input[name*=".Question"]');
                 const answerInput = row.querySelector('textarea[name*=".Answer"]');
 
-                if (questionInput) questionInput.name = `PolicyRequest.FAQs[${index}].Question`;
-                if (answerInput) answerInput.name = `PolicyRequest.FAQs[${index}].Answer`;
+                if (idInput) {
+                    idInput.name = `PolicyRequest.FAQs[${index}].FAQItemId`;
+                    idInput.id = `PolicyRequest_FAQs_${index}__FAQItemId`;
+                }
+                if (questionInput) {
+                    questionInput.name = `PolicyRequest.FAQs[${index}].Question`;
+                    questionInput.id = `PolicyRequest_FAQs_${index}__Question`;
+                }
+                if (answerInput) {
+                    answerInput.name = `PolicyRequest.FAQs[${index}].Answer`;
+                    answerInput.id = `PolicyRequest_FAQs_${index}__Answer`;
+                }
             });
         }
 
@@ -203,15 +249,16 @@
                 newRow.className = 'qa';
                 newRow.setAttribute('data-repeat-row', '');
                 newRow.innerHTML = `
+                        <input type="hidden" name="PolicyRequest.FAQs[${count}].FAQItemId" id="PolicyRequest_FAQs_${count}__FAQItemId" value="0" />
                         <button class="qa__remove" type="button" data-repeat-remove>
                             <span class="u-visually-hidden">Remove this FAQ</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                 <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
                             </svg>
                         </button>
-                        <input class="field__input" name="PolicyRequest.FAQs[${count}].Question" placeholder="Question" />
+                        <input class="field__input" name="PolicyRequest.FAQs[${count}].Question" id="PolicyRequest_FAQs_${count}__Question" placeholder="Question" />
                         <div class="qa__answer">
-                            <textarea class="field__input" name="PolicyRequest.FAQs[${count}].Answer" rows="2" placeholder="Answer..."></textarea>
+                            <textarea class="field__input" name="PolicyRequest.FAQs[${count}].Answer" id="PolicyRequest_FAQs_${count}__Answer" rows="2" placeholder="Answer..."></textarea>
                         </div>`;
                 faqList.appendChild(newRow);
             });
