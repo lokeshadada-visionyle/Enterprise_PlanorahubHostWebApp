@@ -318,8 +318,8 @@ namespace Planora_EnterproseHostWebApp.Models
     public class FAQItem
     {
         public int FAQItemId { get; set; }
-        public string Question {  get; set; }
-        public string Answer {  get; set; }
+        public string Question { get; set; }
+        public string Answer { get; set; }
     }
     public class EventFAQResponse
     {
@@ -654,11 +654,35 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class UpdateAddOns
     {
+        public int AddOnId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int StockLimit { get; set; }
         public int SortOrder { get; set; }
+    }
+    public class DeleteAddOnReq
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int AddOnId { get; set; }
+    }
+    public class EventAddOnItem
+    {
+        public int AddOnId { get; set; }
+        public int EventId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public int StockLimit { get; set; }
+        public int SortOrder { get; set; }
+        public bool IsActive { get; set; }
+    }
+    public class GetEventAddOnsResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<EventAddOnItem> AddOns { get; set; } = new();
     }
     public class AddPromoCodeReq
     {
@@ -676,6 +700,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public int PerUserLimit { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
+        public decimal MinOrderAmount { get; set; }
         public int ApplicableTicketTypeId { get; set; }
         public bool CanCombineCodes { get; set; }
         public bool IsFirstTimeBuyer { get; set; }
@@ -690,6 +715,7 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class UpdatePromoCodes
     {
+        public int PromoCodeId { get; set; }
         public string Code { get; set; } = string.Empty;
         public string DiscountType { get; set; } = string.Empty;
         public decimal DiscountValue { get; set; }
@@ -697,10 +723,39 @@ namespace Planora_EnterproseHostWebApp.Models
         public int PerUserLimit { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
+        public decimal MinOrderAmount { get; set; }
         public int ApplicableTicketTypeId { get; set; }
         public bool CanCombineCodes { get; set; }
         public bool IsFirstTimeBuyer { get; set; }
         public string Status { get; set; }
+    }
+    public class DeletePromoCodeReq
+    {
+        public long UserId { get; set; }
+        public string hashValue { get; set; }
+        public int PromoCodeId { get; set; }
+    }
+    public class PromoCodeItem
+    {
+        public int PromoCodeId { get; set; }
+        public string Code { get; set; } = string.Empty;
+        public string DiscountType { get; set; } = string.Empty;
+        public decimal DiscountValue { get; set; }
+        public int MaxUses { get; set; }
+        public int PerUserLimit { get; set; }
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidTo { get; set; }
+        public decimal MinOrderAmount { get; set; }
+        public int ApplicableTicketTypeId { get; set; }
+        public bool CanCombineCodes { get; set; }
+        public bool IsFirstTimeBuyer { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
+    public class GetPromoCodesResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<PromoCodeItem> PromoCodes { get; set; } = new();
     }
     public class GetDiscountExposureResp
     {
@@ -730,10 +785,19 @@ namespace Planora_EnterproseHostWebApp.Models
     public class AddFoodDetailsReq
     {
         public int UserId { get; set; }
-        public string hashValue { get; set; }
+        public string hashValue { get; set; } = string.Empty;
         public int EventId { get; set; }
         public bool IsFoodEnabled { get; set; }
-        public string ServingType { get; set; }
+        public string ServingType { get; set; } = string.Empty;
+        public bool RequireScan { get; set; }
+    }
+    public class UpdateFoodDetailsReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; } = string.Empty;
+        public int EventId { get; set; }
+        public bool IsFoodEnabled { get; set; }
+        public string ServingType { get; set; } = string.Empty;
         public bool RequireScan { get; set; }
     }
     public class SaveFoodAvailabilityReq
@@ -756,58 +820,61 @@ namespace Planora_EnterproseHostWebApp.Models
         public int EventId { get; set; }
         public List<MenuItems> MenuItems { get; set; } = new List<MenuItems>();
     }
+    public class UpdateMenuItemReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; } = string.Empty;
+        public int EventId { get; set; }
+        public List<UpdateMenuItems> MenuItems { get; set; } = new List<UpdateMenuItems>();
+    }
     public class MenuItems
     {
+        public int MenuItemId { get; set; }
         public int CategoryId { get; set; }
         public string ItemName { get; set; } = string.Empty;
         public bool IsVeg { get; set; }
         public int Extras { get; set; }
     }
-    public class AddEventFieldsReq
+    public class UpdateMenuItems
     {
-        public int UserId { get; set; }
-        public string hashValue { get; set; }
-        public int EventId { get; set; }
-        public string FormTitle { get; set; } = "Registration Form";
-        public List<FieldItem> Fields { get; set; } = new List<FieldItem>();
-    }
-    public class GetFoodCategoryResp
-    {
-        public int Status { get; set; }
-        public string Message { get; set; }
-        public List<FoodCategories> Categories { get; set; }
-    }
-    public class FoodCategories
-    {
+        public int MenuItemId { get; set; }
         public int CategoryId { get; set; }
-
-        public string CategoryName { get; set; }
-    }
-
-    public class FieldItem
-    {
-        public string FieldType { get; set; }
-        public string Label { get; set; }
-        public string Placeholder { get; set; } = string.Empty;
-        public string Options { get; set; } = string.Empty;
-        public bool IsRequired { get; set; }
-        public int SortOrder { get; set; }
+        public string ItemName { get; set; } = string.Empty;
+        public bool IsVeg { get; set; }
+        public int Extras { get; set; }
     }
     public class UploadMenuFilePOST
     {
-        public long UserId { get; set; }
+        public int UserId { get; set; }
         public string hashValue { get; set; } = string.Empty;
         public int EventId { get; set; }
         public string FileName { get; set; } = string.Empty;
         public string FileBase64 { get; set; } = string.Empty;
     }
-    public class GetMenuDetailsResponse
+    public class GetFoodDetailsResp
     {
         public int Status { get; set; }
         public string Message { get; set; } = string.Empty;
-        public List<Categories> Categories { get; set; } = new List<Categories>();
+        public int EventId { get; set; }
+        public bool IsFoodEnabled { get; set; }
+        public string ServingType { get; set; } = string.Empty;
+        public bool RequireScan { get; set; }
     }
-    public class Categories
+    public class GetFoodAvailabilityResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string hashValue { get; set; } = string.Empty;
+        public string AvailabilityScope { get; set; } = string.Empty;
+        public List<FoodEventDates> EventDates { get; set; } = new List<FoodEventDates>();
+    }
+    public class GetMenuDetailsResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<MenuCategoryDto> Categories { get; set; } = new List<MenuCategoryDto>();
+    }
+    public class MenuCategoryDto
     {
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
@@ -821,10 +888,110 @@ namespace Planora_EnterproseHostWebApp.Models
         public bool IsVeg { get; set; }
         public int Extras { get; set; }
     }
+    public class GetFoodCategoryResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public List<FoodCategories> Categories { get; set; } = new List<FoodCategories>();
+    }
+    public class FoodCategories
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
+    }
+    public class Categories
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
+        public List<FoodMenuItems> MenuItems { get; set; } = new List<FoodMenuItems>();
+    }
+
+
+    public class AddEventFieldsReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public string FormTitle { get; set; } = "Registration Form";
+        public List<FieldItem> Fields { get; set; } = new List<FieldItem>();
+    }
+    public class FieldItem
+    {
+        public string FieldType { get; set; }
+        public string Label { get; set; }
+        public string Placeholder { get; set; } = string.Empty;
+        public string Options { get; set; } = string.Empty;
+        public bool IsRequired { get; set; }
+        public int SortOrder { get; set; }
+    }
+    public class UpdateEventFieldsReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int FormId { get; set; }
+        public int EventId { get; set; }
+        public string FormTitle { get; set; } = "Registration Form";
+        public List<FUpdateFieldItem> Fields { get; set; } = new List<FUpdateFieldItem>();
+    }
+    public class UpdateFieldItem
+    {
+        public int FieldId { get; set; }
+        public string FieldType { get; set; }
+        public string Label { get; set; }
+        public string Placeholder { get; set; } = string.Empty;
+        public string Options { get; set; } = string.Empty;
+        public bool IsRequired { get; set; }
+        public int SortOrder { get; set; }
+    }
+    public class DeleteEventFieldsReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int FieldId { get; set; }
+    }
     public class EventAccessModel
     {
         public int UserId { get; set; }
         public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public string AccessGatewayMode { get; set; }
+        public bool IsUnListed { get; set; }
+    }
+    public class CustomFormResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public CustomFormData? Form { get; set; }
+    }
+    public class CustomFormData
+    {
+        public int FormId { get; set; }
+        public int EventId { get; set; }
+        public string FormTitle { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public List<CustomFormFieldData> Fields { get; set; } = new();
+    }
+    public class CustomFormFieldData
+    {
+        public int FieldId { get; set; }
+        public int FormId { get; set; }
+        public string FieldType { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
+        public string? Placeholder { get; set; }
+        public string? Options { get; set; }
+        public bool IsRequired { get; set; }
+        public int SortOrder { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+
+    public class GetEventAccessResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
         public int EventId { get; set; }
         public string AccessGatewayMode { get; set; }
         public bool IsUnListed { get; set; }

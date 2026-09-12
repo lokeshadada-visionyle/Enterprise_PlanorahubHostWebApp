@@ -67,17 +67,49 @@
         font-size: var(--fs-2xs);
         color: var(--color-text-label);
     }
+
+    /* Inline validation styling for this page only — reuses existing design tokens,
+           matching the pattern used on the Basic Details step. */
+    .field__error {
+        display: none;
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .line__input.is-invalid,
+    .field__input.is-invalid,
+    .field__select.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .line__input.is-invalid:focus,
+        .field__input.is-invalid:focus,
+        .field__select.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
+
+    .addonline.is-invalid,
+    .promo.is-invalid {
+        border-color: var(--color-danger);
+    }
 </style>
 <div class="wizard__body">
 
     <main class="wizard__content">
         <div class="wizard__inner">
-            <form class="stack" id="addons-coupons-form" method="post">
+            <form class="stack" id="addons-coupons-form" method="post" novalidate>
                 @Html.AntiForgeryToken()
 
                 @if (!string.IsNullOrWhiteSpace(Model.ApiError))
                 {
-                    <p class="notice notice--error notice--flat">
+                    <p class="notice notice--error notice--flat" id="server-error-banner">
                         <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 8v5M12 16h.01" /></svg>
                         @Model.ApiError
                     </p>
@@ -98,71 +130,45 @@
                     <div class="panel__body">
                         <div class="lines lines--addon">
                             <div class="lines__head" aria-hidden="true">
-                                <span>Name</span><span>Price (₦)</span><span>Stock</span><span></span>
+                                <span>Name</span><span>Price (&#8358;)</span><span>Stock</span><span></span>
                             </div>
                             <div id="addon-list">
-                                <div class="addonline" data-repeat-row="">
-                                    <div class="addonline__top">
-                                        <span class="addonline__fields">
-                                            <label class="u-visually-hidden" for="addon-name-1">Add-on name</label>
-                                            <input class="line__input" id="addon-name-1" name="addon-name-1" type="text" placeholder="e.g. Conference Tote Bag" value="Conference Tote Bag">
-                                            <label class="u-visually-hidden" for="addon-price-1">Price</label>
-                                            <input class="line__input" id="addon-price-1" name="addon-price-1" type="text" inputmode="numeric" placeholder="0" value="2500">
-                                            <label class="u-visually-hidden" for="addon-stock-1">Stock count</label>
-                                            <input class="line__input" id="addon-stock-1" name="addon-stock-1" type="text" inputmode="numeric" placeholder="0" value="150">
-                                        </span>
-                                        <button class="line__remove" type="button" data-repeat-remove="">
-                                            <span class="u-visually-hidden">Remove add-on</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="form__field addonline__desc">
-                                        <label class="field__label" for="addon-desc-1">Description</label>
-                                        <textarea class="field__input" id="addon-desc-1" name="addon-desc-1" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-1" style=" height: 128px;">Canvas tote with the event print
-                                            Notebook and pen inside
-                                            Collect at the registration desk</textarea>
-                                        <span class="field__hint">
-                                            Start a new line for each point — the buyer sees them as bullets
-                                        </span>
-                                        <div class="descprev" data-desc-prev="addon-1">
-                                            <span class="descprev__label">How the buyer sees it</span>
-                                            <ul class="descprev__list" data-desc-list=""><li>Canvas tote with the event print</li><li>Notebook and pen inside</li><li>Collect at the registration desk</li></ul>
-                                            <p class="descprev__line" data-desc-line="" hidden=""></p>
+                                @for (var i = 0; i < Model.AddonRows.Count; i++)
+                                {
+                                    var row = Model.AddonRows[i];
+                                    var n = i + 1;
+                                    <div class="addonline @(row.Error != null ? "is-invalid" : "")" data-repeat-row="">
+                                        <input type="hidden" name="addon-id-@n" value="@row.AddOnId" data-role="addon-id" />
+                                        <div class="addonline__top">
+                                            <span class="addonline__fields">
+                                                <label class="u-visually-hidden" for="addon-name-@n">Add-on name</label>
+                                                <input class="line__input @(row.Error != null ? "is-invalid" : "")" id="addon-name-@n" name="addon-name-@n" type="text" placeholder="e.g. Conference Tote Bag" value="@row.Name" data-role="addon-name">
+                                                <label class="u-visually-hidden" for="addon-price-@n">Price</label>
+                                                <input class="line__input" id="addon-price-@n" name="addon-price-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Price" data-role="addon-price">
+                                                <label class="u-visually-hidden" for="addon-stock-@n">Stock count</label>
+                                                <input class="line__input" id="addon-stock-@n" name="addon-stock-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Stock" data-role="addon-stock">
+                                            </span>
+                                            <button class="line__remove" type="button" data-repeat-remove="">
+                                                <span class="u-visually-hidden">Remove add-on</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg>
+                                            </button>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="addonline" data-repeat-row="">
-                                    <div class="addonline__top">
-                                        <span class="addonline__fields">
-                                            <label class="u-visually-hidden" for="addon-name-2">Add-on name</label>
-                                            <input class="line__input" id="addon-name-2" name="addon-name-2" type="text" placeholder="e.g. Conference Tote Bag" value="Workshop Pass">
-                                            <label class="u-visually-hidden" for="addon-price-2">Price</label>
-                                            <input class="line__input" id="addon-price-2" name="addon-price-2" type="text" inputmode="numeric" placeholder="0" value="8000">
-                                            <label class="u-visually-hidden" for="addon-stock-2">Stock count</label>
-                                            <input class="line__input" id="addon-stock-2" name="addon-stock-2" type="text" inputmode="numeric" placeholder="0" value="60">
-                                        </span>
-                                        <button class="line__remove" type="button" data-repeat-remove="">
-                                            <span class="u-visually-hidden">Remove add-on</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg>
-                                        </button>
-                                    </div>
 
-                                    <div class="form__field addonline__desc">
-                                        <label class="field__label" for="addon-desc-2">Description</label>
-                                        <textarea class="field__input" id="addon-desc-2" name="addon-desc-2" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-2">Entry to the Fintech Panel workshop
-Workbook and materials
-Certificate of attendance</textarea>
-                                        <span class="field__hint">
-                                            Start a new line for each point — the buyer sees them as bullets
-                                        </span>
-                                        <div class="descprev" data-desc-prev="addon-2">
-                                            <span class="descprev__label">How the buyer sees it</span>
-                                            <ul class="descprev__list" data-desc-list=""><li>Entry to the Fintech Panel workshop</li><li>Workbook and materials</li><li>Certificate of attendance</li></ul>
-                                            <p class="descprev__line" data-desc-line="" hidden=""></p>
+                                        <div class="form__field addonline__desc">
+                                            <label class="field__label" for="addon-desc-@n">Description</label>
+                                            <textarea class="field__input" id="addon-desc-@n" name="addon-desc-@n" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-@n">@row.Description</textarea>
+                                            <span class="field__hint">
+                                                Start a new line for each point — the buyer sees them as bullets
+                                            </span>
+                                            <div class="descprev" data-desc-prev="addon-@n">
+                                                <span class="descprev__label">How the buyer sees it</span>
+                                                <ul class="descprev__list" data-desc-list=""></ul>
+                                                <p class="descprev__line" data-desc-line="" hidden=""></p>
+                                            </div>
                                         </div>
+                                        <span class="field__error @(row.Error != null ? "is-visible" : "")" data-role="addon-error" role="alert">@row.Error</span>
                                     </div>
-                                </div>
+                                }
                             </div>
                         </div>
                         <button class="addline" type="button" data-repeat-add="addon-list">
@@ -175,54 +181,6 @@ Certificate of attendance</textarea>
                             when an add-on runs out it stops being offered at checkout.
                         </p>
                     </div>
-                    @* <div class="panel__body">
-                        <div class="lines lines--addon">
-                            <div class="lines__head" aria-hidden="true">
-                                <span>Name</span><span>Price (&#8358;)</span><span>Stock</span><span></span>
-                            </div>
-                            <div id="addon-list">
-                                <div class="line" data-repeat-row style="margin-bottom: 10px;">
-                                    <label class="u-visually-hidden" for="addon-name-1">Add-on name</label>
-                                    <input class="line__input" id="addon-name-1" name="addon-name-1"
-                                           type="text" placeholder="e.g. Conference Tote Bag" value="Conference Tote Bag">
-                                    <label class="u-visually-hidden" for="addon-price-1">Price</label>
-                                    <input class="line__input" id="addon-price-1" name="addon-price-1"
-                                           type="text" inputmode="numeric" placeholder="0" value="2500">
-                                    <label class="u-visually-hidden" for="addon-stock-1">Stock count</label>
-                                    <input class="line__input" id="addon-stock-1" name="addon-stock-1"
-                                           type="text" inputmode="numeric" placeholder="0" value="150">
-                                    <button class="line__remove" type="button" data-repeat-remove>
-                                        <span class="u-visually-hidden">Remove add-on</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                    </button>
-                                </div>
-                                <div class="line" data-repeat-row style="margin-bottom: 10px;">
-                                    <label class="u-visually-hidden" for="addon-name-2">Add-on name</label>
-                                    <input class="line__input" id="addon-name-2" name="addon-name-2"
-                                           type="text" placeholder="e.g. Conference Tote Bag" value="Workshop Pass">
-                                    <label class="u-visually-hidden" for="addon-price-2">Price</label>
-                                    <input class="line__input" id="addon-price-2" name="addon-price-2"
-                                           type="text" inputmode="numeric" placeholder="0" value="8000">
-                                    <label class="u-visually-hidden" for="addon-stock-2">Stock count</label>
-                                    <input class="line__input" id="addon-stock-2" name="addon-stock-2"
-                                           type="text" inputmode="numeric" placeholder="0" value="60">
-                                    <button class="line__remove" type="button" data-repeat-remove>
-                                        <span class="u-visually-hidden">Remove add-on</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="addline" type="button" data-repeat-add="addon-list">
-                            + Add add-on
-                        </button>
-
-                        <p class="notice notice--info notice--flat u-mt-5">
-                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                            Stock is tracked per add-on and sold independently of ticket capacity &mdash;
-                            when an add-on runs out it stops being offered at checkout.
-                        </p>
-                    </div> *@
                 </section>
 
                 <section class="panel" aria-labelledby="promo-title">
@@ -233,114 +191,120 @@ Certificate of attendance</textarea>
                     </div>
                     <div class="panel__body">
                         <div id="promo-list">
-                            <div class="promo">
-                                <div class="promo__head">
-                                    <span class="promo__code">TECH25</span>
-                                    @* <span class="badge badge--live">Active</span> *@
-                                    <span class="promo__summary">20% off &middot; Standard &amp; VIP &middot; 100 uses &middot; ends 5 Aug 2026</span>
-                                    <button class="iconbtn" type="button" aria-expanded="true"
-                                            aria-controls="promo-tech25" data-accordion>
-                                        <span class="u-visually-hidden">Toggle rules for TECH25</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
-                                    </button>
-                                    <button class="line__remove" type="button" data-repeat-remove>
-                                        <span class="u-visually-hidden">Delete TECH25</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                    </button>
-                                </div>
-
-                                <div class="promo__rules" id="promo-tech25">
-                                    <div class="formgrid formgrid--3">
-                                        <div class="form__field">
-                                            <label class="field__label" for="promocode-tech25">Code<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="promocode-tech25" name="promocode-tech25" type="text" placeholder="TECH25" value="TECH25" required>
-                                        </div>
-                                        <div class="form__field">
-                                            <label class="field__label" for="promotype-tech25">Discount Type</label>
-                                            <select class="field__select" id="promotype-tech25" name="promotype-tech25">
-                                                <option>Percentage (%)</option>
-                                                <option>Fixed amount (&#8358;)</option>
-                                            </select>
-                                        </div>
-                                        <div class="form__field">
-                                            <label class="field__label" for="promovalue-tech25">Value<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="promovalue-tech25" name="promovalue-tech25" type="text" placeholder="0" value="20" required>
-                                            <span class="field__hint">Percent off</span>
-                                        </div>
+                            @for (var i = 0; i < Model.PromoRows.Count; i++)
+                            {
+                                var row = Model.PromoRows[i];
+                                var n = i + 1;
+                                var rulesId = "promo-rules-" + n;
+                                <div class="promo @(row.Error != null ? "is-invalid" : "")" data-repeat-row="">
+                                    <input type="hidden" name="promo-id-@n" value="@row.PromoCodeId" data-role="promo-id" />
+                                    <div class="promo__head">
+                                        <span class="promo__code" data-role="promo-code-label">@(string.IsNullOrWhiteSpace(row.Code) ? "New promo code" : row.Code)</span>
+                                        <button class="line__toggle" type="button" aria-expanded="true"
+                                                aria-controls="@rulesId" data-accordion>
+                                            <span class="u-visually-hidden">Toggle rules</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                                        </button>
+                                        <button class="line__remove" type="button" data-repeat-remove="">
+                                            <span class="u-visually-hidden">Delete promo code</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                        </button>
                                     </div>
 
-                                    <div class="formgrid formgrid--3 u-mt-5">
-                                        <div class="form__field">
-                                            <label class="field__label" for="promomax-tech25">Max Redemptions</label>
-                                            <input class="field__input" id="promomax-tech25" name="promomax-tech25" type="text" placeholder="Unlimited" value="100">
-                                            <span class="field__hint">Total uses across all buyers</span>
+                                    <div class="promo__rules" id="@rulesId">
+                                        <div class="formgrid formgrid--3">
+                                            <div class="form__field">
+                                                <label class="field__label" for="promocode-@n">Code<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input @(row.Error != null ? "is-invalid" : "")" id="promocode-@n" name="promocode-@n" type="text" placeholder="TECH25" value="@row.Code" data-role="promo-code" required>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="promotype-@n">Discount Type</label>
+                                                <select class="field__select" id="promotype-@n" name="promotype-@n" data-role="promo-type">
+                                                    <option selected="@(row.DiscountType.StartsWith("Percentage", StringComparison.OrdinalIgnoreCase))">Percentage (%)</option>
+                                                    <option selected="@(row.DiscountType.StartsWith("Fixed", StringComparison.OrdinalIgnoreCase))">Fixed amount (&#8358;)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="promovalue-@n">Value<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="promovalue-@n" name="promovalue-@n" type="text" placeholder="0" value="@row.Value" data-role="promo-value" required>
+                                                <span class="field__hint">Percent or amount off</span>
+                                            </div>
                                         </div>
-                                        <div class="form__field">
-                                            <label class="field__label" for="promouser-tech25">Per-User Limit</label>
-                                            <input class="field__input" id="promouser-tech25" name="promouser-tech25" type="text" placeholder="1" value="1">
-                                            <span class="field__hint">Uses allowed per account</span>
-                                        </div>
-                                        <div class="form__field">
-                                            <label class="field__label" for="promomin-tech25">Minimum Order (&#8358;)</label>
-                                            <input class="field__input" id="promomin-tech25" name="promomin-tech25" type="text" placeholder="0" value="10000">
-                                            <span class="field__hint">Order must reach this to qualify</span>
-                                        </div>
-                                    </div>
 
-                                    <div class="formgrid formgrid--2 u-mt-5">
-                                        <div class="form__field">
-                                            <label class="field__label" for="promofrom-tech25">Valid From</label>
-                                            <input class="field__input" id="promofrom-tech25" name="promofrom-tech25" type="date" value="2026-07-01">
+                                        <div class="formgrid formgrid--3 u-mt-5">
+                                            <div class="form__field">
+                                                <label class="field__label" for="promomax-@n">Max Redemptions</label>
+                                                <input class="field__input" id="promomax-@n" name="promomax-@n" type="text" placeholder="Unlimited" value="@row.MaxUses">
+                                                <span class="field__hint">Total uses across all buyers</span>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="promouser-@n">Per-User Limit</label>
+                                                <input class="field__input" id="promouser-@n" name="promouser-@n" type="text" placeholder="1" value="@row.PerUserLimit">
+                                                <span class="field__hint">Uses allowed per account</span>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="promomin-@n">Minimum Order (&#8358;)</label>
+                                                <input class="field__input" id="promomin-@n" name="promomin-@n" type="text" placeholder="0" value="@row.MinOrder">
+                                                <span class="field__hint">Order must reach this to qualify</span>
+                                            </div>
                                         </div>
-                                        <div class="form__field">
-                                            <label class="field__label" for="promountil-tech25">Valid Until</label>
-                                            <input class="field__input" id="promountil-tech25" name="promountil-tech25" type="date" value="2026-08-05">
+
+                                        <div class="formgrid formgrid--2 u-mt-5">
+                                            <div class="form__field">
+                                                <label class="field__label" for="promofrom-@n">Valid From</label>
+                                                <input class="field__input" id="promofrom-@n" name="promofrom-@n" type="date" value="@row.ValidFrom">
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="promountil-@n">Valid Until</label>
+                                                <input class="field__input" id="promountil-@n" name="promountil-@n" type="date" value="@row.ValidTo" data-role="promo-until">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="formgrid formgrid--2 u-mt-5">
-                                        <div class="form__field">
-                                            <label class="field__label" for="promoapplies-tech25">Applies To</label>
-                                            <select class="field__select" id="promoapplies-tech25" name="promoapplies-tech25">
-                                                <option value="All">All Tiers</option>
+                                        <div class="formgrid formgrid--2 u-mt-5">
+                                            <div class="form__field">
+                                                <label class="field__label" for="promoapplies-@n">Applies To</label>
+                                                <select class="field__select" id="promoapplies-@n" name="promoapplies-@n">
+                                                    <option value="All" selected="@(row.AppliesTo == "All")">All Tiers</option>
 
-                                                @if (Model.TicketTypeData?.TicketTypes != null && Model.TicketTypeData.TicketTypes.Any())
-                                                {
-                                                    @foreach (var ticket in Model.TicketTypeData.TicketTypes)
+                                                    @if (Model.TicketTypeData?.TicketTypes != null && Model.TicketTypeData.TicketTypes.Any())
                                                     {
-                                                        <option value="@ticket.TicketTypeId">@ticket.TypeName</option>
+                                                        @foreach (var ticket in Model.TicketTypeData.TicketTypes)
+                                                        {
+                                                            <option value="@ticket.TicketTypeId" selected="@(row.AppliesTo == ticket.TicketTypeId.ToString())">@ticket.TypeName</option>
+                                                        }
                                                     }
-                                                }
-                                            </select>
+                                                </select>
+                                            </div>
+                                            <div class="form__field">
+                                                <label class="field__label" for="promostatus-@n">Status</label>
+                                                <select class="field__select" id="promostatus-@n" name="promostatus-@n">
+                                                    <option selected="@(row.Status == "Active")">Active</option>
+                                                    <option selected="@(row.Status == "Paused")">Paused</option>
+                                                    <option selected="@(row.Status == "Scheduled")">Scheduled</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="form__field">
-                                            <label class="field__label" for="promostatus-tech25">Status</label>
-                                            <select class="field__select" id="promostatus-tech25" name="promostatus-tech25">
-                                                <option>Active</option>
-                                                <option>Paused</option>
-                                                <option>Scheduled</option>
-                                            </select>
-                                        </div>
-                                    </div>
 
-                                    <div class="optins">
-                                        @* <div class="optin">
-                                            <input class="optin__box" id="stack-tech25" name="stack-tech25" type="checkbox">
-                                            <label for="stack-tech25">
-                                                <span class="optin__title">Can be combined with other codes</span>
-                                                <span class="optin__hint">Leave off so only the best single discount applies per order</span>
-                                            </label>
-                                        </div> *@
-                                        <div class="optin">
-                                            <input class="optin__box" id="firstorder-tech25" name="firstorder-tech25" type="checkbox">
-                                            <label for="firstorder-tech25">
-                                                <span class="optin__title">First-time buyers only</span>
-                                                <span class="optin__hint">Blocks accounts that already bought a ticket to this event</span>
-                                            </label>
+                                        <div class="optins">
+                                            <div class="optin">
+                                                <input class="optin__box" id="stack-@n" name="stack-@n" type="checkbox" checked="@row.CanCombine">
+                                                <label for="stack-@n">
+                                                    <span class="optin__title">Can be combined with other codes</span>
+                                                    <span class="optin__hint">Leave off so only the best single discount applies per order</span>
+                                                </label>
+                                            </div>
+                                            <div class="optin">
+                                                <input class="optin__box" id="firstorder-@n" name="firstorder-@n" type="checkbox" checked="@row.FirstTimeBuyer">
+                                                <label for="firstorder-@n">
+                                                    <span class="optin__title">First-time buyers only</span>
+                                                    <span class="optin__hint">Blocks accounts that already bought a ticket to this event</span>
+                                                </label>
+                                            </div>
                                         </div>
+                                        <span class="field__error @(row.Error != null ? "is-visible" : "")" data-role="promo-error" role="alert">@row.Error</span>
                                     </div>
                                 </div>
-                            </div>
+                            }
                         </div>
                         <button class="addline" type="button" data-repeat-add="promo-list">
                             + Add promo code
@@ -400,52 +364,325 @@ Certificate of attendance</textarea>
 
         <!-- private → Food & Beverage -->
         <div class="wizard__foot-end" data-type-only="private">
-            <!-- <button class="btn btn--quiet" type="submit" form="addons-coupons-form">Skip</button> -->
-            <button class="btn btn--primary" type="submit" form="addons-coupons-form">Continue<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+            <button class="btn btn--primary" type="submit" form="addons-coupons-form">@(Model.IsEditMode ? "Update & Continue" : "Continue")<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
         </div>
 
         <!-- public → skip Food, go to Access Control -->
         <div class="wizard__foot-end" data-type-only="public" hidden>
-            <!-- <button class="btn btn--quiet" type="submit" form="addons-coupons-form">Skip</button> -->
-            <button class="btn btn--primary" type="submit" form="addons-coupons-form">Continue<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+            <button class="btn btn--primary" type="submit" form="addons-coupons-form">@(Model.IsEditMode ? "Update & Continue" : "Continue")<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
         </div>
     </footer>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Generic handler function for list items deletion
-        function setupListDeletion(containerId, itemSelector, lastItemMessage) {
-            const container = document.getElementById(containerId);
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('addons-coupons-form');
+        var addonList = document.getElementById('addon-list');
+        var promoList = document.getElementById('promo-list');
+
+        // ----------------------------------------------------------------
+        // Row deletion (guard against removing the last remaining row)
+        // ----------------------------------------------------------------
+        function setupListDeletion(container, itemSelector, lastItemMessage) {
             if (!container) return;
 
-            container.addEventListener('click', function (event) {
-                // Find remove button by class or data attribute
-                const deleteBtn = event.target.closest('.line__remove, [data-repeat-remove]');
+            container.addEventListener('click', function(event) {
+                var deleteBtn = event.target.closest('.line__remove, [data-repeat-remove]');
                 if (!deleteBtn) return;
 
-                // Select all items currently in this container
-                const allItems = container.querySelectorAll(itemSelector);
-
-                // Prevent deletion if only one item remains
+                var allItems = container.querySelectorAll(itemSelector);
                 if (allItems.length <= 1) {
                     showToast(lastItemMessage);
                     return;
                 }
 
-                // Remove targeted row item
-                const itemToRemove = deleteBtn.closest(itemSelector);
+                var itemToRemove = deleteBtn.closest(itemSelector);
                 if (itemToRemove) {
                     itemToRemove.remove();
+                    renumberAddons();
+                    renumberPromos();
                 }
             });
         }
 
-        // Initialize deletion logic for Promo Codes
-        setupListDeletion(
-            'promo-list',
-            '.promo',
-            'This is the last promo code — there has to be at least one'
-        );
+        setupListDeletion(addonList, '.addonline', 'This is the last add-on — remove the whole section by leaving it blank instead');
+        setupListDeletion(promoList, '.promo', 'This is the last promo code — there has to be at least one');
+
+        // ----------------------------------------------------------------
+        // Renumbering: the shared "add row" behaviour only refreshes each
+        // cloned element's id (not its name), so two rows can end up posting
+        // under the same field name — the server would then see a single
+        // comma-joined value instead of two distinct add-ons/codes. Force a
+        // clean, sequential renumber of every id/name/for/aria-controls pair
+        // after any add or remove so each row is always unique on submit.
+        // ----------------------------------------------------------------
+        function renumberGeneric(container, rowSelector, idFieldSuffixes) {
+            if (!container) return;
+            var rows = container.querySelectorAll(rowSelector);
+
+            rows.forEach(function(row, i) {
+                var n = i + 1;
+
+                row.querySelectorAll('[id], [name]').forEach(function(el) {
+                    var oldId = el.id;
+                    var oldName = el.name;
+
+                    idFieldSuffixes.forEach(function(suffix) {
+                        if (oldId && oldId.indexOf(suffix + '-') === 0) {
+                            var newId = suffix + '-' + n;
+                            row.querySelectorAll('[for="' + CSS.escape(oldId) + '"]').forEach(function(label) {
+                                label.setAttribute('for', newId);
+                            });
+                            row.querySelectorAll('[aria-controls="' + CSS.escape(oldId) + '"], [aria-describedby="' + CSS.escape(oldId) + '"]').forEach(function(ref) {
+                                ref.setAttribute('aria-controls', newId);
+                            });
+                            el.id = newId;
+                        }
+                        if (oldName && oldName.indexOf(suffix + '-') === 0) {
+                            el.name = suffix + '-' + n;
+                        }
+                    });
+                });
+
+                // data-desc-src / data-desc-prev use a shared key ("addon-<n>") rather than a field id.
+                var descField = row.querySelector('[data-desc-src]');
+                var descPrevWrap = row.querySelector('[data-desc-prev]');
+                if (descField && descPrevWrap) {
+                    var key = 'addon-' + n;
+                    descField.setAttribute('data-desc-src', key);
+                    descPrevWrap.setAttribute('data-desc-prev', key);
+                }
+
+                var rulesPanel = row.querySelector('.promo__rules');
+                var toggleBtn = row.querySelector('[data-accordion]');
+                if (rulesPanel && toggleBtn) {
+                    var newRulesId = 'promo-rules-' + n;
+                    rulesPanel.id = newRulesId;
+                    toggleBtn.setAttribute('aria-controls', newRulesId);
+                }
+
+                var hiddenId = row.querySelector('[data-role="addon-id"], [data-role="promo-id"]');
+                if (hiddenId) {
+                    // A brand-new row (cloned from the "+ Add" button) must never carry
+                    // forward another row's database id — that would turn a create
+                    // into an accidental update/duplicate on the server.
+                    var wasClonedFresh = row.getAttribute('data-fresh-clone') === '1';
+                    if (wasClonedFresh) hiddenId.value = '';
+                }
+            });
+        }
+
+        function renumberAddons() { renumberGeneric(addonList, '.addonline', ['addon-name', 'addon-price', 'addon-stock', 'addon-desc', 'addon-id']); }
+        function renumberPromos() { renumberGeneric(promoList, '.promo', ['promocode', 'promotype', 'promovalue', 'promomax', 'promouser', 'promomin', 'promofrom', 'promountil', 'promoapplies', 'promostatus', 'stack', 'firstorder', 'promo-id']); }
+
+        // Mark rows created via "+ Add" so their cloned hidden id gets cleared
+        // (a clone always copies the DOM attribute value, including a hidden
+        // AddOnId/PromoCodeId from the row it was copied from).
+        document.querySelectorAll('[data-repeat-add]').forEach(function(button) {
+            button.addEventListener('click', function() {
+                setTimeout(function() {
+                    var listId = button.getAttribute('data-repeat-add');
+                    var list = document.getElementById(listId);
+                    if (!list) return;
+                    var rows = list.children;
+                    var lastRow = rows[rows.length - 1];
+                    if (!lastRow) return;
+
+                    lastRow.setAttribute('data-fresh-clone', '1');
+                    var hiddenId = lastRow.querySelector('[data-role="addon-id"], [data-role="promo-id"]');
+                    if (hiddenId) hiddenId.value = '';
+                    lastRow.classList.remove('is-invalid');
+                    lastRow.querySelectorAll('.is-invalid').forEach(function(el) { el.classList.remove('is-invalid'); });
+                    lastRow.querySelectorAll('[data-role="addon-error"], [data-role="promo-error"]').forEach(function(el) {
+                        el.textContent = '';
+                        el.classList.remove('is-visible');
+                    });
+
+                    renumberAddons();
+                    renumberPromos();
+                    wireDescPreview(lastRow);
+                    wireLiveValidation(lastRow);
+
+                    var codeLabel = lastRow.querySelector('[data-role="promo-code-label"]');
+                    var codeInput = lastRow.querySelector('[data-role="promo-code"]');
+                    if (codeLabel && codeInput) {
+                        codeLabel.textContent = 'New promo code';
+                        codeInput.addEventListener('input', function() {
+                            codeLabel.textContent = codeInput.value.trim() || 'New promo code';
+                        });
+                    }
+                }, 0);
+            });
+        });
+
+        // ----------------------------------------------------------------
+        // Description bullet preview (re-implemented locally so newly
+        // cloned rows also get a live preview, which the shared script.js
+        // helper does not wire up for elements added after page load).
+        // ----------------------------------------------------------------
+        function wireDescPreview(scope) {
+            (scope || document).querySelectorAll('[data-desc-src]').forEach(function(field) {
+                if (field.dataset.previewBound === '1') return;
+                field.dataset.previewBound = '1';
+
+                function render() {
+                    var key = field.getAttribute('data-desc-src');
+                    var rowScope = field.closest('.addonline');
+                    var wrap = rowScope ? rowScope.querySelector('[data-desc-prev="' + CSS.escape(key) + '"]') : null;
+                    if (!wrap) return;
+                    var list = wrap.querySelector('[data-desc-list]');
+                    var line = wrap.querySelector('[data-desc-line]');
+                    var lines = field.value.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length; });
+
+                    if (lines.length > 1) {
+                        list.hidden = false;
+                        line.hidden = true;
+                        list.innerHTML = lines.map(function(l) { return '<li>' + l.replace(/[<>]/g, '') + '</li>'; }).join('');
+                    } else {
+                        list.hidden = true;
+                        line.hidden = false;
+                        line.textContent = lines[0] || 'Nothing written yet';
+                    }
+                }
+
+                field.addEventListener('input', render);
+                render();
+            });
+        }
+
+        wireDescPreview(document);
+
+        // ----------------------------------------------------------------
+        // Live + submit-time validation, mirroring the Basic Details step:
+        // inline field errors, is-invalid styling, toast + focus on block.
+        // ----------------------------------------------------------------
+        var NAME_PATTERN = /^[a-zA-Z0-9 ]+$/;
+        var CODE_PATTERN = /^[a-zA-Z0-9]+$/;
+
+        function setRowError(row, errorEl, message) {
+            row.classList.toggle('is-invalid', !!message);
+            if (errorEl) {
+                errorEl.textContent = message || '';
+                errorEl.classList.toggle('is-visible', !!message);
+            }
+        }
+
+        function validateAddonRow(row) {
+            var nameInput = row.querySelector('[data-role="addon-name"]');
+            var priceInput = row.querySelector('[data-role="addon-price"]');
+            var stockInput = row.querySelector('[data-role="addon-stock"]');
+            var errorEl = row.querySelector('[data-role="addon-error"]');
+            if (!nameInput) return true;
+
+            var name = nameInput.value.trim();
+            var price = priceInput ? priceInput.value.trim() : '';
+            var stock = stockInput ? stockInput.value.trim() : '';
+
+            // A fully blank row is allowed — it's simply dropped on submit.
+            if (!name && !price && !stock) {
+                nameInput.classList.remove('is-invalid');
+                setRowError(row, errorEl, '');
+                return true;
+            }
+
+            var message = '';
+            if (!name) {
+                message = 'Add-on name is required.';
+            } else if (!NAME_PATTERN.test(name)) {
+                message = 'Only letters, numbers, and spaces are allowed.';
+            } else if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) {
+                message = 'Enter a valid price of 0 or more.';
+            } else if (stock && (isNaN(parseInt(stock, 10)) || parseInt(stock, 10) < 0)) {
+                message = 'Enter a valid stock count of 0 or more.';
+            }
+
+            nameInput.classList.toggle('is-invalid', !!message);
+            setRowError(row, errorEl, message);
+            return !message;
+        }
+
+        function validatePromoRow(row) {
+            var codeInput = row.querySelector('[data-role="promo-code"]');
+            var valueInput = row.querySelector('[data-role="promo-value"]');
+            var typeSelect = row.querySelector('[data-role="promo-type"]');
+            var untilInput = row.querySelector('[data-role="promo-until"]');
+            var fromInput = row.querySelector('input[type="date"]');
+            var errorEl = row.querySelector('[data-role="promo-error"]');
+            if (!codeInput) return true;
+
+            var code = codeInput.value.trim();
+            var value = valueInput ? valueInput.value.trim() : '';
+
+            if (!code && !value) {
+                codeInput.classList.remove('is-invalid');
+                setRowError(row, errorEl, '');
+                return true;
+            }
+
+            var message = '';
+            if (!code) {
+                message = 'Promo code is required.';
+            } else if (!CODE_PATTERN.test(code)) {
+                message = 'Only letters and numbers are allowed — no spaces or symbols.';
+            } else if (!value || isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
+                message = 'Enter a discount value greater than 0.';
+            } else if (typeSelect && typeSelect.value.indexOf('Percentage') === 0 && parseFloat(value) > 100) {
+                message = 'A percentage discount can\'t exceed 100.';
+            } else if (fromInput && untilInput && fromInput.value && untilInput.value && untilInput.value < fromInput.value) {
+                message = 'Valid Until can\'t be before Valid From.';
+            }
+
+            codeInput.classList.toggle('is-invalid', !!message);
+            setRowError(row, errorEl, message);
+            return !message;
+        }
+
+        function wireLiveValidation(scope) {
+            (scope || document).querySelectorAll('.addonline').forEach(function(row) {
+                if (row.dataset.validationBound === '1') return;
+                row.dataset.validationBound = '1';
+                row.querySelectorAll('input, textarea').forEach(function(input) {
+                    input.addEventListener('input', function() { validateAddonRow(row); });
+                    input.addEventListener('blur', function() { validateAddonRow(row); });
+                });
+            });
+
+            (scope || document).querySelectorAll('.promo').forEach(function(row) {
+                if (row.dataset.validationBound === '1') return;
+                row.dataset.validationBound = '1';
+                row.querySelectorAll('input, select').forEach(function(input) {
+                    var evt = input.tagName === 'SELECT' ? 'change' : 'input';
+                    input.addEventListener(evt, function() { validatePromoRow(row); });
+                    input.addEventListener('blur', function() { validatePromoRow(row); });
+                });
+            });
+        }
+
+        wireLiveValidation(document);
+
+        form.addEventListener('submit', function(e) {
+            var isValid = true;
+
+            addonList.querySelectorAll('.addonline').forEach(function(row) {
+                if (!validateAddonRow(row)) isValid = false;
+            });
+            promoList.querySelectorAll('.promo').forEach(function(row) {
+                if (!validatePromoRow(row)) isValid = false;
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                showToast('Please fix the highlighted fields below.');
+
+                var firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    var focusTarget = firstInvalid.matches('input, select, textarea') ? firstInvalid : firstInvalid.querySelector('input, select, textarea');
+                    if (focusTarget && typeof focusTarget.focus === 'function') {
+                        focusTarget.focus({ preventScroll: true });
+                    }
+                }
+            }
+        });
     });
 
     function showToast(message) {

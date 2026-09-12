@@ -2382,7 +2382,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-            (function () {
+            (function() {
                 function valueOfPressed(container, selector, fallback) {
                     var el = container ? container.querySelector(selector + '[aria-pressed="true"]') : null;
                     return el ? (el.getAttribute('data-seatmode') || el.getAttribute('data-pick') || fallback) : fallback;
@@ -2429,15 +2429,15 @@
                         '[id],[name],[for],[aria-controls],[aria-labelledby],' +
                         '[data-reveal],[data-upload],[data-upload-dropzone],' +
                         '[data-pick-owner],[data-segment-owner],[data-tier-repeat-add],' +
-                        '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes]' + 
+                        '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes]' +
                         '[data-incl-group]'
                     );
 
                     var all = [node].concat(Array.prototype.slice.call(scoped));
                     var suffixTail = '-' + oldSuffix;
 
-                    all.forEach(function (el) {
-                        attrs.forEach(function (attr) {
+                    all.forEach(function(el) {
+                        attrs.forEach(function(attr) {
                             var v = el.getAttribute && el.getAttribute(attr);
                             if (!v) return;
 
@@ -2509,23 +2509,23 @@
                         'input[type="radio"][data-reveal], input[type="radio"][data-reveal-inverse],' +
                         'input[type="checkbox"][data-reveal], input[type="checkbox"][data-reveal-inverse],' +
                         '[role="switch"][data-reveal], [role="switch"][data-reveal-inverse]'
-                    ).forEach(function (el) { applyReveal(el, root); });
+                    ).forEach(function(el) { applyReveal(el, root); });
                 }
 
                 // Clears a cloned tier back to a blank/default state (no leftover values,
                 // files, or "members only"/expanded panel state copied from the template).
                 function clearTierValues(node) {
                     node.querySelectorAll('input[type="text"], input[type="date"], input[type="time"]')
-                        .forEach(function (inp) { inp.value = ''; });
-                    node.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+                        .forEach(function(inp) { inp.value = ''; });
+                    node.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
                         cb.checked = false;
                         cb.removeAttribute('checked');
                     });
-                    node.querySelectorAll('input[type="file"]').forEach(function (f) { f.value = ''; });
-                    node.querySelectorAll('[data-upload-directory]').forEach(function (d) {
+                    node.querySelectorAll('input[type="file"]').forEach(function(f) { f.value = ''; });
+                    node.querySelectorAll('[data-upload-directory]').forEach(function(d) {
                         d.setAttribute('hidden', '');
                     });
-                    node.querySelectorAll('.upload').forEach(function (d) { d.removeAttribute('hidden'); });
+                    node.querySelectorAll('.upload').forEach(function(d) { d.removeAttribute('hidden'); });
                     var revenue = node.querySelector('.tier__revenue b');
                     if (revenue) revenue.textContent = '\u20a60';
                     var nameInput = node.querySelector('.tier__name');
@@ -2538,10 +2538,10 @@
                     // template tier happened to be left in.
                     var seatWrap = node.querySelector('[data-seatplan]');
                     if (seatWrap) {
-                        seatWrap.querySelectorAll('[data-seatmode]').forEach(function (btn) {
+                        seatWrap.querySelectorAll('[data-seatmode]').forEach(function(btn) {
                             btn.setAttribute('aria-pressed', btn.getAttribute('data-seatmode') === 'rows' ? 'true' : 'false');
                         });
-                        seatWrap.querySelectorAll('[data-seatmode-panel]').forEach(function (panel) {
+                        seatWrap.querySelectorAll('[data-seatmode-panel]').forEach(function(panel) {
                             if (panel.getAttribute('data-seatmode-panel') === 'rows') panel.removeAttribute('hidden');
                             else panel.setAttribute('hidden', '');
                         });
@@ -2553,20 +2553,20 @@
                     // "off" for a clean starting state, then resync every
                     // data-reveal panel in this tier to match.
                     node.querySelectorAll('[role="switch"][data-reveal], [role="switch"][data-reveal-inverse]')
-                        .forEach(function (sw) { sw.setAttribute('aria-checked', 'false'); });
+                        .forEach(function(sw) { sw.setAttribute('aria-checked', 'false'); });
                     syncRevealsIn(node);
                 }
 
                 function fileToBase64(file) {
-                    return new Promise(function (resolve, reject) {
+                    return new Promise(function(resolve, reject) {
                         var reader = new FileReader();
-                        reader.onload = function () { resolve(String(reader.result).split(',')[1]); };
+                        reader.onload = function() { resolve(String(reader.result).split(',')[1]); };
                         reader.onerror = reject;
                         reader.readAsDataURL(file);
                     });
                 }
 
-                document.addEventListener('DOMContentLoaded', function () {
+                document.addEventListener('DOMContentLoaded', function() {
                     // Guards against this whole setup running twice (e.g. if this
                     // step's markup+script is ever re-inserted into the page
                     // without a full reload). Without this guard, every listener
@@ -2579,7 +2579,7 @@
                     // ---- seating switch: generic reveal/hide wiring ------------
                     // Delegated on document so it works for every tier,
                     // including ones added later via "Add Tier".
-                    document.addEventListener('change', function (e) {
+                    document.addEventListener('change', function(e) {
                         var input = e.target;
                         if (!input || (input.tagName !== 'INPUT')) return;
 
@@ -2590,7 +2590,7 @@
                             // "No session access" is mutually exclusive.
                             if (input.name) {
                                 document.querySelectorAll('input[type="radio"][name="' + CSS.escape(input.name) + '"]')
-                                    .forEach(function (radio) { applyReveal(radio); });
+                                    .forEach(function(radio) { applyReveal(radio); });
                             } else {
                                 applyReveal(input);
                             }
@@ -2604,7 +2604,7 @@
 
                     // Custom role="switch" buttons (e.g. "Assign seating for
                     // this tier") use aria-checked instead of a native checkbox.
-                    document.addEventListener('click', function (e) {
+                    document.addEventListener('click', function(e) {
                         var sw = e.target.closest('[role="switch"][data-reveal], [role="switch"][data-reveal-inverse]');
                         if (!sw) return;
                         var on = sw.getAttribute('aria-checked') === 'true';
@@ -2618,7 +2618,7 @@
                     var pricingMode = form.querySelector('#PricingMode');
                     var paidMode = document.querySelector('#paidmode');
                     if (paidMode) {
-                        paidMode.addEventListener('click', function (e) {
+                        paidMode.addEventListener('click', function(e) {
                             var button = e.target.closest('[data-segment-value]');
                             if (button && pricingMode) pricingMode.value = button.getAttribute('data-segment-value') || 'paid';
                         });
@@ -2661,18 +2661,30 @@
 
                         // NOTE: only the fields common to every tier type are rehydrated
                         // here (name, price, quantity, description, visibility, sale
-                        // window). Seating layout, auto-expiry, member-list file, access
-                        // mode (day/slot selection) and inclusions are intentionally left
-                        // at their template defaults until the exact TicketTypeTierResp
-                        // shape for those is confirmed - wiring them up blind risked
-                        // silently mis-mapping fields.
+                        // window) plus Inclusions (checkbox + label/desc, matched against
+                        // the saved item.Inclusions by name - see rehydrateInclusions
+                        // below). Seating layout, auto-expiry, member-list file, and
+                        // access mode (day/slot selection) are still left at their
+                        // template defaults until the exact TicketTypeTierResp shape for
+                        // those is confirmed - wiring them up blind risked silently
+                        // mis-mapping fields.
                         var freshTiers = [];
-                        items.forEach(function (item) {
+                        items.forEach(function(item) {
                             tierCounter += 1;
                             var suffix = 'existing' + tierCounter;
 
                             var clone = template.cloneNode(true);
                             renameTierNode(clone, 'early', suffix);
+
+                            // clearTierValues() wipes every input[type=text] and
+                            // input[type=checkbox] in the clone, including the
+                            // inclusion rows' checkbox/label/description fields (they
+                            // are plain text/checkbox inputs, same as everything
+                            // else). Snapshot the template's catalog name/description
+                            // for each row BEFORE clearing so they can be restored
+                            // afterwards regardless of whether that inclusion was
+                            // saved on this ticket type or not.
+                            snapshotInclusionCatalog(clone);
                             clearTierValues(clone);
                             // Marks this tier as an existing one to UPDATE (not add) on submit.
                             clone.setAttribute('data-ticket-type-id', String(item.ticketTypeId || 0));
@@ -2684,13 +2696,15 @@
                             setFieldOn(clone, 'salestart-' + suffix, item.saleStart);
                             setFieldOn(clone, 'saleend-' + suffix, item.saleEnd);
 
+                            rehydrateInclusions(clone, suffix, item.Inclusions || item.inclusions || []);
+
                             freshTiers.push(clone);
                         });
 
                         if (freshTiers.length > 0) {
                             // Replace the shipped placeholder tier(s) with the real ones.
-                            tierList.querySelectorAll('.tier').forEach(function (t) { t.remove(); });
-                            freshTiers.forEach(function (t) { tierList.appendChild(t); });
+                            tierList.querySelectorAll('.tier').forEach(function(t) { t.remove(); });
+                            freshTiers.forEach(function(t) { tierList.appendChild(t); });
                             renumberTiers();
                         }
 
@@ -2705,11 +2719,109 @@
                             var el = root.querySelector('[name="' + name + '"]');
                             if (el) el.value = value;
                         }
+
+                        // Records each inclusion row's built-in catalog name/description
+                        // (e.g. "VIP Lounge" / "Private lounge with concierge, both days")
+                        // as data attributes, so they survive clearTierValues() wiping
+                        // the visible input values to ''.
+                        function snapshotInclusionCatalog(root) {
+                            root.querySelectorAll('[data-incl-row]').forEach(function(row) {
+                                var labelField = row.querySelector('[data-incl-labelfield]');
+                                var noteField = row.querySelector('[data-incl-notefield]');
+                                if (labelField) row.setAttribute('data-catalog-name', labelField.value || '');
+                                if (noteField) row.setAttribute('data-catalog-desc', noteField.value || '');
+                            });
+                        }
+
+                        // Restores each inclusion row's label/description from the
+                        // snapshot taken above, then checks the row and (optionally)
+                        // overwrites the description with the server's saved value if
+                        // this inclusion was part of `savedInclusions` for this tier.
+                        // Any saved inclusion that doesn't match a catalog row (i.e. a
+                        // custom item that was added via "Add Item" on a previous edit)
+                        // gets appended as a brand-new row using the same clone pattern
+                        // as the "Add included item" handler.
+                        function rehydrateInclusions(root, suffix, savedInclusions) {
+                            var inclGroup = root.querySelector('[data-incl-group="' + suffix + '"]');
+                            if (!inclGroup) return;
+
+                            var byName = {};
+                            (savedInclusions || []).forEach(function(inc) {
+                                var key = (inc.InclusionName || inc.inclusionName || '').trim().toLowerCase();
+                                if (key) byName[key] = inc;
+                            });
+                            var matchedKeys = {};
+
+                            inclGroup.querySelectorAll('[data-incl-row]').forEach(function(row) {
+                                var box = row.querySelector('[data-incl-box]');
+                                var labelField = row.querySelector('[data-incl-labelfield]');
+                                var noteField = row.querySelector('[data-incl-notefield]');
+                                var labelText = row.querySelector('[data-incl-label]');
+                                var noteText = row.querySelector('[data-incl-note]');
+
+                                var catalogName = row.getAttribute('data-catalog-name') || '';
+                                var catalogDesc = row.getAttribute('data-catalog-desc') || '';
+                                var key = catalogName.trim().toLowerCase();
+                                var match = key ? byName[key] : null;
+
+                                if (labelField) labelField.value = catalogName;
+                                if (labelText) labelText.textContent = catalogName;
+
+                                if (match) {
+                                    matchedKeys[key] = true;
+                                    if (box) box.checked = true;
+                                    var desc = (match.Description || match.description || catalogDesc);
+                                    if (noteField) noteField.value = desc;
+                                    if (noteText) noteText.textContent = desc;
+                                } else {
+                                    if (box) box.checked = false;
+                                    if (noteField) noteField.value = catalogDesc;
+                                    if (noteText) noteText.textContent = catalogDesc;
+                                }
+                            });
+
+                            // Append any saved inclusion that wasn't one of the fixed
+                            // catalog rows (a custom item added on a previous edit).
+                            var list = inclGroup.querySelector('.inclrows');
+                            var rowTemplate = inclGroup.querySelector('[data-incl-row]');
+                            if (!list || !rowTemplate) return;
+
+                            Object.keys(byName).forEach(function(key) {
+                                if (matchedKeys[key]) return;
+                                var inc = byName[key];
+                                var clone = rowTemplate.cloneNode(true);
+                                clone.removeAttribute('data-catalog-name');
+                                clone.removeAttribute('data-catalog-desc');
+                                clone.classList.remove('inclrow--editing');
+
+                                var box = clone.querySelector('[data-incl-box]');
+                                if (box) box.checked = true;
+
+                                var name = inc.InclusionName || inc.inclusionName || '';
+                                var desc = inc.Description || inc.description || '';
+
+                                var labelField = clone.querySelector('[data-incl-labelfield]');
+                                if (labelField) labelField.value = name;
+                                var noteField = clone.querySelector('[data-incl-notefield]');
+                                if (noteField) noteField.value = desc;
+                                var labelText = clone.querySelector('[data-incl-label]');
+                                if (labelText) labelText.textContent = name;
+                                var noteText = clone.querySelector('[data-incl-note]');
+                                if (noteText) noteText.textContent = desc;
+
+                                var editButton = clone.querySelector('[data-incl-edit]');
+                                if (editButton) editButton.hidden = false;
+                                var saveButton = clone.querySelector('[data-incl-save]');
+                                if (saveButton) saveButton.hidden = true;
+
+                                list.appendChild(clone);
+                            });
+                        }
                     })();
 
                     function renumberTiers() {
                         if (!tierList) return;
-                        tierList.querySelectorAll('.tier').forEach(function (tier, i) {
+                        tierList.querySelectorAll('.tier').forEach(function(tier, i) {
                             var noEl = tier.querySelector('.tier__no');
                             if (!noEl) return;
                             noEl.textContent = String(i + 1);
@@ -2719,7 +2831,7 @@
 
                     var addTierBtn = document.querySelector('[data-tier-repeat-add="tier-list"]');
                     if (addTierBtn && tierList) {
-                        addTierBtn.addEventListener('click', function () {
+                        addTierBtn.addEventListener('click', function() {
                             // Always clone the FIRST tier as the template: it is guaranteed
                             // to be in the clean/default state (no "members only" data,
                             // no uploaded file) unlike whichever tier happens to be last.
@@ -2744,7 +2856,7 @@
                     }
 
                     if (tierList) {
-                        tierList.addEventListener('click', function (e) {
+                        tierList.addEventListener('click', function(e) {
                             var removeBtn = e.target.closest('[data-repeat-remove]');
                             if (!removeBtn) return;
                             var tiers = tierList.querySelectorAll('.tier');
@@ -2814,14 +2926,14 @@
                     }
 
                     var readyToSubmit = false;
-                    form.addEventListener('submit', function (e) {
+                    form.addEventListener('submit', function(e) {
                         if (readyToSubmit) return;
 
                         e.preventDefault();
 
                         if (pricingMode && !pricingMode.value) pricingMode.value = 'paid';
 
-                        form.querySelectorAll('#tier-list > .tier').forEach(function (tier) {
+                        form.querySelectorAll('#tier-list > .tier').forEach(function(tier) {
                             var nameInput = tier.querySelector('.tier__name');
                             if (!nameInput) return;
                             var nameAttr = nameInput.getAttribute('name') || '';
@@ -2853,7 +2965,7 @@
                             var inclGroup = tier.querySelector('[data-incl-group="' + CSS.escape(suffix) + '"]');
                             if (inclGroup) {
                                 var inclIdx = 0;
-                                inclGroup.querySelectorAll('[data-incl-row]').forEach(function (row) {
+                                inclGroup.querySelectorAll('[data-incl-row]').forEach(function(row) {
                                     var box = row.querySelector('[data-incl-box]');
                                     if (!box || !box.checked) return;
 
@@ -2871,8 +2983,8 @@
                         });
 
                         uploadMemberListsForTiers()
-                            .catch(function (err) { console.error('Member list upload step failed:', err); })
-                            .then(function () {
+                            .catch(function(err) { console.error('Member list upload step failed:', err); })
+                            .then(function() {
                                 readyToSubmit = true;
                                 if (form.requestSubmit) form.requestSubmit();
                                 else form.submit();
@@ -2883,12 +2995,12 @@
     </script>
 </div>
 <script>
-    (function () {
+    (function() {
         // Prevent duplicate event handlers if this script is loaded more than once.
         if (window.__inclHandlersBound) return;
         window.__inclHandlersBound = true;
 
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
 
             // ============================================================
             // Toggle: Seating layout mode (Row/Seat, Table/Chair, Standing,
@@ -2902,14 +3014,14 @@
                 var seatPlanWrap = seatBtn.closest('[data-seatplan]');
 
                 if (seatGroup) {
-                    seatGroup.querySelectorAll('[data-seatmode]').forEach(function (btn) {
+                    seatGroup.querySelectorAll('[data-seatmode]').forEach(function(btn) {
                         btn.setAttribute('aria-pressed', btn === seatBtn ? 'true' : 'false');
                     });
                 }
 
                 if (seatPlanWrap) {
                     var mode = seatBtn.getAttribute('data-seatmode');
-                    seatPlanWrap.querySelectorAll('[data-seatmode-panel]').forEach(function (panel) {
+                    seatPlanWrap.querySelectorAll('[data-seatmode-panel]').forEach(function(panel) {
                         if (panel.getAttribute('data-seatmode-panel') === mode) {
                             panel.removeAttribute('hidden');
                         } else {
@@ -3057,7 +3169,7 @@
             list.appendChild(clone);
         });
     })();
-    document.addEventListener('change', function (e) {
+    document.addEventListener('change', function(e) {
         // Check if the changed element is a member-list file input
         // (identified by the data-upload wiring, not by re-checking .accept -
         // the accept attribute is only a picker *hint*; the browser still lets
@@ -3079,10 +3191,10 @@
 
             if (extension === '.csv') {
                 const reader = new FileReader();
-                reader.onload = function (event) {
+                reader.onload = function(event) {
                     parseAndRenderCSV(event.target.result, directoryEl, file.name);
                 };
-                reader.onerror = function () {
+                reader.onerror = function() {
                     alert('Could not read "' + file.name + '". Please try uploading it again.');
                 };
                 reader.readAsText(file);
@@ -3093,10 +3205,10 @@
                 }
 
                 const reader = new FileReader();
-                reader.onload = function (event) {
+                reader.onload = function(event) {
                     parseAndRenderXLSX(event.target.result, directoryEl, file.name);
                 };
-                reader.onerror = function () {
+                reader.onerror = function() {
                     alert('Could not read "' + file.name + '". Please try uploading it again.');
                 };
                 // xlsx is a binary/zip format, not text - must be read as
@@ -3185,10 +3297,10 @@
             const rowDiv = document.createElement('div');
             rowDiv.className = 'directory__row';
             rowDiv.innerHTML = `
-                            <span>${escapeHtml(name)}</span>
-                            <span class="directory__email">${escapeHtml(email)}</span>
-                            <span class="badge badge--live">Verified</span>
-                        `;
+                                <span>${escapeHtml(name)}</span>
+                                <span class="directory__email">${escapeHtml(email)}</span>
+                                <span class="badge badge--live">Verified</span>
+                            `;
             scrollContainer.appendChild(rowDiv);
         });
 
@@ -3202,7 +3314,7 @@
     }
 
     function escapeHtml(text) {
-        return text.replace(/[&<>"']/g, function (m) {
+        return text.replace(/[&<>"']/g, function(m) {
             return {
                 '&': '&amp;',
                 '<': '&lt;',
@@ -3217,7 +3329,7 @@
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = async function (e) {
+        reader.onload = async function(e) {
             const base64String = e.target.result.split(',')[1];
 
             const payload = {

@@ -25,8 +25,8 @@
             }
             <form class="stack" method="post" id="food-beverage-form">
                 @Html.AntiForgeryToken()
-                <input type="hidden" id="food-enabled" name="food-enabled" value="true" />
-                <input type="hidden" id="serving-type" name="serving-type" value="live" />
+                <input type="hidden" id="food-enabled" name="food-enabled" value="@(Model.IsFoodEnabled ? "true" : "false")" />
+                <input type="hidden" id="serving-type" name="serving-type" value="@Model.ServingType" />
                 <input type="hidden" id="menu-csv-filename" name="menu-csv-filename" value="" />
                 <input type="hidden" id="menu-csv-base64" name="menu-csv-base64" value="" />
 
@@ -36,11 +36,11 @@
                             <h2 class="panel__title" id="food-title">Food Ordering</h2>
                             <p class="panel__meta">Turn on to serve or sell food at this event</p>
                         </div>
-                        <button class="switch switch--brand" type="button" role="switch" aria-checked="true" aria-labelledby="food-title" aria-controls="food-config" data-food-switch></button>
+                        <button class="switch switch--brand" type="button" role="switch" aria-checked="@(Model.IsFoodEnabled ? "true" : "false")" aria-labelledby="food-title" aria-controls="food-config" data-food-switch></button>
                     </div>
                 </section>
 
-                <div id="food-config">
+                <div id="food-config" @(!Model.IsFoodEnabled ? "hidden" : "")>
                     <section class="panel" aria-labelledby="serving-title" style="margin-bottom:10px;">
                         <div class="panel__head">
                             <span class="tile tile--brand" aria-hidden="true">
@@ -53,14 +53,14 @@
                         </div>
                         <div class="panel__body">
                             <div class="publishpick" id="servingtype" role="group" aria-label="Serving type">
-                                <button class="publishpick__opt" type="button" aria-pressed="true" data-serving-type="live">
+                                <button class="publishpick__opt" type="button" aria-pressed="@(Model.ServingType.Equals("live", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-serving-type="live">
                                     <span class="publishpick__icon" aria-hidden="true">
                                         <i class="fa-solid fa-bell-concierge"></i>
                                     </span>
                                     <span class="publishpick__title">Live serving</span>
                                     <span class="publishpick__text">Guests order in-app; allowances and extra serves are tracked and managed live in Event Hub</span>
                                 </button>
-                                <button class="publishpick__opt" type="button" aria-pressed="false" data-serving-type="counter">
+                                <button class="publishpick__opt" type="button" aria-pressed="@(Model.ServingType.Equals("counter", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-serving-type="counter">
                                     <span class="publishpick__icon" aria-hidden="true">
                                         <i class="fa-solid fa-store"></i>
                                     </span>
@@ -85,7 +85,7 @@
                         <div class="panel__body">
                             <div class="radios radios--2">
                                 <label class="radio">
-                                    <input type="radio" name="food-scope" value="AllSessions" checked />
+                                    <input type="radio" name="food-scope" value="AllSessions" @(Model.AvailabilityScope != "SelectedDates" ? "checked" : "") />
                                     <span class="radio__icon" aria-hidden="true">
                                         <i class="fa-solid fa-calendar-days"></i>
                                     </span>
@@ -95,7 +95,7 @@
                                     </span>
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="food-scope" value="SelectedDates" />
+                                    <input type="radio" name="food-scope" value="SelectedDates" @(Model.AvailabilityScope == "SelectedDates" ? "checked" : "") />
                                     <span class="radio__icon" aria-hidden="true">
                                         <i class="fa-solid fa-calendar-check"></i>
                                     </span>
@@ -105,7 +105,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <div class="scopepicker u-mt-5" id="food-dates" hidden>
+                            <div class="scopepicker u-mt-5" id="food-dates" @(Model.AvailabilityScope != "SelectedDates" ? "hidden" : "")>
                                 <p class="scopepicker__head">Select the event days and sessions where food is available.</p>
                                 <div id="dynamic-food-dates">
                                     <div class="notice notice--info notice--flat">
@@ -128,7 +128,7 @@
                     </section>
 
                     <!-- ================================================= LIVE SERVING ================================================= -->
-                    <div data-serving-panel="live">
+                    <div data-serving-panel="live" @(!Model.ServingType.Equals("live", StringComparison.OrdinalIgnoreCase) ? "hidden" : "")>
                         <section class="panel u-mt-6" aria-labelledby="menu-title" style="margin-bottom:10px;">
                             <div class="panel__head">
                                 <span class="tile tile--brand" aria-hidden="true">
@@ -320,7 +320,7 @@
                     </div>
 
                     <!-- ================================================= COUNTER SERVING ================================================= -->
-                    <div data-serving-panel="counter" hidden>
+                    <div data-serving-panel="counter" @(!Model.ServingType.Equals("counter", StringComparison.OrdinalIgnoreCase) ? "hidden" : "")>
                         <section class="panel u-mt-6" aria-labelledby="counter-title">
                             <div class="panel__head">
                                 <span class="tile tile--accent" aria-hidden="true">
@@ -479,10 +479,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     const availableCategories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Model.Categories.Select(c => new { c.CategoryId, c.CategoryName })
+                        Model.Categories.Select(c => new { c.CategoryId, c.CategoryName })
                 ));
 
-    document.addEventListener("DOMContentLoaded", function() {
+    const savedAvailability = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SavedAvailability));
+
+    document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("food-beverage-form");
         const foodSwitch = document.querySelector("[data-food-switch]");
         const foodEnabled = document.getElementById("food-enabled");
@@ -498,16 +500,8 @@
         const guestPreviewSection = document.getElementById("guest-preview-section");
 
         if (topContinueBtn) {
-            topContinueBtn.addEventListener("click", function() {
-                // The preview markup below was rendered server-side once, at page
-                // load, from the saved menu. Anything added since then - a row from
-                // "+ Add menu item", an imported CSV/XLSX, an edit, a removal - only
-                // exists in the form fields, so the preview has to be rebuilt from
-                // that live DOM state every time it's about to be shown, not just
-                // toggled visible as-is.
+            topContinueBtn.addEventListener("click", function () {
                 refreshGuestPreview();
-
-                // Reveal the "How guests see it" section and the footer Continue button
                 if (guestPreviewSection) {
                     guestPreviewSection.style.display = "block";
                 }
@@ -525,7 +519,7 @@
         }
 
         if (foodSwitch) {
-            foodSwitch.addEventListener("click", function() {
+            foodSwitch.addEventListener("click", function () {
                 const current = this.getAttribute("aria-checked") === "true";
                 this.setAttribute("aria-checked", current ? "false" : "true");
                 updateFoodState();
@@ -536,23 +530,22 @@
         function updateServingType(value) {
             if (!value) value = "live";
             if (servingTypeInput) servingTypeInput.value = value;
-            servingButtons.forEach(function(button) {
+            servingButtons.forEach(function (button) {
                 const buttonValue = button.getAttribute("data-serving-type");
                 button.setAttribute("aria-pressed", buttonValue === value ? "true" : "false");
             });
-            servingPanels.forEach(function(panel) {
+            servingPanels.forEach(function (panel) {
                 const panelValue = panel.getAttribute("data-serving-panel");
                 panel.hidden = panelValue !== value;
             });
             refreshGuestPreview();
         }
 
-        servingButtons.forEach(function(button) {
-            button.addEventListener("click", function() {
+        servingButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
                 updateServingType(this.getAttribute("data-serving-type"));
             });
         });
-        updateServingType(servingTypeInput ? servingTypeInput.value : "live");
 
         function updateFoodScope() {
             const selected = document.querySelector('input[name="food-scope"]:checked');
@@ -582,27 +575,32 @@
 
                     container.innerHTML = "";
                     data.dates.forEach(day => {
+                        const savedDay = savedAvailability ? savedAvailability.find(d => d.EventDateId === day.eventDateId) : null;
+                        const dayChecked = !savedAvailability || savedAvailability.length === 0 || savedDay !== undefined;
+
                         const dayEl = document.createElement("div");
                         dayEl.className = "scopeday";
                         const slotCount = day.slots.length;
+
                         dayEl.innerHTML =
                             '<label class="scopeday__head">' +
-                            '<input type="checkbox" name="food-day-' + day.eventDateId + '" checked>' +
+                            '<input type="checkbox" name="food-day-' + day.eventDateId + '" ' + (dayChecked ? 'checked' : '') + '>' +
                             '<span class="scopeday__body">' +
                             '<span class="scopeday__name">' + day.label + "</span>" +
                             '<span class="scopeday__meta">' + day.date + " · " + slotCount + " session" + (slotCount === 1 ? "" : "s") + "</span>" +
                             "</span>" +
                             "</label>" +
                             '<div class="scopeday__slots">' +
-                            day.slots.map(slot =>
-                                '<label class="scopeslot">' +
-                                '<input type="checkbox" name="food-day-' + day.eventDateId + "-s-" + slot.slotId + '" checked>' +
-                                '<span class="scopeslot__body">' +
-                                '<span class="scopeslot__name">' + slot.name + "</span>" +
-                                '<span class="scopeslot__meta">' + slot.time + " · " + slot.hall + "</span>" +
-                                "</span>" +
-                                "</label>"
-                            ).join("") +
+                            day.slots.map(slot => {
+                                const slotChecked = !savedAvailability || savedAvailability.length === 0 || (savedDay && savedDay.SlotId && savedDay.SlotId.includes(slot.slotId));
+                                return '<label class="scopeslot">' +
+                                    '<input type="checkbox" name="food-day-' + day.eventDateId + "-s-" + slot.slotId + '" ' + (slotChecked ? 'checked' : '') + '>' +
+                                    '<span class="scopeslot__body">' +
+                                    '<span class="scopeslot__name">' + slot.name + "</span>" +
+                                    '<span class="scopeslot__meta">' + slot.time + " · " + slot.hall + "</span>" +
+                                    "</span>" +
+                                    "</label>";
+                            }).join("") +
                             "</div>";
                         container.appendChild(dayEl);
                     });
@@ -616,7 +614,23 @@
         foodScopeInputs.forEach(radio => radio.addEventListener("change", updateFoodScope));
         updateFoodScope();
 
-        document.addEventListener("click", function(event) {
+        // Handle stepper operations (+/-)
+        document.addEventListener("click", function (event) {
+            const btn = event.target.closest("[data-step]");
+            if (!btn) return;
+            const stepper = btn.closest("[data-stepper]");
+            if (!stepper) return;
+            const input = stepper.querySelector(".stepper__value");
+            if (!input) return;
+
+            const step = parseInt(btn.getAttribute("data-step"), 10) || 0;
+            let val = parseInt(input.value, 10) || 0;
+            val = Math.max(0, val + step);
+            input.value = val;
+            refreshGuestPreview();
+        });
+
+        document.addEventListener("click", function (event) {
             const removeButton = event.target.closest("[data-remove-menu]");
             if (!removeButton) return;
             const row = removeButton.closest("[data-menu-row]");
@@ -648,21 +662,11 @@
             return '<option value="">No categories available</option>';
         }
 
-        // ------------------------------------------------------------------
-        // Guest preview - built from whatever is currently in the form
-        // ------------------------------------------------------------------
-        // The "How guests see it" panels were originally only rendered once,
-        // server-side, from the saved menu. That leaves them stale the moment
-        // someone adds, imports, edits or removes a menu item client-side.
-        // These functions read the live-menu-list / counter-menu-list DOM and
-        // rebuild the matching preview to match, so it always reflects what's
-        // actually about to be submitted.
-
         const DIET_PREVIEW_LABELS = { veg: "Veg", nonveg: "Non-veg", vegan: "Vegan", egg: "Egg" };
 
         function getCategoryNameById(id) {
             if (!availableCategories) return "";
-            const match = availableCategories.find(function(cat) {
+            const match = availableCategories.find(function (cat) {
                 return String(cat.CategoryId) === String(id);
             });
             return match ? match.CategoryName : "";
@@ -673,7 +677,7 @@
             if (!list) return [];
 
             return Array.prototype.slice.call(list.querySelectorAll("[data-menu-row]"))
-                .map(function(row) {
+                .map(function (row) {
                     const nameInput = row.querySelector(".menucard__name");
                     const catSelect = row.querySelector("select[name*='-cat']");
                     const dietSelect = row.querySelector("[data-diet-select]");
@@ -686,18 +690,17 @@
                         extra: extraInput ? (parseInt(extraInput.value, 10) || 0) : 0
                     };
                 })
-                .filter(function(item) { return item.name.length > 0; });
+                .filter(function (item) { return item.name.length > 0; });
         }
 
         function renderMenuPreview(previewId, items, hasExtras) {
             const container = document.getElementById(previewId);
             if (!container) return;
 
-            // Group by category, keeping categories in first-seen order.
             const groups = [];
             const groupIndexByName = {};
 
-            items.forEach(function(item) {
+            items.forEach(function (item) {
                 const catName = getCategoryNameById(item.categoryId) || "Uncategorised";
                 if (!(catName in groupIndexByName)) {
                     groupIndexByName[catName] = groups.length;
@@ -714,13 +717,13 @@
                     '<circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>' +
                     'No menu items are available for this event.</div>';
             } else {
-                groups.forEach(function(group) {
+                groups.forEach(function (group) {
                     html += '<div class="menupreview__group">' +
                         '<p class="menupreview__heading">' + escapeHtmlAttr(group.name) +
                         '<span class="menupreview__count">' + group.items.length + ' ' +
                         (group.items.length === 1 ? "item" : "items") + '</span></p>';
 
-                    group.items.forEach(function(item) {
+                    group.items.forEach(function (item) {
                         const dietText = DIET_PREVIEW_LABELS[item.diet] || "Veg";
                         html += '<div class="menuitem">' +
                             '<span class="diet diet--' + item.diet + '" aria-hidden="true"></span>' +
@@ -772,46 +775,46 @@
             const name = values.name || "";
             const extra = values.extra != null ? values.extra : 0;
             row.innerHTML = `
-                                    <div class="menucard__top">
-                                        <span class="diet diet--${diet}" aria-hidden="true"></span>
-                                        <label class="u-visually-hidden" for="live-menu-${liveIndex}-name">Item name</label>
-                                        <input class="menucard__name" id="live-menu-${liveIndex}-name" name="live-menu-${liveIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
-                                        <button class="line__remove" type="button" data-remove-menu>
-                                            <span class="u-visually-hidden">Remove menu item</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="menucard__grid">
-                                        <div>
-                                            <label class="menucard__label" for="live-menu-${liveIndex}-cat">Category</label>
-                                            <select class="slot__select" id="live-menu-${liveIndex}-cat" name="live-menu-${liveIndex}-cat">${getCategoryOptions()}</select>
-                                        </div>
-                                        <div>
-                                            <label class="menucard__label" for="live-menu-${liveIndex}-diet">Dietary Type</label>
-                                            <select class="slot__select" id="live-menu-${liveIndex}-diet" name="live-menu-${liveIndex}-diet" data-diet-select>
-                                                <option value="veg">Veg</option>
-                                                <option value="nonveg">Non-veg</option>
-                                                <option value="vegan">Vegan</option>
-                                                <option value="egg">Egg</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <span class="menucard__label">Extra serves per guest</span>
-                                            <span class="stepper" data-stepper>
-                                                <button class="stepper__btn" type="button" data-step="-1">
-                                                    <span aria-hidden="true">&minus;</span>
-                                                </button>
-                                                <label class="u-visually-hidden" for="live-menu-${liveIndex}-extra">Extra serves allowed per guest</label>
-                                                <input class="stepper__value" id="live-menu-${liveIndex}-extra" name="live-menu-${liveIndex}-extra" type="text" inputmode="numeric" value="${extra}" min="0">
-                                                <button class="stepper__btn" type="button" data-step="1">
-                                                    <span aria-hidden="true">+</span>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                `;
+                    <div class="menucard__top">
+                        <span class="diet diet--${diet}" aria-hidden="true"></span>
+                        <label class="u-visually-hidden" for="live-menu-${liveIndex}-name">Item name</label>
+                        <input class="menucard__name" id="live-menu-${liveIndex}-name" name="live-menu-${liveIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
+                        <button class="line__remove" type="button" data-remove-menu>
+                            <span class="u-visually-hidden">Remove menu item</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="menucard__grid">
+                        <div>
+                            <label class="menucard__label" for="live-menu-${liveIndex}-cat">Category</label>
+                            <select class="slot__select" id="live-menu-${liveIndex}-cat" name="live-menu-${liveIndex}-cat">${getCategoryOptions()}</select>
+                        </div>
+                        <div>
+                            <label class="menucard__label" for="live-menu-${liveIndex}-diet">Dietary Type</label>
+                            <select class="slot__select" id="live-menu-${liveIndex}-diet" name="live-menu-${liveIndex}-diet" data-diet-select>
+                                <option value="veg">Veg</option>
+                                <option value="nonveg">Non-veg</option>
+                                <option value="vegan">Vegan</option>
+                                <option value="egg">Egg</option>
+                            </select>
+                        </div>
+                        <div>
+                            <span class="menucard__label">Extra serves per guest</span>
+                            <span class="stepper" data-stepper>
+                                <button class="stepper__btn" type="button" data-step="-1">
+                                    <span aria-hidden="true">&minus;</span>
+                                </button>
+                                <label class="u-visually-hidden" for="live-menu-${liveIndex}-extra">Extra serves allowed per guest</label>
+                                <input class="stepper__value" id="live-menu-${liveIndex}-extra" name="live-menu-${liveIndex}-extra" type="text" inputmode="numeric" value="${extra}" min="0">
+                                <button class="stepper__btn" type="button" data-step="1">
+                                    <span aria-hidden="true">+</span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                `;
             const dietSelect = row.querySelector("[data-diet-select]");
             if (dietSelect) dietSelect.value = diet;
             return row;
@@ -826,47 +829,47 @@
             const diet = values.diet || "veg";
             const name = values.name || "";
             row.innerHTML = `
-                                    <div class="menucard__top">
-                                        <span class="diet diet--${diet}" aria-hidden="true"></span>
-                                        <label class="u-visually-hidden" for="counter-menu-${counterIndex}-name">Item name</label>
-                                        <input class="menucard__name" id="counter-menu-${counterIndex}-name" name="counter-menu-${counterIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
-                                        <button class="line__remove" type="button" data-remove-menu>
-                                            <span class="u-visually-hidden">Remove menu item</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="menucard__grid">
-                                        <div>
-                                            <label class="menucard__label" for="counter-menu-${counterIndex}-cat">Category</label>
-                                            <select class="slot__select" id="counter-menu-${counterIndex}-cat" name="counter-menu-${counterIndex}-cat">${getCategoryOptions()}</select>
-                                        </div>
-                                        <div>
-                                            <label class="menucard__label" for="counter-menu-${counterIndex}-diet">Dietary Type</label>
-                                            <select class="slot__select" id="counter-menu-${counterIndex}-diet" name="counter-menu-${counterIndex}-diet" data-diet-select>
-                                                <option value="veg">Veg</option>
-                                                <option value="nonveg">Non-veg</option>
-                                                <option value="vegan">Vegan</option>
-                                                <option value="egg">Egg</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                `;
+                    <div class="menucard__top">
+                        <span class="diet diet--${diet}" aria-hidden="true"></span>
+                        <label class="u-visually-hidden" for="counter-menu-${counterIndex}-name">Item name</label>
+                        <input class="menucard__name" id="counter-menu-${counterIndex}-name" name="counter-menu-${counterIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
+                        <button class="line__remove" type="button" data-remove-menu>
+                            <span class="u-visually-hidden">Remove menu item</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="menucard__grid">
+                        <div>
+                            <label class="menucard__label" for="counter-menu-${counterIndex}-cat">Category</label>
+                            <select class="slot__select" id="counter-menu-${counterIndex}-cat" name="counter-menu-${counterIndex}-cat">${getCategoryOptions()}</select>
+                        </div>
+                        <div>
+                            <label class="menucard__label" for="counter-menu-${counterIndex}-diet">Dietary Type</label>
+                            <select class="slot__select" id="counter-menu-${counterIndex}-diet" name="counter-menu-${counterIndex}-diet" data-diet-select>
+                                <option value="veg">Veg</option>
+                                <option value="nonveg">Non-veg</option>
+                                <option value="vegan">Vegan</option>
+                                <option value="egg">Egg</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
             const dietSelect = row.querySelector("[data-diet-select]");
             if (dietSelect) dietSelect.value = diet;
             return row;
         }
 
         function escapeHtmlAttr(text) {
-            return String(text).replace(/[&<>"']/g, function(m) {
+            return String(text).replace(/[&<>"']/g, function (m) {
                 return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
             });
         }
 
         const addLiveMenu = document.getElementById("add-live-menu");
         if (addLiveMenu) {
-            addLiveMenu.addEventListener("click", function() {
+            addLiveMenu.addEventListener("click", function () {
                 const list = document.getElementById("live-menu-list");
                 if (!list) return;
                 const row = createLiveMenuRow();
@@ -879,7 +882,7 @@
 
         const addCounterMenu = document.getElementById("add-counter-menu");
         if (addCounterMenu) {
-            addCounterMenu.addEventListener("click", function() {
+            addCounterMenu.addEventListener("click", function () {
                 const list = document.getElementById("counter-menu-list");
                 if (!list) return;
                 const row = createCounterMenuRow();
@@ -890,7 +893,7 @@
             });
         }
 
-        document.addEventListener("change", function(event) {
+        document.addEventListener("change", function (event) {
             const select = event.target.closest("[data-diet-select]");
             if (!select) return;
             const row = select.closest("[data-menu-row]");
@@ -901,17 +904,6 @@
             icon.classList.remove("diet--veg", "diet--nonveg", "diet--vegan", "diet--egg");
             icon.classList.add("diet--" + select.value);
         });
-
-        // ------------------------------------------------------------------
-        // Menu CSV import
-        // ------------------------------------------------------------------
-        // Columns (matching the hint text above the dropzone):
-        //   item, category, dietary type, extra serves per guest
-        // Imported rows are rendered straight into whichever list matches
-        // the currently selected serving type (live vs counter), using the
-        // same row-builder functions as "+ Add menu item" so they stay in
-        // sync with everything else on the page (steppers, diet icon,
-        // category dropdown, remove button, form field names/indexes).
 
         const DIET_ALIASES = {
             veg: "veg", vegetarian: "veg",
@@ -928,14 +920,12 @@
         function findCategoryIdByName(name) {
             const key = (name || "").toString().trim().toLowerCase();
             if (!key || !availableCategories) return null;
-            const match = availableCategories.find(function(cat) {
+            const match = availableCategories.find(function (cat) {
                 return (cat.CategoryName || "").toString().trim().toLowerCase() === key;
             });
             return match ? match.CategoryId : null;
         }
 
-        // Shared by both the CSV and XLSX paths once each has produced a plain
-        // array-of-arrays of cell values (row 0 may or may not be a header row).
         function parseMenuRows(rows) {
             if (!rows || rows.length === 0) return [];
 
@@ -985,7 +975,7 @@
             const list = document.getElementById(isCounter ? "counter-menu-list" : "live-menu-list");
             if (!list) return;
 
-            items.forEach(function(item) {
+            items.forEach(function (item) {
                 const row = isCounter
                     ? createCounterMenuRow({ name: item.name, diet: item.diet })
                     : createLiveMenuRow({ name: item.name, diet: item.diet, extra: item.extra });
@@ -1010,8 +1000,8 @@
 
         const XLSX_EXTENSIONS = [".xlsx", ".xls"];
         const XLSX_MIME_TYPES = [
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
-            "application/vnd.ms-excel" // .xls (also sometimes reported for .csv, hence the extension check first)
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
         ];
 
         function detectMenuFileType(file) {
@@ -1039,10 +1029,9 @@
             if (csvUploadName) csvUploadName.textContent = file.name;
             if (csvDirectory) csvDirectory.hidden = false;
 
-            // Parse and preview the rows...
             if (fileType === "csv") {
                 const textReader = new FileReader();
-                textReader.onload = function(event) {
+                textReader.onload = function (event) {
                     let items = [];
                     try {
                         items = parseMenuCsvText(event.target.result || "");
@@ -1057,7 +1046,7 @@
                 textReader.readAsText(file);
             } else {
                 const xlsxReader = new FileReader();
-                xlsxReader.onload = function(event) {
+                xlsxReader.onload = function (event) {
                     let items = [];
                     try {
                         items = parseMenuXlsxArrayBuffer(event.target.result);
@@ -1076,10 +1065,8 @@
                 xlsxReader.readAsArrayBuffer(file);
             }
 
-            // ...and separately as base64, so the raw original file is still
-            // posted to the server as-is alongside the parsed/edited items.
             const base64Reader = new FileReader();
-            base64Reader.onload = function(event) {
+            base64Reader.onload = function (event) {
                 const result = event.target.result;
                 if (!result) return;
                 const commaIndex = result.indexOf(",");
@@ -1091,7 +1078,7 @@
         }
 
         if (csvInput) {
-            csvInput.addEventListener("change", function() {
+            csvInput.addEventListener("change", function () {
                 readCsvFile(this.files && this.files.length > 0 ? this.files[0] : null);
                 this.value = "";
             });
@@ -1110,7 +1097,7 @@
 
         const removeCsv = document.getElementById("menu-remove");
         if (removeCsv) {
-            removeCsv.addEventListener("click", function() {
+            removeCsv.addEventListener("click", function () {
                 if (csvInput) csvInput.value = "";
                 if (csvFilename) csvFilename.value = "";
                 if (csvBase64) csvBase64.value = "";
@@ -1120,7 +1107,7 @@
         }
 
         if (form) {
-            form.addEventListener("submit", function() {
+            form.addEventListener("submit", function () {
                 if (foodSwitch && foodEnabled) {
                     foodEnabled.value = foodSwitch.getAttribute("aria-checked") === "true" ? "true" : "false";
                 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Planora_EnterproseHostWebApp.Models;
@@ -11,56 +12,78 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
     public class FoodBeverageModel : PageModel
     {
         public string? FoodError { get; private set; }
-
         public List<Categories> Categories { get; private set; } = new();
+
+        // Bindable properties for UI initialization
+        public bool IsFoodEnabled { get; set; } = true;
+        public string ServingType { get; set; } = "live";
+        public string AvailabilityScope { get; set; } = "AllSessions";
+        public List<FoodEventDates> SavedAvailability { get; set; } = new();
 
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
             ViewData["StepIndex"] = 8;
+
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
+
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
-            if (userId is not null && eventId.HasValue && eventId.Value != 0)
+            if (eventId.HasValue && eventId.Value != 0)
             {
                 try
                 {
                     var helper = new CommonHelper();
 
-                    // Load categories from API
+                    // 1. Get Food Details
+                    var foodDetailsResp = helper.GetFoodDetails(userId.Value, eventId.Value);
+                    if (foodDetailsResp != null)
+                    {
+                        IsFoodEnabled = foodDetailsResp.IsFoodEnabled;
+                        ServingType = string.IsNullOrWhiteSpace(foodDetailsResp.ServingType) ? "live" : foodDetailsResp.ServingType;
+                    }
+
+                    // 2. Get Food Availability
+                    var availabilityResp = helper.GetFoodAvaliablity(userId.Value, eventId.Value);
+                    if (availabilityResp != null)
+                    {
+                        AvailabilityScope = string.IsNullOrWhiteSpace(availabilityResp.AvailabilityScope) ? "AllSessions" : availabilityResp.AvailabilityScope;
+                        SavedAvailability = availabilityResp.EventDates ?? new List<FoodEventDates>();
+                    }
+
+                    // 3. Get Food Categories
                     var catResp = helper.GetFoodMenuCategory(userId.Value, eventId.Value);
-                    if (catResp is not null && catResp.Status == 1 && catResp.Categories != null)
+                    if (catResp?.Status == 1 && catResp.Categories != null)
                     {
                         Categories = catResp.Categories.Select(c => new Categories
                         {
                             CategoryId = c.CategoryId,
-                            CategoryName = c.CategoryName
+                            CategoryName = c.CategoryName,
+                            MenuItems = new List<FoodMenuItems>()
                         }).ToList();
                     }
 
-                    // Load existing menu details if available
-                    var menu = helper.GetMenuDetails(userId.Value, eventId.Value);
-                    if (menu is not null && menu.Status == 1 && menu.Categories != null)
+                    // 4. Get Menu Items & Map to Categories
+                    var menuResp = helper.GetMenuDetails(userId.Value, eventId.Value);
+                    if (menuResp?.Status == 1 && menuResp.Categories != null)
                     {
                         foreach (var cat in Categories)
                         {
-                            var existingCat = menu.Categories.FirstOrDefault(c => c.CategoryId == cat.CategoryId);
+                            var existingCat = menuResp.Categories.FirstOrDefault(c => c.CategoryId == cat.CategoryId);
                             if (existingCat != null)
                             {
-                                cat.MenuItems = existingCat.MenuItems;
+                                cat.MenuItems = existingCat.MenuItems ?? new List<FoodMenuItems>();
                             }
                         }
                     }
                 }
                 catch
                 {
-                    // Fail gracefully on background data fetch errors
+                    // Fail gracefully on initial load rendering defaults
                 }
             }
 
@@ -74,10 +97,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
+
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
             try
@@ -120,8 +142,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
 
@@ -138,15 +158,34 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             var helper = new CommonHelper();
 
+            // -------------------------------------------------------------
+            // STEP 1: ADD / UPDATE FOOD DETAILS
+            // -------------------------------------------------------------
             try
             {
-                helper.AddFoodDeatils(new AddFoodDetailsReq
+                var existingDetails = helper.GetFoodDetails(userId.Value, eventId.Value);
+                if (existingDetails != null && existingDetails.Status == 1)
                 {
-                    UserId = userId.Value,
-                    EventId = eventId.Value,
-                    IsFoodEnabled = isFoodEnabled,
-                    ServingType = servingType
-                });
+                    helper.UpdateFoodDeatils(new UpdateFoodDetailsReq
+                    {
+                        UserId = userId.Value,
+                        EventId = eventId.Value,
+                        IsFoodEnabled = isFoodEnabled,
+                        ServingType = servingType,
+                        RequireScan = false
+                    });
+                }
+                else
+                {
+                    helper.AddFoodDeatils(new AddFoodDetailsReq
+                    {
+                        UserId = userId.Value,
+                        EventId = eventId.Value,
+                        IsFoodEnabled = isFoodEnabled,
+                        ServingType = servingType,
+                        RequireScan = false
+                    });
+                }
             }
             catch
             {
@@ -154,28 +193,36 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return Page();
             }
 
+            // If Food is disabled, bypass remaining steps and continue workflow
             if (!isFoodEnabled)
             {
-                
                 HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProg, 9));
                 return RedirectToPage("/CreateEvent/AccessControl");
             }
 
+            // -------------------------------------------------------------
+            // STEP 2: SAVE FOOD AVAILABILITY
+            // -------------------------------------------------------------
             string scope = Request.Form["food-scope"].ToString();
             if (string.IsNullOrWhiteSpace(scope)) scope = "AllSessions";
 
             var eventDates = scope == "SelectedDates" ? ParseFoodAvailability() : new List<FoodEventDates>();
 
-            Response availabilityResult;
             try
             {
-                availabilityResult = helper.SaveFoodAvaliablity(new SaveFoodAvailabilityReq
+                var availabilityResult = helper.SaveFoodAvaliablity(new SaveFoodAvailabilityReq
                 {
                     UserId = userId.Value,
                     EventId = eventId.Value,
                     AvailabilityScope = scope,
                     EventDates = eventDates
                 });
+
+                if (availabilityResult is null || availabilityResult.Status != 1)
+                {
+                    FoodError = availabilityResult?.Message ?? "Unable to save food availability.";
+                    return Page();
+                }
             }
             catch
             {
@@ -183,45 +230,68 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return Page();
             }
 
-            if (availabilityResult is null || availabilityResult.Status != 1)
-            {
-                FoodError = availabilityResult != null && !string.IsNullOrWhiteSpace(availabilityResult.Message)
-                    ? availabilityResult.Message
-                    : "Unable to save food availability.";
-                return Page();
-            }
-
+            // -------------------------------------------------------------
+            // STEP 3: ADD / UPDATE MENU ITEMS
+            // -------------------------------------------------------------
             var menuItems = servingType.Equals("counter", StringComparison.OrdinalIgnoreCase)
                 ? ParseMenuItems(idPrefix: "counter-menu-", hasExtras: false)
                 : ParseMenuItems(idPrefix: "live-menu-", hasExtras: true);
 
             if (menuItems.Count > 0)
             {
-                Response menuResult;
                 try
                 {
-                    menuResult = helper.AddMenuItems(new AddMenuItemReq
+                    var existingMenu = helper.GetMenuDetails(userId.Value, eventId.Value);
+                    if (existingMenu != null && existingMenu.Status == 1 && existingMenu.Categories != null && existingMenu.Categories.Any(c => c.MenuItems != null && c.MenuItems.Any()))
                     {
-                        UserId = userId.Value,
-                        EventId = eventId.Value,
-                        MenuItems = menuItems
-                    });
+                        var updateReq = new UpdateMenuItemReq
+                        {
+                            UserId = userId.Value,
+                            EventId = eventId.Value,
+                            MenuItems = menuItems.Select(m => new UpdateMenuItems
+                            {
+                                MenuItemId = m.MenuItemId,
+                                CategoryId = m.CategoryId,
+                                ItemName = m.ItemName,
+                                IsVeg = m.IsVeg,
+                                Extras = m.Extras
+                            }).ToList()
+                        };
+
+                        var menuResult = helper.UpdateMenuItems(updateReq);
+                        if (menuResult is null || menuResult.Status != 1)
+                        {
+                            FoodError = menuResult?.Message ?? "Unable to update the menu items.";
+                            return Page();
+                        }
+                    }
+                    else
+                    {
+                        var addReq = new AddMenuItemReq
+                        {
+                            UserId = userId.Value,
+                            EventId = eventId.Value,
+                            MenuItems = menuItems
+                        };
+
+                        var menuResult = helper.AddMenuItems(addReq);
+                        if (menuResult is null || menuResult.Status != 1)
+                        {
+                            FoodError = menuResult?.Message ?? "Unable to add the menu items.";
+                            return Page();
+                        }
+                    }
                 }
                 catch
                 {
                     FoodError = "Unable to save the menu right now. Please try again.";
                     return Page();
                 }
-
-                if (menuResult is null || menuResult.Status != 1)
-                {
-                    FoodError = menuResult != null && !string.IsNullOrWhiteSpace(menuResult.Message)
-                        ? menuResult.Message
-                        : "Unable to save the menu.";
-                    return Page();
-                }
             }
 
+            // -------------------------------------------------------------
+            // STEP 4: UPLOAD MENU FILE (IF ATTACHED)
+            // -------------------------------------------------------------
             var csvFileName = Request.Form["menu-csv-filename"].ToString();
             var csvBase64 = Request.Form["menu-csv-base64"].ToString();
             if (!string.IsNullOrWhiteSpace(csvBase64))
@@ -238,6 +308,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 }
                 catch
                 {
+                    // Non-blocking upload fallback
                 }
             }
 
@@ -259,11 +330,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 var name = Request.Form[$"{idPrefix}{idx}-name"].ToString();
                 if (string.IsNullOrWhiteSpace(name)) continue;
 
+                int.TryParse(idx, out var menuItemId);
                 int.TryParse(Request.Form[$"{idPrefix}{idx}-cat"].ToString(), out var categoryId);
                 var diet = Request.Form[$"{idPrefix}{idx}-diet"].ToString();
 
                 var isVeg = diet.Equals("veg", StringComparison.OrdinalIgnoreCase)
-                    || diet.Equals("vegan", StringComparison.OrdinalIgnoreCase);
+                         || diet.Equals("vegan", StringComparison.OrdinalIgnoreCase);
 
                 var extras = 0;
                 if (hasExtras)
@@ -273,6 +345,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
                 result.Add(new MenuItems
                 {
+                    MenuItemId = menuItemId,
                     CategoryId = categoryId,
                     ItemName = name.Trim(),
                     IsVeg = isVeg,

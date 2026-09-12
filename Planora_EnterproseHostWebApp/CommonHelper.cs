@@ -669,6 +669,102 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public GetEventAddOnsResp GetEventAddOns(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetEventAddOns?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<GetEventAddOnsResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateAddons(UpdateAddonsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateAddonsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                AddOns = req.AddOns,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateEventAddOn";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response DeleteAddon(long userId, int addOnId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new DeleteAddOnReq
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                AddOnId = addOnId
+            };
+            string url = SERVICE_URL + "/Ent_DeleteEventAddOn";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public GetPromoCodesResp GetPromoCodes(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetPromoCodes?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<GetPromoCodesResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public AddEventPolicyResp UpdatePromoCode(UpdatePromoCodeReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdatePromoCodeReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                PromoCodes = req.PromoCodes,
+            };
+            string url = SERVICE_URL + "/Ent_UpdatePromoCode";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<AddEventPolicyResp>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response DeletePromoCode(long userId, int promoCodeId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            var request = new DeletePromoCodeReq
+            {
+                UserId = userId,
+                hashValue = hashValue,
+                PromoCodeId = promoCodeId
+            };
+            string url = SERVICE_URL + "/Ent_DeletePromoCode";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public GetDiscountExposureResp GetDiscountExposure(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
@@ -716,6 +812,39 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public Response UpdateFoodDeatils(UpdateFoodDetailsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateFoodDetailsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                IsFoodEnabled = req.IsFoodEnabled,
+                RequireScan = false,
+                ServingType = req.ServingType,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateFoodDetails";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public GetFoodDetailsResp GetFoodDetails(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetFoodDetails?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<GetFoodDetailsResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public Response SaveFoodAvaliablity(SaveFoodAvailabilityReq req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
@@ -735,6 +864,19 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public GetFoodAvailabilityResp GetFoodAvaliablity(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetFoodAvailability?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<GetFoodAvailabilityResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public Response AddMenuItems(AddMenuItemReq req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
@@ -746,6 +888,24 @@ namespace Planora_EnterproseHostWebApp
                 MenuItems = req.MenuItems,
             };
             string url = SERVICE_URL + "/Ent_AddMenuItem";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response UpdateMenuItems(UpdateMenuItemReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateMenuItemReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                MenuItems = req.MenuItems,
+            };
+            string url = SERVICE_URL + "/Ent_UpdateMenuItems";
             string jsonData = JsonSerializer.Serialize(request);
             Debug.WriteLine(url);
             Debug.WriteLine(jsonData);
@@ -772,7 +932,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetMenuDetailsResponse GetMenuDetails(long userId, int eventId)
+        public GetMenuDetailsResp GetMenuDetails(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
@@ -781,7 +941,7 @@ namespace Planora_EnterproseHostWebApp
                 ("hashValue", hashValue));
             string url = SERVICE_URL + "/Ent_GetMenuItems?" + query;
             Debug.WriteLine(url);
-            var response = _download_serialized_json_data<GetMenuDetailsResponse>(url);
+            var response = _download_serialized_json_data<GetMenuDetailsResp>(url);
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
@@ -790,6 +950,7 @@ namespace Planora_EnterproseHostWebApp
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
                 ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
                 ("hashValue", hashValue));
             string url = SERVICE_URL + "/Ent_GetFoodCategories?" + query;
             Debug.WriteLine(url);
@@ -833,6 +994,78 @@ namespace Planora_EnterproseHostWebApp
 
             return response;
         }
+        public Response UpdateRegistrationFormRe(UpdateEventFieldsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+
+            // Populate SortOrder and fallback defaults for each field
+            if (req.Fields != null)
+            {
+                for (int i = 0; i < req.Fields.Count; i++)
+                {
+                    req.Fields[i].SortOrder = i + 1;
+                    req.Fields[i].Placeholder ??= string.Empty;
+                    req.Fields[i].Options ??= string.Empty;
+                }
+            }
+
+            var request = new UpdateEventFieldsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                FormId = req.FormId,
+                EventId = req.EventId,
+                FormTitle = string.IsNullOrWhiteSpace(req.FormTitle) ? "Custom Registration Form" : req.FormTitle,
+                Fields = req.Fields
+            };
+
+            string url = SERVICE_URL + "/Ent_UpdateCustomForm";
+            string jsonData = JsonSerializer.Serialize(request);
+
+            Debug.WriteLine("URL: " + url);
+            Debug.WriteLine("Payload: " + jsonData);
+
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+
+            return response;
+        }
+        public Response DeleteCustomFormFieldReq(DeleteEventFieldsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+
+
+            var request = new DeleteEventFieldsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                FieldId = req.FieldId,
+            };
+
+            string url = SERVICE_URL + "/Ent_DeleteCustomField";
+            string jsonData = JsonSerializer.Serialize(request);
+
+            Debug.WriteLine("URL: " + url);
+            Debug.WriteLine("Payload: " + jsonData);
+
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+
+            return response;
+        }
+        public CustomFormResponse GetCustomRegistrationForm(long userId, int formId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("FormId", formId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetCustomForm?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<CustomFormResponse>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public Response AddAccessRegistration(EventAccessModel req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
@@ -852,6 +1085,20 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        public GetEventAccessResp GetAccessRegistration(long userId, int eventId)
+        {
+            string hashValue = GetSHA265(userId.ToString());
+            string query = BuildQuery(
+                ("UserId", userId.ToString()),
+                ("EventId", eventId.ToString()),
+                ("hashValue", hashValue));
+            string url = SERVICE_URL + "/Ent_GetAccessGateway?" + query;
+            Debug.WriteLine(url);
+            var response = _download_serialized_json_data<GetEventAccessResp>(url);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+
         public GetDefaultRegistrationFormsResp GetDefaultRegistrationForms(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
@@ -878,6 +1125,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+
         public GetRegistrationFormResp GetRegistrationForm(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
@@ -917,6 +1165,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+
         public Response AddLadndingPage(AddLandingPageReq req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
