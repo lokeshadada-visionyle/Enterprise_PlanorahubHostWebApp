@@ -15,7 +15,8 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public List<RegistrationFormSummary> DefaultTemplates { get; set; } = new();
 
         public bool HasExistingForm { get; set; }
-
+        public string SelectedDiscovery { get; set; }   // "listed" | "standalone"
+        public string SelectedAccess { get; set; }
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -30,9 +31,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return RedirectToPage("/Login/Login");
             }
 
-            // A missing event id here means a broken/expired session — bounce
-            // to the start of the wizard instead of silently falling back to
-            // a hardcoded id, which could edit a stranger's event.
             if (eventId is null)
             {
                 ApiError = "We couldn't find your event in progress. Please start again.";
@@ -40,6 +38,19 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
 
             var helper = new CommonHelper();
+            //var existingAccess = helper.GetAccessRegistration(userId.Value, eventId.Value);
+            //if (existingAccess != null && existingAccess.Status == 1)
+            //{
+            //    SelectedDiscovery = existingAccess.IsUnListed ? "standalone" : "listed";
+
+            //    SelectedAccess = existingAccess.AccessGatewayMode?.Trim().ToLowerInvariant() switch
+            //    {
+            //        "open" => "open",
+            //        "invite" => "invite",
+            //        "rsvp" => "rsvp",
+            //        _ => null
+            //    };
+            //}
 
             var existing = helper.GetRegistrationForm(userId.Value, eventId.Value);
             if (existing != null && existing.Status == 1 && existing.Fields != null && existing.Fields.Any())
@@ -50,6 +61,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     .OrderBy(f => f.SortOrder)
                     .Select(f => new FieldItem
                     {
+                        FieldId = f.FieldId,
                         Label = f.Label,
                         FieldType = f.FieldType,
                         IsRequired = f.IsRequired
@@ -70,7 +82,27 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             return Page();
         }
+        public IActionResult OnPostDeleteField([FromBody] DeleteEventFieldsReq body)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue || userId.Value <= 0)
+                return new JsonResult(new { success = false, message = "Not authenticated." }) { StatusCode = 401 };
 
+            if (body == null || body.FieldId <= 0)
+                return new JsonResult(new { success = false, message = "Invalid field id." }) { StatusCode = 400 };
+
+            var helper = new CommonHelper();
+            var response = helper.DeleteCustomFormFieldReq(new DeleteEventFieldsReq
+            {
+                UserId = userId.Value,
+                FieldId = body.FieldId
+            });
+
+            if (response == null)
+                return new JsonResult(new { success = false, message = "No response from service." });
+
+            return new JsonResult(new { success = response.Status == 1, message = response.Message });
+        }
         // AJAX handler: GET /CreateEvent/AccessControl?handler=TemplateFields&formId=3
         public JsonResult OnGetTemplateFields(int formId)
         {

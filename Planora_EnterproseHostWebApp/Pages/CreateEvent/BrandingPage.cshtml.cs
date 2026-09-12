@@ -11,6 +11,10 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
         public EventPageDetailsResp PageDetails { get; set; } = new EventPageDetailsResp();
 
+        public GetLandingPageResp? Branding { get; set; }
+
+        public bool HasExistingLandingPage => Branding != null && Branding.Status == 1;
+
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -25,7 +29,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             var eventId = HttpContext.Session.GetInt32("createdEventId");
 
-            if (eventId == 0)
+            if (!eventId.HasValue || eventId.Value <= 0)
             {
                 BrandingError = "Event ID is missing.";
                 return Page();
@@ -53,6 +57,23 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
 
             PageDetails = result;
+
+            // --- Load any previously-saved branding (Ent_GetLandingPage) ---
+            try
+            {
+                var brandingResult = helper.GetLandingPageResp(userId.Value, eventId.Value);
+                if (brandingResult != null && brandingResult.Status == 1)
+                {
+                    Branding = brandingResult;
+                }
+            }
+            catch
+            {
+                // No saved branding yet, or the lookup failed - the form just falls back
+                // to its defaults. Branding hasn't been saved before at this point, so
+                // this isn't treated as a page-blocking error.
+            }
+
             return Page();
         }
 
@@ -60,9 +81,15 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
-            if (userId is null)
+            if (userId is null || userId.Value <= 0)
             {
                 return RedirectToPage("/Login/Login");
+            }
+
+            if (!eventId.HasValue || eventId.Value <= 0)
+            {
+                BrandingError = "Event ID is missing.";
+                return Page();
             }
 
             bool isPrivate = HttpContext.Session.IsPrivateEvent();
@@ -80,10 +107,17 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             var description = Request.Form["social-desc"].ToString().Trim();
 
+            var hasExistingPage = string.Equals(
+                Request.Form["has-existing-page"].ToString(),
+                "true",
+                StringComparison.OrdinalIgnoreCase);
+
             var helper = new CommonHelper();
 
             // --- Logo upload (Ent_UploadLogo) ---
-            var logoUrl = "";
+            // Default to whatever logo was already saved, so re-saving branding without
+            // touching the logo input doesn't wipe it out.
+            var logoUrl = Request.Form["existing-logo-url"].ToString().Trim();
             var logoFile = Request.Form.Files["logo-upload"];
 
             if (logoFile != null && logoFile.Length > 0)
@@ -132,17 +166,34 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             Response result;
             try
             {
-                result = helper.AddLadndingPage(new AddLandingPageReq
+                if (hasExistingPage)
                 {
-                    UserId = userId.Value,
-                    Logo = logoUrl,
-                    EventId = eventId.Value,
-                    PrimaryColour = primaryColour,
-                    AccentColour = accentColour,
-                    BackGroundColour = backgroundColour,
-                    Link = link,
-                    Description = description
-                });
+                    result = helper.UpdateLadndingPage(new UpdateLandingPageReq
+                    {
+                        UserId = userId.Value,
+                        Logo = logoUrl,
+                        EventId = eventId.Value,
+                        PrimaryColour = primaryColour,
+                        AccentColour = accentColour,
+                        BackGroundColour = backgroundColour,
+                        Link = link,
+                        Description = description
+                    });
+                }
+                else
+                {
+                    result = helper.AddLadndingPage(new AddLandingPageReq
+                    {
+                        UserId = userId.Value,
+                        Logo = logoUrl,
+                        EventId = eventId.Value,
+                        PrimaryColour = primaryColour,
+                        AccentColour = accentColour,
+                        BackGroundColour = backgroundColour,
+                        Link = link,
+                        Description = description
+                    });
+                }
             }
             catch
             {

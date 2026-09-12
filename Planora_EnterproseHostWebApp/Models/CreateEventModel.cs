@@ -917,6 +917,7 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class FieldItem
     {
+        public int? FieldId { get; set; }
         public string FieldType { get; set; }
         public string Label { get; set; }
         public string Placeholder { get; set; } = string.Empty;
@@ -931,7 +932,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public int FormId { get; set; }
         public int EventId { get; set; }
         public string FormTitle { get; set; } = "Registration Form";
-        public List<FUpdateFieldItem> Fields { get; set; } = new List<FUpdateFieldItem>();
+        public List<UpdateFieldItem> Fields { get; set; } = new List<UpdateFieldItem>();
     }
     public class UpdateFieldItem
     {
@@ -986,8 +987,6 @@ namespace Planora_EnterproseHostWebApp.Models
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-
-
     public class GetEventAccessResp
     {
         public int Status { get; set; }
@@ -996,6 +995,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public string AccessGatewayMode { get; set; }
         public bool IsUnListed { get; set; }
     }
+
     public class GetDefaultRegistrationFormsResp
     {
         public int Status { get; set; }
@@ -1058,6 +1058,30 @@ namespace Planora_EnterproseHostWebApp.Models
     {
         public int UserId { get; set; }
         public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public string Logo { get; set; }
+        public string PrimaryColour { get; set; }
+        public string AccentColour { get; set; }
+        public string BackGroundColour { get; set; }
+        public string Link { get; set; }
+        public string Description { get; set; }
+    }
+    public class UpdateLandingPageReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public string Logo { get; set; }
+        public string PrimaryColour { get; set; }
+        public string AccentColour { get; set; }
+        public string BackGroundColour { get; set; }
+        public string Link { get; set; }
+        public string Description { get; set; }
+    }
+    public class GetLandingPageResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
         public int EventId { get; set; }
         public string Logo { get; set; }
         public string PrimaryColour { get; set; }

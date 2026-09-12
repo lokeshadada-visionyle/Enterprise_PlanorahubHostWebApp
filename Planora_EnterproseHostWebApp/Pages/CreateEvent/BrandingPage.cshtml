@@ -12,6 +12,18 @@
     var pd = Model.PageDetails;
     var day1 = pd.EventDates != null && pd.EventDates.Count > 0 ? pd.EventDates[0] : null;
     var day2 = pd.EventDates != null && pd.EventDates.Count > 1 ? pd.EventDates[1] : null;
+
+    // Saved branding (Ent_GetLandingPage), falling back to the page's defaults when nothing has been saved yet.
+    var brand = Model.Branding;
+    var savedLogo = brand?.Logo ?? "";
+    var savedPrimary = !string.IsNullOrWhiteSpace(brand?.PrimaryColour) ? brand!.PrimaryColour : "#5A1D54";
+    var savedAccent = !string.IsNullOrWhiteSpace(brand?.AccentColour) ? brand!.AccentColour : "#B583AF";
+    var savedBackground = !string.IsNullOrWhiteSpace(brand?.BackGroundColour) ? brand!.BackGroundColour : "#FFFFFF";
+    var savedLink = !string.IsNullOrWhiteSpace(brand?.Link) ? brand!.Link : "";
+    var savedDescription = !string.IsNullOrWhiteSpace(brand?.Description) ? brand!.Description : pd.Description;
+    var savedBgMode = savedBackground.Equals("#111111", StringComparison.OrdinalIgnoreCase)
+        ? "dark"
+        : savedBackground.Equals(savedPrimary, StringComparison.OrdinalIgnoreCase) ? "brand" : "light";
 }
 <div class="wizard__body">
 
@@ -40,6 +52,8 @@
             </div>
 
             <form class="branding" id="brandingForm" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="has-existing-page" name="has-existing-page" value="@(Model.HasExistingLandingPage ? "true" : "false")">
+                <input type="hidden" id="existing-logo-url" name="existing-logo-url" value="@savedLogo">
 
                 <div class="stack">
                     <section class="panel" aria-labelledby="logo-title">
@@ -49,19 +63,23 @@
                         <div class="panel__body">
                             <div class="logodrop">
                                 <span class="logodrop__box" data-brand-logo-box>
-                                    <span class="logodrop__ph" aria-hidden="true" data-brand-logo-ph>
+                                    <span class="logodrop__ph" aria-hidden="true" data-brand-logo-ph hidden="@(!string.IsNullOrWhiteSpace(savedLogo))">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
                                     </span>
+                                    @if (!string.IsNullOrWhiteSpace(savedLogo))
+                                    {
+                                        <img src="@savedLogo" alt="Current logo" data-brand-logo-preview />
+                                    }
                                 </span>
                                 <span class="logodrop__body">
-                                    <span class="logodrop__name" data-brand-logo-name>No logo yet</span>
+                                    <span class="logodrop__name" data-brand-logo-name>@(!string.IsNullOrWhiteSpace(savedLogo) ? "Current logo" : "No logo yet")</span>
                                     <span class="logodrop__hint">
                                         PNG or SVG &middot; transparent background &middot; at least
                                         512&times;512
                                     </span>
                                     <span class="logodrop__acts">
                                         <label class="btn btn--outline btn--sm" for="logo-upload">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> <span data-brand-logo-verb>Upload logo</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> <span data-brand-logo-verb>@(!string.IsNullOrWhiteSpace(savedLogo) ? "Change logo" : "Upload logo")</span>
                                         </label>
                                         <input class="u-visually-hidden" id="logo-upload" name="logo-upload"
                                                type="file" accept="image/png,image/svg+xml,image/jpeg"
@@ -96,35 +114,35 @@
                                 <label class="field__label" for="primary-colour">Primary Colour</label>
                                 <div class="colorrow">
                                     <input class="swatch" id="primary-swatch" name="primary-swatch"
-                                           type="color" value="#5a1d54"
+                                           type="color" value="@savedPrimary.ToLowerInvariant()"
                                            aria-label="Pick a primary colour"
                                            data-brand-colour="primary">
                                     <input class="field__input colorrow__input" id="primary-colour"
-                                           name="primary-colour" type="text" value="#5A1D54"
+                                           name="primary-colour" type="text" value="@savedPrimary.ToUpperInvariant()"
                                            data-brand-colour="primary">
                                     <span class="presets" role="group" aria-label="Preset primary colours">
                                         <button class="preset preset--plum" type="button"
-                                                aria-pressed="true" data-color="#5A1D54"
+                                                aria-pressed="@(savedPrimary.Equals("#5A1D54", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-color="#5A1D54"
                                                 data-color-target="primary">
                                             <span class="u-visually-hidden">Use Plum (#5A1D54)</span>
                                         </button>
                                         <button class="preset preset--blue" type="button"
-                                                aria-pressed="false" data-color="#1D3F5A"
+                                                aria-pressed="@(savedPrimary.Equals("#1D3F5A", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-color="#1D3F5A"
                                                 data-color-target="primary">
                                             <span class="u-visually-hidden">Use Blue (#1D3F5A)</span>
                                         </button>
                                         <button class="preset preset--green" type="button"
-                                                aria-pressed="false" data-color="#1D5A3C"
+                                                aria-pressed="@(savedPrimary.Equals("#1D5A3C", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-color="#1D5A3C"
                                                 data-color-target="primary">
                                             <span class="u-visually-hidden">Use Green (#1D5A3C)</span>
                                         </button>
                                         <button class="preset preset--rust" type="button"
-                                                aria-pressed="false" data-color="#8A3B1D"
+                                                aria-pressed="@(savedPrimary.Equals("#8A3B1D", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-color="#8A3B1D"
                                                 data-color-target="primary">
                                             <span class="u-visually-hidden">Use Rust (#8A3B1D)</span>
                                         </button>
                                         <button class="preset preset--slate" type="button"
-                                                aria-pressed="false" data-color="#3F4653"
+                                                aria-pressed="@(savedPrimary.Equals("#3F4653", StringComparison.OrdinalIgnoreCase) ? "true" : "false")" data-color="#3F4653"
                                                 data-color-target="primary">
                                             <span class="u-visually-hidden">Use Slate (#3F4653)</span>
                                         </button>
@@ -137,11 +155,11 @@
                                 <label class="field__label" for="accent-colour">Accent Colour</label>
                                 <div class="colorrow">
                                     <input class="swatch" id="accent-swatch" name="accent-swatch"
-                                           type="color" value="#b583af"
+                                           type="color" value="@savedAccent.ToLowerInvariant()"
                                            aria-label="Pick an accent colour"
                                            data-brand-colour="accent">
                                     <input class="field__input colorrow__input" id="accent-colour"
-                                           name="accent-colour" type="text" value="#B583AF"
+                                           name="accent-colour" type="text" value="@savedAccent.ToUpperInvariant()"
                                            data-brand-colour="accent">
                                 </div>
                                 <span class="field__hint">Badges and secondary highlights</span>
@@ -152,19 +170,19 @@
                                 <div class="bgpick" role="group" aria-labelledby="bg-label"
                                      id="bgmode" data-pick-group data-brand-bg>
                                     <button class="bgpick__opt bgpick__opt--light" type="button"
-                                            aria-pressed="true" data-pick="light">
+                                            aria-pressed="@(savedBgMode == "light" ? "true" : "false")" data-pick="light">
                                         Light
                                     </button>
                                     <button class="bgpick__opt bgpick__opt--dark" type="button"
-                                            aria-pressed="false" data-pick="dark">
+                                            aria-pressed="@(savedBgMode == "dark" ? "true" : "false")" data-pick="dark">
                                         Dark
                                     </button>
                                     <button class="bgpick__opt bgpick__opt--brand" type="button"
-                                            aria-pressed="false" data-pick="brand">
+                                            aria-pressed="@(savedBgMode == "brand" ? "true" : "false")" data-pick="brand">
                                         Brand
                                     </button>
                                 </div>
-                                <input type="hidden" id="background-colour-input" name="background-colour" value="#FFFFFF">
+                                <input type="hidden" id="background-colour-input" name="background-colour" value="@savedBackground.ToUpperInvariant()">
                             </div>
                         </div>
                     </section>
@@ -180,7 +198,7 @@
                             <div class="formgrid">
                                 <div class="form__field">
                                     <label class="field__label" for="page-slug">Page Link</label>
-                                    <input class="field__input" id="page-slug" name="page-slug" type="text" placeholder="tech-summit-2026" value="planorahub.com/e/&lt;link&gt; &mdash; share this directly with invitees">
+                                    <input class="field__input" id="page-slug" name="page-slug" type="text" placeholder="tech-summit-2026" value="@savedLink">
                                 </div>
                             </div>
 
@@ -240,13 +258,13 @@
                             <div class="formgrid">
                                 <div class="form__field">
                                     <label class="field__label" for="page-slug-public">Page Link</label>
-                                    <input class="field__input" data-brand-slug id="page-slug-public" name="page-slug-public" type="text" placeholder="tech-summit-africa-2026" value="planorahub.com/e/&lt;link&gt;">
+                                    <input class="field__input" data-brand-slug id="page-slug-public" name="page-slug-public" type="text" placeholder="tech-summit-africa-2026" value="@savedLink">
                                 </div>
                             </div>
                             <div class="formgrid u-mt-5">
                                 <div class="form__field">
                                     <label class="field__label" for="social-desc">Social Share Description</label>
-                                    <input class="field__input" data-brand-social id="social-desc" name="social-desc" type="text" placeholder="Shown when the link is shared" value="@pd.Description">
+                                    <input class="field__input" data-brand-social id="social-desc" name="social-desc" type="text" placeholder="Shown when the link is shared" value="@savedDescription">
                                 </div>
                             </div>
                         </div>
@@ -501,7 +519,7 @@
 </div>
 
 <script>
-    document.getElementById('brandingForm').addEventListener('submit', function() {
+    document.getElementById('brandingForm').addEventListener('submit', function () {
         var pressed = document.querySelector('#bgmode .bgpick__opt[aria-pressed="true"]');
         var mode = pressed ? pressed.getAttribute('data-pick') : 'light';
         var primary = document.getElementById('primary-colour').value || '#5A1D54';
@@ -513,10 +531,10 @@
         document.getElementById('background-colour-input').value = colour;
     });
 
-        // Live-sync organiser name into the preview as the field changes
-        document.getElementById('brand-name')?.addEventListener('input', function (e) {
-            document.querySelectorAll('[data-brand-name-preview]').forEach(function (el) {
-                el.textContent = e.target.value || 'Acme Global';
-            });
+    // Live-sync organiser name into the preview as the field changes
+    document.getElementById('brand-name')?.addEventListener('input', function (e) {
+        document.querySelectorAll('[data-brand-name-preview]').forEach(function (el) {
+            el.textContent = e.target.value || 'Acme Global';
         });
+    });
 </script>

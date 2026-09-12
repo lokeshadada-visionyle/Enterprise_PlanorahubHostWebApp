@@ -10,6 +10,10 @@
     ViewData["StepHint"] = "Set who can register and how";
     ViewData["IsPrivate"] = isPrivate;
 }
+@{
+    var discoveryVal = Model.SelectedDiscovery ?? (!isPrivate ? "listed" : "standalone");
+    var accessVal = Model.SelectedAccess ?? (isPrivate ? "invite" : "open");
+}
 
 <div class="wizard__body">
 
@@ -24,7 +28,7 @@
             </p>
 
             <form class="stack" id="accessControlForm" method="post">
-
+                @Html.AntiForgeryToken()
                 <!-- Is registration required at all? -->
                 <section class="panel" aria-labelledby="regreq-title">
                     <div class="panel__head panel__head--plain">
@@ -91,7 +95,7 @@
                         <div class="panel__body">
                             <div class="radios radios--2">
                                 <label class="radio">
-                                    <input type="radio" name="discovery" value="listed" @(!isPrivate ? "checked" : "")
+                                    <input type="radio" name="discovery" value="listed" @(discoveryVal == "listed" ? "checked" : "")
                                            data-type-default="public" data-type-lock="private" @(isPrivate ? "disabled" : "")>
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
                                     <span class="radio__body">
@@ -102,7 +106,7 @@
                                     </span>
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="discovery" value="standalone" @(isPrivate ? "checked" : "")
+                                    <input type="radio" name="discovery" value="standalone" @(discoveryVal == "standalone" ? "checked" : "")
                                            data-type-default="private" data-type-lock="public">
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-earth-africa"></i></span>
                                     <span class="radio__body">
@@ -133,7 +137,7 @@
                         <div class="panel__body">
                             <div class="radios">
                                 <label class="radio">
-                                    <input type="radio" name="access" value="open" @(!isPrivate ? "checked" : "") data-type-default="public">
+                                    <input type="radio" name="access" value="open" @(accessVal == "open" ? "checked" : "") data-type-default="public">
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-earth-africa"></i></span>
                                     <span class="radio__body">
                                         <span class="radio__title">
@@ -143,7 +147,7 @@
                                     </span>
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="access" value="invite" @(isPrivate ? "checked" : "") data-type-default="private">
+                                    <input type="radio" name="access" value="invite" @(accessVal == "invite" ? "checked" : "") data-type-default="private">
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
                                     <span class="radio__body">
                                         <span class="radio__title">Invite Only</span>
@@ -151,7 +155,7 @@
                                     </span>
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="access" value="rsvp" data-type-lock="public" @(!isPrivate ? "disabled" : "")>
+                                    <input type="radio" name="access" value="rsvp" data-type-lock="public" @(!isPrivate ? "disabled" : "") >
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-clipboard-check"></i></span>
                                     <span class="radio__body">
                                         <span class="radio__title">
