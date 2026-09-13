@@ -7,6 +7,43 @@
     ViewData["StepName"] = "Schedule Builder";
     ViewData["StepHint"] = "Set your venue, halls, dates and time slots";
 }
+
+<style>
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__input.is-invalid,
+    .field__select.is-invalid,
+    .slot__input.is-invalid,
+    .slot__select.is-invalid,
+    .slotcard__name.is-invalid,
+    .hall__name.is-invalid,
+    .hall__cap.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .field__input.is-invalid:focus,
+        .field__select.is-invalid:focus,
+        .slot__input.is-invalid:focus,
+        .slot__select.is-invalid:focus,
+        .slotcard__name.is-invalid:focus,
+        .hall__name.is-invalid:focus,
+        .hall__cap.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
+</style>
+
 <div class="wizard__body">
     <main class="wizard__content">
         <div class="wizard__inner">
@@ -72,20 +109,23 @@
                                         </label>
                                         <input class="field__input" id="sp-1-name" name="sp-1-name"
                                                type="text" value="" placeholder="Speaker name"
-                                               data-speaker-field="name" required>
+                                               data-speaker-field="name" data-required-field="text">
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sp-1-title">Job title<span class="field__required" aria-hidden="true">*</span></label>
                                         <input class="field__input" id="sp-1-title" name="sp-1-title"
                                                type="text" value=""
                                                placeholder="e.g. Chief Technology Officer"
-                                               data-speaker-field="title" required>
+                                               data-speaker-field="title" data-required-field="text">
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sp-1-org">Organisation<span class="field__required" aria-hidden="true">*</span></label>
                                         <input class="field__input" id="sp-1-org" name="sp-1-org"
                                                type="text" value="" placeholder="Company or institution"
-                                               data-speaker-field="org" required>
+                                               data-speaker-field="org" data-required-field="text">
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                 </div>
 
@@ -150,11 +190,12 @@
                                 <div class="formgrid formgrid--2">
                                     <div class="form__field">
                                         <label class="field__label" for="sv-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="" required oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
+                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="" data-required-field="text" oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sv-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <select class="field__input" id="sv-city" name="sv-city" required>
+                                        <select class="field__input" id="sv-city" name="sv-city" data-required-field="select">
                                             <option value="">Select City...</option>
                                             @if (Model.Cities != null && Model.Cities.Any())
                                             {
@@ -166,20 +207,23 @@
                                                 }
                                             }
                                         </select>
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                 </div>
 
                                 <div class="formgrid u-mt-5">
                                     <div class="form__field">
                                         <label class="field__label" for="sv-address">Address<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="sv-address" name="sv-address" type="text" placeholder="Full street address" value="">
+                                        <input class="field__input" id="sv-address" name="sv-address" type="text" placeholder="Full street address" value="" data-required-field="text">
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                 </div>
 
                                 <div class="formgrid u-mt-5">
                                     <div class="form__field">
                                         <label class="field__label" for="sv-map-url">Map URL<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="sv-map-url" name="sv-map-url" type="text" placeholder="Map URL" value="https://www.google.com/maps">
+                                        <input class="field__input" id="sv-map-url" name="sv-map-url" type="text" placeholder="Map URL" value="https://www.google.com/maps" data-required-field="url">
+                                        <span class="field__error" role="alert"></span>
                                     </div>
                                 </div>
 
@@ -265,11 +309,13 @@
                                         <div class="formgrid formgrid--2">
                                             <div class="form__field">
                                                 <label class="field__label" for="venue-1-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-1-name" name="venue-1-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Eko Hotel Convention Centre" required>
+                                                <input class="field__input" id="venue-1-name" name="venue-1-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Eko Hotel Convention Centre" data-required-field="text">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="venue-1-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-1-city" name="venue-1-city" type="text" placeholder="Lagos" value="Lagos" required>
+                                                <input class="field__input" id="venue-1-city" name="venue-1-city" type="text" placeholder="Lagos" value="Lagos" data-required-field="text">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                         </div>
 
@@ -331,11 +377,13 @@
                                         <div class="formgrid formgrid--2">
                                             <div class="form__field">
                                                 <label class="field__label" for="venue-2-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-2-name" name="venue-2-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Landmark Events Centre" required>
+                                                <input class="field__input" id="venue-2-name" name="venue-2-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Landmark Events Centre" data-required-field="text">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="venue-2-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-2-city" name="venue-2-city" type="text" placeholder="Lagos" value="Lagos" required>
+                                                <input class="field__input" id="venue-2-city" name="venue-2-city" type="text" placeholder="Lagos" value="Lagos" data-required-field="text">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                         </div>
 
@@ -414,27 +462,31 @@
                              data-pick-owner="schedmode" hidden>
                             <div class="form__field">
                                 <label class="field__label" for="range-start">Start Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <input class="field__input" id="range-start" name="range-start" type="date" value="" required>
+                                <input class="field__input" id="range-start" name="range-start" type="date" value="" data-required-field="date">
+                                <span class="field__error" role="alert"></span>
                             </div>
                             <div class="form__field">
                                 <label class="field__label" for="range-end">End Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <input class="field__input" id="range-end" name="range-end" type="date" value="" required>
+                                <input class="field__input" id="range-end" name="range-end" type="date" value="" data-required-field="date">
+                                <span class="field__error" role="alert"></span>
                             </div>
                         </div>
 
                         <div id="schedule-days" class="u-mt-5">
                             <div class="day" data-day data-repeat-row>
-                                <div class="day__head"> 
+                                <div class="day__head">
                                     <span class="day__no" aria-hidden="true">1</span>
                                     <span class="day__date">
                                         <label class="slotcard__label" for="day-1-name">Session name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                         <input class="field__input" id="day-1-name" name="day-1-name"
-                                               type="text" value="" data-autoname="Session" placeholder="eg:- Session Name" required>
+                                               type="text" value="" data-autoname="Session" placeholder="eg:- Session Name" data-required-field="text">
+                                        <span class="field__error" role="alert"></span>
                                     </span>
                                     <span class="day__date">
                                         <label class="slotcard__label" for="day-1-date">Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                         <input class="field__input" id="day-1-date" name="day-1-date"
-                                               type="date" value="" data-day-date required>
+                                               type="date" value="" data-day-date data-required-field="date">
+                                        <span class="field__error" role="alert"></span>
                                     </span>
                                 </div>
 
@@ -444,7 +496,8 @@
                                             <span class="slotcard__no" aria-hidden="true">1</span>
                                             <label class="u-visually-hidden" for="slot-1-1-name">Slot name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                             <input class="slotcard__name" id="slot-1-1-name" name="slot-1-1-name"
-                                                   type="text" value="" placeholder="eg:-slotName" data-autoname="Slot" required>
+                                                   type="text" value="" placeholder="eg:-slotName" data-autoname="Slot" data-required-field="text">
+                                            <span class="field__error" role="alert"></span>
                                             <button class="line__remove" type="button" data-repeat-remove>
                                                 <span class="u-visually-hidden">Remove this slot</span>
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
@@ -455,31 +508,36 @@
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-start">Start<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-start" name="slot-1-1-start"
-                                                       type="datetime-local" value="" data-slot-start required>
+                                                       type="datetime-local" value="" data-slot-start data-required-field="datetime">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-end">End<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-end" name="slot-1-1-end"
-                                                       type="datetime-local" value="" data-slot-end required>
+                                                       type="datetime-local" value="" data-slot-end data-required-field="datetime">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-venue">Venues<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <select class="slot__select" id="slot-1-1-venue" name="slot-1-1-venue" data-slot-venue-select required>
+                                                <select class="slot__select" id="slot-1-1-venue" name="slot-1-1-venue" data-slot-venue-select data-required-field="select">
                                                     <option value="">Select Venues...</option>
                                                 </select>
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-hall">Halls<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <select class="slot__select" id="slot-1-1-hall" name="slot-1-1-hall"
-                                                        data-slot-hall disabled required>
+                                                        data-slot-hall disabled data-required-field="select">
                                                     <option value="">Select a venue first...</option>
                                                 </select>
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-cap">Max capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="slot__input" id="slot-1-1-cap" name="slot-1-1-cap"
                                                        type="text" inputmode="numeric" value=""
-                                                       placeholder="0" data-cap-input required>
+                                                       placeholder="0" data-cap-input data-required-field="numeric">
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                             <div class="slotcard__speakers">
                                                 <span class="slotcard__label" id="slot-1-1-splabel">Speakers<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></span>
@@ -489,9 +547,10 @@
                                                 </label>
                                                 <select class="slot__select" id="slot-1-1-speakeradd"
                                                         data-speaker-add="slot-1-1"
-                                                        aria-describedby="slot-1-1-splabel" required>
+                                                        aria-describedby="slot-1-1-splabel">
                                                     <option value="">Add a speaker&hellip;</option>
                                                 </select>
+                                                <span class="field__error" role="alert"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -629,6 +688,133 @@
         let hasSavedVenues = false;
         let hasSavedSpeakers = false;
         let hasSavedSchedule = false;
+
+        /* ------------------------------------------------------------
+           Field validation — required checks + input-format checks,
+           inline red error text under each field, live as the user
+           types/selects, and re-checked before each Save / Continue
+           action. Implemented with event delegation (rather than
+           per-element listeners) so it also covers speaker, venue,
+           hall, day and slot rows that get added dynamically via the
+           "+ Add ..." buttons or loaded in from the server.
+           ------------------------------------------------------------ */
+
+        const form = document.getElementById("scheduleForm");
+
+        function getErrorEl(field) {
+            return field.parentElement ? field.parentElement.querySelector(".field__error") : null;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add("is-invalid");
+            const errorEl = getErrorEl(field);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add("is-visible");
+            }
+        }
+
+        function clearFieldError(field) {
+            field.classList.remove("is-invalid");
+            const errorEl = getErrorEl(field);
+            if (errorEl) {
+                errorEl.textContent = "";
+                errorEl.classList.remove("is-visible");
+            }
+        }
+
+        function isFieldVisible(field) {
+            return field.offsetParent !== null;
+        }
+
+        function runValidator(field) {
+            // Disabled fields (e.g. the Hall select before a Venue is picked)
+            // and hidden fields (e.g. the date-range inputs when "Single Day"
+            // is selected) aren't actionable yet, so they're skipped rather
+            // than flagged.
+            if (field.disabled || !isFieldVisible(field)) {
+                clearFieldError(field);
+                return true;
+            }
+
+            const type = field.dataset.requiredField;
+            const value = (field.value || "").trim();
+            let message = "";
+
+            switch (type) {
+                case "text":
+                    if (!value) message = "This field is required.";
+                    break;
+                case "select":
+                    if (!value) message = "Please make a selection.";
+                    break;
+                case "date":
+                    if (!value) message = "Please select a date.";
+                    break;
+                case "datetime":
+                    if (!value) message = "Please select a date & time.";
+                    break;
+                case "numeric":
+                    if (!value) message = "This field is required.";
+                    else if (!/^\d+$/.test(value)) message = "Enter a valid number.";
+                    break;
+                case "url":
+                    if (!value) message = "Please enter a Map URL.";
+                    else if (!/^https?:\/\/.+/i.test(value)) message = "Enter a valid URL starting with http:// or https://";
+                    break;
+                default:
+                    break;
+            }
+
+            if (message) {
+                showFieldError(field, message);
+            } else {
+                clearFieldError(field);
+            }
+            return !message;
+        }
+
+        // Live validation as the user interacts with any current or
+        // future mandatory field, via delegation on the form.
+        if (form) {
+            form.addEventListener("input", (e) => {
+                if (e.target.matches("[data-required-field]")) runValidator(e.target);
+            });
+            form.addEventListener("change", (e) => {
+                if (e.target.matches("[data-required-field]")) runValidator(e.target);
+            });
+            // 'blur' doesn't bubble, so delegate using the capture phase.
+            form.addEventListener("blur", (e) => {
+                if (e.target.matches && e.target.matches("[data-required-field]")) runValidator(e.target);
+            }, true);
+        }
+
+        // Validates every mandatory field within a given scope (a CSS
+        // selector or an Element) and focuses/scrolls to the first
+        // invalid one. Returns true only if every field in scope passes.
+        function validateScope(scope) {
+            const root = typeof scope === "string" ? document.querySelector(scope) : scope;
+            if (!root) return true;
+
+            let isValid = true;
+            let firstInvalid = null;
+
+            root.querySelectorAll("[data-required-field]").forEach((field) => {
+                if (!runValidator(field)) {
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = field;
+                }
+            });
+
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (typeof firstInvalid.focus === "function") {
+                    firstInvalid.focus({ preventScroll: true });
+                }
+            }
+
+            return isValid;
+        }
 
         function revealVenueSection() {
             if (venueSection) {
@@ -929,6 +1115,20 @@
         }
 
         // SAVE BUTTON HANDLERS
+
+        // Validate the Speakers section before the existing save logic
+        // (registered further below) is allowed to run.
+        const speakersValidateBtn = document.getElementById("btnSaveSpeakers");
+        if (speakersValidateBtn) {
+            speakersValidateBtn.addEventListener("click", function(e) {
+                if (!validateScope("#speaker-list")) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    showToast("Please fix the highlighted fields below.", "warning");
+                }
+            });
+        }
+
         const saveSpeakersBtn = document.getElementById("btnSaveSpeakers");
         if (saveSpeakersBtn) {
             saveSpeakersBtn.addEventListener("click", async function() {
@@ -1003,6 +1203,22 @@
             });
         }
 
+        // Validate the active Venue section (single- or multi-venue,
+        // whichever is currently in use) before the existing save logic
+        // (registered further below) is allowed to run.
+        const venuesValidateBtn = document.getElementById("btnSaveVenues");
+        if (venuesValidateBtn) {
+            venuesValidateBtn.addEventListener("click", function(e) {
+                const isMulti = document.getElementById("multivenue")?.checked;
+                const scope = isMulti ? "#multi-venue" : "#single-venue";
+                if (!validateScope(scope)) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    showToast("Please fix the highlighted fields below.", "warning");
+                }
+            });
+        }
+
         const saveVenuesBtn = document.getElementById("btnSaveVenues");
         if (saveVenuesBtn) {
             saveVenuesBtn.addEventListener("click", async function() {
@@ -1070,10 +1286,33 @@
         // HANDLER FOR CONTINUE BUTTON
         // Inside document.addEventListener("DOMContentLoaded", async function() { ... })
 
+        // Validate the Date & Schedule section (range dates when in
+        // range mode, plus every day/slot field) before the existing
+        // continue logic (registered further below) is allowed to run.
+        const continueValidateBtn = document.getElementById("btnContinue");
+        if (continueValidateBtn) {
+            continueValidateBtn.addEventListener("click", function(e) {
+                if (!validateScope("#section-schedule")) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    showToast("Please fix the highlighted fields below.", "warning");
+                }
+            });
+        }
+
         const btnContinue = document.getElementById("btnContinue");
         if (btnContinue) {
             btnContinue.addEventListener("click", async function(e) {
                 e.preventDefault();
+
+                // datetime-local inputs give "YYYY-MM-DDTHH:mm" (no seconds, no
+                // timezone). Send that wall-clock value straight through — just
+                // pad on ":00" seconds — instead of new Date(...).toISOString(),
+                // which converts to UTC and can shift the hour the user typed.
+                function formatDateTime(value) {
+                    if (!value) return "";
+                    return value.length === 16 ? `${value}:00` : value;
+                }
 
                 const dayRows = document.querySelectorAll("#schedule-days .day");
                 const slotsPayload = [];
@@ -1092,9 +1331,14 @@
 
                         const startTime = slotCard.querySelector("[data-slot-start]")?.value;
                         const endTime = slotCard.querySelector("[data-slot-end]")?.value;
-                        const hallId = slotCard.querySelector("[data-slot-hall]")?.value;
-                        const capacity = slotCard.querySelector("[data-cap-input]")?.value;
-                        const speakerId = slotCard.querySelector("[data-speaker-add]")?.value;
+                        const hallId = parseInt(slotCard.querySelector("[data-slot-hall]")?.value, 10) || 0;
+                        const capacity = parseInt(slotCard.querySelector("[data-cap-input]")?.value, 10) || 0;
+                        // NEW CODE:
+                        const speakerChips = slotCard.querySelectorAll(".speakerchips [data-chip-speaker-id]");
+                        const speakerIds = Array.from(speakerChips).map(chip => chip.dataset.chipSpeakerId);
+                        // Backend only accepts a single speaker per slot (SpeakersId is an int,
+                        // not a list), so if multiple chips were added we send the first one.
+                        const primarySpeakerId = speakerIds.length > 0 ? (parseInt(speakerIds[0], 10) || 0) : 0;
                         const slotId = parseInt(slotCard.dataset.slotId, 10) || 0;
 
                         // Push slot object if at least a name OR time is provided
@@ -1103,25 +1347,25 @@
                                 // Update shape: SlotId is required, and the speaker is sent as the
                                 // resolved name string (Ent_UpdateEventDateAndSlots takes "Speakers",
                                 // not "SpeakerId" like the Add call does).
-                                const speakerMatch = globalSpeakersCache.find(sp => String(sp.SpeakerId ?? sp.speakerId) === String(speakerId));
+                                const speakerMatch = globalSpeakersCache.find(sp => String(sp.SpeakerId ?? sp.speakerId) === String(primarySpeakerId));
                                 const speakerName = speakerMatch ? (speakerMatch.Name ?? speakerMatch.name ?? "") : "";
                                 slots.push({
                                     SlotId: slotId,
                                     SlotName: slotName || "Slot",
-                                    StartTime: startTime ? new Date(startTime).toISOString() : "",
-                                    EndTime: endTime ? new Date(endTime).toISOString() : "",
-                                    HallId: hallId ? parseInt(hallId) : 0,
-                                    Capacity: capacity ? parseInt(capacity) : 0,
-                                    Speakers: speakerName
+                                    StartTime: formatDateTime(startTime),
+                                    EndTime: formatDateTime(endTime),
+                                    HallId: hallId,
+                                    Capacity: capacity,
+                                    Speakers: speakerName,
                                 });
                             } else {
                                 slots.push({
                                     SlotName: slotName || "Slot",
-                                    StartTime: startTime ? new Date(startTime).toISOString() : "",
-                                    EndTime: endTime ? new Date(endTime).toISOString() : "",
-                                    HallId: hallId ? parseInt(hallId) : 0,
-                                    Capacity: capacity ? parseInt(capacity) : 0,
-                                    SpeakersId: speakerId ? parseInt(speakerId) : 0
+                                    StartTime: formatDateTime(startTime),
+                                    EndTime: formatDateTime(endTime),
+                                    HallId: hallId,
+                                    Capacity: capacity,
+                                    SpeakersId: primarySpeakerId,
                                 });
                             }
                         }
@@ -1188,5 +1432,43 @@
         }
 
         init();
+    });
+    document.addEventListener("change", function(e) {
+        if (e.target && e.target.matches("[data-speaker-add]")) {
+            const select = e.target;
+            const selectedId = select.value;
+            const selectedText = select.options[select.selectedIndex]?.text;
+
+            if (!selectedId) return;
+
+            const slotCard = select.closest(".slotcard");
+            const slotId = select.getAttribute("data-speaker-add");
+            const chipsContainer = slotCard ? slotCard.querySelector(`[data-speaker-chips="${slotId}"]`) : null;
+
+            if (chipsContainer) {
+                const existingChip = chipsContainer.querySelector(`[data-chip-speaker-id="${selectedId}"]`);
+                if (!existingChip) {
+                    const chip = document.createElement("span");
+                    chip.className = "chip";
+                    chip.dataset.chipSpeakerId = selectedId;
+                    chip.innerHTML = `
+                            <span>${selectedText}</span>
+                            <button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>
+                        `;
+
+                    chip.querySelector(".chip__remove").addEventListener("click", function() {
+                        chip.remove();
+                    });
+
+                    chipsContainer.appendChild(chip);
+                }
+            }
+
+            // Reset dropdown back to default placeholder
+            select.value = "";
+
+            // Remove the invalid class and clear validation error message
+            clearFieldError(select);
+        }
     });
 </script>
