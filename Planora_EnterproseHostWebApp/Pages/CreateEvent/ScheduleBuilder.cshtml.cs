@@ -429,26 +429,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     }
                 }
 
-                if (request.Speakers != null && request.Speakers.Any())
-                {
-                    var speakerRequest = new AddSpeakerReq
-                    {
-                        UserId = userId.Value,
-                        EventId = eventId.Value,
-                        Ent_Speaker = request.Speakers
-                    };
-
-                    var speakerResponse = helper.AddSpeaker(speakerRequest);
-
-                    if (speakerResponse == null || (speakerResponse.Status != 1 && speakerResponse.Status != 200))
-                    {
-                        return new JsonResult(new
-                        {
-                            success = false,
-                            message = speakerResponse?.Message ?? "Failed to save speakers."
-                        });
-                    }
-                }
                 int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
                 HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 4));
                 return new JsonResult(new { success = true, message = "Schedule saved successfully." });
