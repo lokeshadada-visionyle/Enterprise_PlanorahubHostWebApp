@@ -69,7 +69,7 @@
     }
 
     /* Inline validation styling for this page only — reuses existing design tokens,
-           matching the pattern used on the Basic Details step. */
+               matching the pattern used on the Basic Details step. */
     .field__error {
         display: none;
         margin-top: 0.5rem;
@@ -130,22 +130,22 @@
                     <div class="panel__body">
                         <div class="lines lines--addon">
                             <div class="lines__head" aria-hidden="true">
-                                <span>Name</span><span>Price (&#8358;)</span><span>Stock</span><span></span>
+                                <span>Name<span class="field__required">*</span></span><span>Price (&#8358;)<span class="field__required">*</span></span><span>Stock<span class="field__required">*</span></span><span></span>
                             </div>
                             <div id="addon-list">
                                 @for (var i = 0; i < Model.AddonRows.Count; i++)
                                 {
                                     var row = Model.AddonRows[i];
                                     var n = i + 1;
-                                    <div class="addonline @(row.Error != null ? "is-invalid" : "")" data-repeat-row="">
+                                    <div class="addonline" data-repeat-row="">
                                         <input type="hidden" name="addon-id-@n" value="@row.AddOnId" data-role="addon-id" />
                                         <div class="addonline__top">
                                             <span class="addonline__fields">
-                                                <label class="u-visually-hidden" for="addon-name-@n">Add-on name</label>
+                                                <label class="u-visually-hidden" for="addon-name-@n">Add-on name (required)</label>
                                                 <input class="line__input @(row.Error != null ? "is-invalid" : "")" id="addon-name-@n" name="addon-name-@n" type="text" placeholder="e.g. Conference Tote Bag" value="@row.Name" data-role="addon-name">
-                                                <label class="u-visually-hidden" for="addon-price-@n">Price</label>
+                                                <label class="u-visually-hidden" for="addon-price-@n">Price (required)</label>
                                                 <input class="line__input" id="addon-price-@n" name="addon-price-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Price" data-role="addon-price">
-                                                <label class="u-visually-hidden" for="addon-stock-@n">Stock count</label>
+                                                <label class="u-visually-hidden" for="addon-stock-@n">Stock count (required)</label>
                                                 <input class="line__input" id="addon-stock-@n" name="addon-stock-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Stock" data-role="addon-stock">
                                             </span>
                                             <button class="line__remove" type="button" data-repeat-remove="">
@@ -155,8 +155,8 @@
                                         </div>
 
                                         <div class="form__field addonline__desc">
-                                            <label class="field__label" for="addon-desc-@n">Description</label>
-                                            <textarea class="field__input" id="addon-desc-@n" name="addon-desc-@n" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-@n">@row.Description</textarea>
+                                            <label class="field__label" for="addon-desc-@n">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <textarea class="field__input" id="addon-desc-@n" name="addon-desc-@n" rows="3" placeholder="One line per thing the buyer gets" data-desc-src="addon-@n" data-role="addon-desc">@row.Description</textarea>
                                             <span class="field__hint">
                                                 Start a new line for each point — the buyer sees them as bullets
                                             </span>
@@ -196,7 +196,7 @@
                                 var row = Model.PromoRows[i];
                                 var n = i + 1;
                                 var rulesId = "promo-rules-" + n;
-                                <div class="promo @(row.Error != null ? "is-invalid" : "")" data-repeat-row="">
+                                <div class="promo" data-repeat-row="">
                                     <input type="hidden" name="promo-id-@n" value="@row.PromoCodeId" data-role="promo-id" />
                                     <div class="promo__head">
                                         <span class="promo__code" data-role="promo-code-label">@(string.IsNullOrWhiteSpace(row.Code) ? "New promo code" : row.Code)</span>
@@ -215,10 +215,10 @@
                                         <div class="formgrid formgrid--3">
                                             <div class="form__field">
                                                 <label class="field__label" for="promocode-@n">Code<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input @(row.Error != null ? "is-invalid" : "")" id="promocode-@n" name="promocode-@n" type="text" placeholder="TECH25" value="@row.Code" data-role="promo-code" required>
+                                                <input class="field__input @(row.Error != null ? "is-invalid" : "")" id="promocode-@n" name="promocode-@n" type="text" placeholder="TECH25" value="@row.Code" data-role="promo-code">
                                             </div>
                                             <div class="form__field">
-                                                <label class="field__label" for="promotype-@n">Discount Type</label>
+                                                <label class="field__label" for="promotype-@n">Discount Type<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <select class="field__select" id="promotype-@n" name="promotype-@n" data-role="promo-type">
                                                     <option selected="@(row.DiscountType.StartsWith("Percentage", StringComparison.OrdinalIgnoreCase))">Percentage (%)</option>
                                                     <option selected="@(row.DiscountType.StartsWith("Fixed", StringComparison.OrdinalIgnoreCase))">Fixed amount (&#8358;)</option>
@@ -226,44 +226,44 @@
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="promovalue-@n">Value<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promovalue-@n" name="promovalue-@n" type="text" placeholder="0" value="@row.Value" data-role="promo-value" required>
+                                                <input class="field__input" id="promovalue-@n" name="promovalue-@n" type="text" placeholder="0" value="@row.Value" data-role="promo-value">
                                                 <span class="field__hint">Percent or amount off</span>
                                             </div>
                                         </div>
 
                                         <div class="formgrid formgrid--3 u-mt-5">
                                             <div class="form__field">
-                                                <label class="field__label" for="promomax-@n">Max Redemptions</label>
-                                                <input class="field__input" id="promomax-@n" name="promomax-@n" type="text" placeholder="Unlimited" value="@row.MaxUses">
+                                                <label class="field__label" for="promomax-@n">Max Redemptions<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="promomax-@n" name="promomax-@n" type="text" placeholder="Unlimited" value="@row.MaxUses" data-role="promo-max">
                                                 <span class="field__hint">Total uses across all buyers</span>
                                             </div>
                                             <div class="form__field">
-                                                <label class="field__label" for="promouser-@n">Per-User Limit</label>
-                                                <input class="field__input" id="promouser-@n" name="promouser-@n" type="text" placeholder="1" value="@row.PerUserLimit">
+                                                <label class="field__label" for="promouser-@n">Per-User Limit<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="promouser-@n" name="promouser-@n" type="text" placeholder="1" value="@row.PerUserLimit" data-role="promo-user">
                                                 <span class="field__hint">Uses allowed per account</span>
                                             </div>
                                             <div class="form__field">
-                                                <label class="field__label" for="promomin-@n">Minimum Order (&#8358;)</label>
-                                                <input class="field__input" id="promomin-@n" name="promomin-@n" type="text" placeholder="0" value="@row.MinOrder">
+                                                <label class="field__label" for="promomin-@n">Minimum Order (&#8358;)<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="promomin-@n" name="promomin-@n" type="text" placeholder="0" value="@row.MinOrder" data-role="promo-min">
                                                 <span class="field__hint">Order must reach this to qualify</span>
                                             </div>
                                         </div>
 
                                         <div class="formgrid formgrid--2 u-mt-5">
                                             <div class="form__field">
-                                                <label class="field__label" for="promofrom-@n">Valid From</label>
-                                                <input class="field__input" id="promofrom-@n" name="promofrom-@n" type="date" value="@row.ValidFrom">
+                                                <label class="field__label" for="promofrom-@n">Valid From<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="promofrom-@n" name="promofrom-@n" type="date" value="@row.ValidFrom" data-role="promo-from">
                                             </div>
                                             <div class="form__field">
-                                                <label class="field__label" for="promountil-@n">Valid Until</label>
+                                                <label class="field__label" for="promountil-@n">Valid Until<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                                 <input class="field__input" id="promountil-@n" name="promountil-@n" type="date" value="@row.ValidTo" data-role="promo-until">
                                             </div>
                                         </div>
 
                                         <div class="formgrid formgrid--2 u-mt-5">
                                             <div class="form__field">
-                                                <label class="field__label" for="promoapplies-@n">Applies To</label>
-                                                <select class="field__select" id="promoapplies-@n" name="promoapplies-@n">
+                                                <label class="field__label" for="promoapplies-@n">Applies To<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <select class="field__select" id="promoapplies-@n" name="promoapplies-@n" data-role="promo-applies">
                                                     <option value="All" selected="@(row.AppliesTo == "All")">All Tiers</option>
 
                                                     @if (Model.TicketTypeData?.TicketTypes != null && Model.TicketTypeData.TicketTypes.Any())
@@ -276,8 +276,8 @@
                                                 </select>
                                             </div>
                                             <div class="form__field">
-                                                <label class="field__label" for="promostatus-@n">Status</label>
-                                                <select class="field__select" id="promostatus-@n" name="promostatus-@n">
+                                                <label class="field__label" for="promostatus-@n">Status<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <select class="field__select" id="promostatus-@n" name="promostatus-@n" data-role="promo-status">
                                                     <option selected="@(row.Status == "Active")">Active</option>
                                                     <option selected="@(row.Status == "Paused")">Paused</option>
                                                     <option selected="@(row.Status == "Scheduled")">Scheduled</option>
@@ -404,7 +404,7 @@
             });
         }
 
-        setupListDeletion(addonList, '.addonline', 'This is the last add-on — remove the whole section by leaving it blank instead');
+        setupListDeletion(addonList, '.addonline', 'This is the last add-on — every event must have at least one add-on filled in');
         setupListDeletion(promoList, '.promo', 'This is the last promo code — there has to be at least one');
 
         // ----------------------------------------------------------------
@@ -566,36 +566,95 @@
             }
         }
 
+        function isAddonRowBlank(row) {
+            var nameInput = row.querySelector('[data-role="addon-name"]');
+            var priceInput = row.querySelector('[data-role="addon-price"]');
+            var stockInput = row.querySelector('[data-role="addon-stock"]');
+            var descInput = row.querySelector('[data-role="addon-desc"]');
+            if (!nameInput) return true;
+            return !nameInput.value.trim() &&
+                !(priceInput && priceInput.value.trim()) &&
+                !(stockInput && stockInput.value.trim()) &&
+                !(descInput && descInput.value.trim());
+        }
+
+        function isPromoRowBlank(row) {
+            var codeInput = row.querySelector('[data-role="promo-code"]');
+            var valueInput = row.querySelector('[data-role="promo-value"]');
+            var maxInput = row.querySelector('[data-role="promo-max"]');
+            var userInput = row.querySelector('[data-role="promo-user"]');
+            var minInput = row.querySelector('[data-role="promo-min"]');
+            var fromInput = row.querySelector('[data-role="promo-from"]');
+            var untilInput = row.querySelector('[data-role="promo-until"]');
+            if (!codeInput) return true;
+            return !codeInput.value.trim() &&
+                !(valueInput && valueInput.value.trim()) &&
+                !(maxInput && maxInput.value.trim()) &&
+                !(userInput && userInput.value.trim()) &&
+                !(minInput && minInput.value.trim()) &&
+                !(fromInput && fromInput.value.trim()) &&
+                !(untilInput && untilInput.value.trim());
+        }
+
         function validateAddonRow(row) {
             var nameInput = row.querySelector('[data-role="addon-name"]');
             var priceInput = row.querySelector('[data-role="addon-price"]');
             var stockInput = row.querySelector('[data-role="addon-stock"]');
+            var descInput = row.querySelector('[data-role="addon-desc"]');
             var errorEl = row.querySelector('[data-role="addon-error"]');
             if (!nameInput) return true;
 
             var name = nameInput.value.trim();
             var price = priceInput ? priceInput.value.trim() : '';
             var stock = stockInput ? stockInput.value.trim() : '';
+            var desc = descInput ? descInput.value.trim() : '';
 
-            // A fully blank row is allowed — it's simply dropped on submit.
-            if (!name && !price && !stock) {
-                nameInput.classList.remove('is-invalid');
+            var allInputs = [nameInput, priceInput, stockInput, descInput];
+            allInputs.forEach(function(el) { if (el) el.classList.remove('is-invalid'); });
+
+            // A fully blank row is allowed on its own — it's simply dropped
+            // on submit (the "at least one" section-level rule is enforced
+            // separately in the submit handler).
+            if (!name && !price && !stock && !desc) {
                 setRowError(row, errorEl, '');
                 return true;
             }
 
-            var message = '';
+            // Every field is checked independently so all invalid fields in
+            // the row are highlighted at once, rather than stopping at the
+            // first problem found.
+            var messages = [];
+
             if (!name) {
-                message = 'Add-on name is required.';
+                messages.push('Add-on name is required.');
+                nameInput.classList.add('is-invalid');
             } else if (!NAME_PATTERN.test(name)) {
-                message = 'Only letters, numbers, and spaces are allowed.';
-            } else if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) {
-                message = 'Enter a valid price of 0 or more.';
-            } else if (stock && (isNaN(parseInt(stock, 10)) || parseInt(stock, 10) < 0)) {
-                message = 'Enter a valid stock count of 0 or more.';
+                messages.push('Add-on name can only contain letters, numbers, and spaces.');
+                nameInput.classList.add('is-invalid');
             }
 
-            nameInput.classList.toggle('is-invalid', !!message);
+            if (!price) {
+                messages.push('Price is required.');
+                if (priceInput) priceInput.classList.add('is-invalid');
+            } else if (isNaN(parseFloat(price)) || parseFloat(price) < 0) {
+                messages.push('Enter a valid price of 0 or more.');
+                if (priceInput) priceInput.classList.add('is-invalid');
+            }
+
+            if (!stock) {
+                messages.push('Stock is required.');
+                if (stockInput) stockInput.classList.add('is-invalid');
+            } else if (isNaN(parseInt(stock, 10)) || parseInt(stock, 10) < 0) {
+                messages.push('Enter a valid stock count of 0 or more.');
+                if (stockInput) stockInput.classList.add('is-invalid');
+            }
+
+            if (!desc) {
+                messages.push('Description is required.');
+                if (descInput) descInput.classList.add('is-invalid');
+            }
+
+            var message = messages.join(' ');
             setRowError(row, errorEl, message);
             return !message;
         }
@@ -604,34 +663,115 @@
             var codeInput = row.querySelector('[data-role="promo-code"]');
             var valueInput = row.querySelector('[data-role="promo-value"]');
             var typeSelect = row.querySelector('[data-role="promo-type"]');
+            var maxInput = row.querySelector('[data-role="promo-max"]');
+            var userInput = row.querySelector('[data-role="promo-user"]');
+            var minInput = row.querySelector('[data-role="promo-min"]');
+            var fromInput = row.querySelector('[data-role="promo-from"]');
             var untilInput = row.querySelector('[data-role="promo-until"]');
-            var fromInput = row.querySelector('input[type="date"]');
+            var appliesSelect = row.querySelector('[data-role="promo-applies"]');
+            var statusSelect = row.querySelector('[data-role="promo-status"]');
             var errorEl = row.querySelector('[data-role="promo-error"]');
             if (!codeInput) return true;
 
             var code = codeInput.value.trim();
             var value = valueInput ? valueInput.value.trim() : '';
+            var max = maxInput ? maxInput.value.trim() : '';
+            var perUser = userInput ? userInput.value.trim() : '';
+            var minOrder = minInput ? minInput.value.trim() : '';
+            var from = fromInput ? fromInput.value.trim() : '';
+            var until = untilInput ? untilInput.value.trim() : '';
 
-            if (!code && !value) {
-                codeInput.classList.remove('is-invalid');
+            var allInputs = [codeInput, valueInput, maxInput, userInput, minInput, fromInput, untilInput, typeSelect, appliesSelect, statusSelect];
+            allInputs.forEach(function(el) { if (el) el.classList.remove('is-invalid'); });
+
+            // A fully blank row is allowed on its own — it's simply dropped
+            // on submit (the "at least one" section-level rule is enforced
+            // separately in the submit handler). Discount Type / Applies To /
+            // Status always carry a default selected value, so they're
+            // excluded from this "is this row empty" check — otherwise a
+            // genuinely blank row could never be detected as blank.
+            if (!code && !value && !max && !perUser && !minOrder && !from && !until) {
                 setRowError(row, errorEl, '');
                 return true;
             }
 
-            var message = '';
+            // Every field is checked independently so all invalid fields in
+            // the row are highlighted at once, rather than stopping at the
+            // first problem found.
+            var messages = [];
+
             if (!code) {
-                message = 'Promo code is required.';
+                messages.push('Promo code is required.');
+                codeInput.classList.add('is-invalid');
             } else if (!CODE_PATTERN.test(code)) {
-                message = 'Only letters and numbers are allowed — no spaces or symbols.';
-            } else if (!value || isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
-                message = 'Enter a discount value greater than 0.';
-            } else if (typeSelect && typeSelect.value.indexOf('Percentage') === 0 && parseFloat(value) > 100) {
-                message = 'A percentage discount can\'t exceed 100.';
-            } else if (fromInput && untilInput && fromInput.value && untilInput.value && untilInput.value < fromInput.value) {
-                message = 'Valid Until can\'t be before Valid From.';
+                messages.push('Promo code can only contain letters and numbers — no spaces or symbols.');
+                codeInput.classList.add('is-invalid');
             }
 
-            codeInput.classList.toggle('is-invalid', !!message);
+            if (!typeSelect || !typeSelect.value) {
+                messages.push('Please select a Discount Type.');
+                if (typeSelect) typeSelect.classList.add('is-invalid');
+            }
+
+            if (!value) {
+                messages.push('Discount value is required.');
+                if (valueInput) valueInput.classList.add('is-invalid');
+            } else if (isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
+                messages.push('Enter a discount value greater than 0.');
+                if (valueInput) valueInput.classList.add('is-invalid');
+            } else if (typeSelect && typeSelect.value.indexOf('Percentage') === 0 && parseFloat(value) > 100) {
+                messages.push('A percentage discount can\'t exceed 100.');
+                if (valueInput) valueInput.classList.add('is-invalid');
+            }
+
+            if (!max) {
+                messages.push('Max Redemptions is required.');
+                if (maxInput) maxInput.classList.add('is-invalid');
+            } else if (isNaN(parseInt(max, 10)) || parseInt(max, 10) < 1) {
+                messages.push('Enter a valid Max Redemptions of 1 or more.');
+                if (maxInput) maxInput.classList.add('is-invalid');
+            }
+
+            if (!perUser) {
+                messages.push('Per-User Limit is required.');
+                if (userInput) userInput.classList.add('is-invalid');
+            } else if (isNaN(parseInt(perUser, 10)) || parseInt(perUser, 10) < 1) {
+                messages.push('Enter a valid Per-User Limit of 1 or more.');
+                if (userInput) userInput.classList.add('is-invalid');
+            }
+
+            if (!minOrder) {
+                messages.push('Minimum Order is required.');
+                if (minInput) minInput.classList.add('is-invalid');
+            } else if (isNaN(parseFloat(minOrder)) || parseFloat(minOrder) < 0) {
+                messages.push('Enter a valid Minimum Order of 0 or more.');
+                if (minInput) minInput.classList.add('is-invalid');
+            }
+
+            if (!from) {
+                messages.push('Valid From is required.');
+                if (fromInput) fromInput.classList.add('is-invalid');
+            }
+
+            if (!until) {
+                messages.push('Valid Until is required.');
+                if (untilInput) untilInput.classList.add('is-invalid');
+            } else if (from && until < from) {
+                messages.push('Valid Until can\'t be before Valid From.');
+                if (untilInput) untilInput.classList.add('is-invalid');
+            }
+
+            if (!appliesSelect || !appliesSelect.value) {
+                messages.push('Please select what this code Applies To.');
+                if (appliesSelect) appliesSelect.classList.add('is-invalid');
+            }
+
+            if (!statusSelect || !statusSelect.value) {
+                messages.push('Please select a Status.');
+                if (statusSelect) statusSelect.classList.add('is-invalid');
+            }
+
+            var message = messages.join(' ');
             setRowError(row, errorEl, message);
             return !message;
         }
@@ -661,17 +801,49 @@
 
         form.addEventListener('submit', function(e) {
             var isValid = true;
+            var hasFilledAddon = false;
+            var hasFilledPromo = false;
 
-            addonList.querySelectorAll('.addonline').forEach(function(row) {
+            var addonRows = addonList.querySelectorAll('.addonline');
+            addonRows.forEach(function(row) {
                 if (!validateAddonRow(row)) isValid = false;
+                if (!isAddonRowBlank(row)) hasFilledAddon = true;
             });
-            promoList.querySelectorAll('.promo').forEach(function(row) {
+
+            var promoRows = promoList.querySelectorAll('.promo');
+            promoRows.forEach(function(row) {
                 if (!validatePromoRow(row)) isValid = false;
+                if (!isPromoRowBlank(row)) hasFilledPromo = true;
             });
+
+            // "At least one row is required" is a section-level rule, not a
+            // per-field one, so it's surfaced as a toast rather than inline
+            // row text — the row/field highlighting still shows where to look.
+            var sectionMessages = [];
+
+            if (!hasFilledAddon && addonRows.length) {
+                isValid = false;
+                var firstAddonRow = addonRows[0];
+                firstAddonRow.classList.add('is-invalid');
+                firstAddonRow.querySelectorAll('[data-role="addon-name"], [data-role="addon-price"], [data-role="addon-stock"], [data-role="addon-desc"]').forEach(function(el) {
+                    el.classList.add('is-invalid');
+                });
+                sectionMessages.push('At least one add-on is required.');
+            }
+
+            if (!hasFilledPromo && promoRows.length) {
+                isValid = false;
+                var firstPromoRow = promoRows[0];
+                firstPromoRow.classList.add('is-invalid');
+                firstPromoRow.querySelectorAll('[data-role="promo-code"], [data-role="promo-type"], [data-role="promo-value"], [data-role="promo-max"], [data-role="promo-user"], [data-role="promo-min"], [data-role="promo-from"], [data-role="promo-until"], [data-role="promo-applies"], [data-role="promo-status"]').forEach(function(el) {
+                    el.classList.add('is-invalid');
+                });
+                sectionMessages.push('At least one promo code is required.');
+            }
 
             if (!isValid) {
                 e.preventDefault();
-                showToast('Please fix the highlighted fields below.');
+                showToast(sectionMessages.length ? sectionMessages.join(' ') : 'Please fix the highlighted fields below.');
 
                 var firstInvalid = form.querySelector('.is-invalid');
                 if (firstInvalid) {

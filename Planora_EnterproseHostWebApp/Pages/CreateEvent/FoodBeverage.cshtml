@@ -9,6 +9,25 @@
     ViewData["StepHint"] = "Set up catering and drink service";
     var categories = Model.Categories ?? new List<Categories>();
 }
+<style>
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__required {
+        color: var(--color-danger);
+        margin-left: 0.15rem;
+    }
+</style>
 <div class="wizard__body">
     <main class="wizard__content">
         <div class="wizard__inner">
@@ -106,7 +125,7 @@
                                 </label>
                             </div>
                             <div class="scopepicker u-mt-5" id="food-dates" @(Model.AvailabilityScope != "SelectedDates" ? "hidden" : "")>
-                                <p class="scopepicker__head">Select the event days and sessions where food is available.</p>
+                                <p class="scopepicker__head">Select the event days and sessions where food is available.<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(at least one day or session required)</span></p>
                                 <div id="dynamic-food-dates">
                                     <div class="notice notice--info notice--flat">
                                         <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -116,6 +135,7 @@
                                         Loading schedule…
                                     </div>
                                 </div>
+                                <span class="field__error" id="food-dates-error" role="alert"></span>
                                 <p class="notice notice--info notice--flat u-mt-5">
                                     <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="8" />
@@ -136,7 +156,7 @@
                                         <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" />
                                     </svg>
                                 </span>
-                                <h2 class="panel__title" id="menu-title">Menu</h2>
+                                <h2 class="panel__title" id="menu-title">Menu<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(at least one item required)</span></h2>
                                 <p class="panel__meta">Import a CSV/Excel file or build it item by item</p>
                             </div>
                             <div class="panel__body">
@@ -234,6 +254,7 @@
                                         }
                                     }
                                 </div>
+                                <span class="field__error" id="live-menu-error" role="alert"></span>
                                 <button class="addline" type="button" id="add-live-menu">+ Add menu item</button>
                             </div>
                         </section>
@@ -328,7 +349,7 @@
                                         <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h1.5a2.5 2.5 0 0 1 0 5H17" />
                                     </svg>
                                 </span>
-                                <h2 class="panel__title" id="counter-title">Menu on Display</h2>
+                                <h2 class="panel__title" id="counter-title">Menu on Display<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(at least one item required)</span></h2>
                                 <p class="panel__meta">Published for reference &mdash; no ordering</p>
                             </div>
                             <div class="panel__body">
@@ -380,6 +401,7 @@
                                         }
                                     }
                                 </div>
+                                <span class="field__error" id="counter-menu-error" role="alert"></span>
                                 <button class="addline" type="button" id="add-counter-menu">+ Add menu item</button>
                             </div>
                         </section>
@@ -479,12 +501,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     const availableCategories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                        Model.Categories.Select(c => new { c.CategoryId, c.CategoryName })
+                                                        Model.Categories.Select(c => new { c.CategoryId, c.CategoryName })
                 ));
 
     const savedAvailability = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SavedAvailability));
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("food-beverage-form");
         const foodSwitch = document.querySelector("[data-food-switch]");
         const foodEnabled = document.getElementById("food-enabled");
@@ -499,8 +521,89 @@
         const footerContinueBtn = document.getElementById("food-continue-footer");
         const guestPreviewSection = document.getElementById("guest-preview-section");
 
+        /* ------------------------------------------------------------
+           Group-level validation — "at least one row required", same
+           rule used for Add-ons/Promo Codes. There's no single input
+           to flag here, so each rule shows one inline message below
+           its group (the menu grid, or the day/session checkboxes)
+           instead of per-field errors.
+           ------------------------------------------------------------ */
+        function showGroupError(errorId, groupEl, message) {
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add("is-visible");
+            }
+        }
+
+        function clearGroupError(errorId, groupEl) {
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+                errorEl.textContent = "";
+                errorEl.classList.remove("is-visible");
+            }
+        }
+
+        function validateMenuItems() {
+            const isCounter = servingTypeInput && servingTypeInput.value === "counter";
+            const listId = isCounter ? "counter-menu-list" : "live-menu-list";
+            const errorId = isCounter ? "counter-menu-error" : "live-menu-error";
+            const listEl = document.getElementById(listId);
+
+            // Only the active serving type's menu (Live or Counter) needs
+            // checking; clear any stale error left on the other one.
+            clearGroupError(isCounter ? "live-menu-error" : "counter-menu-error",
+                document.getElementById(isCounter ? "live-menu-list" : "counter-menu-list"));
+
+            if (!foodEnabled || foodEnabled.value !== "true") {
+                clearGroupError(errorId, listEl);
+                return true;
+            }
+
+            const items = readMenuItemsFromList(listId, !isCounter);
+            if (items.length === 0) {
+                showGroupError(errorId, listEl, "Add at least one menu item with a name.");
+                return false;
+            }
+            clearGroupError(errorId, listEl);
+            return true;
+        }
+
+        function validateFoodDates() {
+            const groupEl = document.getElementById("dynamic-food-dates");
+            const selected = document.querySelector('input[name="food-scope"]:checked');
+
+            if (!foodEnabled || foodEnabled.value !== "true" || !selected || selected.value !== "SelectedDates") {
+                clearGroupError("food-dates-error", groupEl);
+                return true;
+            }
+
+            const anyChecked = document.querySelectorAll('#dynamic-food-dates input[type="checkbox"]:checked').length > 0;
+            if (!anyChecked) {
+                showGroupError("food-dates-error", groupEl, "Select at least one day or session.");
+                return false;
+            }
+            clearGroupError("food-dates-error", groupEl);
+            return true;
+        }
+
+        function validateFoodBeverageForm() {
+            // Calling both (rather than menuOk() && datesOk()) so both
+            // sections show their errors at once, not just the first.
+            const menuOk = validateMenuItems();
+            const datesOk = validateFoodDates();
+            if (!menuOk || !datesOk) {
+                showToast("Please fix the highlighted fields below.", "warning");
+                const firstInvalid = document.querySelector(".field__error.is-visible");
+                if (firstInvalid) firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            return menuOk && datesOk;
+        }
+
         if (topContinueBtn) {
-            topContinueBtn.addEventListener("click", function () {
+            topContinueBtn.addEventListener("click", function() {
+                if (!validateFoodBeverageForm()) return;
+
                 refreshGuestPreview();
                 if (guestPreviewSection) {
                     guestPreviewSection.style.display = "block";
@@ -516,10 +619,15 @@
             const enabled = foodSwitch.getAttribute("aria-checked") === "true";
             if (foodEnabled) foodEnabled.value = enabled ? "true" : "false";
             if (foodConfig) foodConfig.hidden = !enabled;
+            if (!enabled) {
+                clearGroupError("live-menu-error", document.getElementById("live-menu-list"));
+                clearGroupError("counter-menu-error", document.getElementById("counter-menu-list"));
+                clearGroupError("food-dates-error", document.getElementById("dynamic-food-dates"));
+            }
         }
 
         if (foodSwitch) {
-            foodSwitch.addEventListener("click", function () {
+            foodSwitch.addEventListener("click", function() {
                 const current = this.getAttribute("aria-checked") === "true";
                 this.setAttribute("aria-checked", current ? "false" : "true");
                 updateFoodState();
@@ -530,19 +638,19 @@
         function updateServingType(value) {
             if (!value) value = "live";
             if (servingTypeInput) servingTypeInput.value = value;
-            servingButtons.forEach(function (button) {
+            servingButtons.forEach(function(button) {
                 const buttonValue = button.getAttribute("data-serving-type");
                 button.setAttribute("aria-pressed", buttonValue === value ? "true" : "false");
             });
-            servingPanels.forEach(function (panel) {
+            servingPanels.forEach(function(panel) {
                 const panelValue = panel.getAttribute("data-serving-panel");
                 panel.hidden = panelValue !== value;
             });
             refreshGuestPreview();
         }
 
-        servingButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
+        servingButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
                 updateServingType(this.getAttribute("data-serving-type"));
             });
         });
@@ -556,6 +664,7 @@
             if (isDates && !foodDates.dataset.loaded) {
                 loadDateAndSlots();
             }
+            validateFoodDates();
         }
 
         function loadDateAndSlots() {
@@ -570,6 +679,7 @@
                     if (!data.success || !data.dates || data.dates.length === 0) {
                         container.innerHTML = '<div class="notice notice--warn notice--flat">' +
                             (data.message || "No schedule found. Build your schedule first.") + '</div>';
+                        validateFoodDates();
                         return;
                     }
 
@@ -605,6 +715,7 @@
                         container.appendChild(dayEl);
                     });
                     foodDates.dataset.loaded = "true";
+                    validateFoodDates();
                 })
                 .catch(() => {
                     container.innerHTML = '<div class="notice notice--warn notice--flat">Couldn\'t load the schedule. Try again.</div>';
@@ -615,7 +726,7 @@
         updateFoodScope();
 
         // Handle stepper operations (+/-)
-        document.addEventListener("click", function (event) {
+        document.addEventListener("click", function(event) {
             const btn = event.target.closest("[data-step]");
             if (!btn) return;
             const stepper = btn.closest("[data-stepper]");
@@ -630,7 +741,7 @@
             refreshGuestPreview();
         });
 
-        document.addEventListener("click", function (event) {
+        document.addEventListener("click", function(event) {
             const removeButton = event.target.closest("[data-remove-menu]");
             if (!removeButton) return;
             const row = removeButton.closest("[data-menu-row]");
@@ -642,10 +753,20 @@
                 const nameInput = row.querySelector(".menucard__name");
                 if (nameInput) nameInput.value = "";
                 refreshGuestPreview();
+                validateMenuItems();
                 return;
             }
             row.remove();
             refreshGuestPreview();
+            validateMenuItems();
+        });
+
+        document.addEventListener("input", function(event) {
+            if (event.target.matches(".menucard__name")) validateMenuItems();
+        });
+
+        document.addEventListener("change", function(event) {
+            if (event.target.closest("#dynamic-food-dates")) validateFoodDates();
         });
 
         function getCategoryOptions() {
@@ -666,7 +787,7 @@
 
         function getCategoryNameById(id) {
             if (!availableCategories) return "";
-            const match = availableCategories.find(function (cat) {
+            const match = availableCategories.find(function(cat) {
                 return String(cat.CategoryId) === String(id);
             });
             return match ? match.CategoryName : "";
@@ -677,7 +798,7 @@
             if (!list) return [];
 
             return Array.prototype.slice.call(list.querySelectorAll("[data-menu-row]"))
-                .map(function (row) {
+                .map(function(row) {
                     const nameInput = row.querySelector(".menucard__name");
                     const catSelect = row.querySelector("select[name*='-cat']");
                     const dietSelect = row.querySelector("[data-diet-select]");
@@ -690,7 +811,7 @@
                         extra: extraInput ? (parseInt(extraInput.value, 10) || 0) : 0
                     };
                 })
-                .filter(function (item) { return item.name.length > 0; });
+                .filter(function(item) { return item.name.length > 0; });
         }
 
         function renderMenuPreview(previewId, items, hasExtras) {
@@ -700,7 +821,7 @@
             const groups = [];
             const groupIndexByName = {};
 
-            items.forEach(function (item) {
+            items.forEach(function(item) {
                 const catName = getCategoryNameById(item.categoryId) || "Uncategorised";
                 if (!(catName in groupIndexByName)) {
                     groupIndexByName[catName] = groups.length;
@@ -717,13 +838,13 @@
                     '<circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>' +
                     'No menu items are available for this event.</div>';
             } else {
-                groups.forEach(function (group) {
+                groups.forEach(function(group) {
                     html += '<div class="menupreview__group">' +
                         '<p class="menupreview__heading">' + escapeHtmlAttr(group.name) +
                         '<span class="menupreview__count">' + group.items.length + ' ' +
                         (group.items.length === 1 ? "item" : "items") + '</span></p>';
 
-                    group.items.forEach(function (item) {
+                    group.items.forEach(function(item) {
                         const dietText = DIET_PREVIEW_LABELS[item.diet] || "Veg";
                         html += '<div class="menuitem">' +
                             '<span class="diet diet--' + item.diet + '" aria-hidden="true"></span>' +
@@ -775,46 +896,46 @@
             const name = values.name || "";
             const extra = values.extra != null ? values.extra : 0;
             row.innerHTML = `
-                    <div class="menucard__top">
-                        <span class="diet diet--${diet}" aria-hidden="true"></span>
-                        <label class="u-visually-hidden" for="live-menu-${liveIndex}-name">Item name</label>
-                        <input class="menucard__name" id="live-menu-${liveIndex}-name" name="live-menu-${liveIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
-                        <button class="line__remove" type="button" data-remove-menu>
-                            <span class="u-visually-hidden">Remove menu item</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="menucard__grid">
-                        <div>
-                            <label class="menucard__label" for="live-menu-${liveIndex}-cat">Category</label>
-                            <select class="slot__select" id="live-menu-${liveIndex}-cat" name="live-menu-${liveIndex}-cat">${getCategoryOptions()}</select>
+                        <div class="menucard__top">
+                            <span class="diet diet--${diet}" aria-hidden="true"></span>
+                            <label class="u-visually-hidden" for="live-menu-${liveIndex}-name">Item name</label>
+                            <input class="menucard__name" id="live-menu-${liveIndex}-name" name="live-menu-${liveIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
+                            <button class="line__remove" type="button" data-remove-menu>
+                                <span class="u-visually-hidden">Remove menu item</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                </svg>
+                            </button>
                         </div>
-                        <div>
-                            <label class="menucard__label" for="live-menu-${liveIndex}-diet">Dietary Type</label>
-                            <select class="slot__select" id="live-menu-${liveIndex}-diet" name="live-menu-${liveIndex}-diet" data-diet-select>
-                                <option value="veg">Veg</option>
-                                <option value="nonveg">Non-veg</option>
-                                <option value="vegan">Vegan</option>
-                                <option value="egg">Egg</option>
-                            </select>
+                        <div class="menucard__grid">
+                            <div>
+                                <label class="menucard__label" for="live-menu-${liveIndex}-cat">Category</label>
+                                <select class="slot__select" id="live-menu-${liveIndex}-cat" name="live-menu-${liveIndex}-cat">${getCategoryOptions()}</select>
+                            </div>
+                            <div>
+                                <label class="menucard__label" for="live-menu-${liveIndex}-diet">Dietary Type</label>
+                                <select class="slot__select" id="live-menu-${liveIndex}-diet" name="live-menu-${liveIndex}-diet" data-diet-select>
+                                    <option value="veg">Veg</option>
+                                    <option value="nonveg">Non-veg</option>
+                                    <option value="vegan">Vegan</option>
+                                    <option value="egg">Egg</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span class="menucard__label">Extra serves per guest</span>
+                                <span class="stepper" data-stepper>
+                                    <button class="stepper__btn" type="button" data-step="-1">
+                                        <span aria-hidden="true">&minus;</span>
+                                    </button>
+                                    <label class="u-visually-hidden" for="live-menu-${liveIndex}-extra">Extra serves allowed per guest</label>
+                                    <input class="stepper__value" id="live-menu-${liveIndex}-extra" name="live-menu-${liveIndex}-extra" type="text" inputmode="numeric" value="${extra}" min="0">
+                                    <button class="stepper__btn" type="button" data-step="1">
+                                        <span aria-hidden="true">+</span>
+                                    </button>
+                                </span>
+                            </div>
                         </div>
-                        <div>
-                            <span class="menucard__label">Extra serves per guest</span>
-                            <span class="stepper" data-stepper>
-                                <button class="stepper__btn" type="button" data-step="-1">
-                                    <span aria-hidden="true">&minus;</span>
-                                </button>
-                                <label class="u-visually-hidden" for="live-menu-${liveIndex}-extra">Extra serves allowed per guest</label>
-                                <input class="stepper__value" id="live-menu-${liveIndex}-extra" name="live-menu-${liveIndex}-extra" type="text" inputmode="numeric" value="${extra}" min="0">
-                                <button class="stepper__btn" type="button" data-step="1">
-                                    <span aria-hidden="true">+</span>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
-                `;
+                    `;
             const dietSelect = row.querySelector("[data-diet-select]");
             if (dietSelect) dietSelect.value = diet;
             return row;
@@ -829,47 +950,47 @@
             const diet = values.diet || "veg";
             const name = values.name || "";
             row.innerHTML = `
-                    <div class="menucard__top">
-                        <span class="diet diet--${diet}" aria-hidden="true"></span>
-                        <label class="u-visually-hidden" for="counter-menu-${counterIndex}-name">Item name</label>
-                        <input class="menucard__name" id="counter-menu-${counterIndex}-name" name="counter-menu-${counterIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
-                        <button class="line__remove" type="button" data-remove-menu>
-                            <span class="u-visually-hidden">Remove menu item</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="menucard__grid">
-                        <div>
-                            <label class="menucard__label" for="counter-menu-${counterIndex}-cat">Category</label>
-                            <select class="slot__select" id="counter-menu-${counterIndex}-cat" name="counter-menu-${counterIndex}-cat">${getCategoryOptions()}</select>
+                        <div class="menucard__top">
+                            <span class="diet diet--${diet}" aria-hidden="true"></span>
+                            <label class="u-visually-hidden" for="counter-menu-${counterIndex}-name">Item name</label>
+                            <input class="menucard__name" id="counter-menu-${counterIndex}-name" name="counter-menu-${counterIndex}-name" type="text" placeholder="Item name" value="${escapeHtmlAttr(name)}">
+                            <button class="line__remove" type="button" data-remove-menu>
+                                <span class="u-visually-hidden">Remove menu item</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+                                </svg>
+                            </button>
                         </div>
-                        <div>
-                            <label class="menucard__label" for="counter-menu-${counterIndex}-diet">Dietary Type</label>
-                            <select class="slot__select" id="counter-menu-${counterIndex}-diet" name="counter-menu-${counterIndex}-diet" data-diet-select>
-                                <option value="veg">Veg</option>
-                                <option value="nonveg">Non-veg</option>
-                                <option value="vegan">Vegan</option>
-                                <option value="egg">Egg</option>
-                            </select>
+                        <div class="menucard__grid">
+                            <div>
+                                <label class="menucard__label" for="counter-menu-${counterIndex}-cat">Category</label>
+                                <select class="slot__select" id="counter-menu-${counterIndex}-cat" name="counter-menu-${counterIndex}-cat">${getCategoryOptions()}</select>
+                            </div>
+                            <div>
+                                <label class="menucard__label" for="counter-menu-${counterIndex}-diet">Dietary Type</label>
+                                <select class="slot__select" id="counter-menu-${counterIndex}-diet" name="counter-menu-${counterIndex}-diet" data-diet-select>
+                                    <option value="veg">Veg</option>
+                                    <option value="nonveg">Non-veg</option>
+                                    <option value="vegan">Vegan</option>
+                                    <option value="egg">Egg</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
             const dietSelect = row.querySelector("[data-diet-select]");
             if (dietSelect) dietSelect.value = diet;
             return row;
         }
 
         function escapeHtmlAttr(text) {
-            return String(text).replace(/[&<>"']/g, function (m) {
+            return String(text).replace(/[&<>"']/g, function(m) {
                 return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
             });
         }
 
         const addLiveMenu = document.getElementById("add-live-menu");
         if (addLiveMenu) {
-            addLiveMenu.addEventListener("click", function () {
+            addLiveMenu.addEventListener("click", function() {
                 const list = document.getElementById("live-menu-list");
                 if (!list) return;
                 const row = createLiveMenuRow();
@@ -882,7 +1003,7 @@
 
         const addCounterMenu = document.getElementById("add-counter-menu");
         if (addCounterMenu) {
-            addCounterMenu.addEventListener("click", function () {
+            addCounterMenu.addEventListener("click", function() {
                 const list = document.getElementById("counter-menu-list");
                 if (!list) return;
                 const row = createCounterMenuRow();
@@ -893,7 +1014,7 @@
             });
         }
 
-        document.addEventListener("change", function (event) {
+        document.addEventListener("change", function(event) {
             const select = event.target.closest("[data-diet-select]");
             if (!select) return;
             const row = select.closest("[data-menu-row]");
@@ -920,7 +1041,7 @@
         function findCategoryIdByName(name) {
             const key = (name || "").toString().trim().toLowerCase();
             if (!key || !availableCategories) return null;
-            const match = availableCategories.find(function (cat) {
+            const match = availableCategories.find(function(cat) {
                 return (cat.CategoryName || "").toString().trim().toLowerCase() === key;
             });
             return match ? match.CategoryId : null;
@@ -975,7 +1096,7 @@
             const list = document.getElementById(isCounter ? "counter-menu-list" : "live-menu-list");
             if (!list) return;
 
-            items.forEach(function (item) {
+            items.forEach(function(item) {
                 const row = isCounter
                     ? createCounterMenuRow({ name: item.name, diet: item.diet })
                     : createLiveMenuRow({ name: item.name, diet: item.diet, extra: item.extra });
@@ -1031,7 +1152,7 @@
 
             if (fileType === "csv") {
                 const textReader = new FileReader();
-                textReader.onload = function (event) {
+                textReader.onload = function(event) {
                     let items = [];
                     try {
                         items = parseMenuCsvText(event.target.result || "");
@@ -1046,7 +1167,7 @@
                 textReader.readAsText(file);
             } else {
                 const xlsxReader = new FileReader();
-                xlsxReader.onload = function (event) {
+                xlsxReader.onload = function(event) {
                     let items = [];
                     try {
                         items = parseMenuXlsxArrayBuffer(event.target.result);
@@ -1066,7 +1187,7 @@
             }
 
             const base64Reader = new FileReader();
-            base64Reader.onload = function (event) {
+            base64Reader.onload = function(event) {
                 const result = event.target.result;
                 if (!result) return;
                 const commaIndex = result.indexOf(",");
@@ -1078,7 +1199,7 @@
         }
 
         if (csvInput) {
-            csvInput.addEventListener("change", function () {
+            csvInput.addEventListener("change", function() {
                 readCsvFile(this.files && this.files.length > 0 ? this.files[0] : null);
                 this.value = "";
             });
@@ -1097,7 +1218,7 @@
 
         const removeCsv = document.getElementById("menu-remove");
         if (removeCsv) {
-            removeCsv.addEventListener("click", function () {
+            removeCsv.addEventListener("click", function() {
                 if (csvInput) csvInput.value = "";
                 if (csvFilename) csvFilename.value = "";
                 if (csvBase64) csvBase64.value = "";
@@ -1107,12 +1228,16 @@
         }
 
         if (form) {
-            form.addEventListener("submit", function () {
+            form.addEventListener("submit", function(e) {
                 if (foodSwitch && foodEnabled) {
                     foodEnabled.value = foodSwitch.getAttribute("aria-checked") === "true" ? "true" : "false";
                 }
                 if (servingTypeInput && !servingTypeInput.value) {
                     servingTypeInput.value = "live";
+                }
+
+                if (!validateFoodBeverageForm()) {
+                    e.preventDefault();
                 }
             });
         }

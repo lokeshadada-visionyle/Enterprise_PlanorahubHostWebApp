@@ -25,6 +25,34 @@
         ? "dark"
         : savedBackground.Equals(savedPrimary, StringComparison.OrdinalIgnoreCase) ? "brand" : "light";
 }
+<style>
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__required {
+        color: var(--color-danger);
+        margin-left: 0.15rem;
+    }
+
+    .field__input.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .field__input.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
+</style>
 <div class="wizard__body">
 
     <main class="wizard__content">
@@ -94,10 +122,11 @@
 
                             <div class="form__field u-mt-5">
                                 <label class="field__label" for="brand-name">
-                                    Organiser name shown on the page
+                                    Organiser name shown on the page<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span>
                                 </label>
                                 <input class="field__input" id="brand-name" name="brand-name"
-                                       type="text" value="Acme Global" data-brand-name>
+                                       type="text" value="Acme Global" data-brand-name data-required-field="text">
+                                <span class="field__error" role="alert"></span>
                                 <span class="field__hint">
                                     Sits beside the logo in the page header and footer
                                 </span>
@@ -519,7 +548,74 @@
 </div>
 
 <script>
-    document.getElementById('brandingForm').addEventListener('submit', function () {
+    function getErrorEl(field) {
+        return field.parentElement ? field.parentElement.querySelector(".field__error") : null;
+    }
+
+    function showFieldError(field, message) {
+        field.classList.add("is-invalid");
+        const errorEl = getErrorEl(field);
+        if (errorEl) {
+            errorEl.textContent = message;
+            errorEl.classList.add("is-visible");
+        }
+    }
+
+    function clearFieldError(field) {
+        field.classList.remove("is-invalid");
+        const errorEl = getErrorEl(field);
+        if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.classList.remove("is-visible");
+        }
+    }
+
+    function runValidator(field) {
+        const value = (field.value || "").trim();
+        if (!value) {
+            showFieldError(field, "This field is required.");
+            return false;
+        }
+        clearFieldError(field);
+        return true;
+    }
+
+    document.addEventListener("input", function(e) {
+        if (e.target.matches("[data-required-field]")) runValidator(e.target);
+    });
+    // 'blur' doesn't bubble, so delegate using the capture phase.
+    document.addEventListener("blur", function(e) {
+        if (e.target.matches && e.target.matches("[data-required-field]")) runValidator(e.target);
+    }, true);
+
+    function validateBrandingForm() {
+        let isValid = true;
+        let firstInvalid = null;
+
+        document.querySelectorAll("[data-required-field]").forEach((field) => {
+            if (!runValidator(field)) {
+                isValid = false;
+                if (!firstInvalid) firstInvalid = field;
+            }
+        });
+
+        if (firstInvalid) {
+            firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+            firstInvalid.focus({ preventScroll: true });
+        }
+
+        return isValid;
+    }
+
+    document.getElementById('brandingForm').addEventListener('submit', function(e) {
+        if (!validateBrandingForm()) {
+            e.preventDefault();
+            if (typeof showToast === "function") {
+                showToast("Please fix the highlighted fields below.", "warning");
+            }
+            return;
+        }
+
         var pressed = document.querySelector('#bgmode .bgpick__opt[aria-pressed="true"]');
         var mode = pressed ? pressed.getAttribute('data-pick') : 'light';
         var primary = document.getElementById('primary-colour').value || '#5A1D54';
@@ -532,8 +628,8 @@
     });
 
     // Live-sync organiser name into the preview as the field changes
-    document.getElementById('brand-name')?.addEventListener('input', function (e) {
-        document.querySelectorAll('[data-brand-name-preview]').forEach(function (el) {
+    document.getElementById('brand-name')?.addEventListener('input', function(e) {
+        document.querySelectorAll('[data-brand-name-preview]').forEach(function(el) {
             el.textContent = e.target.value || 'Acme Global';
         });
     });

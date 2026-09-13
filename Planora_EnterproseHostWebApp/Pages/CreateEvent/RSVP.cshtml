@@ -7,6 +7,34 @@
     ViewData["StepName"] = "RSVP Setup";
     ViewData["StepHint"] = "RSVP requirement & the form guests answer";
 }
+<style>
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__required {
+        color: var(--color-danger);
+        margin-left: 0.15rem;
+    }
+
+    .fieldrow__input.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .fieldrow__input.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
+</style>
 
 <div class="wizard__body">
 
@@ -90,7 +118,7 @@
                         <div class="panel__head panel__head--plain">
                             <div>
                                 <h2 class="panel__title panel__title--lg" id="rsvpform-title">
-                                    RSVP Registration Form
+                                    RSVP Registration Form<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(every question needs a label)</span>
                                 </h2>
                                 <p class="panel__meta">
                                     What each guest fills in when they reply &middot; drag to reorder
@@ -161,7 +189,7 @@
                                         </select>
                                     </span>
                                     <label class="fieldrow__req" for="rq-1-req">
-                                        <input id="rq-1-req" name="rq-1-req" type="checkbox" checked disabled>
+                                        <input id="rq-1-req" name="rq-1-req" type="checkbox" checked>
                                         Req
                                     </label>
                                     <button class="fieldrow__icon" type="button"
@@ -185,7 +213,7 @@
                                     </span>
                                     <span>
                                         <label class="u-visually-hidden" for="rq-2-type">Answer type</label>
-                                        <select class="fieldrow__select" id="rq-2-type" name="rq-2-type" disabled>
+                                        <select class="fieldrow__select" id="rq-2-type" name="rq-2-type">
                                             <option>Short Text</option>
                                             <option selected>Email</option>
                                             <option>Phone</option>
@@ -198,7 +226,7 @@
                                         </select>
                                     </span>
                                     <label class="fieldrow__req" for="rq-2-req">
-                                        <input id="rq-2-req" name="rq-2-req" type="checkbox" checked disabled>
+                                        <input id="rq-2-req" name="rq-2-req" type="checkbox" checked>
                                         Req
                                     </label>
                                     <button class="fieldrow__icon" type="button"
@@ -627,6 +655,75 @@
         const rsvpOff = document.getElementById("rsvp-off");
         const continueBtn = document.getElementById("rsvpContinueBtn");
 
+        /* ------------------------------------------------------------
+           Field validation — every custom RSVP question needs a label.
+           The locked Full Name / Email Address rows are readonly and
+           always filled, so they're excluded. Validated via class +
+           :not([readonly]) rather than a data attribute, since new
+           rows can be added by the generic "+ Add question" button,
+           the preset chips, or loadTemplateByTitle()/renderFields()
+           below — none of which this file fully controls — so this
+           works no matter which path added the row.
+           ------------------------------------------------------------ */
+        function getErrorEl(field) {
+            return field.parentElement ? field.parentElement.querySelector(".field__error") : null;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add("is-invalid");
+            const errorEl = getErrorEl(field);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add("is-visible");
+            }
+        }
+
+        function clearFieldError(field) {
+            field.classList.remove("is-invalid");
+            const errorEl = getErrorEl(field);
+            if (errorEl) {
+                errorEl.textContent = "";
+                errorEl.classList.remove("is-visible");
+            }
+        }
+
+        function runValidator(field) {
+            const value = (field.value || "").trim();
+            if (!value) {
+                showFieldError(field, "This field is required.");
+                return false;
+            }
+            clearFieldError(field);
+            return true;
+        }
+
+        document.addEventListener("input", function(e) {
+            if (e.target.matches("#rq-list .fieldrow__input:not([readonly])")) runValidator(e.target);
+        });
+        // 'blur' doesn't bubble, so delegate using the capture phase.
+        document.addEventListener("blur", function(e) {
+            if (e.target.matches && e.target.matches("#rq-list .fieldrow__input:not([readonly])")) runValidator(e.target);
+        }, true);
+
+        function validateRsvpQuestions() {
+            let isValid = true;
+            let firstInvalid = null;
+
+            document.querySelectorAll("#rq-list .fieldrow__input:not([readonly])").forEach((field) => {
+                if (!runValidator(field)) {
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = field;
+                }
+            });
+
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                firstInvalid.focus({ preventScroll: true });
+            }
+
+            return isValid;
+        }
+
         function updateRsvpVisibility() {
 
             if (noRadio && noRadio.checked) {
@@ -669,6 +766,13 @@
                     return;
                 }
 
+                if (!validateRsvpQuestions()) {
+                    if (typeof showToast === "function") {
+                        showToast("Please fix the highlighted fields below.", "warning");
+                    }
+                    return;
+                }
+
                 document.getElementById("RsvpForm").submit();
             });
         }
@@ -703,34 +807,35 @@
                 const isReq = (field.isRequired || field.IsRequired) ? 'checked' : '';
 
                 const rowHtml = `
-                <div class="fieldrow" data-repeat-row>
-                    <span class="fieldrow__grip" aria-hidden="true">#</span>
-                    <span class="fieldrow__no" aria-hidden="true">${idx}</span>
-                    <span>
-                        <input class="fieldrow__input" id="rq-${idx}-label" name="rq-${idx}-label"
-                               type="text" value="${label}" placeholder="What do you want to ask?">
-                    </span>
-                    <span>
-                        <select class="fieldrow__select" id="rq-${idx}-type" name="rq-${idx}-type">
-                            <option ${type === 'Short Text' ? 'selected' : ''}>Short Text</option>
-                            <option ${type === 'Email' ? 'selected' : ''}>Email</option>
-                            <option ${type === 'Phone' ? 'selected' : ''}>Phone</option>
-                            <option ${type === 'Long Text' ? 'selected' : ''}>Long Text</option>
-                            <option ${type === 'Dropdown' ? 'selected' : ''}>Dropdown</option>
-                            <option ${type === 'Checkbox' ? 'selected' : ''}>Checkbox</option>
-                            <option ${type === 'Date' ? 'selected' : ''}>Date</option>
-                            <option ${type === 'Number' ? 'selected' : ''}>Number</option>
-                            <option ${type === 'File Upload' ? 'selected' : ''}>File Upload</option>
-                        </select>
-                    </span>
-                    <label class="fieldrow__req" for="rq-${idx}-req">
-                        <input id="rq-${idx}-req" name="rq-${idx}-req" type="checkbox" ${isReq}>
-                        Req
-                    </label>
-                    <button class="fieldrow__icon fieldrow__icon--danger" type="button" onclick="this.closest('.fieldrow').remove()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-                    </button>
-                </div>`;
+                    <div class="fieldrow" data-repeat-row>
+                        <span class="fieldrow__grip" aria-hidden="true">#</span>
+                        <span class="fieldrow__no" aria-hidden="true">${idx}</span>
+                        <span>
+                            <input class="fieldrow__input" id="rq-${idx}-label" name="rq-${idx}-label"
+                                   type="text" value="${label}" placeholder="What do you want to ask?">
+                            <span class="field__error" role="alert"></span>
+                        </span>
+                        <span>
+                            <select class="fieldrow__select" id="rq-${idx}-type" name="rq-${idx}-type">
+                                <option ${type === 'Short Text' ? 'selected' : ''}>Short Text</option>
+                                <option ${type === 'Email' ? 'selected' : ''}>Email</option>
+                                <option ${type === 'Phone' ? 'selected' : ''}>Phone</option>
+                                <option ${type === 'Long Text' ? 'selected' : ''}>Long Text</option>
+                                <option ${type === 'Dropdown' ? 'selected' : ''}>Dropdown</option>
+                                <option ${type === 'Checkbox' ? 'selected' : ''}>Checkbox</option>
+                                <option ${type === 'Date' ? 'selected' : ''}>Date</option>
+                                <option ${type === 'Number' ? 'selected' : ''}>Number</option>
+                                <option ${type === 'File Upload' ? 'selected' : ''}>File Upload</option>
+                            </select>
+                        </span>
+                        <label class="fieldrow__req" for="rq-${idx}-req">
+                            <input id="rq-${idx}-req" name="rq-${idx}-req" type="checkbox" ${isReq}>
+                            Req
+                        </label>
+                        <button class="fieldrow__icon fieldrow__icon--danger" type="button" onclick="this.closest('.fieldrow').remove()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </div>`;
                 container.insertAdjacentHTML('beforeend', rowHtml);
             });
         }

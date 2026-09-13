@@ -4,8 +4,8 @@
 @{
     Layout = "_CreateEventLayout";
     bool isPrivate = HttpContext.Session.IsPrivateEvent();
-    ViewData["StepIndex"] = 12;
-    ViewData["StepTotal"] = isPrivate ? 12 : 10;
+    ViewData["StepIndex"] = isPrivate ? 12 : 11;
+    ViewData["StepTotal"] = isPrivate ? 12 : 11;
     ViewData["StepName"] = "Review & Publish";
     ViewData["StepHint"] = "Check everything before going live";
 }

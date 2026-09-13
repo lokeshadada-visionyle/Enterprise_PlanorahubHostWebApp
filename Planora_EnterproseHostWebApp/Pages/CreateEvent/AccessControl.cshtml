@@ -10,6 +10,36 @@
     ViewData["StepHint"] = "Set who can register and how";
     ViewData["IsPrivate"] = isPrivate;
 }
+<style>
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__required {
+        color: var(--color-danger);
+        margin-left: 0.15rem;
+    }
+
+    .field__input.is-invalid,
+    .fieldrow__input.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .field__input.is-invalid:focus,
+        .fieldrow__input.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
+</style>
 @{
     var discoveryVal = Model.SelectedDiscovery ?? (!isPrivate ? "listed" : "standalone");
     var accessVal = Model.SelectedAccess ?? (isPrivate ? "invite" : "open");
@@ -155,7 +185,7 @@
                                     </span>
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="access" value="rsvp" data-type-lock="public" @(!isPrivate ? "disabled" : "") >
+                                    <input type="radio" name="access" value="rsvp" data-type-lock="public" @(!isPrivate ? "disabled" : "")>
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-clipboard-check"></i></span>
                                     <span class="radio__body">
                                         <span class="radio__title">
@@ -172,7 +202,7 @@
                     <section class="panel" aria-labelledby="form-title">
                         <div class="panel__head panel__head--plain">
                             <div>
-                                <h2 class="panel__title panel__title--lg" id="form-title">Registration Form</h2>
+                                <h2 class="panel__title panel__title--lg" id="form-title">Registration Form<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(every field needs a label)</span></h2>
                                 <p class="panel__meta">
                                     Customise fields attendees fill at checkout &middot; drag to reorder
                                 </p>
@@ -210,7 +240,7 @@
                                     <button class="btn btn--outline btn--sm" type="button" id="tplLoadBtn">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg> Load
                                     </button>
-                                    
+
                                     <button class="btn btn--quiet btn--sm" type="button" data-modal-open="tpllibrary-modal" style="cursor: pointer; text-decoration: underline; background: none; border: none;">
                                         Manage
                                     </button>
@@ -234,7 +264,8 @@
                                             <span class="fieldrow__grip" aria-hidden="true">#</span>
                                             <span class="fieldrow__no" aria-hidden="true">@(i + 1)</span>
                                             <span>
-                                                <input class="fieldrow__input" name="EventFields.Fields[@i].Label" type="text" value="@f.Label">
+                                                <input class="fieldrow__input" name="EventFields.Fields[@i].Label" type="text" value="@f.Label" data-required-field="text">
+                                                <span class="field__error" role="alert"></span>
                                             </span>
                                             <span>
                                                 <select class="fieldrow__select" name="EventFields.Fields[@i].FieldType">
@@ -265,7 +296,7 @@
                                     <div class="fieldrow" data-repeat-row>
                                         <span class="fieldrow__grip" aria-hidden="true">#</span>
                                         <span class="fieldrow__no" aria-hidden="true">1</span>
-                                        <span><input class="fieldrow__input" name="EventFields.Fields[0].Label" type="text" value="Phone Number"></span>
+                                        <span><input class="fieldrow__input" name="EventFields.Fields[0].Label" type="text" value="Phone Number" data-required-field="text"><span class="field__error" role="alert"></span></span>
                                         <span>
                                             <select class="fieldrow__select" name="EventFields.Fields[0].FieldType">
                                                 <option value="Short Text">Short Text</option>
@@ -287,7 +318,7 @@
                                     <div class="fieldrow" data-repeat-row>
                                         <span class="fieldrow__grip" aria-hidden="true">#</span>
                                         <span class="fieldrow__no" aria-hidden="true">2</span>
-                                        <span><input class="fieldrow__input" name="EventFields.Fields[1].Label" type="text" value="Organization"></span>
+                                        <span><input class="fieldrow__input" name="EventFields.Fields[1].Label" type="text" value="Organization" data-required-field="text"><span class="field__error" role="alert"></span></span>
                                         <span>
                                             <select class="fieldrow__select" name="EventFields.Fields[1].FieldType">
                                                 <option value="Short Text" selected>Short Text</option>
@@ -401,8 +432,9 @@
         </div>
         <form class="modal__body" id="tplsave-form" data-tplsave-form>
             <div class="form__field">
-                <label class="field__label" for="tplname">Template name</label>
-                <input class="field__input" id="tplname" name="tplname" type="text" placeholder="e.g. Quarterly Partner Briefing" required>
+                <label class="field__label" for="tplname">Template name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                <input class="field__input" id="tplname" name="tplname" type="text" placeholder="e.g. Quarterly Partner Briefing" data-required-field="text">
+                <span class="field__error" role="alert"></span>
             </div>
             <div class="form__field u-mt-5">
                 <label class="field__label" for="tpldesc">Description</label>
@@ -473,6 +505,121 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Event type is already applied to <body data-event-type> by the
         // shared layout (from Session) — nothing to rewrite here anymore.
+
+        /* ------------------------------------------------------------
+           Field validation — required checks, inline red error text,
+           live as the user types, and re-checked before Continue and
+           before confirming a template save. Uses event delegation so
+           it also covers Registration Form rows added dynamically
+           ("+ Add Field", loading a template) without extra wiring.
+           ------------------------------------------------------------ */
+        function getErrorEl(field) {
+            return field.parentElement ? field.parentElement.querySelector(".field__error") : null;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add("is-invalid");
+            const errorEl = getErrorEl(field);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add("is-visible");
+            }
+        }
+
+        function clearFieldError(field) {
+            field.classList.remove("is-invalid");
+            const errorEl = getErrorEl(field);
+            if (errorEl) {
+                errorEl.textContent = "";
+                errorEl.classList.remove("is-visible");
+            }
+        }
+
+        function isFieldVisible(field) {
+            return field.offsetParent !== null;
+        }
+
+        function runValidator(field) {
+            if (field.disabled || !isFieldVisible(field)) {
+                clearFieldError(field);
+                return true;
+            }
+            const value = (field.value || "").trim();
+            if (!value) {
+                showFieldError(field, "This field is required.");
+                return false;
+            }
+            clearFieldError(field);
+            return true;
+        }
+
+        document.addEventListener("input", function(e) {
+            if (e.target.matches("[data-required-field]")) runValidator(e.target);
+        });
+        // 'blur' doesn't bubble, so delegate using the capture phase.
+        document.addEventListener("blur", function(e) {
+            if (e.target.matches && e.target.matches("[data-required-field]")) runValidator(e.target);
+        }, true);
+
+        function validateScope(scope) {
+            const root = typeof scope === "string" ? document.querySelector(scope) : scope;
+            if (!root) return true;
+
+            let isValid = true;
+            let firstInvalid = null;
+
+            root.querySelectorAll("[data-required-field]").forEach((field) => {
+                if (!runValidator(field)) {
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = field;
+                }
+            });
+
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (typeof firstInvalid.focus === "function") firstInvalid.focus({ preventScroll: true });
+            }
+
+            return isValid;
+        }
+
+        // Registration Form field labels only need checking when the
+        // Registration Form section is actually showing (registration
+        // is on and #reg-config isn't hidden).
+        function validateRegistrationFields() {
+            const regConfig = document.getElementById("reg-config");
+            if (!regConfig || regConfig.hidden) return true;
+            return validateScope("#rf-list");
+        }
+
+        document.querySelectorAll('button[type="submit"][value="save"]').forEach((btn) => {
+            btn.addEventListener("click", function(e) {
+                if (!validateRegistrationFields()) {
+                    e.preventDefault();
+                    if (typeof showToast === "function") {
+                        showToast("Please fix the highlighted fields below.", "warning");
+                    }
+                }
+            });
+        });
+
+        // The Save-template modal's confirm button also has
+        // data-modal-close, handled by the delegated document click
+        // listener further down. Validating here first and stopping
+        // propagation on failure keeps the modal open instead.
+        const tplSaveConfirmBtn = document.querySelector("[data-tplsave-confirm]");
+        if (tplSaveConfirmBtn) {
+            tplSaveConfirmBtn.addEventListener("click", function(e) {
+                const tplNameInput = document.getElementById("tplname");
+                if (tplNameInput && !runValidator(tplNameInput)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof showToast === "function") {
+                        showToast("Please enter a template name.", "warning");
+                    }
+                }
+            });
+        }
     });
 
     function reindexFields() {
@@ -539,22 +686,23 @@
         }).join("");
 
         row.innerHTML = `
-            <span class="fieldrow__grip" aria-hidden="true">#</span>
-            <span class="fieldrow__no" aria-hidden="true">${index + 1}</span>
-            <span>
-                <input class="fieldrow__input" name="EventFields.Fields[${index}].Label" type="text" value="${field.label ?? field.Label ?? ""}">
-            </span>
-            <span>
-                <select class="fieldrow__select" name="EventFields.Fields[${index}].FieldType">${options}</select>
-            </span>
-            <label class="fieldrow__req">
-                <input name="EventFields.Fields[${index}].IsRequired" type="checkbox" value="true" ${(field.isRequired || field.IsRequired) ? "checked" : ""}>
-                <input type="hidden" name="EventFields.Fields[${index}].IsRequired" value="false" />
-                Req
-            </label>
-            <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </button>`;
+                <span class="fieldrow__grip" aria-hidden="true">#</span>
+                <span class="fieldrow__no" aria-hidden="true">${index + 1}</span>
+                <span>
+                    <input class="fieldrow__input" name="EventFields.Fields[${index}].Label" type="text" value="${field.label ?? field.Label ?? ""}" data-required-field="text">
+                    <span class="field__error" role="alert"></span>
+                </span>
+                <span>
+                    <select class="fieldrow__select" name="EventFields.Fields[${index}].FieldType">${options}</select>
+                </span>
+                <label class="fieldrow__req">
+                    <input name="EventFields.Fields[${index}].IsRequired" type="checkbox" value="true" ${(field.isRequired || field.IsRequired) ? "checked" : ""}>
+                    <input type="hidden" name="EventFields.Fields[${index}].IsRequired" value="false" />
+                    Req
+                </label>
+                <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>`;
 
         return row;
     }
