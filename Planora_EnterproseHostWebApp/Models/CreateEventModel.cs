@@ -535,7 +535,7 @@ namespace Planora_EnterproseHostWebApp.Models
         // The live API returns this array under the key "EventDate" (singular),
         // not "EventDates". Without this JsonPropertyName the list always
         // deserialized as null even though the HTTP call succeeded.
-        [System.Text.Json.Serialization.JsonPropertyName("EventDate")]
+        [System.Text.Json.Serialization.JsonPropertyName("EventDates")]
         public List<EventDates> EventDates { get; set; }
     }
     public class EventDates
@@ -548,7 +548,7 @@ namespace Planora_EnterproseHostWebApp.Models
 
         // NOTE (fix for API #8): the live API returns the nested slots array
         // under the key "EventSlot" (singular), not "EventSlots".
-        [System.Text.Json.Serialization.JsonPropertyName("EventSlot")]
+        [System.Text.Json.Serialization.JsonPropertyName("EventSlots")]
         public List<EventSlot> EventSlots { get; set; } = new List<EventSlot>();
     }
     public class EventSlot

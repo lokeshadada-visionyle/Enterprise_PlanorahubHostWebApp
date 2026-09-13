@@ -792,6 +792,7 @@
 
                     populateVenueDropdowns(result.data);
                     revealScheduleSection();
+                    recalculateCapacityBar();
                     return true;
                 }
             } catch (err) {
@@ -813,6 +814,20 @@
 
                     if (!dayTemplate) return;
                     daysContainer.innerHTML = "";
+
+                    // The API returns times like "2026-09-14 07:06 AM" — datetime-local
+                    // inputs need "YYYY-MM-DDTHH:mm" (24-hour, no seconds), so convert.
+                    function parseApiDateTime(value) {
+                        if (!value) return "";
+                        if (value.includes("T")) return value.slice(0, 16); // already ISO-ish
+                        const match = value.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+                        if (!match) return "";
+                        let [, datePart, hourStr, minuteStr, meridiem] = match;
+                        let hour = parseInt(hourStr, 10);
+                        if (/pm/i.test(meridiem) && hour !== 12) hour += 12;
+                        if (/am/i.test(meridiem) && hour === 12) hour = 0;
+                        return `${datePart}T${String(hour).padStart(2, "0")}:${minuteStr}`;
+                    }
 
                     for (const day of result.data) {
                         const dayRow = dayTemplate.cloneNode(true);
@@ -845,17 +860,26 @@
                                 const speakerSelect = slotRow.querySelector("[data-speaker-add]");
 
                                 if (slotNameInput) slotNameInput.value = slot.SlotName ?? slot.slotName ?? "";
-                                if (startInput) startInput.value = slot.StartTime ?? slot.startTime ?? "";
-                                if (endInput) endInput.value = slot.EndTime ?? slot.endTime ?? "";
+                                if (startInput) startInput.value = parseApiDateTime(slot.StartTime ?? slot.startTime ?? "");
+                                if (endInput) endInput.value = parseApiDateTime(slot.EndTime ?? slot.endTime ?? "");
                                 if (capInput) capInput.value = slot.Capacity ?? slot.capacity ?? "";
 
                                 populateVenueDropdowns(globalVenuesCache);
 
-                                const selectedVenueId = slot.VenueId ?? slot.venueId;
+                                // The API only returns HallId, not VenueId, so find which
+                                // saved venue owns this hall to resolve the venue dropdown too.
+                                const targetHallId = slot.HallId ?? slot.hallId;
+                                let selectedVenueId = slot.VenueId ?? slot.venueId;
+                                if (!selectedVenueId && targetHallId != null) {
+                                    const ownerVenue = globalVenuesCache.find(v =>
+                                        (v.Halls ?? v.halls ?? []).some(h => String(h.HallId ?? h.hallId) === String(targetHallId))
+                                    );
+                                    if (ownerVenue) selectedVenueId = ownerVenue.VenueId ?? ownerVenue.venueId;
+                                }
                                 if (venueSelect && selectedVenueId) {
                                     venueSelect.value = selectedVenueId;
                                     await loadHallsForVenue(hallSelect, selectedVenueId);
-                                    if (hallSelect) hallSelect.value = slot.HallId ?? slot.hallId ?? "";
+                                    if (hallSelect) hallSelect.value = targetHallId ?? "";
                                 }
 
                                 populateSpeakerDropdowns(globalSpeakersCache);
@@ -864,7 +888,7 @@
                                     // returns the speaker on a slot as "Speakers" (a name string), not
                                     // "SpeakersId" like the Add/Update request shapes use. Resolve the
                                     // dropdown selection by matching that name back to a SpeakerId.
-                                    const rawSpeaker = slot.SpeakersId ?? slot.speakersId ?? slot.Speakers ?? slot.speakers ?? "";
+                                    const rawSpeaker = slot.SpeakerId ?? slot.speakerId ?? slot.SpeakersId ?? slot.speakersId ?? slot.Speakers ?? slot.speakers ?? "";
                                     let resolvedSpeakerId = rawSpeaker;
                                     if (rawSpeaker && isNaN(rawSpeaker)) {
                                         const match = globalSpeakersCache.find(sp => (sp.Name ?? sp.name ?? "").trim().toLowerCase() === String(rawSpeaker).trim().toLowerCase());
@@ -879,9 +903,81 @@
 
                         daysContainer.appendChild(dayRow);
                     }
+
+                    recalculateCapacityBar();
                 }
             } catch (err) {
                 console.error("Failed to load schedule:", err);
+            }
+        }
+
+        // CAPACITY BAR (Total hall capacity / Peak concurrent / Headroom at peak)
+        // These three numbers were static "0"s in the markup with nothing computing
+        // them. This fills that in per the "Hall allocation rules" panel below it.
+        function recalculateCapacityBar() {
+            const limitEl = document.querySelector("[data-cap-limit]");
+            const totalEl = document.querySelector("[data-cap-total]");
+            const remainingEl = document.querySelector("[data-cap-remaining]");
+            const warningEl = document.querySelector("[data-cap-warning]");
+            const warningTextEl = document.querySelector("[data-cap-warning-text]");
+            if (!limitEl || !totalEl || !remainingEl) return;
+
+            // Total hall capacity: sum of every saved hall's capacity for this event's venue(s).
+            const totalHallCapacity = globalVenuesCache.reduce((sum, v) => {
+                const halls = v.Halls ?? v.halls ?? [];
+                return sum + halls.reduce((hSum, h) => hSum + (parseInt(h.Capacity ?? h.capacity, 10) || 0), 0);
+            }, 0);
+
+            // Peak concurrent: at any instant, sum the capacity of every slot running
+            // then (parallel breakouts in different halls are additive — "counted once"
+            // per the rules panel, i.e. not multiplied by hall count), then take the
+            // highest such sum. Days don't overlap each other, so each ".day" block is
+            // swept independently and the overall max across all days is kept. Note:
+            // this does not check whether two overlapping slots share the same hall —
+            // that's the separate "hall can't host two overlapping slots" rule, not
+            // implemented here.
+            let peakConcurrent = 0;
+            document.querySelectorAll("#schedule-days .day").forEach(dayRow => {
+                const events = [];
+                dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
+                    const startVal = slotCard.querySelector("[data-slot-start]")?.value;
+                    const endVal = slotCard.querySelector("[data-slot-end]")?.value;
+                    const capacity = parseInt(slotCard.querySelector("[data-cap-input]")?.value, 10) || 0;
+                    if (!startVal || !endVal || capacity <= 0) return;
+
+                    const start = new Date(startVal).getTime();
+                    const end = new Date(endVal).getTime();
+                    if (isNaN(start) || isNaN(end) || end <= start) return;
+
+                    events.push({ time: start, delta: capacity, isStart: true });
+                    events.push({ time: end, delta: -capacity, isStart: false });
+                });
+
+                // Process end-events before start-events at the same timestamp so
+                // back-to-back (non-overlapping) slots aren't double-counted.
+                events.sort((a, b) => a.time - b.time || (a.isStart ? 1 : -1));
+
+                let running = 0;
+                events.forEach(evt => {
+                    running += evt.delta;
+                    if (running > peakConcurrent) peakConcurrent = running;
+                });
+            });
+
+            const headroom = totalHallCapacity - peakConcurrent;
+
+            limitEl.textContent = totalHallCapacity;
+            totalEl.textContent = peakConcurrent;
+            remainingEl.textContent = headroom;
+
+            if (warningEl) {
+                const isOver = headroom < 0;
+                warningEl.hidden = !isOver;
+                if (warningTextEl) {
+                    warningTextEl.textContent = isOver
+                        ? `Peak concurrent attendance exceeds total hall capacity by ${Math.abs(headroom)}.`
+                        : "";
+                }
             }
         }
 
@@ -894,6 +990,24 @@
                 if (hallSelect) {
                     await loadHallsForVenue(hallSelect, venueId);
                 }
+            }
+            if (e.target && (e.target.matches("[data-slot-start]") || e.target.matches("[data-slot-end]") || e.target.matches("[data-cap-input]"))) {
+                recalculateCapacityBar();
+            }
+        });
+        document.addEventListener("input", function(e) {
+            if (e.target && e.target.matches("[data-cap-input]")) {
+                recalculateCapacityBar();
+            }
+        });
+        // Adding/removing a day or slot changes which intervals exist, and removing
+        // a hall changes the total — recalculate after the generic repeat-add/remove
+        // handler (defined in the shared layout script) has done its DOM work.
+        document.addEventListener("click", function(e) {
+            const addBtn = e.target.closest("[data-repeat-add]");
+            const removeBtn = e.target.closest("[data-repeat-remove]");
+            if ((addBtn && addBtn.closest("#section-schedule")) || (removeBtn && removeBtn.closest("#section-schedule"))) {
+                setTimeout(recalculateCapacityBar, 0);
             }
         });
 
@@ -1266,5 +1380,43 @@
         }
 
         init();
+    });
+    document.addEventListener("change", function(e) {
+        if (e.target && e.target.matches("[data-speaker-add]")) {
+            const select = e.target;
+            const selectedId = select.value;
+            const selectedText = select.options[select.selectedIndex]?.text;
+
+            if (!selectedId) return;
+
+            const slotCard = select.closest(".slotcard");
+            const slotId = select.getAttribute("data-speaker-add");
+            const chipsContainer = slotCard ? slotCard.querySelector(`[data-speaker-chips="${slotId}"]`) : null;
+
+            if (chipsContainer) {
+                const existingChip = chipsContainer.querySelector(`[data-chip-speaker-id="${selectedId}"]`);
+                if (!existingChip) {
+                    const chip = document.createElement("span");
+                    chip.className = "chip";
+                    chip.dataset.chipSpeakerId = selectedId;
+                    chip.innerHTML = `
+                        <span>${selectedText}</span>
+                        <button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>
+                    `;
+
+                    chip.querySelector(".chip__remove").addEventListener("click", function() {
+                        chip.remove();
+                    });
+
+                    chipsContainer.appendChild(chip);
+                }
+            }
+
+            // Reset dropdown back to default placeholder
+            select.value = "";
+
+            // Remove the invalid class and clear validation error message
+            clearFieldError(select);
+        }
     });
 </script>
