@@ -186,14 +186,14 @@
         </a>
         <div class="wizard__foot-end">
             <button type="submit" class="btn btn--primary" form="contentSectionForm" data-wizard-link>
-                @if (Model.HasExistingData)
+                @* @if (Model.HasExistingData)
                 {
                     <text>Update &amp; Continue</text>
                 }
                 else
-                {
+                { *@
                     <text>Continue</text>
-                }
+                @* } *@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg>
             </button>
         </div>

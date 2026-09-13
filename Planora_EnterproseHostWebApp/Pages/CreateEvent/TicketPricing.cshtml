@@ -294,6 +294,30 @@
         clip: rect(0 0 0 0);
         white-space: nowrap;
     }
+
+    /* Inline validation styling for this page only — reuses existing design tokens. */
+    .field__error {
+        display: none;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        line-height: var(--lh-snug, 1.4);
+        color: var(--color-danger);
+    }
+
+        .field__error.is-visible {
+            display: block;
+        }
+
+    .field__input.is-invalid,
+    .field__select.is-invalid {
+        border-color: var(--color-danger);
+    }
+
+        .field__input.is-invalid:focus,
+        .field__select.is-invalid:focus {
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px var(--color-danger-soft);
+        }
 </style>
 <div class="wizard__body">
 
@@ -341,8 +365,8 @@
                         <div class="formgrid formgrid--3" data-segment-panel="paid"
                              data-segment-owner="paidmode">
                             <div class="form__field">
-                                <label class="field__label" for="display-currency">Display Currency</label>
-                                <select class="field__select" id="display-currency" name="display-currency">
+                                <label class="field__label" for="display-currency">Display Currency<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <select class="field__select" id="display-currency" name="display-currency" aria-describedby="err-display-currency" data-validate="required">
                                     <option selected="@(Model.Currency == "NGN")">NGN</option>
                                     <option selected="@(Model.Currency == "USD")">USD</option>
                                     <option selected="@(Model.Currency == "GHS")">GHS</option>
@@ -350,14 +374,16 @@
                                     <option selected="@(Model.Currency == "ZAR")">ZAR</option>
                                 </select>
                                 <span class="field__hint">Prices shown to buyers</span>
+                                <span class="field__error" id="err-display-currency" role="alert"></span>
                             </div>
                             <div class="form__field">
-                                <label class="field__label" for="settlement-currency">Settlement Currency</label>
-                                <select class="field__select" id="settlement-currency" name="settlement-currency">
+                                <label class="field__label" for="settlement-currency">Settlement Currency<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                <select class="field__select" id="settlement-currency" name="settlement-currency" aria-describedby="err-settlement-currency" data-validate="required">
                                     <option selected="@(Model.Currency == "NGN")">NGN</option>
                                     <option selected="@(Model.Currency == "USD")">USD</option>
                                 </select>
                                 <span class="field__hint">Currency you are paid in</span>
+                                <span class="field__error" id="err-settlement-currency" role="alert"></span>
                             </div>
                             <div class="form__field">
                                 <label class="field__label" for="total-capacity">Total Capacity</label>
@@ -526,20 +552,23 @@
                             <div class="formgrid formgrid--2">
                                 <div class="form__field">
                                     <label class="field__label" for="free-qty">Quantity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <input class="field__input" id="free-qty" name="free-qty" type="text" placeholder="0" value="300" required>
+                                    <input class="field__input" id="free-qty" name="free-qty" type="text" placeholder="0" value="300" aria-describedby="err-free-qty" data-validate="number">
                                     <span class="field__hint">Total free tickets released</span>
+                                    <span class="field__error" id="err-free-qty" role="alert"></span>
                                 </div>
                                 <div class="form__field">
                                     <label class="field__label" for="free-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <input class="field__input" id="free-cap" name="free-cap" type="text" placeholder="0" value="300" required>
+                                    <input class="field__input" id="free-cap" name="free-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-cap" data-validate="number">
                                     <span class="field__hint">Hard ceiling across the event</span>
+                                    <span class="field__error" id="err-free-cap" role="alert"></span>
                                 </div>
                             </div>
 
                             <div class="formgrid u-mt-5">
                                 <div class="form__field">
-                                    <label class="field__label" for="free-desc">Description</label>
-                                    <textarea class="field__input" id="free-desc" name="free-desc" type="text" placeholder="Shown on the ticket card" value="General admission"></textarea>
+                                    <label class="field__label" for="free-desc">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                    <textarea class="field__input" id="free-desc" name="free-desc" type="text" placeholder="Shown on the ticket card" value="General admission" aria-describedby="err-free-desc" data-validate="required"></textarea>
+                                    <span class="field__error" id="err-free-desc" role="alert"></span>
                                 </div>
                             </div>
 
@@ -580,13 +609,15 @@
                                 <div class="sizegrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-rows">Total Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="12" required>
+                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="12" aria-describedby="err-free-rows" data-validate="number">
                                         <span class="field__hint">Rows are labelled A, B, C&hellip;</span>
+                                        <span class="field__error" id="err-free-rows" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="free-seats-row">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="20" required>
+                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="20" aria-describedby="err-free-seats-row" data-validate="number">
                                         <span class="field__hint">Numbered 1 upwards within each row</span>
+                                        <span class="field__error" id="err-free-seats-row" role="alert"></span>
                                     </div>
                                 </div>
                                 <p class="sizetotal">
@@ -599,13 +630,15 @@
                                 <div class="sizegrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-tables">Total Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="10" required>
+                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="10" aria-describedby="err-free-tables" data-validate="number">
                                         <span class="field__hint">Tables are labelled T1, T2, T3&hellip;</span>
+                                        <span class="field__error" id="err-free-tables" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="free-chairs">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="10" required>
+                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="10" aria-describedby="err-free-chairs" data-validate="number">
                                         <span class="field__hint">Seats are assigned per table</span>
+                                        <span class="field__error" id="err-free-chairs" role="alert"></span>
                                     </div>
                                 </div>
                                 <p class="sizetotal">
@@ -618,8 +651,9 @@
                                 <div class="formgrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-standing-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="300" required>
+                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-standing-cap" data-validate="number">
                                         <span class="field__hint">Registration closes at this number</span>
+                                        <span class="field__error" id="err-free-standing-cap" role="alert"></span>
                                     </div>
                                 </div>
                                 <p class="sizetotal">
@@ -632,8 +666,9 @@
                                 <div class="formgrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-open-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="300" required>
+                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-open-cap" data-validate="number">
                                         <span class="field__hint">Registration closes at this number</span>
+                                        <span class="field__error" id="err-free-open-cap" role="alert"></span>
                                     </div>
                                 </div>
                                 <p class="sizetotal">
@@ -1166,9 +1201,11 @@
                             <div class="tier">
                                 <div class="tier__head">
                                     <span class="tier__no tier__no--1" aria-hidden="true">1</span>
-                                    <label class="u-visually-hidden" for="tiername-early">Tier name</label>
+                                    <label class="u-visually-hidden" for="tiername-early">Tier name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                     <input class="tier__name field__input" id="tiername-early"
-                                           name="tiername-early" type="text" value="Early Bird">
+                                           name="tiername-early" type="text" value="Early Bird"
+                                           aria-describedby="err-tiername-early" data-validate="required">
+                                    <span class="field__error" id="err-tiername-early" role="alert"></span>
                                     <span class="tier__tools">
                                         <button class="iconbtn" type="button" aria-pressed="false"
                                                 data-tier-hide>
@@ -1186,27 +1223,32 @@
                                     <div class="formgrid formgrid--2">
                                         <div class="form__field">
                                             <label class="field__label" for="price-early">Price (&#8358;)<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="price-early" name="price-early" type="text" placeholder="0" value="5000" required>
+                                            <input class="field__input" id="price-early" name="price-early" type="text" placeholder="0" value="5000" aria-describedby="err-price-early" data-validate="number">
+                                            <span class="field__error" id="err-price-early" role="alert"></span>
                                         </div>
                                         <div class="form__field">
                                             <label class="field__label" for="qty-early">Quantity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="qty-early" name="qty-early" type="text" placeholder="0" value="200" required>
+                                            <input class="field__input" id="qty-early" name="qty-early" type="text" placeholder="0" value="200" aria-describedby="err-qty-early" data-validate="number">
+                                            <span class="field__error" id="err-qty-early" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="formgrid formgrid--2 u-mt-5">
                                         <div class="form__field">
-                                            <label class="field__label" for="salestart-early">Sale Start</label>
-                                            <input class="field__input" id="salestart-early" name="salestart-early" type="date">
+                                            <label class="field__label" for="salestart-early">Sale Start<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="salestart-early" name="salestart-early" type="date" aria-describedby="err-salestart-early" data-validate="required">
+                                            <span class="field__error" id="err-salestart-early" role="alert"></span>
                                         </div>
                                         <div class="form__field">
-                                            <label class="field__label" for="saleend-early">Sale End</label>
-                                            <input class="field__input" id="saleend-early" name="saleend-early" type="date">
+                                            <label class="field__label" for="saleend-early">Sale End<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="saleend-early" name="saleend-early" type="date" aria-describedby="err-saleend-early" data-validate="required">
+                                            <span class="field__error" id="err-saleend-early" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="formgrid u-mt-5">
                                         <div class="form__field">
-                                            <label class="field__label" for="desc-early">Description</label>
-                                            <textarea class="field__input" id="desc-early" name="desc-early" type="text" placeholder="Shown on the ticket card" value="Limited early access"></textarea>
+                                            <label class="field__label" for="desc-early">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <textarea class="field__input" id="desc-early" name="desc-early" type="text" placeholder="Shown on the ticket card" value="Limited early access" aria-describedby="err-desc-early" data-validate="required"></textarea>
+                                            <span class="field__error" id="err-desc-early" role="alert"></span>
                                         </div>
                                     </div>
                                     <span class="field__hint">
@@ -1249,21 +1291,24 @@
                                             <div class="formgrid formgrid--2 u-mt-5" data-pick-panel="date"
                                                  data-pick-owner="expmode-early">
                                                 <div class="form__field">
-                                                    <label class="field__label" for="expdate-early">Expiry Date</label>
-                                                    <input class="field__input" id="expdate-early" name="expdate-early" type="date" value="2026-07-15">
+                                                    <label class="field__label" for="expdate-early">Expiry Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                    <input class="field__input" id="expdate-early" name="expdate-early" type="date" value="2026-07-15" aria-describedby="err-expdate-early" data-validate="required">
+                                                    <span class="field__error" id="err-expdate-early" role="alert"></span>
                                                 </div>
                                                 <div class="form__field">
-                                                    <label class="field__label" for="exptime-early">Expiry Time</label>
-                                                    <input class="field__input" id="exptime-early" name="exptime-early" type="time" value="23:59">
+                                                    <label class="field__label" for="exptime-early">Expiry Time<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                    <input class="field__input" id="exptime-early" name="exptime-early" type="time" value="23:59" aria-describedby="err-exptime-early" data-validate="required">
+                                                    <span class="field__error" id="err-exptime-early" role="alert"></span>
                                                 </div>
                                             </div>
 
                                             <div class="formgrid u-mt-5" data-pick-panel="alloc"
                                                  data-pick-owner="expmode-early" hidden>
                                                 <div class="form__field">
-                                                    <label class="field__label" for="expalloc-early">Close after tickets sold</label>
-                                                    <input class="field__input" id="expalloc-early" name="expalloc-early" type="text" placeholder="e.g. 150">
+                                                    <label class="field__label" for="expalloc-early">Close after tickets sold<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                    <input class="field__input" id="expalloc-early" name="expalloc-early" type="text" placeholder="e.g. 150" aria-describedby="err-expalloc-early" data-validate="number">
                                                     <span class="field__hint">Sales stop once this many tickets in this tier are sold</span>
+                                                    <span class="field__error" id="err-expalloc-early" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1380,12 +1425,14 @@
                                             <div data-seatmode-panel="rows" hidden>
                                                 <div class="formgrid formgrid--2">
                                                     <div class="form__field">
-                                                        <label class="field__label" for="rows-early">Number of Rows</label>
-                                                        <input class="field__input" id="rows-early" name="rows-early" type="text" value="12">
+                                                        <label class="field__label" for="rows-early">Number of Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                        <input class="field__input" id="rows-early" name="rows-early" type="text" value="12" aria-describedby="err-rows-early" data-validate="number">
+                                                        <span class="field__error" id="err-rows-early" role="alert"></span>
                                                     </div>
                                                     <div class="form__field">
-                                                        <label class="field__label" for="seats-early">Seats per Row</label>
-                                                        <input class="field__input" id="seats-early" name="seats-early" type="text" value="20">
+                                                        <label class="field__label" for="seats-early">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                        <input class="field__input" id="seats-early" name="seats-early" type="text" value="20" aria-describedby="err-seats-early" data-validate="number">
+                                                        <span class="field__error" id="err-seats-early" role="alert"></span>
                                                     </div>
                                                 </div>
                                                 <button class="btn btn--outline btn--sm btn--block u-mt-5" type="button">
@@ -1437,12 +1484,14 @@
                                             <div data-seatmode-panel="tables" hidden>
                                                 <div class="formgrid formgrid--2">
                                                     <div class="form__field">
-                                                        <label class="field__label" for="tables-early">Number of Tables</label>
-                                                        <input class="field__input" id="tables-early" name="tables-early" type="text" value="10">
+                                                        <label class="field__label" for="tables-early">Number of Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                        <input class="field__input" id="tables-early" name="tables-early" type="text" value="10" aria-describedby="err-tables-early" data-validate="number">
+                                                        <span class="field__error" id="err-tables-early" role="alert"></span>
                                                     </div>
                                                     <div class="form__field">
-                                                        <label class="field__label" for="chairs-early">Chairs per Table</label>
-                                                        <input class="field__input" id="chairs-early" name="chairs-early" type="text" value="10">
+                                                        <label class="field__label" for="chairs-early">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                        <input class="field__input" id="chairs-early" name="chairs-early" type="text" value="10" aria-describedby="err-chairs-early" data-validate="number">
+                                                        <span class="field__error" id="err-chairs-early" role="alert"></span>
                                                     </div>
                                                 </div>
                                                 <button class="btn btn--outline btn--sm btn--block u-mt-5" type="button">
@@ -1498,9 +1547,10 @@
                                             <div data-seatmode-panel="standing" hidden>
                                                 <div class="formgrid">
                                                     <div class="form__field">
-                                                        <label class="field__label" for="standcap-early">Standing capacity</label>
-                                                        <input class="field__input" id="standcap-early" name="standcap-early" type="text" value="200">
+                                                        <label class="field__label" for="standcap-early">Standing capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                        <input class="field__input" id="standcap-early" name="standcap-early" type="text" value="200" aria-describedby="err-standcap-early" data-validate="number">
                                                         <span class="field__hint">Tickets are sold up to this number; no seat is assigned</span>
+                                                        <span class="field__error" id="err-standcap-early" role="alert"></span>
                                                     </div>
                                                 </div>
                                                 <div class="seatmap">
@@ -1511,9 +1561,10 @@
                                             <div data-seatmode-panel="open">
                                                 <div class="formgrid">
                                                     <div class="form__field">
-                                                        <label class="field__label" for="opencap-early">Seats available</label>
-                                                        <input class="field__input" id="opencap-early" name="opencap-early" type="text" value="200">
+                                                        <label class="field__label" for="opencap-early">Seats available<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                        <input class="field__input" id="opencap-early" name="opencap-early" type="text" value="200" aria-describedby="err-opencap-early" data-validate="number">
                                                         <span class="field__hint">Counted for capacity, but no seat numbers are printed on tickets</span>
+                                                        <span class="field__error" id="err-opencap-early" role="alert"></span>
                                                     </div>
                                                 </div>
                                                 <div class="seatmap">
@@ -2412,6 +2463,7 @@
                         'for',
                         'aria-controls',
                         'aria-labelledby',
+                        'aria-describedby',
                         'data-reveal',
                         'data-upload',
                         'data-upload-dropzone',
@@ -2426,10 +2478,10 @@
                     ];
 
                     var scoped = node.querySelectorAll(
-                        '[id],[name],[for],[aria-controls],[aria-labelledby],' +
+                        '[id],[name],[for],[aria-controls],[aria-labelledby],[aria-describedby],' +
                         '[data-reveal],[data-upload],[data-upload-dropzone],' +
                         '[data-pick-owner],[data-segment-owner],[data-tier-repeat-add],' +
-                        '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes]' +
+                        '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes],' +
                         '[data-incl-group]'
                     );
 
@@ -2455,7 +2507,8 @@
                                 (attr === 'data-incl-switch' ||
                                     attr === 'data-incl-body' ||
                                     attr === 'data-incl-off' ||
-                                    attr === 'data-includes') &&
+                                    attr === 'data-includes' ||
+                                    attr === 'data-incl-group') &&
                                 v === oldSuffix
                             ) {
                                 el.setAttribute(attr, newSuffix);
@@ -2696,6 +2749,27 @@
                             setFieldOn(clone, 'salestart-' + suffix, item.saleStart);
                             setFieldOn(clone, 'saleend-' + suffix, item.saleEnd);
 
+                            // Seating layout: the API response doesn't say which seat-mode
+                            // panel (rows, tables, standing or open) was active for this
+                            // tier, so that picker is left at its template default - but
+                            // every mode's saved numbers are filled in below so whichever
+                            // panel the user opens shows the real saved values instead of
+                            // the template's placeholder ones. Also note the API's
+                            // "columns" field is misspelled "coulmns" on the wire, so both
+                            // spellings are checked here.
+                            var isSeatingOn = item.isSeating === true || item.IsSeating === true;
+                            var seatingSwitch = clone.querySelector('[role="switch"][data-switch]');
+                            if (seatingSwitch) {
+                                seatingSwitch.setAttribute('aria-checked', isSeatingOn ? 'true' : 'false');
+                                applyReveal(seatingSwitch, clone);
+                            }
+                            setFieldOn(clone, 'rows-' + suffix, item.rows);
+                            setFieldOn(clone, 'seats-' + suffix, item.columns != null ? item.columns : item.coulmns);
+                            setFieldOn(clone, 'tables-' + suffix, item.numberOfTables);
+                            setFieldOn(clone, 'chairs-' + suffix, item.chairsPerTable);
+                            setFieldOn(clone, 'standcap-' + suffix, item.standingCapacity);
+                            setFieldOn(clone, 'opencap-' + suffix, item.openSeatingCapacity);
+
                             rehydrateInclusions(clone, suffix, item.Inclusions || item.inclusions || []);
 
                             freshTiers.push(clone);
@@ -2930,6 +3004,12 @@
                         if (readyToSubmit) return;
 
                         e.preventDefault();
+
+                        // Block submission (and the async member-list upload step below)
+                        // until every visible required field passes validation.
+                        if (window.__ticketPricingValidateAll && !window.__ticketPricingValidateAll()) {
+                            return;
+                        }
 
                         if (pricingMode && !pricingMode.value) pricingMode.value = 'paid';
 
@@ -3297,10 +3377,10 @@
             const rowDiv = document.createElement('div');
             rowDiv.className = 'directory__row';
             rowDiv.innerHTML = `
-                                <span>${escapeHtml(name)}</span>
-                                <span class="directory__email">${escapeHtml(email)}</span>
-                                <span class="badge badge--live">Verified</span>
-                            `;
+                                    <span>${escapeHtml(name)}</span>
+                                    <span class="directory__email">${escapeHtml(email)}</span>
+                                    <span class="badge badge--live">Verified</span>
+                                `;
             scrollContainer.appendChild(rowDiv);
         });
 
@@ -3370,4 +3450,120 @@
         };
         reader.readAsDataURL(file);
     }
+</script>
+<script>
+    /* ------------------------------------------------------------
+       Field validation — required / format checks, inline red error
+       text under each field, live as the user types/selects, and
+       re-checked on submit. Mirrors the validation style used on
+       the Basic Details step.
+
+       Delegated on `document` (rather than bound per-input) so it
+       keeps working for ticket tiers added later via "Add Tier" -
+       cloned fields inherit their `data-validate` attribute but get
+       no listeners of their own; delegation doesn't need any.
+       ------------------------------------------------------------ */
+    (function() {
+        if (window.__ticketPricingValidateAll) return;
+
+        var NUMBER_PATTERN = /^\d+(\.\d+)?$/;
+
+        function fieldLabelText(input) {
+            var label = input.id ? document.querySelector('label[for="' + CSS.escape(input.id) + '"]') : null;
+            if (!label) return 'This field';
+
+            var clone = label.cloneNode(true);
+            clone.querySelectorAll('span').forEach(function(s) { s.remove(); });
+            var text = clone.textContent.trim();
+            return text || 'This field';
+        }
+
+        function getErrorEl(input) {
+            var field = input.closest('.form__field') || input.closest('.tier__head');
+            return field ? field.querySelector('.field__error') : null;
+        }
+
+        function isVisible(input) {
+            // Fields inside a hidden pricing-mode panel, seat-mode panel or
+            // collapsed expiry/reveal section shouldn't block submission -
+            // only the currently active fields matter.
+            return input.offsetParent !== null;
+        }
+
+        function showFieldError(input, message) {
+            input.classList.add('is-invalid');
+            var err = getErrorEl(input);
+            if (err) {
+                err.textContent = message;
+                err.classList.add('is-visible');
+            }
+        }
+
+        function clearFieldError(input) {
+            input.classList.remove('is-invalid');
+            var err = getErrorEl(input);
+            if (err) {
+                err.textContent = '';
+                err.classList.remove('is-visible');
+            }
+        }
+
+        function runValidator(input) {
+            var type = input.getAttribute('data-validate');
+            if (!type) return true;
+
+            if (!isVisible(input)) {
+                clearFieldError(input);
+                return true;
+            }
+
+            var value = (input.value || '').trim();
+            var label = fieldLabelText(input);
+            var message = '';
+
+            if (!value) {
+                message = label + ' is required.';
+            } else if (type === 'number' && !NUMBER_PATTERN.test(value)) {
+                message = 'Enter a valid number for ' + label + '.';
+            }
+
+            if (message) {
+                showFieldError(input, message);
+            } else {
+                clearFieldError(input);
+            }
+            return !message;
+        }
+
+        ['input', 'change', 'focusout'].forEach(function(eventName) {
+            document.addEventListener(eventName, function(e) {
+                var input = e.target && e.target.closest && e.target.closest('[data-validate]');
+                if (input) runValidator(input);
+            });
+        });
+
+        // Exposed so the form's submit handler can block submission (and the
+        // async member-list upload step) until every visible required field
+        // passes validation, without altering that handler's own logic.
+        window.__ticketPricingValidateAll = function() {
+            var isValid = true;
+            var firstInvalid = null;
+
+            document.querySelectorAll('#TicketPriceForm [data-validate]').forEach(function(input) {
+                if (!runValidator(input)) {
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = input;
+                }
+            });
+
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (typeof firstInvalid.focus === 'function') {
+                    firstInvalid.focus({ preventScroll: true });
+                }
+            }
+
+            return isValid;
+        };
+    })();
 </script>
