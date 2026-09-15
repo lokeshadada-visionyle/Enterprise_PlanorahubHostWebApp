@@ -208,6 +208,8 @@ namespace Planora_EnterproseHostWebApp.Models
     {
         public string VenueName { get; set; }
         public string Address { get; set; }
+        public string City { get; set; }
+        public string MapUrl { get; set; }
         public List<Hall> Halls { get; set; }
     }
     public class Hall
@@ -233,6 +235,8 @@ namespace Planora_EnterproseHostWebApp.Models
         public int VenueId { get; set; }
         public string? VenueName { get; set; }
         public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? MapUrl { get; set; }
         public List<GetHall> Halls { get; set; } = new();
     }
     public class GetHall
@@ -273,7 +277,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public string EndTime { get; set; } = string.Empty;
         public int HallId { get; set; }
         public int Capacity { get; set; }
-        public int SpeakersId { get; set; }
+        public int SpeakerId { get; set; }
     }
     public class AddSpeakerReq
     {
@@ -542,7 +546,7 @@ namespace Planora_EnterproseHostWebApp.Models
         // The live API returns this array under the key "EventDate" (singular),
         // not "EventDates". Without this JsonPropertyName the list always
         // deserialized as null even though the HTTP call succeeded.
-        [System.Text.Json.Serialization.JsonPropertyName("EventDates")]
+        [System.Text.Json.Serialization.JsonPropertyName("EventDate")]
         public List<EventDates> EventDates { get; set; }
     }
     public class EventDates
@@ -555,7 +559,7 @@ namespace Planora_EnterproseHostWebApp.Models
 
         // NOTE (fix for API #8): the live API returns the nested slots array
         // under the key "EventSlot" (singular), not "EventSlots".
-        [System.Text.Json.Serialization.JsonPropertyName("EventSlots")]
+        [System.Text.Json.Serialization.JsonPropertyName("EventSlot")]
         public List<EventSlot> EventSlots { get; set; } = new List<EventSlot>();
     }
     public class EventSlot
@@ -582,6 +586,8 @@ namespace Planora_EnterproseHostWebApp.Models
         public int VenueId { get; set; }
         public string VenueName { get; set; }
         public string Address { get; set; }
+        public string City { get; set; }
+        public string MapUrl { get; set; }
         public List<UpdateHall> Halls { get; set; } = new();
     }
     public class UpdateHall
