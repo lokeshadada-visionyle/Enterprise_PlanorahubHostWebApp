@@ -3836,4 +3836,35 @@
         // Render once on load for any pre-filled description (existing/rehydrated tiers).
         document.querySelectorAll('textarea[id^="desc-"], #free-desc').forEach(renderDescPreview);
     })();
+    document.addEventListener("DOMContentLoaded", function () {
+    const pricingModeInput = document.getElementById("PricingMode");
+    const segmentButtons = document.querySelectorAll("#paidmode [data-segment-value]");
+
+    segmentButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const selectedValue = this.getAttribute("data-segment-value");
+
+            // 1. Update hidden field value for POST request
+            if (pricingModeInput) {
+                pricingModeInput.value = selectedValue;
+            }
+
+            // 2. Update button UI states
+            segmentButtons.forEach(btn => btn.setAttribute("aria-pressed", "false"));
+            this.setAttribute("aria-pressed", "true");
+
+            // 3. Toggle free/paid UI panels
+            const paidPanels = document.querySelectorAll('[data-segment-panel="paid"]');
+            const freePanels = document.querySelectorAll('[data-segment-panel="free"]');
+
+            if (selectedValue === "free") {
+                paidPanels.forEach(panel => panel.hidden = true);
+                freePanels.forEach(panel => panel.hidden = false);
+            } else {
+                paidPanels.forEach(panel => panel.hidden = false);
+                freePanels.forEach(panel => panel.hidden = true);
+            }
+        });
+    });
+});
 </script>

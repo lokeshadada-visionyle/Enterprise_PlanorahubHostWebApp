@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Planora_EnterproseHostWebApp.Extensions;
 using Planora_EnterproseHostWebApp.Models;
+using System.Diagnostics;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text.Json;
@@ -200,7 +201,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             //    StringComparison.OrdinalIgnoreCase)
             //    ? "free"
             //    : "paid";
-
+            Debug.WriteLine(PricingMode);
             // Public events may use either mode. Private events are paid-only.
             if (!IsPrivateEvent && PricingMode == "free")
             {
