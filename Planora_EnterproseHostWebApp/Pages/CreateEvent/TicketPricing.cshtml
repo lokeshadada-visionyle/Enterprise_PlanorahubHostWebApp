@@ -7,6 +7,13 @@
     ViewData["StepName"] = "Tickets & Pricing";
     ViewData["StepHint"] = "Set pricing, capacity and ticket tiers";
 
+    var requestedEventType = Request.Query["type"].FirstOrDefault();
+    var pageIsPrivateEvent = string.Equals(requestedEventType, "private", StringComparison.OrdinalIgnoreCase)
+        ? true
+        : string.Equals(requestedEventType, "public", StringComparison.OrdinalIgnoreCase)
+            ? false
+            : Model.IsPrivateEvent;
+
     var allEventSlots = (Model.EventDates ?? new List<Planora_EnterproseHostWebApp.Models.EventDates>())
         .Where(d => d.EventSlots != null)
         .SelectMany(d => d.EventSlots)
@@ -335,8 +342,8 @@
             <form class="stack" id="TicketPriceForm" method="post" enctype="multipart/form-data" novalidate data-ticket-pricing-form>
                 @Html.AntiForgeryToken()
                 <input type="hidden" id="EventId" name="EventId" value="@Model.EventId" />
+                <input type="hidden" id="EventType" name="EventType" value="@(pageIsPrivateEvent ? "private" : "public")" />
                 <input type="hidden" id="PricingMode" name="PricingMode" value="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) ? "free" : "paid")" />
-
                 @* Existing ticket tiers (if any) for this event, used to rehydrate the
                    form below. type="application/json" means the browser never
                    executes this as script - it's inert data, parsed via
@@ -349,17 +356,21 @@
                         <div>
                             <h2 class="panel__title" id="pricing-title">Event Pricing</h2>
                             <p class="panel__meta">
-                                @(Model.IsPrivateEvent ? "Private events are paid tickets only" : "Toggle to offer free or paid tickets")
+                                @(pageIsPrivateEvent ? "Private events are paid tickets only" : "Toggle to offer free or paid tickets")
                             </p>
                         </div>
                         <div class="segment" id="paidmode" role="group" aria-label="Pricing mode" data-segment>
-                            @if (!Model.IsPrivateEvent)
+                            @if (!pageIsPrivateEvent)
                             {
-                                <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "true" : "false")" data-segment-value="free">
+                                <button class="segment__btn" type="button"
+                                        aria-pressed="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) && !pageIsPrivateEvent ? "true" : "false")"
+                                        data-segment-value="free">
                                     Free
                                 </button>
                             }
-                            <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "false" : "true")" data-segment-value="paid">
+                            <button class="segment__btn" type="button"
+                                    aria-pressed="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) && !pageIsPrivateEvent ? "false" : "true")"
+                                    data-segment-value="paid">
                                 Paid
                             </button>
                         </div>
@@ -528,7 +539,7 @@
                 </section> *@
 
                 <!-- Free events: exactly one tier (public events only; private events are paid-only) -->
-                @if (!Model.IsPrivateEvent)
+                @if (!pageIsPrivateEvent)
                 {
                 <section class="panel" data-segment-panel="free" data-segment-owner="paidmode"
                          aria-labelledby="freetier-title" hidden>
@@ -734,80 +745,37 @@
                             </fieldset>
 
                             <div class="scopepicker u-mt-5" id="accdays-free" hidden>
-                                <p class="scopepicker__head">
-                                    Days come from your Schedule Builder &mdash; tick the ones this ticket
-                                    covers. All standard sessions on a ticked day are included.
-                                </p>
-                                <div class="scopeday__slots scopeday__slots--flush">
-                                    <label class="scopeslot">
-                                        <input type="checkbox" name="acc-free-day-1">
-                                        <span class="scopeslot__body">
-                                            <span class="scopeslot__name">Day 1 &mdash; Opening Day</span>
-                                            <span class="scopeslot__meta">2026-08-06 &middot; 3 sessions</span>
-                                        </span>
-                                    </label>
-                                    <label class="scopeslot">
-                                        <input type="checkbox" name="acc-free-day-2">
-                                        <span class="scopeslot__body">
-                                            <span class="scopeslot__name">Day 2 &mdash; Session 2</span>
-                                            <span class="scopeslot__meta">2026-08-07 &middot; 2 sessions</span>
-                                        </span>
-                                    </label>
-                                </div>
+                            <p class="scopepicker__head">
+                                Days come from your Schedule Builder &mdash; tick the ones this ticket covers.
+                            </p>
+                            <div class="scopeday__slots scopeday__slots--flush">
+                                @if (Model.EventDates != null && Model.EventDates.Any())
+                                {
+                                    var dayIndex = 1;
+                                    foreach (var date in Model.EventDates)
+                                    {
+                                        <label class="scopeslot">
+                                            <input type="checkbox" name="acc-free-day-@date.EventDateId" value="@date.EventDateId">
+                                            <span class="scopeslot__body">
+                                                <span class="scopeslot__name">Day @dayIndex &mdash; @date.SessionName</span>
+                                                <span class="scopeslot__meta">@date.EventDateValue &middot; @(date.EventSlots?.Count ?? 0) sessions</span>
+                                            </span>
+                                        </label>
+                                        dayIndex++;
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="field__hint">No event dates found.</p>
+                                }
                             </div>
+                        </div>
 
                             <div class="scopepicker u-mt-5" id="accsessions-free" hidden>
                                 <p class="scopepicker__head">
                                     Pick individual sessions. Narrow the list first if your schedule is long.
                                 </p>
-                                <div class="sessionfilter" data-session-scope="accsessions-free">
-                                    <div class="sessionfilter__field sessionfilter__field--wide">
-                                        <label class="slotcard__label" for="sf-text-free">Search</label>
-                                        <input class="field__input" id="sf-text-free" name="sf-text-free"
-                                               type="search" placeholder="Session, speaker or hall"
-                                               data-session-filter="text">
-                                    </div>
-                                    <div class="sessionfilter__field">
-                                        <label class="slotcard__label" for="sf-date-free">Date</label>
-                                        <select class="field__select" id="sf-date-free" name="sf-date-free"
-                                                data-session-filter="date">
-                                            <option value="">All</option>
-                                            <option>2026-08-06</option>
-                                            <option>2026-08-07</option>
-                                        </select>
-                                    </div>
-                                    <div class="sessionfilter__field">
-                                        <label class="slotcard__label" for="sf-venue-free">Venue</label>
-                                        <select class="field__select" id="sf-venue-free" name="sf-venue-free"
-                                                data-session-filter="venue">
-                                            <option value="">All</option>
-                                            <option>Eko Convention Centre</option>
-                                            <option>Landmark Centre</option>
-                                        </select>
-                                    </div>
-                                    <div class="sessionfilter__field">
-                                        <label class="slotcard__label" for="sf-hall-free">Hall</label>
-                                        <select class="field__select" id="sf-hall-free" name="sf-hall-free"
-                                                data-session-filter="hall">
-                                            <option value="">All</option>
-                                            <option>Main Hall</option>
-                                            <option>Hall B</option>
-                                            <option>Breakout Room 1</option>
-                                            <option>VIP Lounge</option>
-                                        </select>
-                                    </div>
-                                    <div class="sessionfilter__field">
-                                        <label class="slotcard__label" for="sf-track-free">Track</label>
-                                        <select class="field__select" id="sf-track-free" name="sf-track-free"
-                                                data-session-filter="track">
-                                            <option value="">All</option>
-                                            <option>Keynote</option>
-                                            <option>Panel</option>
-                                            <option>Workshop</option>
-                                            <option>Clinic</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                
                                 <div class="sessionlist">
                                     @{
                                         var freeDaySeq = 0;
@@ -2681,13 +2649,106 @@
                     if (!form) return;
 
                     var pricingMode = form.querySelector('#PricingMode');
+                    var pricingModeGroup = document.getElementById('paidmode');
 
-                    document.addEventListener('click', function(e) {
-                        var button = e.target.closest('#paidmode [data-segment-value]');
-                        if (!button) return;
-                        var pm = document.querySelector('#PricingMode');
-                        if (pm) pm.value = button.getAttribute('data-segment-value') || 'paid';
-                    });
+                    // ============================================================
+                    // Pricing mode
+                    // PUBLIC  event -> Free or Paid
+                    // PRIVATE event -> Paid only
+                    //
+                    // PricingMode is a real form field and is the value that is
+                    // posted to OnPost(). The selected pricing button is the
+                    // client-side source of truth for that hidden field.
+                    // ============================================================
+                    var isPrivateEvent = @(pageIsPrivateEvent ? "true" : "false");
+
+                    function normalizePricingMode(mode) {
+                        mode = (mode || '').toString().trim().toLowerCase();
+
+                        // Private events are paid-only.
+                        if (isPrivateEvent) {
+                            return 'paid';
+                        }
+
+                        // Public events support both modes.
+                        return mode === 'free' ? 'free' : 'paid';
+                    }
+
+                    function syncPricingMode(mode) {
+                        var normalizedMode = normalizePricingMode(mode);
+
+                        // Always update the actual hidden input that ASP.NET binds.
+                        var hiddenPricingMode = document.getElementById('PricingMode');
+                        if (hiddenPricingMode) {
+                            hiddenPricingMode.value = normalizedMode;
+                        }
+
+                        // Update the visual selected button.
+                        if (pricingModeGroup) {
+                            pricingModeGroup.querySelectorAll('[data-segment-value]').forEach(function(button) {
+                                var buttonMode = (button.getAttribute('data-segment-value') || '')
+                                    .toString()
+                                    .trim()
+                                    .toLowerCase();
+
+                                button.setAttribute(
+                                    'aria-pressed',
+                                    buttonMode === normalizedMode ? 'true' : 'false'
+                                );
+                            });
+                        }
+
+                        // Show only the sections belonging to the selected mode.
+                        document.querySelectorAll('[data-segment-owner="paidmode"]').forEach(function(panel) {
+                            var panelMode = (panel.getAttribute('data-segment-panel') || '')
+                                .toString()
+                                .trim()
+                                .toLowerCase();
+
+                            if (panelMode === normalizedMode &&
+                                !(isPrivateEvent && panelMode === 'free')) {
+                                panel.removeAttribute('hidden');
+                            } else {
+                                panel.setAttribute('hidden', '');
+                            }
+                        });
+
+                        return normalizedMode;
+                    }
+
+                    // ------------------------------------------------------------
+                    // Initial state.
+                    // Do not force a PUBLIC event to Paid when the server already
+                    // rendered PricingMode = free.
+                    // ------------------------------------------------------------
+                    syncPricingMode(
+                        pricingMode ? pricingMode.value : 'paid'
+                    );
+
+                    // ------------------------------------------------------------
+                    // Free / Paid button click.
+                    // This directly changes the hidden PricingMode field.
+                    // ------------------------------------------------------------
+                    if (pricingModeGroup) {
+                        pricingModeGroup.addEventListener('click', function(e) {
+                            var button = e.target.closest('[data-segment-value]');
+
+                            if (!button || !pricingModeGroup.contains(button)) {
+                                return;
+                            }
+
+                            var selectedMode = button.getAttribute('data-segment-value') || 'paid';
+
+                            syncPricingMode(selectedMode);
+
+                            console.log(
+                                '[TicketPricing] Selected pricing mode:',
+                                document.getElementById('PricingMode')
+                                    ? document.getElementById('PricingMode').value
+                                    : 'PricingMode field not found'
+                            );
+                        });
+                    }
 
                     // ---- Add Tier / Remove Tier -----------------------------------
                     var tierList = document.getElementById('tier-list');
@@ -3017,12 +3078,32 @@
 
                         e.preventDefault();
 
+                        // --------------------------------------------------------
+                        // FINAL PRICING MODE SYNC BEFORE POST
+                        // --------------------------------------------------------
+                        // Read the selected button first. This prevents an old/stale
+                        // hidden value such as "paid" from overriding a newly
+                        // selected "free" mode on a PUBLIC event.
+                        var selectedPricingButton = document.querySelector(
+                            '#paidmode [data-segment-value][aria-pressed="true"]'
+                        );
+
+                        var selectedPricingMode = selectedPricingButton
+                            ? selectedPricingButton.getAttribute('data-segment-value')
+                            : (pricingMode ? pricingMode.value : 'paid');
+
+                        var finalPricingMode = syncPricingMode(selectedPricingMode);
+
+                        console.log(
+                            '[TicketPricing] FINAL PricingMode before POST:',
+                            finalPricingMode
+                        );
+
                         // Block submission (and the async member-list upload step below)
                         // until every visible required field passes validation.
                         if (window.__ticketPricingValidateAll && !window.__ticketPricingValidateAll()) {
                             return;
                         }
-                        if (pricingMode && !pricingMode.value) pricingMode.value = 'paid';
 
                         if (pricingMode && pricingMode.value === 'free') {
                             // Free mode: the Ticket Tiers section isn't read server-side
@@ -3742,4 +3823,31 @@
         });
     });
 });
+function syncUIWithPricingMode() {
+    const pricingModeInput = document.getElementById("PricingMode");
+    if (!pricingModeInput) return;
+
+    const currentMode = pricingModeInput.value.toLowerCase();
+    const segmentButtons = document.querySelectorAll("#paidmode [data-segment-value]");
+
+    segmentButtons.forEach(button => {
+        const isSelected = button.getAttribute("data-segment-value") === currentMode;
+        button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        button.classList.toggle("active", isSelected);
+    });
+class="inclrow" data-incl-row
+    const paidPanels = document.querySelectorAll('[data-segment-panel="paid"]');
+    const freePanels = document.querySelectorAll('[data-segment-panel="free"]');
+
+    if (currentMode === "free") {
+        paidPanels.forEach(panel => panel.hidden = true);
+        freePanels.forEach(panel => panel.hidden = false);
+    } else {
+        paidPanels.forEach(panel => panel.hidden = false);
+        freePanels.forEach(panel => panel.hidden = true);
+    }
+}
+
+// Ensures correct UI highlight when navigating back via browser cache
+window.addEventListener("pageshow", syncUIWithPricingMode);
 </script>
