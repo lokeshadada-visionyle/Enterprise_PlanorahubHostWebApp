@@ -85,7 +85,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateHost
             value ? "badge badge--live" : "badge badge--nodot badge--neutral";
 
         public string BadgeText(bool value, string yes = "Yes", string no = "\u2014") =>
-            value ? "--" : no;
+    value ? yes : no;
 
         public string LockedBadgeText(bool value) =>
             value ? "on" : "off";
