@@ -21,17 +21,19 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public string EventType { get; set; } = string.Empty;
 
         [BindProperty]
-        public string PricingMode { get; set; }
+        public string PricingMode { get; set; } = string.Empty;
 
         public string Currency { get; private set; } = "NGN";
 
         public bool IsPrivateEvent { get; private set; }
 
         public List<EventDates> EventDates { get; private set; } = new List<EventDates>();
+
         [BindProperty]
         public bool HasExistingTicketData { get; set; }
 
         public string ExistingTicketDataJson { get; private set; } = "[]";
+
         public string? ErrorMessage { get; private set; }
 
         public string? SuccessMessage { get; private set; }
@@ -41,11 +43,11 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
+
             ViewData["StepIndex"] = 5;
+
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
 
@@ -55,12 +57,12 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             IsPrivateEvent = string.Equals(EventType, "private", StringComparison.OrdinalIgnoreCase);
 
             var helper = new CommonHelper();
+
             try
             {
                 var response = helper.GetEventCurrency(userId.Value, eventId.Value);
 
-                if (response != null &&
-                    !string.IsNullOrWhiteSpace(response.Currency))
+                if (response != null && !string.IsNullOrWhiteSpace(response.Currency))
                 {
                     Currency = response.Currency.Trim();
                 }
@@ -82,6 +84,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             {
                 ErrorMessage = "Unable to load event dates/slots: " + ex.Message;
             }
+
             try
             {
                 var tierResp = helper.GetTicketTypeTierResp(userId.Value, eventId.Value);
@@ -106,8 +109,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 ErrorMessage = "Unable to load existing ticket tiers: " + ex.Message;
             }
 
-            // Private events are never allowed to offer free tickets, regardless of
-            // what the previously saved ticket data says.
             if (IsPrivateEvent && string.Equals(PricingMode, "free", StringComparison.OrdinalIgnoreCase))
             {
                 PricingMode = "paid";
@@ -115,6 +116,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             return Page();
         }
+
         public IActionResult OnPostSetCurrency([FromBody] SetCurrencyRequestDto req)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -147,7 +149,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     Currency = req.Currency.Trim()
                 });
 
-                // Same success convention used elsewhere in this file (0 / 1 / 200).
                 if (response != null && (response.Status == 0 || response.Status == 1 || response.Status == 200))
                 {
                     return new JsonResult(new { status = 1, message = "Currency updated.", currency = req.Currency.Trim() });
@@ -165,19 +166,18 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             public string Currency { get; set; } = string.Empty;
         }
+
         public IActionResult OnPost()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
-
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
+
             ResolveIds();
 
             EventType = ResolveEventType();
@@ -195,24 +195,18 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return Page();
             }
 
-            //PricingMode = string.Equals(
-            //    PricingMode,
-            //    "free",
-            //    StringComparison.OrdinalIgnoreCase)
-            //    ? "free"
-            //    : "paid";
             Debug.WriteLine(PricingMode);
-            // Public events may use either mode. Private events are paid-only.
-            if (!IsPrivateEvent && PricingMode == "free")
-            {
-                PricingMode = "free";
-            }
-            else
+
+            if (IsPrivateEvent)
             {
                 PricingMode = "paid";
             }
-
-
+            else
+            {
+                PricingMode = string.Equals(PricingMode, "free", StringComparison.OrdinalIgnoreCase)
+                    ? "free"
+                    : "paid";
+            }
 
             List<ParsedTier> parsedTiers = PricingMode == "free"
                 ? BuildFreeTier(eventId.Value)
@@ -223,6 +217,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 ErrorMessage = "Please add at least one ticket tier.";
                 return Page();
             }
+
             var newTiers = parsedTiers.Where(t => t.TicketTypeId <= 0).ToList();
             var existingTiers = parsedTiers.Where(t => t.TicketTypeId > 0).ToList();
 
@@ -301,9 +296,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
         }
 
-        // =========================
-        // PARSED TIER (shared shape for both Add and Update paths)
-        // =========================
         private class ParsedTier
         {
             public int TicketTypeId { get; set; }
@@ -391,7 +383,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             SelectedSlotIds = t.SelectedSlotIds,
             Inclusions = t.Inclusions.Select(i => new UpdateInclusions
             {
-                InclusionId = 0, // Set to existing inclusion ID if available, otherwise 0 for new inclusions
+                InclusionId = 0,
                 InclusionName = i.InclusionName,
                 Description = i.Description,
                 SortOrder = i.SortOrder
@@ -402,15 +394,13 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
-
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
             }
+
             ResolveIds();
 
             if (userId <= 0)
@@ -431,8 +421,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return new JsonResult(new { status = 0, message = "Only .csv or .xlsx files are supported." });
             }
 
-            // Reject absurdly large uploads before they hit the downstream service.
-            // Base64 is ~4/3 the size of the raw bytes, so this caps the file at ~10MB.
             const int maxBase64Length = 14_000_000;
             if (req.FileBase64.Length > maxBase64Length)
             {
@@ -457,9 +445,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     return new JsonResult(new { status = 0, message = "Empty response from upload service." });
                 }
 
-                // Remember which URL we actually issued for this tier, so the final
-                // OnPost submission can be checked against it instead of trusting
-                // whatever value the client posts back in the hidden input.
                 if (response.Status == 1 && !string.IsNullOrWhiteSpace(response.FileURL))
                 {
                     RememberUploadedMemberListUrl(eventId.Value, req.TierSuffix, response.FileURL);
@@ -485,14 +470,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             public string FileName { get; set; } = string.Empty;
             public string FileBase64 { get; set; } = string.Empty;
         }
-        // =========================
-        // MEMBER-LIST URL VERIFICATION
-        // =========================
-        // The upload URL for a "members only" tier is round-tripped through a
-        // client-side hidden input, which anyone can edit before final submit.
-        // To avoid trusting an arbitrary attacker-supplied URL, we remember what
-        // OnPostUploadMembers actually issued for each (eventId, tier) pair in
-        // session, and only accept a submitted URL that matches exactly.
 
         private const string MemberListUploadsSessionKeyPrefix = "MemberListUploads_";
 
@@ -520,12 +497,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             HttpContext.Session.SetString(MemberListUploadsSessionKeyPrefix + eventId, JsonSerializer.Serialize(map));
         }
 
-        /// <summary>
-        /// Returns the submitted member-list URL only if it exactly matches what we
-        /// actually issued for this tier during this session. Otherwise returns
-        /// empty, so a tampered/stale value can never be persisted as the tier's
-        /// member gate list.
-        /// </summary>
         private string GetVerifiedMemberListUrl(int eventId, string tierSuffix, string submittedUrl)
         {
             if (string.IsNullOrWhiteSpace(submittedUrl))
@@ -540,10 +511,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
         private string ResolveEventType()
         {
-            // The explicit event type carried by the current wizard URL/form is the
-            // source of truth for this step. Only fall back to session state when no
-            // explicit type was supplied. This prevents a stale session value from
-            // forcing a public event into paid-only mode.
             var eventType = string.Empty;
 
             if (Request.HasFormContentType)
@@ -569,7 +536,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             return HttpContext.Session.IsPrivateEvent() ? "private" : "public";
         }
 
-
         private void ResolveIds()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -577,10 +543,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 RedirectToPage("/Login/Login");
             }
+
             var eventId = HttpContext.Session.GetInt32("createdEventId");
             if (eventId <= 0)
                 EventId = ReadInt("EventId", "eventId");
@@ -588,128 +553,84 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             if (userId <= 0)
                 UserId = ReadLong("UserId", "userId");
 
-
             if (eventId <= 0)
                 EventId = ReadSessionInt("EventId", "eventId");
 
             if (userId <= 0)
                 UserId = ReadSessionLong("UserId", "userId");
 
-
             if (userId <= 0)
             {
-                var claim =
-                    User.FindFirstValue(ClaimTypes.NameIdentifier)
+                var claim = User.FindFirstValue(ClaimTypes.NameIdentifier)
                     ?? User.FindFirstValue("UserId")
                     ?? User.FindFirstValue("userId");
 
-                if (long.TryParse(
-                    claim,
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out var claimUserId))
+                if (long.TryParse(claim, NumberStyles.Integer, CultureInfo.InvariantCulture, out var claimUserId))
                 {
                     UserId = claimUserId;
                 }
             }
         }
 
-
         private int ReadInt(params string[] names)
         {
             foreach (var name in names)
             {
-                if (int.TryParse(
-                    Request.Query[name].FirstOrDefault(),
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out var queryValue))
+                if (int.TryParse(Request.Query[name].FirstOrDefault(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var queryValue))
                 {
                     return queryValue;
                 }
 
-                if (Request.HasFormContentType &&
-                    int.TryParse(
-                        Request.Form[name].FirstOrDefault(),
-                        NumberStyles.Integer,
-                        CultureInfo.InvariantCulture,
-                        out var formValue))
+                if (Request.HasFormContentType && int.TryParse(Request.Form[name].FirstOrDefault(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var formValue))
                 {
                     return formValue;
                 }
             }
-
             return 0;
         }
-
 
         private long ReadLong(params string[] names)
         {
             foreach (var name in names)
             {
-                if (long.TryParse(
-                    Request.Query[name].FirstOrDefault(),
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out var queryValue))
+                if (long.TryParse(Request.Query[name].FirstOrDefault(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var queryValue))
                 {
                     return queryValue;
                 }
 
-                if (Request.HasFormContentType &&
-                    long.TryParse(
-                        Request.Form[name].FirstOrDefault(),
-                        NumberStyles.Integer,
-                        CultureInfo.InvariantCulture,
-                        out var formValue))
+                if (Request.HasFormContentType && long.TryParse(Request.Form[name].FirstOrDefault(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var formValue))
                 {
                     return formValue;
                 }
             }
-
             return 0;
         }
-
 
         private int ReadSessionInt(params string[] names)
         {
             foreach (var name in names)
             {
                 var value = HttpContext.Session.GetString(name);
-
-                if (int.TryParse(
-                    value,
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out var result))
+                if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
                 {
                     return result;
                 }
             }
-
             return 0;
         }
-
 
         private long ReadSessionLong(params string[] names)
         {
             foreach (var name in names)
             {
                 var value = HttpContext.Session.GetString(name);
-
-                if (long.TryParse(
-                    value,
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out var result))
+                if (long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
                 {
                     return result;
                 }
             }
-
             return 0;
         }
-
 
         private List<ParsedTier> BuildPaidTiers(int eventId)
         {
@@ -737,19 +658,14 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 bool autoExpire = GetBool(form, $"expire-{suffix}");
                 string expiryMode = GetForm(form, $"tier-expiry-mode-{suffix}", "date");
 
-                // Parse Access Mode & Selected Dates/Slots
                 string accessMode = GetForm(form, $"acc-mode-{suffix}", "all");
                 var selectedDateIds = GetFormIntList(form, $"acc-{suffix}-day-");
                 var selectedSlotIds = GetFormIntList(form, $"acc-{suffix}-slot-");
 
-                // Parse Inclusions for this tier
                 var inclusions = BuildInclusionsForTier(form, suffix);
 
                 result.Add(new ParsedTier
                 {
-                    // 0 (default) means "no existing tier" -> Add. See tier-id-{suffix},
-                    // written by the client at submit time from data-ticket-type-id on the
-                    // rehydrated tier node.
                     TicketTypeId = GetInt(form, $"tier-id-{suffix}"),
                     IsVisible = GetBool(form, $"tier-visible-{suffix}", true),
                     TypeName = typeName.Trim(),
@@ -781,8 +697,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     IsSeating = GetBool(form, $"tier-seating-{suffix}"),
                     Rows = GetInt(form, $"rows-{suffix}"),
                     Columns = GetInt(form, $"seats-{suffix}"),
-
-                    // New Fields
                     AccessMode = accessMode,
                     SelectedDateIds = selectedDateIds,
                     SelectedSlotIds = selectedSlotIds,
@@ -802,20 +716,16 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             var quantity = GetInt(form, "free-qty");
             var capacity = GetInt(form, "free-cap");
 
-            // Parse Access Mode & Selected Dates/Slots for Free tier
             string accessMode = GetForm(form, "acc-mode-free", "all");
             var selectedDateIds = GetFormIntList(form, "acc-free-day-");
             var selectedSlotIds = GetFormIntList(form, "acc-free-slot-");
 
-            // Parse Inclusions for Free tier
             var inclusions = BuildInclusionsForTier(form, "free");
 
             return new List<ParsedTier>
             {
                 new ParsedTier
                 {
-                    // 0 means no existing Free tier yet -> Add. See free-tier-id, written by
-                    // the rehydrate script when an existing Free tier was loaded on OnGet.
                     TicketTypeId = GetInt(form, "free-tier-id"),
                     IsVisible = true,
                     TypeName = "Free",
@@ -837,8 +747,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     IsSeating = true,
                     Rows = GetInt(form, "free-rows"),
                     Columns = GetInt(form, "free-seats-row"),
-
-                    // New Fields
                     AccessMode = accessMode,
                     SelectedDateIds = selectedDateIds,
                     SelectedSlotIds = selectedSlotIds,
@@ -847,16 +755,10 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             };
         }
 
-        // =========================
-        // HELPER METHODS FOR PARSING
-        // =========================
-
         private List<Inclusions> BuildInclusionsForTier(IFormCollection form, string suffix)
         {
             var inclusions = new List<Inclusions>();
 
-            // Find all checked inclusions for this tier
-            // Expecting inputs named like: incl-name-{suffix}-{index} and incl-desc-{suffix}-{index}
             var keys = form.Keys
                 .Where(k => k.StartsWith($"incl-name-{suffix}-", StringComparison.OrdinalIgnoreCase))
                 .ToList();
@@ -890,7 +792,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             {
                 var value = form[key].FirstOrDefault();
 
-                // Handles key form structure like: acc-early-day-101 where key ending is ID or input value holds the ID
                 if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id))
                 {
                     results.Add(id);

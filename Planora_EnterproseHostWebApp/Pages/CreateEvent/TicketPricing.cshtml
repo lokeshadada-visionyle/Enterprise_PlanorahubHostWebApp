@@ -7,13 +7,6 @@
     ViewData["StepName"] = "Tickets & Pricing";
     ViewData["StepHint"] = "Set pricing, capacity and ticket tiers";
 
-    var requestedEventType = Request.Query["type"].FirstOrDefault();
-    var pageIsPrivateEvent = string.Equals(requestedEventType, "private", StringComparison.OrdinalIgnoreCase)
-        ? true
-        : string.Equals(requestedEventType, "public", StringComparison.OrdinalIgnoreCase)
-            ? false
-            : Model.IsPrivateEvent;
-
     var allEventSlots = (Model.EventDates ?? new List<Planora_EnterproseHostWebApp.Models.EventDates>())
         .Where(d => d.EventSlots != null)
         .SelectMany(d => d.EventSlots)
@@ -342,7 +335,6 @@
             <form class="stack" id="TicketPriceForm" method="post" enctype="multipart/form-data" novalidate data-ticket-pricing-form>
                 @Html.AntiForgeryToken()
                 <input type="hidden" id="EventId" name="EventId" value="@Model.EventId" />
-                <input type="hidden" id="EventType" name="EventType" value="@(pageIsPrivateEvent ? "private" : "public")" />
                 <input type="hidden" id="PricingMode" name="PricingMode" value="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) ? "free" : "paid")" />
 
                 @* Existing ticket tiers (if any) for this event, used to rehydrate the
@@ -357,21 +349,17 @@
                         <div>
                             <h2 class="panel__title" id="pricing-title">Event Pricing</h2>
                             <p class="panel__meta">
-                                @(pageIsPrivateEvent ? "Private events are paid tickets only" : "Toggle to offer free or paid tickets")
+                                @(Model.IsPrivateEvent ? "Private events are paid tickets only" : "Toggle to offer free or paid tickets")
                             </p>
                         </div>
                         <div class="segment" id="paidmode" role="group" aria-label="Pricing mode" data-segment>
-                            @if (!pageIsPrivateEvent)
+                            @if (!Model.IsPrivateEvent)
                             {
-                                <button class="segment__btn" type="button"
-                                        aria-pressed="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) && !pageIsPrivateEvent ? "true" : "false")"
-                                        data-segment-value="free">
+                                <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "true" : "false")" data-segment-value="free">
                                     Free
                                 </button>
                             }
-                            <button class="segment__btn" type="button"
-                                    aria-pressed="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) && !pageIsPrivateEvent ? "false" : "true")"
-                                    data-segment-value="paid">
+                            <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "false" : "true")" data-segment-value="paid">
                                 Paid
                             </button>
                         </div>
@@ -540,7 +528,7 @@
                 </section> *@
 
                 <!-- Free events: exactly one tier (public events only; private events are paid-only) -->
-                @if (!pageIsPrivateEvent)
+                @if (!Model.IsPrivateEvent)
                 {
                 <section class="panel" data-segment-panel="free" data-segment-owner="paidmode"
                          aria-labelledby="freetier-title" hidden>
@@ -2291,7 +2279,7 @@
                                                 @foreach (var slot in eventDate.EventSlots)
                                                 {
                                                     <tr>
-                                                        <th scope="row">@eventDate.SessionName</th>
+                                                        <td scope="row">@eventDate.SessionName</td>
                                                         <td>@eventDate.EventDateValue</td>
                                                         <td>@slot.SlotName</td>
                                                         <td>@slot.StartTime &ndash; @slot.EndTime</td>
@@ -2693,106 +2681,13 @@
                     if (!form) return;
 
                     var pricingMode = form.querySelector('#PricingMode');
-                    var pricingModeGroup = document.getElementById('paidmode');
 
-                    // ============================================================
-                    // Pricing mode
-                    // PUBLIC  event -> Free or Paid
-                    // PRIVATE event -> Paid only
-                    //
-                    // PricingMode is a real form field and is the value that is
-                    // posted to OnPost(). The selected pricing button is the
-                    // client-side source of truth for that hidden field.
-                    // ============================================================
-                    var isPrivateEvent = @(pageIsPrivateEvent ? "true" : "false");
-
-                    function normalizePricingMode(mode) {
-                        mode = (mode || '').toString().trim().toLowerCase();
-
-                        // Private events are paid-only.
-                        if (isPrivateEvent) {
-                            return 'paid';
-                        }
-
-                        // Public events support both modes.
-                        return mode === 'free' ? 'free' : 'paid';
-                    }
-
-                    function syncPricingMode(mode) {
-                        var normalizedMode = normalizePricingMode(mode);
-
-                        // Always update the actual hidden input that ASP.NET binds.
-                        var hiddenPricingMode = document.getElementById('PricingMode');
-                        if (hiddenPricingMode) {
-                            hiddenPricingMode.value = normalizedMode;
-                        }
-
-                        // Update the visual selected button.
-                        if (pricingModeGroup) {
-                            pricingModeGroup.querySelectorAll('[data-segment-value]').forEach(function(button) {
-                                var buttonMode = (button.getAttribute('data-segment-value') || '')
-                                    .toString()
-                                    .trim()
-                                    .toLowerCase();
-
-                                button.setAttribute(
-                                    'aria-pressed',
-                                    buttonMode === normalizedMode ? 'true' : 'false'
-                                );
-                            });
-                        }
-
-                        // Show only the sections belonging to the selected mode.
-                        document.querySelectorAll('[data-segment-owner="paidmode"]').forEach(function(panel) {
-                            var panelMode = (panel.getAttribute('data-segment-panel') || '')
-                                .toString()
-                                .trim()
-                                .toLowerCase();
-
-                            if (panelMode === normalizedMode &&
-                                !(isPrivateEvent && panelMode === 'free')) {
-                                panel.removeAttribute('hidden');
-                            } else {
-                                panel.setAttribute('hidden', '');
-                            }
-                        });
-
-                        return normalizedMode;
-                    }
-
-                    // ------------------------------------------------------------
-                    // Initial state.
-                    // Do not force a PUBLIC event to Paid when the server already
-                    // rendered PricingMode = free.
-                    // ------------------------------------------------------------
-                    syncPricingMode(
-                        pricingMode ? pricingMode.value : 'paid'
-                    );
-
-                    // ------------------------------------------------------------
-                    // Free / Paid button click.
-                    // This directly changes the hidden PricingMode field.
-                    // ------------------------------------------------------------
-                    if (pricingModeGroup) {
-                        pricingModeGroup.addEventListener('click', function(e) {
-                            var button = e.target.closest('[data-segment-value]');
-
-                            if (!button || !pricingModeGroup.contains(button)) {
-                                return;
-                            }
-
-                            var selectedMode = button.getAttribute('data-segment-value') || 'paid';
-
-                            syncPricingMode(selectedMode);
-
-                            console.log(
-                                '[TicketPricing] Selected pricing mode:',
-                                document.getElementById('PricingMode')
-                                    ? document.getElementById('PricingMode').value
-                                    : 'PricingMode field not found'
-                            );
-                        });
-                    }
+                    document.addEventListener('click', function(e) {
+                        var button = e.target.closest('#paidmode [data-segment-value]');
+                        if (!button) return;
+                        var pm = document.querySelector('#PricingMode');
+                        if (pm) pm.value = button.getAttribute('data-segment-value') || 'paid';
+                    });
 
                     // ---- Add Tier / Remove Tier -----------------------------------
                     var tierList = document.getElementById('tier-list');
@@ -3122,32 +3017,12 @@
 
                         e.preventDefault();
 
-                        // --------------------------------------------------------
-                        // FINAL PRICING MODE SYNC BEFORE POST
-                        // --------------------------------------------------------
-                        // Read the selected button first. This prevents an old/stale
-                        // hidden value such as "paid" from overriding a newly
-                        // selected "free" mode on a PUBLIC event.
-                        var selectedPricingButton = document.querySelector(
-                            '#paidmode [data-segment-value][aria-pressed="true"]'
-                        );
-
-                        var selectedPricingMode = selectedPricingButton
-                            ? selectedPricingButton.getAttribute('data-segment-value')
-                            : (pricingMode ? pricingMode.value : 'paid');
-
-                        var finalPricingMode = syncPricingMode(selectedPricingMode);
-
-                        console.log(
-                            '[TicketPricing] FINAL PricingMode before POST:',
-                            finalPricingMode
-                        );
-
                         // Block submission (and the async member-list upload step below)
                         // until every visible required field passes validation.
                         if (window.__ticketPricingValidateAll && !window.__ticketPricingValidateAll()) {
                             return;
                         }
+                        if (pricingMode && !pricingMode.value) pricingMode.value = 'paid';
 
                         if (pricingMode && pricingMode.value === 'free') {
                             // Free mode: the Ticket Tiers section isn't read server-side
