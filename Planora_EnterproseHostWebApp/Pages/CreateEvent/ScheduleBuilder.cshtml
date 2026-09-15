@@ -340,13 +340,7 @@
                             <div class="form__field">
                                 <label class="field__label" for="range-end">End Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                 <input class="field__input" id="range-end" name="range-end" type="date" value="" required>
-                                <span class="field__hint">Up to 10 days from the start date</span>
                             </div>
-                        </div>
-
-                        <div id="schedule-day-tabs" class="scopebar" hidden>
-                            <span class="scopebar__label">Day</span>
-                            <div class="scopebar__row" role="group" aria-label="Choose a day" id="schedule-day-tabs-row"></div>
                         </div>
 
                         <div id="schedule-days" class="u-mt-5">
@@ -363,10 +357,6 @@
                                         <input class="field__input" id="day-1-date" name="day-1-date"
                                                type="date" value="" data-day-date required>
                                     </span>
-                                    <button class="hall__remove" type="button" data-day-remove title="Remove this day">
-                                        <span class="u-visually-hidden">Remove this day</span>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
                                 </div>
 
                                 <div class="slots" id="day-1-slots">
@@ -551,277 +541,6 @@
             speakerKeySeq += 1;
             return "speaker-new-" + Date.now() + "-" + speakerKeySeq;
         }
-
-        // ===================== SCHEDULE MODE (single / range / specific) =====================
-
-        // Minimal local toast, styled the same as the shared one in script.js
-        // (that one is private to its own module, so we can't call it directly here).
-        let scheduleToastHost = null;
-        function scheduleToast(message, tone) {
-            if (!scheduleToastHost) {
-                scheduleToastHost = document.createElement('div');
-                scheduleToastHost.className = 'toasts';
-                scheduleToastHost.setAttribute('role', 'status');
-                scheduleToastHost.setAttribute('aria-live', 'polite');
-                document.body.appendChild(scheduleToastHost);
-            }
-            const note = document.createElement('p');
-            note.className = 'toast' + (tone ? ' toast--' + tone : '');
-            note.textContent = message;
-            scheduleToastHost.appendChild(note);
-            setTimeout(() => {
-                note.classList.add('toast--out');
-                setTimeout(() => note.parentNode && note.parentNode.removeChild(note), 300);
-            }, 3200);
-        }
-
-        const MAX_SLOTS_SINGLE_DAY = 4;
-        const MAX_RANGE_DAYS = 10;
-
-        function getScheduleMode() {
-            const active = document.querySelector('#schedmode .option[aria-checked="true"]');
-            return active ? active.getAttribute('data-pick') : 'single';
-        }
-
-        // Combine a day's date ("YYYY-MM-DD") with a slot's time-only value
-        // ("HH:mm") into the "YYYY-MM-DDTHH:mm" shape the rest of the code
-        // (capacity bar, save payload) already expects from datetime-local.
-        function combineDateTime(dateStr, timeStr) {
-            if (!dateStr || !timeStr) return "";
-            return `${dateStr}T${timeStr}`;
-        }
-
-        // Extract just "HH:mm" out of either a datetime-local-shaped string
-        // or a full ISO string coming back from the API, for populating the
-        // now-time-only start/end inputs when a saved schedule is loaded.
-        function extractTimePart(value) {
-            if (!value) return "";
-            const match = value.match(/T(\d{2}:\d{2})/);
-            return match ? match[1] : "";
-        }
-
-        function updateDayNo(dayRow, index) {
-            const noEl = dayRow.querySelector(".day__no");
-            if (noEl) noEl.textContent = index + 1;
-        }
-
-        function renumberDays() {
-            document.querySelectorAll("#schedule-days .day").forEach((dayRow, idx) => updateDayNo(dayRow, idx));
-        }
-
-        // Enable/disable a day's slot time inputs based on whether that day
-        // has a date set yet.
-        function syncSlotTimeAvailability(dayRow) {
-            const dateVal = dayRow.querySelector("[data-day-date]")?.value;
-            dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
-                const startInput = slotCard.querySelector("[data-slot-start]");
-                const endInput = slotCard.querySelector("[data-slot-end]");
-                [startInput, endInput].forEach(input => {
-                    if (!input) return;
-                    input.disabled = !dateVal;
-                });
-            });
-        }
-
-        function countSlots(dayRow) {
-            return dayRow.querySelectorAll(".slotcard").length;
-        }
-
-        // Applies the visibility/behaviour rules for whichever mode is active:
-        // which buttons show, whether days are auto-generated, etc.
-        function applyScheduleModeUI(mode) {
-            const addDayBtn = document.querySelector('[data-repeat-add="schedule-days"]');
-            const dayTabsWrap = document.getElementById("schedule-day-tabs");
-            const daysContainer = document.getElementById("schedule-days");
-
-            if (mode === "single") {
-                if (addDayBtn) addDayBtn.hidden = true;
-                if (dayTabsWrap) dayTabsWrap.hidden = true;
-                if (daysContainer) daysContainer.querySelectorAll(".day").forEach(d => d.hidden = false);
-                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = true);
-
-                // Collapse down to exactly one day if more than one exists
-                // (e.g. the host switched modes after adding extra days).
-                const dayRows = document.querySelectorAll("#schedule-days .day");
-                dayRows.forEach((row, idx) => { if (idx > 0) row.remove(); });
-                renumberDays();
-            } else if (mode === "range") {
-                if (addDayBtn) addDayBtn.hidden = true;
-                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = true);
-                regenerateRangeDays(); // builds the tab strip itself
-            } else {
-                // specific
-                if (addDayBtn) addDayBtn.hidden = false;
-                if (dayTabsWrap) dayTabsWrap.hidden = true;
-                if (daysContainer) daysContainer.querySelectorAll(".day").forEach(d => d.hidden = false);
-                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = false);
-            }
-        }
-
-        // ---- Range mode: date limits + auto-generated day blocks ----
-        function toISODate(d) {
-            return d.toISOString().slice(0, 10);
-        }
-
-        function clampRangeDates() {
-            const startInput = document.getElementById("range-start");
-            const endInput = document.getElementById("range-end");
-            if (!startInput || !endInput) return;
-
-            if (startInput.value) {
-                const start = new Date(startInput.value + "T00:00:00");
-                const maxEnd = new Date(start);
-                maxEnd.setDate(maxEnd.getDate() + (MAX_RANGE_DAYS - 1));
-                endInput.min = startInput.value;
-                endInput.max = toISODate(maxEnd);
-
-                if (endInput.value) {
-                    const end = new Date(endInput.value + "T00:00:00");
-                    if (end < start || end > maxEnd) {
-                        scheduleToast(`Please choose an end date within ${MAX_RANGE_DAYS} days of the start date.`, "warn");
-                        endInput.value = "";
-                    }
-                }
-            }
-        }
-
-        function regenerateRangeDays() {
-            const startInput = document.getElementById("range-start");
-            const endInput = document.getElementById("range-end");
-            const daysContainer = document.getElementById("schedule-days");
-            const tabsWrap = document.getElementById("schedule-day-tabs");
-            const tabsRow = document.getElementById("schedule-day-tabs-row");
-            if (!startInput?.value || !endInput?.value || !daysContainer) {
-                if (tabsWrap) tabsWrap.hidden = true;
-                return;
-            }
-
-            const start = new Date(startInput.value + "T00:00:00");
-            const end = new Date(endInput.value + "T00:00:00");
-            const dayCount = Math.round((end - start) / 86400000) + 1;
-
-            if (dayCount < 1 || dayCount > MAX_RANGE_DAYS) {
-                scheduleToast(`A range can span at most ${MAX_RANGE_DAYS} days.`, "warn");
-                if (tabsWrap) tabsWrap.hidden = true;
-                return;
-            }
-
-            const templateDay = daysContainer.querySelector(".day")?.cloneNode(true);
-            if (!templateDay) return;
-
-            // Preserve any slots already configured on the first existing day
-            // so switching dates doesn't wipe out slot data the host already
-            // entered for "Day 1" — every other day gets one blank slot.
-            daysContainer.innerHTML = "";
-            tabsRow.innerHTML = "";
-
-            for (let i = 0; i < dayCount; i++) {
-                const dayDate = new Date(start);
-                dayDate.setDate(dayDate.getDate() + i);
-                const iso = toISODate(dayDate);
-
-                const dayRow = templateDay.cloneNode(true);
-                const nameInput = dayRow.querySelector("input[name*='name']");
-                const dateInput = dayRow.querySelector("[data-day-date]");
-                if (nameInput) nameInput.value = `Day ${i + 1}`;
-                if (dateInput) {
-                    dateInput.value = iso;
-                    dateInput.disabled = true; // auto-set, not host-editable in range mode
-                }
-                dayRow.hidden = i !== 0;
-                updateDayNo(dayRow, i);
-                syncSlotTimeAvailability(dayRow);
-
-                daysContainer.appendChild(dayRow);
-
-                const tabBtn = document.createElement("button");
-                tabBtn.type = "button";
-                tabBtn.className = "scopetab";
-                tabBtn.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-                tabBtn.dataset.dayIndex = i;
-                tabBtn.innerHTML = `Day ${i + 1} <span class="scopetab__date">${iso}</span>`;
-                tabsRow.appendChild(tabBtn);
-            }
-
-            if (tabsWrap) tabsWrap.hidden = false;
-            recalculateCapacityBar();
-        }
-
-        document.getElementById("schedule-day-tabs-row")?.addEventListener("click", function(e) {
-            const btn = e.target.closest("[data-day-index]");
-            if (!btn) return;
-            const idx = parseInt(btn.dataset.dayIndex, 10);
-            document.querySelectorAll("#schedule-day-tabs-row .scopetab").forEach((b, i) => {
-                b.setAttribute("aria-pressed", i === idx ? "true" : "false");
-            });
-            document.querySelectorAll("#schedule-days .day").forEach((row, i) => {
-                row.hidden = i !== idx;
-            });
-        });
-
-        document.getElementById("range-start")?.addEventListener("change", () => { clampRangeDates(); regenerateRangeDays(); });
-        document.getElementById("range-end")?.addEventListener("change", () => { clampRangeDates(); regenerateRangeDays(); });
-
-        // ---- Mode switch buttons ----
-        document.querySelectorAll('#schedmode .option[data-pick]').forEach(btn => {
-            btn.addEventListener("click", function() {
-                // Let the existing generic pick-group handler run first
-                // (it sets aria-checked/shows the matching data-pick-panel),
-                // then apply our own mode rules.
-                setTimeout(() => applyScheduleModeUI(getScheduleMode()), 0);
-            });
-        });
-
-        // ---- Day date -> enable/disable that day's slot times ----
-        document.addEventListener("change", function(e) {
-            if (e.target && e.target.matches("[data-day-date]")) {
-                const dayRow = e.target.closest(".day");
-                if (dayRow) syncSlotTimeAvailability(dayRow);
-            }
-        });
-
-        // ---- "Remove day" (Specific Dates mode only) ----
-        document.addEventListener("click", function(e) {
-            const removeBtn = e.target.closest("[data-day-remove]");
-            if (!removeBtn) return;
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            const daysContainer = document.getElementById("schedule-days");
-            const rows = daysContainer?.querySelectorAll(".day");
-            if (!rows || rows.length <= 1) {
-                scheduleToast("At least one day is required.", "warn");
-                return;
-            }
-            removeBtn.closest(".day")?.remove();
-            renumberDays();
-            recalculateCapacityBar();
-        }, true);
-
-        // ---- Cap slots at 4 per day, Single Day mode only ----
-        document.addEventListener("click", function(e) {
-            const addSlotBtn = e.target.closest(".addline[data-repeat-add]");
-            if (!addSlotBtn) return;
-            const dayRow = addSlotBtn.closest(".day");
-            if (!dayRow) return;
-
-            if (getScheduleMode() === "single") {
-                // The generic repeat-add handler runs on the same click and
-                // appends the new slot synchronously before this listener
-                // (registered after DOMContentLoaded's other listeners) can
-                // check — so check post-append and remove the extra one.
-                setTimeout(() => {
-                    const slots = dayRow.querySelectorAll(".slotcard");
-                    if (slots.length > MAX_SLOTS_SINGLE_DAY) {
-                        slots[slots.length - 1].remove();
-                        scheduleToast(`You can add up to ${MAX_SLOTS_SINGLE_DAY} time slots per day.`, "warn");
-                    }
-                    syncSlotTimeAvailability(dayRow);
-                }, 0);
-            } else {
-                setTimeout(() => syncSlotTimeAvailability(dayRow), 0);
-            }
-        });
 
         function revealVenueSection() {
             if (venueSection) {
@@ -1128,8 +847,8 @@
                                 const speakerSelect = slotRow.querySelector("[data-speaker-add]");
 
                                 if (slotNameInput) slotNameInput.value = slot.SlotName ?? slot.slotName ?? "";
-                                if (startInput) startInput.value = extractTimePart(parseApiDateTime(slot.StartTime ?? slot.startTime ?? ""));
-                                if (endInput) endInput.value = extractTimePart(parseApiDateTime(slot.EndTime ?? slot.endTime ?? ""));
+                                if (startInput) startInput.value = parseApiDateTime(slot.StartTime ?? slot.startTime ?? "");
+                                if (endInput) endInput.value = parseApiDateTime(slot.EndTime ?? slot.endTime ?? "");
                                 if (capInput) capInput.value = slot.Capacity ?? slot.capacity ?? "";
 
                                 populateVenueDropdowns(globalVenuesCache);
@@ -1167,9 +886,7 @@
 
                                 slotsContainer.appendChild(slotRow);
                             }
-
                         }
-                        syncSlotTimeAvailability(dayRow);
 
                         daysContainer.appendChild(dayRow);
                     }
@@ -1209,15 +926,14 @@
             let peakConcurrent = 0;
             document.querySelectorAll("#schedule-days .day").forEach(dayRow => {
                 const events = [];
-                const dateVal = dayRow.querySelector("[data-day-date]")?.value;
                 dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
-                    const startTime = slotCard.querySelector("[data-slot-start]")?.value;
-                    const endTime = slotCard.querySelector("[data-slot-end]")?.value;
+                    const startVal = slotCard.querySelector("[data-slot-start]")?.value;
+                    const endVal = slotCard.querySelector("[data-slot-end]")?.value;
                     const capacity = parseInt(slotCard.querySelector("[data-cap-input]")?.value, 10) || 0;
-                    if (!dateVal || !startTime || !endTime || capacity <= 0) return;
+                    if (!startVal || !endVal || capacity <= 0) return;
 
-                    const start = new Date(combineDateTime(dateVal, startTime)).getTime();
-                    const end = new Date(combineDateTime(dateVal, endTime)).getTime();
+                    const start = new Date(startVal).getTime();
+                    const end = new Date(endVal).getTime();
                     if (isNaN(start) || isNaN(end) || end <= start) return;
 
                     events.push({ time: start, delta: capacity, isStart: true });
@@ -1663,10 +1379,8 @@
                     slotCards.forEach(slotCard => {
                         const nameInput = slotCard.querySelector(".slotcard__name") || slotCard.querySelector("input[name*='slot']");
                         const slotName = nameInput ? nameInput.value.trim() : "";
-                        const startTimeOnly = slotCard.querySelector("[data-slot-start]")?.value;
-                        const endTimeOnly = slotCard.querySelector("[data-slot-end]")?.value;
-                        const startTime = combineDateTime(eventDate, startTimeOnly);
-                        const endTime = combineDateTime(eventDate, endTimeOnly);
+                        const startTime = slotCard.querySelector("[data-slot-start]")?.value;
+                        const endTime = slotCard.querySelector("[data-slot-end]")?.value;
                         const hallId = slotCard.querySelector("[data-slot-hall]")?.value;
                         const capacity = slotCard.querySelector("[data-cap-input]")?.value;
                         const speakerId = slotCard.querySelector("[data-speaker-add]")?.value;
@@ -1766,7 +1480,6 @@
                     await loadAndBindSchedule();
                 }
             }
-            applyScheduleModeUI(getScheduleMode());
         }
 
         init();
