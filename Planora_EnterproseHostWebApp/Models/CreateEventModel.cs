@@ -370,6 +370,13 @@ namespace Planora_EnterproseHostWebApp.Models
         public int Capacity { get; set; }
     }
 
+    public class SetEventCurrencyReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public string Currency { get; set; }
+    }
     public class GetEventCurrencyResp
     {
         public int Status { get; set; }
