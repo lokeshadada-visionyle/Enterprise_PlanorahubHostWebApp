@@ -189,39 +189,11 @@
                                             <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
                                             <label class="u-visually-hidden" for="sv-1-hall-name">Hall name</label>
                                             <input class="hall__name" id="sv-1-hall-name" name="sv-1-hall-name"
-                                                   type="text" placeholder="Hall name" value="Main Hall">
+                                                   type="text" placeholder="e.g. Main Hall" value="" required>
                                             <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
                                             <label class="u-visually-hidden" for="sv-1-hall-cap">Maximum capacity</label>
                                             <input class="hall__cap" id="sv-1-hall-cap" name="sv-1-hall-cap"
-                                                   type="text" inputmode="numeric" value="500">
-                                            <button class="hall__remove" type="button" data-repeat-remove>
-                                                <span class="u-visually-hidden">Remove hall</span>
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="hall" data-repeat-row>
-                                            <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
-                                            <label class="u-visually-hidden" for="sv-2-hall-name">Hall name</label>
-                                            <input class="hall__name" id="sv-2-hall-name" name="sv-2-hall-name"
-                                                   type="text" placeholder="Hall name" value="Hall B">
-                                            <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
-                                            <label class="u-visually-hidden" for="sv-2-hall-cap">Maximum capacity</label>
-                                            <input class="hall__cap" id="sv-2-hall-cap" name="sv-2-hall-cap"
-                                                   type="text" inputmode="numeric" value="180">
-                                            <button class="hall__remove" type="button" data-repeat-remove>
-                                                <span class="u-visually-hidden">Remove hall</span>
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="hall" data-repeat-row>
-                                            <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
-                                            <label class="u-visually-hidden" for="sv-3-hall-name">Hall name</label>
-                                            <input class="hall__name" id="sv-3-hall-name" name="sv-3-hall-name"
-                                                   type="text" placeholder="Hall name" value="Breakout Room 1">
-                                            <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
-                                            <label class="u-visually-hidden" for="sv-3-hall-cap">Maximum capacity</label>
-                                            <input class="hall__cap" id="sv-3-hall-cap" name="sv-3-hall-cap"
-                                                   type="text" inputmode="numeric" value="60">
+                                                   type="text" inputmode="numeric" value="" placeholder="e.g. 200" required>
                                             <button class="hall__remove" type="button" data-repeat-remove>
                                                 <span class="u-visually-hidden">Remove hall</span>
                                                 <span aria-hidden="true">&times;</span>
@@ -254,23 +226,44 @@
                                         <div class="venue__head">
                                             <span class="venue__no" aria-hidden="true">1</span>
                                             <h3 class="venue__title">Venue 1</h3>
+                                            <button class="venue__remove" type="button" data-repeat-remove>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove venue
+                                            </button>
                                         </div>
 
                                         <div class="formgrid formgrid--2">
                                             <div class="form__field">
                                                 <label class="field__label" for="venue-1-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-1-name" name="venue-1-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Eko Hotel Convention Centre" required>
+                                                <input class="field__input" id="venue-1-name" name="venue-1-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="" required>
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="venue-1-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-1-city" name="venue-1-city" type="text" placeholder="Lagos" value="Lagos" required>
+                                                <select class="field__input" id="venue-1-city" name="venue-1-city" required>
+                                                    <option value="">Select City...</option>
+                                                    @if (Model.Cities != null && Model.Cities.Any())
+                                                    {
+                                                        @foreach (var city in Model.Cities)
+                                                        {
+                                                            <option value="@city.CityName">
+                                                                @city.CityName@(string.IsNullOrWhiteSpace(city.CountryName) ? "" : $", {city.CountryName}")
+                                                            </option>
+                                                        }
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
 
                                         <div class="formgrid u-mt-5">
                                             <div class="form__field">
-                                                <label class="field__label" for="venue-1-address">Address</label>
-                                                <input class="field__input" id="venue-1-address" name="venue-1-address" type="text" placeholder="Full street address">
+                                                <label class="field__label" for="venue-1-address">Address<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="venue-1-address" name="venue-1-address" type="text" placeholder="Full street address" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="formgrid u-mt-5">
+                                            <div class="form__field">
+                                                <label class="field__label" for="venue-1-map-url">Map URL<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="field__input" id="venue-1-map-url" name="venue-1-map-url" type="text" placeholder="Map URL" value="https://www.google.com/maps">
                                             </div>
                                         </div>
 
@@ -286,77 +279,11 @@
                                                     <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
                                                     <label class="u-visually-hidden" for="v1-1-hall-name">Hall name</label>
                                                     <input class="hall__name" id="v1-1-hall-name" name="v1-1-hall-name"
-                                                           type="text" placeholder="Hall name" value="Main Hall">
+                                                           type="text" placeholder="e.g. Main Hall" value="" required>
                                                     <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
                                                     <label class="u-visually-hidden" for="v1-1-hall-cap">Maximum capacity</label>
                                                     <input class="hall__cap" id="v1-1-hall-cap" name="v1-1-hall-cap"
-                                                           type="text" inputmode="numeric" value="500">
-                                                    <button class="hall__remove" type="button" data-repeat-remove>
-                                                        <span class="u-visually-hidden">Remove hall</span>
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="hall" data-repeat-row>
-                                                    <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
-                                                    <label class="u-visually-hidden" for="v1-2-hall-name">Hall name</label>
-                                                    <input class="hall__name" id="v1-2-hall-name" name="v1-2-hall-name"
-                                                           type="text" placeholder="Hall name" value="Hall B">
-                                                    <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
-                                                    <label class="u-visually-hidden" for="v1-2-hall-cap">Maximum capacity</label>
-                                                    <input class="hall__cap" id="v1-2-hall-cap" name="v1-2-hall-cap"
-                                                           type="text" inputmode="numeric" value="180">
-                                                    <button class="hall__remove" type="button" data-repeat-remove>
-                                                        <span class="u-visually-hidden">Remove hall</span>
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="venue" data-repeat-row>
-                                        <div class="venue__head">
-                                            <span class="venue__no" aria-hidden="true">2</span>
-                                            <h3 class="venue__title">Venue 2</h3>
-                                            <button class="venue__remove" type="button" data-repeat-remove>
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg> Remove venue
-                                            </button>
-                                        </div>
-
-                                        <div class="formgrid formgrid--2">
-                                            <div class="form__field">
-                                                <label class="field__label" for="venue-2-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-2-name" name="venue-2-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="Landmark Events Centre" required>
-                                            </div>
-                                            <div class="form__field">
-                                                <label class="field__label" for="venue-2-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="venue-2-city" name="venue-2-city" type="text" placeholder="Lagos" value="Lagos" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="formgrid u-mt-5">
-                                            <div class="form__field">
-                                                <label class="field__label" for="venue-2-address">Address</label>
-                                                <input class="field__input" id="venue-2-address" name="venue-2-address" type="text" placeholder="Full street address">
-                                            </div>
-                                        </div>
-
-                                        <div class="halls">
-                                            <p class="halls__head">
-                                                Halls / Rooms &middot; max capacity
-                                                <button class="halls__add" type="button" data-repeat-add="venue-2-halls">
-                                                    + Add Hall
-                                                </button>
-                                            </p>
-                                            <div id="venue-2-halls">
-                                                <div class="hall" data-repeat-row>
-                                                    <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
-                                                    <label class="u-visually-hidden" for="v2-1-hall-name">Hall name</label>
-                                                    <input class="hall__name" id="v2-1-hall-name" name="v2-1-hall-name"
-                                                           type="text" placeholder="Hall name" value="VIP Lounge">
-                                                    <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
-                                                    <label class="u-visually-hidden" for="v2-1-hall-cap">Maximum capacity</label>
-                                                    <input class="hall__cap" id="v2-1-hall-cap" name="v2-1-hall-cap"
-                                                           type="text" inputmode="numeric" value="100">
+                                                           type="text" inputmode="numeric" value="" placeholder="e.g. 200" required>
                                                     <button class="hall__remove" type="button" data-repeat-remove>
                                                         <span class="u-visually-hidden">Remove hall</span>
                                                         <span aria-hidden="true">&times;</span>
@@ -413,7 +340,13 @@
                             <div class="form__field">
                                 <label class="field__label" for="range-end">End Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                 <input class="field__input" id="range-end" name="range-end" type="date" value="" required>
+                                <span class="field__hint">Up to 10 days from the start date</span>
                             </div>
+                        </div>
+
+                        <div id="schedule-day-tabs" class="scopebar" hidden>
+                            <span class="scopebar__label">Day</span>
+                            <div class="scopebar__row" role="group" aria-label="Choose a day" id="schedule-day-tabs-row"></div>
                         </div>
 
                         <div id="schedule-days" class="u-mt-5">
@@ -430,6 +363,10 @@
                                         <input class="field__input" id="day-1-date" name="day-1-date"
                                                type="date" value="" data-day-date required>
                                     </span>
+                                    <button class="hall__remove" type="button" data-day-remove title="Remove this day">
+                                        <span class="u-visually-hidden">Remove this day</span>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
 
                                 <div class="slots" id="day-1-slots">
@@ -615,6 +552,277 @@
             return "speaker-new-" + Date.now() + "-" + speakerKeySeq;
         }
 
+        // ===================== SCHEDULE MODE (single / range / specific) =====================
+
+        // Minimal local toast, styled the same as the shared one in script.js
+        // (that one is private to its own module, so we can't call it directly here).
+        let scheduleToastHost = null;
+        function scheduleToast(message, tone) {
+            if (!scheduleToastHost) {
+                scheduleToastHost = document.createElement('div');
+                scheduleToastHost.className = 'toasts';
+                scheduleToastHost.setAttribute('role', 'status');
+                scheduleToastHost.setAttribute('aria-live', 'polite');
+                document.body.appendChild(scheduleToastHost);
+            }
+            const note = document.createElement('p');
+            note.className = 'toast' + (tone ? ' toast--' + tone : '');
+            note.textContent = message;
+            scheduleToastHost.appendChild(note);
+            setTimeout(() => {
+                note.classList.add('toast--out');
+                setTimeout(() => note.parentNode && note.parentNode.removeChild(note), 300);
+            }, 3200);
+        }
+
+        const MAX_SLOTS_SINGLE_DAY = 4;
+        const MAX_RANGE_DAYS = 10;
+
+        function getScheduleMode() {
+            const active = document.querySelector('#schedmode .option[aria-checked="true"]');
+            return active ? active.getAttribute('data-pick') : 'single';
+        }
+
+        // Combine a day's date ("YYYY-MM-DD") with a slot's time-only value
+        // ("HH:mm") into the "YYYY-MM-DDTHH:mm" shape the rest of the code
+        // (capacity bar, save payload) already expects from datetime-local.
+        function combineDateTime(dateStr, timeStr) {
+            if (!dateStr || !timeStr) return "";
+            return `${dateStr}T${timeStr}`;
+        }
+
+        // Extract just "HH:mm" out of either a datetime-local-shaped string
+        // or a full ISO string coming back from the API, for populating the
+        // now-time-only start/end inputs when a saved schedule is loaded.
+        function extractTimePart(value) {
+            if (!value) return "";
+            const match = value.match(/T(\d{2}:\d{2})/);
+            return match ? match[1] : "";
+        }
+
+        function updateDayNo(dayRow, index) {
+            const noEl = dayRow.querySelector(".day__no");
+            if (noEl) noEl.textContent = index + 1;
+        }
+
+        function renumberDays() {
+            document.querySelectorAll("#schedule-days .day").forEach((dayRow, idx) => updateDayNo(dayRow, idx));
+        }
+
+        // Enable/disable a day's slot time inputs based on whether that day
+        // has a date set yet.
+        function syncSlotTimeAvailability(dayRow) {
+            const dateVal = dayRow.querySelector("[data-day-date]")?.value;
+            dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
+                const startInput = slotCard.querySelector("[data-slot-start]");
+                const endInput = slotCard.querySelector("[data-slot-end]");
+                [startInput, endInput].forEach(input => {
+                    if (!input) return;
+                    input.disabled = !dateVal;
+                });
+            });
+        }
+
+        function countSlots(dayRow) {
+            return dayRow.querySelectorAll(".slotcard").length;
+        }
+
+        // Applies the visibility/behaviour rules for whichever mode is active:
+        // which buttons show, whether days are auto-generated, etc.
+        function applyScheduleModeUI(mode) {
+            const addDayBtn = document.querySelector('[data-repeat-add="schedule-days"]');
+            const dayTabsWrap = document.getElementById("schedule-day-tabs");
+            const daysContainer = document.getElementById("schedule-days");
+
+            if (mode === "single") {
+                if (addDayBtn) addDayBtn.hidden = true;
+                if (dayTabsWrap) dayTabsWrap.hidden = true;
+                if (daysContainer) daysContainer.querySelectorAll(".day").forEach(d => d.hidden = false);
+                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = true);
+
+                // Collapse down to exactly one day if more than one exists
+                // (e.g. the host switched modes after adding extra days).
+                const dayRows = document.querySelectorAll("#schedule-days .day");
+                dayRows.forEach((row, idx) => { if (idx > 0) row.remove(); });
+                renumberDays();
+            } else if (mode === "range") {
+                if (addDayBtn) addDayBtn.hidden = true;
+                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = true);
+                regenerateRangeDays(); // builds the tab strip itself
+            } else {
+                // specific
+                if (addDayBtn) addDayBtn.hidden = false;
+                if (dayTabsWrap) dayTabsWrap.hidden = true;
+                if (daysContainer) daysContainer.querySelectorAll(".day").forEach(d => d.hidden = false);
+                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = false);
+            }
+        }
+
+        // ---- Range mode: date limits + auto-generated day blocks ----
+        function toISODate(d) {
+            return d.toISOString().slice(0, 10);
+        }
+
+        function clampRangeDates() {
+            const startInput = document.getElementById("range-start");
+            const endInput = document.getElementById("range-end");
+            if (!startInput || !endInput) return;
+
+            if (startInput.value) {
+                const start = new Date(startInput.value + "T00:00:00");
+                const maxEnd = new Date(start);
+                maxEnd.setDate(maxEnd.getDate() + (MAX_RANGE_DAYS - 1));
+                endInput.min = startInput.value;
+                endInput.max = toISODate(maxEnd);
+
+                if (endInput.value) {
+                    const end = new Date(endInput.value + "T00:00:00");
+                    if (end < start || end > maxEnd) {
+                        scheduleToast(`Please choose an end date within ${MAX_RANGE_DAYS} days of the start date.`, "warn");
+                        endInput.value = "";
+                    }
+                }
+            }
+        }
+
+        function regenerateRangeDays() {
+            const startInput = document.getElementById("range-start");
+            const endInput = document.getElementById("range-end");
+            const daysContainer = document.getElementById("schedule-days");
+            const tabsWrap = document.getElementById("schedule-day-tabs");
+            const tabsRow = document.getElementById("schedule-day-tabs-row");
+            if (!startInput?.value || !endInput?.value || !daysContainer) {
+                if (tabsWrap) tabsWrap.hidden = true;
+                return;
+            }
+
+            const start = new Date(startInput.value + "T00:00:00");
+            const end = new Date(endInput.value + "T00:00:00");
+            const dayCount = Math.round((end - start) / 86400000) + 1;
+
+            if (dayCount < 1 || dayCount > MAX_RANGE_DAYS) {
+                scheduleToast(`A range can span at most ${MAX_RANGE_DAYS} days.`, "warn");
+                if (tabsWrap) tabsWrap.hidden = true;
+                return;
+            }
+
+            const templateDay = daysContainer.querySelector(".day")?.cloneNode(true);
+            if (!templateDay) return;
+
+            // Preserve any slots already configured on the first existing day
+            // so switching dates doesn't wipe out slot data the host already
+            // entered for "Day 1" — every other day gets one blank slot.
+            daysContainer.innerHTML = "";
+            tabsRow.innerHTML = "";
+
+            for (let i = 0; i < dayCount; i++) {
+                const dayDate = new Date(start);
+                dayDate.setDate(dayDate.getDate() + i);
+                const iso = toISODate(dayDate);
+
+                const dayRow = templateDay.cloneNode(true);
+                const nameInput = dayRow.querySelector("input[name*='name']");
+                const dateInput = dayRow.querySelector("[data-day-date]");
+                if (nameInput) nameInput.value = `Day ${i + 1}`;
+                if (dateInput) {
+                    dateInput.value = iso;
+                    dateInput.disabled = true; // auto-set, not host-editable in range mode
+                }
+                dayRow.hidden = i !== 0;
+                updateDayNo(dayRow, i);
+                syncSlotTimeAvailability(dayRow);
+
+                daysContainer.appendChild(dayRow);
+
+                const tabBtn = document.createElement("button");
+                tabBtn.type = "button";
+                tabBtn.className = "scopetab";
+                tabBtn.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+                tabBtn.dataset.dayIndex = i;
+                tabBtn.innerHTML = `Day ${i + 1} <span class="scopetab__date">${iso}</span>`;
+                tabsRow.appendChild(tabBtn);
+            }
+
+            if (tabsWrap) tabsWrap.hidden = false;
+            recalculateCapacityBar();
+        }
+
+        document.getElementById("schedule-day-tabs-row")?.addEventListener("click", function(e) {
+            const btn = e.target.closest("[data-day-index]");
+            if (!btn) return;
+            const idx = parseInt(btn.dataset.dayIndex, 10);
+            document.querySelectorAll("#schedule-day-tabs-row .scopetab").forEach((b, i) => {
+                b.setAttribute("aria-pressed", i === idx ? "true" : "false");
+            });
+            document.querySelectorAll("#schedule-days .day").forEach((row, i) => {
+                row.hidden = i !== idx;
+            });
+        });
+
+        document.getElementById("range-start")?.addEventListener("change", () => { clampRangeDates(); regenerateRangeDays(); });
+        document.getElementById("range-end")?.addEventListener("change", () => { clampRangeDates(); regenerateRangeDays(); });
+
+        // ---- Mode switch buttons ----
+        document.querySelectorAll('#schedmode .option[data-pick]').forEach(btn => {
+            btn.addEventListener("click", function() {
+                // Let the existing generic pick-group handler run first
+                // (it sets aria-checked/shows the matching data-pick-panel),
+                // then apply our own mode rules.
+                setTimeout(() => applyScheduleModeUI(getScheduleMode()), 0);
+            });
+        });
+
+        // ---- Day date -> enable/disable that day's slot times ----
+        document.addEventListener("change", function(e) {
+            if (e.target && e.target.matches("[data-day-date]")) {
+                const dayRow = e.target.closest(".day");
+                if (dayRow) syncSlotTimeAvailability(dayRow);
+            }
+        });
+
+        // ---- "Remove day" (Specific Dates mode only) ----
+        document.addEventListener("click", function(e) {
+            const removeBtn = e.target.closest("[data-day-remove]");
+            if (!removeBtn) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const daysContainer = document.getElementById("schedule-days");
+            const rows = daysContainer?.querySelectorAll(".day");
+            if (!rows || rows.length <= 1) {
+                scheduleToast("At least one day is required.", "warn");
+                return;
+            }
+            removeBtn.closest(".day")?.remove();
+            renumberDays();
+            recalculateCapacityBar();
+        }, true);
+
+        // ---- Cap slots at 4 per day, Single Day mode only ----
+        document.addEventListener("click", function(e) {
+            const addSlotBtn = e.target.closest(".addline[data-repeat-add]");
+            if (!addSlotBtn) return;
+            const dayRow = addSlotBtn.closest(".day");
+            if (!dayRow) return;
+
+            if (getScheduleMode() === "single") {
+                // The generic repeat-add handler runs on the same click and
+                // appends the new slot synchronously before this listener
+                // (registered after DOMContentLoaded's other listeners) can
+                // check — so check post-append and remove the extra one.
+                setTimeout(() => {
+                    const slots = dayRow.querySelectorAll(".slotcard");
+                    if (slots.length > MAX_SLOTS_SINGLE_DAY) {
+                        slots[slots.length - 1].remove();
+                        scheduleToast(`You can add up to ${MAX_SLOTS_SINGLE_DAY} time slots per day.`, "warn");
+                    }
+                    syncSlotTimeAvailability(dayRow);
+                }, 0);
+            } else {
+                setTimeout(() => syncSlotTimeAvailability(dayRow), 0);
+            }
+        });
+
         function revealVenueSection() {
             if (venueSection) {
                 venueSection.removeAttribute("hidden");
@@ -751,43 +959,18 @@
                 if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
                     globalVenuesCache = result.data;
                     hasSavedVenues = true;
-                    const firstVenue = result.data[0];
-                    const firstVenueId = firstVenue.VenueId ?? firstVenue.venueId ?? 0;
 
-                    const nameInput = document.getElementById("sv-name");
-                    const citySelect = document.getElementById("sv-city");
-                    const addressInput = document.getElementById("sv-address");
-                    const singleVenuePanel = document.getElementById("single-venue");
-                    if (singleVenuePanel) singleVenuePanel.dataset.venueId = firstVenueId;
+                    const isMultiVenue = result.data.length > 1;
+                    const multivenueCheckbox = document.getElementById("multivenue");
+                    if (multivenueCheckbox) {
+                        multivenueCheckbox.checked = isMultiVenue;
+                        multivenueCheckbox.dispatchEvent(new Event("change"));
+                    }
 
-                    if (nameInput) nameInput.value = firstVenue.VenueName ?? firstVenue.venueName ?? "";
-                    if (citySelect) citySelect.value = firstVenue.City ?? firstVenue.cityName ?? "";
-                    if (addressInput) addressInput.value = firstVenue.Address ?? firstVenue.address ?? "";
-
-                    const halls = firstVenue.Halls ?? firstVenue.halls;
-                    if (Array.isArray(halls) && halls.length > 0) {
-                        const hallContainer = document.getElementById("sv-halls");
-                        const templateHall = hallContainer.querySelector(".hall")?.cloneNode(true);
-
-                        if (templateHall) {
-                            hallContainer.innerHTML = "";
-                            halls.forEach(h => {
-                                const hRow = templateHall.cloneNode(true);
-                                const hNameInput = hRow.querySelector(".hall__name");
-                                const hCapInput = hRow.querySelector(".hall__cap");
-
-                                // FIX: mark this row as loaded-from-server and stamp its
-                                // real HallId, mirroring the speaker pattern above. Only
-                                // rows carrying this flag are eligible for the Update
-                                // path in btnSaveVenues below.
-                                hRow.dataset.hallId = h.HallId ?? h.hallId ?? 0;
-                                hRow.dataset.loadedFromServer = "true";
-                                if (hNameInput) hNameInput.value = h.HallName ?? h.hallName ?? "";
-                                if (hCapInput) hCapInput.value = h.Capacity ?? h.capacity ?? 0;
-
-                                hallContainer.appendChild(hRow);
-                            });
-                        }
+                    if (isMultiVenue) {
+                        bindMultiVenues(result.data);
+                    } else {
+                        bindSingleVenue(result.data[0]);
                     }
 
                     populateVenueDropdowns(result.data);
@@ -799,6 +982,91 @@
                 console.error("Failed to load venues:", err);
             }
             return false;
+        }
+
+        function bindSingleVenue(firstVenue) {
+            const nameInput = document.getElementById("sv-name");
+            const citySelect = document.getElementById("sv-city");
+            const addressInput = document.getElementById("sv-address");
+            const singleVenuePanel = document.getElementById("single-venue");
+            const firstVenueId = firstVenue.VenueId ?? firstVenue.venueId ?? 0;
+            if (singleVenuePanel) {
+                singleVenuePanel.dataset.venueId = firstVenueId;
+                singleVenuePanel.dataset.loadedFromServer = "true";
+            }
+            if (nameInput) nameInput.value = firstVenue.VenueName ?? firstVenue.venueName ?? "";
+            if (citySelect) citySelect.value = firstVenue.City ?? firstVenue.cityName ?? "";
+            if (addressInput) addressInput.value = firstVenue.Address ?? firstVenue.address ?? "";
+            const mapUrlInput = document.getElementById("sv-map-url");
+            if (mapUrlInput) mapUrlInput.value = firstVenue.MapUrl ?? firstVenue.mapUrl ?? "https://www.google.com/maps";
+
+            const halls = firstVenue.Halls ?? firstVenue.halls ?? [];
+            const hallContainer = document.getElementById("sv-halls");
+            const templateHall = hallContainer?.querySelector(".hall")?.cloneNode(true);
+            if (templateHall && halls.length > 0) {
+                hallContainer.innerHTML = "";
+                halls.forEach(h => {
+                    const hRow = templateHall.cloneNode(true);
+                    hRow.dataset.hallId = h.HallId ?? h.hallId ?? 0;
+                    hRow.dataset.loadedFromServer = "true";
+                    const n = hRow.querySelector(".hall__name"), c = hRow.querySelector(".hall__cap");
+                    if (n) n.value = h.HallName ?? h.hallName ?? "";
+                    if (c) c.value = h.Capacity ?? h.capacity ?? 0;
+                    hallContainer.appendChild(hRow);
+                });
+            }
+        }
+
+        function bindMultiVenues(venues) {
+            const venueListContainer = document.getElementById("venue-list");
+            const templateVenue = venueListContainer.querySelector(".venue")?.cloneNode(true);
+            if (!templateVenue) return;
+
+            venueListContainer.innerHTML = "";
+            venues.forEach((v, idx) => {
+                const venueRow = templateVenue.cloneNode(true);
+                const venueId = v.VenueId ?? v.venueId ?? 0;
+                venueRow.dataset.venueId = venueId;
+                venueRow.dataset.loadedFromServer = "true";
+
+                const noEl = venueRow.querySelector(".venue__no");
+                const titleEl = venueRow.querySelector(".venue__title");
+                if (noEl) noEl.textContent = idx + 1;
+                if (titleEl) titleEl.textContent = `Venue ${idx + 1}`;
+
+                const nameInput = venueRow.querySelector("input[id$='-name']");
+                const cityInput = venueRow.querySelector("[id$='-city']");
+                const addressInput = venueRow.querySelector("input[id$='-address']");
+                const mapUrlInput = venueRow.querySelector("input[id$='-map-url']");
+                if (nameInput) nameInput.value = v.VenueName ?? v.venueName ?? "";
+                if (cityInput) cityInput.value = v.City ?? v.city ?? "";
+                if (addressInput) addressInput.value = v.Address ?? v.address ?? "";
+                if (mapUrlInput) mapUrlInput.value = v.MapUrl ?? v.mapUrl ?? "https://www.google.com/maps";
+
+                const hallsContainer = venueRow.querySelector("[id$='-halls']");
+                const templateHall = hallsContainer?.querySelector(".hall")?.cloneNode(true);
+                const halls = v.Halls ?? v.halls ?? [];
+                if (templateHall && halls.length > 0) {
+                    hallsContainer.innerHTML = "";
+                    halls.forEach(h => {
+                        const hRow = templateHall.cloneNode(true);
+                        hRow.dataset.hallId = h.HallId ?? h.hallId ?? 0;
+                        hRow.dataset.loadedFromServer = "true";
+                        const n = hRow.querySelector(".hall__name"), c = hRow.querySelector(".hall__cap");
+                        if (n) n.value = h.HallName ?? h.hallName ?? "";
+                        if (c) c.value = h.Capacity ?? h.capacity ?? 0;
+                        hallsContainer.appendChild(hRow);
+                    });
+                }
+
+                const addHallBtn = hallsContainer?.parentElement?.querySelector(".halls__add[data-repeat-add]");
+                if (addHallBtn && !addHallBtn.dataset.hallAddWired) {
+                    addHallBtn.dataset.hallAddWired = "true";
+                    wireHallAddButton(addHallBtn);
+                }
+
+                venueListContainer.appendChild(venueRow);
+            });
         }
 
         // 3. LOAD & BIND SCHEDULE
@@ -860,8 +1128,8 @@
                                 const speakerSelect = slotRow.querySelector("[data-speaker-add]");
 
                                 if (slotNameInput) slotNameInput.value = slot.SlotName ?? slot.slotName ?? "";
-                                if (startInput) startInput.value = parseApiDateTime(slot.StartTime ?? slot.startTime ?? "");
-                                if (endInput) endInput.value = parseApiDateTime(slot.EndTime ?? slot.endTime ?? "");
+                                if (startInput) startInput.value = extractTimePart(parseApiDateTime(slot.StartTime ?? slot.startTime ?? ""));
+                                if (endInput) endInput.value = extractTimePart(parseApiDateTime(slot.EndTime ?? slot.endTime ?? ""));
                                 if (capInput) capInput.value = slot.Capacity ?? slot.capacity ?? "";
 
                                 populateVenueDropdowns(globalVenuesCache);
@@ -899,7 +1167,9 @@
 
                                 slotsContainer.appendChild(slotRow);
                             }
+
                         }
+                        syncSlotTimeAvailability(dayRow);
 
                         daysContainer.appendChild(dayRow);
                     }
@@ -939,14 +1209,15 @@
             let peakConcurrent = 0;
             document.querySelectorAll("#schedule-days .day").forEach(dayRow => {
                 const events = [];
+                const dateVal = dayRow.querySelector("[data-day-date]")?.value;
                 dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
-                    const startVal = slotCard.querySelector("[data-slot-start]")?.value;
-                    const endVal = slotCard.querySelector("[data-slot-end]")?.value;
+                    const startTime = slotCard.querySelector("[data-slot-start]")?.value;
+                    const endTime = slotCard.querySelector("[data-slot-end]")?.value;
                     const capacity = parseInt(slotCard.querySelector("[data-cap-input]")?.value, 10) || 0;
-                    if (!startVal || !endVal || capacity <= 0) return;
+                    if (!dateVal || !startTime || !endTime || capacity <= 0) return;
 
-                    const start = new Date(startVal).getTime();
-                    const end = new Date(endVal).getTime();
+                    const start = new Date(combineDateTime(dateVal, startTime)).getTime();
+                    const end = new Date(combineDateTime(dateVal, endTime)).getTime();
                     if (isNaN(start) || isNaN(end) || end <= start) return;
 
                     events.push({ time: start, delta: capacity, isStart: true });
@@ -1089,14 +1360,79 @@
         // each multi-venue hall list).
         document.querySelectorAll('.halls__add[data-repeat-add]').forEach(wireHallAddButton);
 
+        document.addEventListener("click", function(e) {
+            const removeBtn = e.target.closest(".hall .hall__remove[data-repeat-remove]");
+            if (!removeBtn) return;
+            const hallList = removeBtn.closest(".halls")?.querySelector("[id$='-halls']");
+            if (hallList && hallList.querySelectorAll(".hall").length <= 1) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                alert("At least one hall is required.");
+            }
+        }, true);
+
         // Multi-venue mode also lets the host add whole new venues ("+ Add Venue"),
         // each bringing its own "+ Add Hall" button that doesn't exist at load time.
         // Wire those up as they're cloned in too, so a hall added inside a
         // freshly-added venue gets the same id-reset treatment.
+        // Keeps the "Venue N" badge/title in sync with actual position in the list,
+        // after any add or remove.
+        function renumberVenues() {
+            document.querySelectorAll("#venue-list .venue").forEach((venueRow, idx) => {
+                const noEl = venueRow.querySelector(".venue__no");
+                const titleEl = venueRow.querySelector(".venue__title");
+                if (noEl) noEl.textContent = idx + 1;
+                if (titleEl) titleEl.textContent = `Venue ${idx + 1}`;
+            });
+        }
+
+        // FIX: cleanup for a newly-cloned VENUE row added via "+ Add Venue". Same root
+        // cause as the speaker/hall bugs above: the generic data-repeat-add handler
+        // clones the *last* venue row, inheriting its data-venue-id / loaded-from-server
+        // flag and every typed value (name, city, address, map url, halls) if that row
+        // was ever bound from the server. Left alone, the new row would silently
+        // impersonate the venue it was cloned from on save. This resets it to a
+        // genuine blank "new venue" with exactly one blank, required hall.
+        function resetClonedVenueRow(venueRow) {
+            if (!venueRow) return;
+            venueRow.dataset.venueId = "0";
+            venueRow.removeAttribute("data-loaded-from-server");
+
+            const nameInput = venueRow.querySelector("input[id$='-name']");
+            const cityField = venueRow.querySelector("[id$='-city']");
+            const addressInput = venueRow.querySelector("input[id$='-address']");
+            const mapUrlInput = venueRow.querySelector("input[id$='-map-url']");
+            if (nameInput) nameInput.value = "";
+            if (cityField) cityField.value = "";
+            if (addressInput) addressInput.value = "";
+            if (mapUrlInput) mapUrlInput.value = "https://www.google.com/maps";
+
+            const hallsContainer = venueRow.querySelector("[id$='-halls']");
+            if (hallsContainer) {
+                const firstHall = hallsContainer.querySelector(".hall");
+                if (firstHall) {
+                    hallsContainer.innerHTML = "";
+                    const blankHall = firstHall.cloneNode(true);
+                    blankHall.dataset.hallId = "0";
+                    blankHall.removeAttribute("data-loaded-from-server");
+                    const hName = blankHall.querySelector(".hall__name");
+                    const hCap = blankHall.querySelector(".hall__cap");
+                    if (hName) hName.value = "";
+                    if (hCap) hCap.value = "";
+                    hallsContainer.appendChild(blankHall);
+                }
+            }
+        }
+
         const addVenueBtn = document.querySelector('[data-repeat-add="venue-list"]');
         if (addVenueBtn) {
             addVenueBtn.addEventListener("click", function() {
                 setTimeout(() => {
+                    const rows = document.querySelectorAll("#venue-list .venue");
+                    const newRow = rows[rows.length - 1];
+                    resetClonedVenueRow(newRow);
+                    renumberVenues();
+
                     document.querySelectorAll('#venue-list .halls__add[data-repeat-add]')
                         .forEach(btn => {
                             if (!btn.dataset.hallAddWired) {
@@ -1107,6 +1443,26 @@
                 }, 0);
             });
         }
+
+        // "Remove venue" — actually removes the row (functional, not just visual),
+        // requires at least one venue to remain, and renumbers what's left.
+        document.addEventListener("click", function(e) {
+            const removeBtn = e.target.closest(".venue .venue__remove[data-repeat-remove]");
+            if (!removeBtn) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const venueList = document.getElementById("venue-list");
+            const rows = venueList?.querySelectorAll(".venue");
+            if (!rows || rows.length <= 1) {
+                alert("At least one venue is required.");
+                return;
+            }
+
+            const venueRow = removeBtn.closest(".venue");
+            venueRow?.remove();
+            renumberVenues();
+        }, true);
 
         // SAVE BUTTON HANDLERS
         const saveSpeakersBtn = document.getElementById("btnSaveSpeakers");
@@ -1189,45 +1545,59 @@
                 const isMulti = document.getElementById("multivenue")?.checked;
                 const venues = [];
 
-                if (!isMulti) {
-                    const name = document.getElementById("sv-name")?.value;
-                    const city = document.getElementById("sv-city")?.value;
-                    const address = document.getElementById("sv-address")?.value;
+                function collectHalls(container) {
                     const halls = [];
-
-                    // FIX: build the halls payload from each row's own
-                    // loaded/new status instead of assuming "all halls are
-                    // existing whenever the venue itself is existing". Before
-                    // this fix, hasSavedVenues (a venue-level flag) decided
-                    // whether *every* hall row -- including a hall just added
-                    // via "+ Add Hall" in this same visit -- was sent with a
-                    // HallId. A freshly-added row's dataset.hallId is now
-                    // reset to "0" by resetClonedHallRow(), so this correctly
-                    // routes it as a new hall (no HallId) even though the
-                    // venue itself already exists.
-                    document.querySelectorAll("#sv-halls .hall").forEach(hRow => {
-                        const hName = hRow.querySelector(".hall__name")?.value;
+                    container?.querySelectorAll(".hall").forEach(hRow => {
+                        const hName = hRow.querySelector(".hall__name")?.value?.trim();
                         const hCap = hRow.querySelector(".hall__cap")?.value;
                         if (!hName) return;
-
                         const isExistingHall = hRow.dataset.loadedFromServer === "true";
                         const hallId = parseInt(hRow.dataset.hallId, 10) || 0;
-
-                        if (isExistingHall && hallId > 0) {
-                            halls.push({ HallId: hallId, HallName: hName, Capacity: parseInt(hCap) || 0 });
-                        } else {
-                            halls.push({ HallName: hName, Capacity: parseInt(hCap) || 0 });
-                        }
+                        halls.push(isExistingHall && hallId > 0
+                            ? { HallId: hallId, HallName: hName, Capacity: parseInt(hCap) || 0 }
+                            : { HallName: hName, Capacity: parseInt(hCap) || 0 });
                     });
+                    return halls;
+                }
 
-                    if (name) {
-                        if (hasSavedVenues) {
-                            const venueId = parseInt(document.getElementById("single-venue")?.dataset.venueId, 10) || 0;
-                            venues.push({ VenueId: venueId, VenueName: name, City: city, Address: address, Halls: halls });
-                        } else {
-                            venues.push({ VenueName: name, City: city, Address: address, Halls: halls });
-                        }
+                if (!isMulti) {
+                    const name = document.getElementById("sv-name")?.value?.trim();
+                    const city = document.getElementById("sv-city")?.value;
+                    const address = document.getElementById("sv-address")?.value;
+                    const mapUrl = document.getElementById("sv-map-url")?.value?.trim();
+                    const halls = collectHalls(document.getElementById("sv-halls"));
+
+                    if (!name) { alert("Please enter a venue name."); return; }
+                    if (halls.length === 0) { alert("Please add at least one hall with a name and capacity."); return; }
+
+                    if (hasSavedVenues) {
+                        const venueId = parseInt(document.getElementById("single-venue")?.dataset.venueId, 10) || 0;
+                        venues.push({ VenueId: venueId, VenueName: name, City: city, Address: address, MapUrl: mapUrl, Halls: halls });
+                    } else {
+                        venues.push({ VenueName: name, City: city, Address: address, MapUrl: mapUrl, Halls: halls });
                     }
+                } else {
+                    document.querySelectorAll("#venue-list .venue").forEach(venueRow => {
+                        const nameInput = venueRow.querySelector("input[id$='-name']");
+                        const cityInput = venueRow.querySelector("[id$='-city']");
+                        const addressInput = venueRow.querySelector("input[id$='-address']");
+                        const mapUrlInput = venueRow.querySelector("input[id$='-map-url']");
+                        const hallsContainer = venueRow.querySelector("[id$='-halls']");
+                        const name = nameInput?.value?.trim();
+                        const city = cityInput?.value?.trim();
+                        const address = addressInput?.value?.trim();
+                        const mapUrl = mapUrlInput?.value?.trim();
+                        if (!name || !hallsContainer) return;
+
+                        const halls = collectHalls(hallsContainer);
+                        if (halls.length === 0) return;
+
+                        const isExistingVenue = venueRow.dataset.loadedFromServer === "true";
+                        const venueId = parseInt(venueRow.dataset.venueId, 10) || 0;
+                        venues.push(isExistingVenue && venueId > 0
+                            ? { VenueId: venueId, VenueName: name, City: city, Address: address, MapUrl: mapUrl, Halls: halls }
+                            : { VenueName: name, City: city, Address: address, MapUrl: mapUrl, Halls: halls });
+                    });
                 }
 
                 if (venues.length === 0) {
@@ -1235,17 +1605,13 @@
                     return;
                 }
 
-                // If venues were already loaded for this event, update the existing
-                // records (Ent_UpdateVenueAndHall) instead of re-adding them (Ent_AddVenueAndHall).
                 const venueHandlerName = hasSavedVenues ? "UpdateVenue" : "SaveVenue";
-
                 try {
                     const response = await fetch(`?handler=${venueHandlerName}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
                         body: JSON.stringify({ Venues: venues })
                     });
-
                     const result = await response.json();
                     if (result && result.success) {
                         await loadAndBindVenues();
@@ -1269,6 +1635,23 @@
 
                 const dayRows = document.querySelectorAll("#schedule-days .day");
                 const slotsPayload = [];
+                let hasError = false;
+
+                // Helper to format datetime-local value safely for C# backend
+                function formatDateTimeForApi(dateString) {
+                    if (!dateString) return "";
+                    // datetime-local inputs return "YYYY-MM-DDTHH:mm" (exactly 16 characters)
+                    if (dateString.length === 16 && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dateString)) {
+                        return dateString + ":00"; // Safely becomes "YYYY-MM-DDTHH:mm:ss"
+                    }
+                    // Fallback for any other valid date string
+                    const d = new Date(dateString);
+                    if (!isNaN(d.getTime())) {
+                        const pad = (n) => n.toString().padStart(2, '0');
+                        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                    }
+                    return dateString;
+                }
 
                 dayRows.forEach(dayRow => {
                     const sessionName = dayRow.querySelector("input[name*='name']")?.value;
@@ -1278,30 +1661,32 @@
 
                     const slots = [];
                     slotCards.forEach(slotCard => {
-                        // Check if slot name field exists, or fallback to an empty string / default title
                         const nameInput = slotCard.querySelector(".slotcard__name") || slotCard.querySelector("input[name*='slot']");
                         const slotName = nameInput ? nameInput.value.trim() : "";
-
-                        const startTime = slotCard.querySelector("[data-slot-start]")?.value;
-                        const endTime = slotCard.querySelector("[data-slot-end]")?.value;
+                        const startTimeOnly = slotCard.querySelector("[data-slot-start]")?.value;
+                        const endTimeOnly = slotCard.querySelector("[data-slot-end]")?.value;
+                        const startTime = combineDateTime(eventDate, startTimeOnly);
+                        const endTime = combineDateTime(eventDate, endTimeOnly);
                         const hallId = slotCard.querySelector("[data-slot-hall]")?.value;
                         const capacity = slotCard.querySelector("[data-cap-input]")?.value;
                         const speakerId = slotCard.querySelector("[data-speaker-add]")?.value;
                         const slotId = parseInt(slotCard.dataset.slotId, 10) || 0;
 
-                        // Push slot object if at least a name OR time is provided
                         if (slotName || startTime || endTime) {
+                            // CRITICAL FIX: Prevent sending empty strings to the backend
+                            if (!startTime || !endTime) {
+                                hasError = true;
+                                return;
+                            }
+
                             if (hasSavedSchedule) {
-                                // Update shape: SlotId is required, and the speaker is sent as the
-                                // resolved name string (Ent_UpdateEventDateAndSlots takes "Speakers",
-                                // not "SpeakerId" like the Add call does).
                                 const speakerMatch = globalSpeakersCache.find(sp => String(sp.SpeakerId ?? sp.speakerId) === String(speakerId));
                                 const speakerName = speakerMatch ? (speakerMatch.Name ?? speakerMatch.name ?? "") : "";
                                 slots.push({
                                     SlotId: slotId,
                                     SlotName: slotName || "Slot",
-                                    StartTime: startTime ? new Date(startTime).toISOString() : "",
-                                    EndTime: endTime ? new Date(endTime).toISOString() : "",
+                                    StartTime: formatDateTimeForApi(startTime),
+                                    EndTime: formatDateTimeForApi(endTime),
                                     HallId: hallId ? parseInt(hallId) : 0,
                                     Capacity: capacity ? parseInt(capacity) : 0,
                                     Speakers: speakerName
@@ -1309,11 +1694,11 @@
                             } else {
                                 slots.push({
                                     SlotName: slotName || "Slot",
-                                    StartTime: startTime ? new Date(startTime).toISOString() : "",
-                                    EndTime: endTime ? new Date(endTime).toISOString() : "",
+                                    StartTime: formatDateTimeForApi(startTime),
+                                    EndTime: formatDateTimeForApi(endTime),
                                     HallId: hallId ? parseInt(hallId) : 0,
                                     Capacity: capacity ? parseInt(capacity) : 0,
-                                    SpeakersId: speakerId ? parseInt(speakerId) : 0
+                                    SpeakerId: speakerId ? parseInt(speakerId) : 0
                                 });
                             }
                         }
@@ -1337,13 +1722,17 @@
                     }
                 });
 
+                // CRITICAL FIX: Alert the user if they missed filling out the time fields
+                if (hasError) {
+                    alert("Please ensure all time slots have both a Start Time and an End Time filled in.");
+                    return;
+                }
+
                 if (slotsPayload.length === 0) {
                     alert("Please complete the schedule details before continuing.");
                     return;
                 }
 
-                // If a schedule was already loaded for this event, update the existing
-                // records (Ent_UpdateEventDateAndSlots) instead of re-adding them (Ent_AddEventDateAndSlots).
                 const scheduleHandlerName = hasSavedSchedule ? "UpdateSchedule" : "SaveSchedule";
 
                 try {
@@ -1377,6 +1766,7 @@
                     await loadAndBindSchedule();
                 }
             }
+            applyScheduleModeUI(getScheduleMode());
         }
 
         init();
@@ -1400,9 +1790,9 @@
                     chip.className = "chip";
                     chip.dataset.chipSpeakerId = selectedId;
                     chip.innerHTML = `
-                        <span>${selectedText}</span>
-                        <button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>
-                    `;
+                            <span>${selectedText}</span>
+                            <button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>
+                        `;
 
                     chip.querySelector(".chip__remove").addEventListener("click", function() {
                         chip.remove();
