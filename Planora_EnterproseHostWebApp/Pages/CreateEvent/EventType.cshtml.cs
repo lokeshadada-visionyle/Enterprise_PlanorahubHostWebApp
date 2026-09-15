@@ -77,17 +77,22 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateHost
             HttpContext.Session.SetInt32("StepProgress", Math.Max(currentMaxProgress, 2));
             return RedirectToPage("/CreateEvent/BasicDetails");
         }
-
-        // Small view helpers so the .cshtml doesn't need per-cell if/else.
-        // Instance methods (not static) so the view can call them as
-        // Model.BadgeClass(...) / Model.BadgeText(...).
         public string BadgeClass(bool value) =>
             value ? "badge badge--live" : "badge badge--nodot badge--neutral";
 
+        // Optional feature: Yes / — pill.
         public string BadgeText(bool value, string yes = "Yes", string no = "\u2014") =>
-    value ? yes : no;
+            value ? yes : no;
 
-        public string LockedBadgeText(bool value) =>
-            value ? "on" : "off";
+        // Locked feature: on/off (or custom words, e.g. "only") pill text.
+        public string LockedBadgeText(bool value, string onText = "on", string offText = "off") =>
+            value ? onText : offText;
+
+        // Cell where the feature simply doesn't apply to this event type.
+        public string NotApplicable() => "\u2014";
+
+        // Plain-text conditional cell (no badge), e.g. Ticketing/commission rows.
+        public string ConditionalText(bool value, string whenTrue, string whenFalse = "\u2014") =>
+            value ? whenTrue : whenFalse;
     }
 }

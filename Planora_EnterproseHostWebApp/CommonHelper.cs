@@ -527,6 +527,25 @@ namespace Planora_EnterproseHostWebApp
             return response;
         }
 
+        public Response AddEventCurrencyReq(SetEventCurrencyReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new SetEventCurrencyReq
+            {
+                UserId = req.UserId,
+                EventId = req.EventId,
+                hashValue = hashValue,
+                Currency = req.Currency,
+
+            };
+            string url = SERVICE_URL + "/Ent_SetEventCurrency";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
         public GetEventCurrencyResp GetEventCurrency(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());

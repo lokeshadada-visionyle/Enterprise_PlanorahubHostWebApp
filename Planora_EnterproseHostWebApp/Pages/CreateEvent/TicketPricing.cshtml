@@ -7,6 +7,13 @@
     ViewData["StepName"] = "Tickets & Pricing";
     ViewData["StepHint"] = "Set pricing, capacity and ticket tiers";
 
+    var requestedEventType = Request.Query["type"].FirstOrDefault();
+    var pageIsPrivateEvent = string.Equals(requestedEventType, "private", StringComparison.OrdinalIgnoreCase)
+        ? true
+        : string.Equals(requestedEventType, "public", StringComparison.OrdinalIgnoreCase)
+            ? false
+            : Model.IsPrivateEvent;
+
     var allEventSlots = (Model.EventDates ?? new List<Planora_EnterproseHostWebApp.Models.EventDates>())
         .Where(d => d.EventSlots != null)
         .SelectMany(d => d.EventSlots)
@@ -335,7 +342,8 @@
             <form class="stack" id="TicketPriceForm" method="post" enctype="multipart/form-data" novalidate data-ticket-pricing-form>
                 @Html.AntiForgeryToken()
                 <input type="hidden" id="EventId" name="EventId" value="@Model.EventId" />
-                <input type="hidden" id="PricingMode" name="PricingMode" value="@Model.PricingMode" />
+                <input type="hidden" id="EventType" name="EventType" value="@(pageIsPrivateEvent ? "private" : "public")" />
+                <input type="hidden" id="PricingMode" name="PricingMode" value="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) ? "free" : "paid")" />
 
                 @* Existing ticket tiers (if any) for this event, used to rehydrate the
                    form below. type="application/json" means the browser never
@@ -348,14 +356,21 @@
                     <div class="panel__head panel__head--plain">
                         <div>
                             <h2 class="panel__title" id="pricing-title">Event Pricing</h2>
-                            <p class="panel__meta">Toggle to offer free or paid tickets</p>
+                            <p class="panel__meta">
+                                @(pageIsPrivateEvent ? "Private events are paid tickets only" : "Toggle to offer free or paid tickets")
+                            </p>
                         </div>
                         <div class="segment" id="paidmode" role="group" aria-label="Pricing mode" data-segment>
-                            <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "true" : "false")"
-                                    data-segment-value="free">
-                                Free
-                            </button>
-                            <button class="segment__btn" type="button" aria-pressed="@(Model.PricingMode == "free" ? "false" : "true")"
+                            @if (!pageIsPrivateEvent)
+                            {
+                                <button class="segment__btn" type="button"
+                                        aria-pressed="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) && !pageIsPrivateEvent ? "true" : "false")"
+                                        data-segment-value="free">
+                                    Free
+                                </button>
+                            }
+                            <button class="segment__btn" type="button"
+                                    aria-pressed="@(string.Equals(Model.PricingMode, "free", StringComparison.OrdinalIgnoreCase) && !pageIsPrivateEvent ? "false" : "true")"
                                     data-segment-value="paid">
                                 Paid
                             </button>
@@ -378,11 +393,8 @@
                             </div>
                             <div class="form__field">
                                 <label class="field__label" for="settlement-currency">Settlement Currency<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <select class="field__select" id="settlement-currency" name="settlement-currency" aria-describedby="err-settlement-currency" data-validate="required">
-                                    <option selected="@(Model.Currency == "NGN")">NGN</option>
-                                    <option selected="@(Model.Currency == "USD")">USD</option>
-                                </select>
-                                <span class="field__hint">Currency you are paid in</span>
+                                <input class="field__input" id="settlement-currency" name="settlement-currency" type="text" value="@Model.Currency" readonly aria-describedby="err-settlement-currency">
+                                <span class="field__hint">Currency you are paid in &mdash; matches Display Currency</span>
                                 <span class="field__error" id="err-settlement-currency" role="alert"></span>
                             </div>
                             <div class="form__field">
@@ -521,13 +533,15 @@
                                     <p class="invoice__row invoice__row--total">
                                         <span>Due to publish</span><span>&#8358;0</span>
                                     </p>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
                 </section> *@
 
-                <!-- Free events: exactly one tier -->
+                <!-- Free events: exactly one tier (public events only; private events are paid-only) -->
+                @if (!pageIsPrivateEvent)
+                {
                 <section class="panel" data-segment-panel="free" data-segment-owner="paidmode"
                          aria-labelledby="freetier-title" hidden>
                     <div class="panel__head">
@@ -552,13 +566,13 @@
                             <div class="formgrid formgrid--2">
                                 <div class="form__field">
                                     <label class="field__label" for="free-qty">Quantity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <input class="field__input" id="free-qty" name="free-qty" type="text" placeholder="0" value="300" aria-describedby="err-free-qty" data-validate="number">
+                                    <input class="field__input" id="free-qty" name="free-qty" type="text" placeholder="0" value="" aria-describedby="err-free-qty" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                     <span class="field__hint">Total free tickets released</span>
                                     <span class="field__error" id="err-free-qty" role="alert"></span>
                                 </div>
                                 <div class="form__field">
                                     <label class="field__label" for="free-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <input class="field__input" id="free-cap" name="free-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-cap" data-validate="number">
+                                    <input class="field__input" id="free-cap" name="free-cap" type="text" placeholder="0" value="" aria-describedby="err-free-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                     <span class="field__hint">Hard ceiling across the event</span>
                                     <span class="field__error" id="err-free-cap" role="alert"></span>
                                 </div>
@@ -567,9 +581,18 @@
                             <div class="formgrid u-mt-5">
                                 <div class="form__field">
                                     <label class="field__label" for="free-desc">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <textarea class="field__input" id="free-desc" name="free-desc" type="text" placeholder="Shown on the ticket card" value="General admission" aria-describedby="err-free-desc" data-validate="required"></textarea>
+                                    <textarea class="field__input" id="free-desc" name="free-desc" type="text" placeholder="Shown on the ticket card" value="General admission" aria-describedby="err-free-desc" data-validate="required" style="height:3.5rem;align-content:center"></textarea>
                                     <span class="field__error" id="err-free-desc" role="alert"></span>
                                 </div>
+                            </div>
+                            <div class="descprev" data-desc-prev="free">
+                                <span class="descprev__label">How the buyer sees it</span>
+                                <ul class="descprev__list" data-desc-list>
+                                    <li>General admission</li>
+                                    <li>Entry to every standard session</li>
+                                    <li>Lunch on both days</li>
+                                </ul>
+                                <p class="descprev__line" data-desc-line hidden></p>
                             </div>
 
                         </div>
@@ -609,13 +632,13 @@
                                 <div class="sizegrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-rows">Total Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="12" aria-describedby="err-free-rows" data-validate="number">
+                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="12" aria-describedby="err-free-rows" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Rows are labelled A, B, C&hellip;</span>
                                         <span class="field__error" id="err-free-rows" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="free-seats-row">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="20" aria-describedby="err-free-seats-row" data-validate="number">
+                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="20" aria-describedby="err-free-seats-row" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Numbered 1 upwards within each row</span>
                                         <span class="field__error" id="err-free-seats-row" role="alert"></span>
                                     </div>
@@ -630,13 +653,13 @@
                                 <div class="sizegrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-tables">Total Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="10" aria-describedby="err-free-tables" data-validate="number">
+                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="10" aria-describedby="err-free-tables" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Tables are labelled T1, T2, T3&hellip;</span>
                                         <span class="field__error" id="err-free-tables" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="free-chairs">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="10" aria-describedby="err-free-chairs" data-validate="number">
+                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="10" aria-describedby="err-free-chairs" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Seats are assigned per table</span>
                                         <span class="field__error" id="err-free-chairs" role="alert"></span>
                                     </div>
@@ -651,7 +674,7 @@
                                 <div class="formgrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-standing-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-standing-cap" data-validate="number">
+                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-standing-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Registration closes at this number</span>
                                         <span class="field__error" id="err-free-standing-cap" role="alert"></span>
                                     </div>
@@ -666,7 +689,7 @@
                                 <div class="formgrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-open-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-open-cap" data-validate="number">
+                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-open-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Registration closes at this number</span>
                                         <span class="field__error" id="err-free-open-cap" role="alert"></span>
                                     </div>
@@ -1184,6 +1207,7 @@
                         </p>
                     </div>
                 </section>
+                }
 
                 <!-- Paid events: full tier configuration -->
                 <section class="panel" data-segment-panel="paid" data-segment-owner="paidmode"
@@ -1223,38 +1247,37 @@
                                     <div class="formgrid formgrid--2">
                                         <div class="form__field">
                                             <label class="field__label" for="price-early">Price (&#8358;)<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="price-early" name="price-early" type="text" placeholder="0" value="5000" aria-describedby="err-price-early" data-validate="number">
+                                            <input class="field__input" id="price-early" name="price-early" type="text" placeholder="0" value="" aria-describedby="err-price-early" data-validate="number" oninput="this.value = this.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')" maxlength="5">
                                             <span class="field__error" id="err-price-early" role="alert"></span>
                                         </div>
                                         <div class="form__field">
                                             <label class="field__label" for="qty-early">Quantity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="qty-early" name="qty-early" type="text" placeholder="0" value="200" aria-describedby="err-qty-early" data-validate="number">
+                                            <input class="field__input" id="qty-early" name="qty-early" type="text" placeholder="0" value="" aria-describedby="err-qty-early" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="5">
                                             <span class="field__error" id="err-qty-early" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="formgrid formgrid--2 u-mt-5">
                                         <div class="form__field">
                                             <label class="field__label" for="salestart-early">Sale Start<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="salestart-early" name="salestart-early" type="date" aria-describedby="err-salestart-early" data-validate="required">
+                                            <input class="field__input" id="salestart-early" name="salestart-early" type="date" aria-describedby="err-salestart-early" data-validate="required" data-role="sale-start">
                                             <span class="field__error" id="err-salestart-early" role="alert"></span>
                                         </div>
                                         <div class="form__field">
                                             <label class="field__label" for="saleend-early">Sale End<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="field__input" id="saleend-early" name="saleend-early" type="date" aria-describedby="err-saleend-early" data-validate="required">
+                                            <input class="field__input" id="saleend-early" name="saleend-early" type="date" aria-describedby="err-saleend-early" data-validate="required" data-role="sale-end">
                                             <span class="field__error" id="err-saleend-early" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="formgrid u-mt-5">
                                         <div class="form__field">
                                             <label class="field__label" for="desc-early">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <textarea class="field__input" id="desc-early" name="desc-early" type="text" placeholder="Shown on the ticket card" value="Limited early access" aria-describedby="err-desc-early" data-validate="required"></textarea>
-                                            <span class="field__error" id="err-desc-early" role="alert"></span>
+                                            <textarea class="field__input" id="desc-early" name="desc-early" placeholder="Shown on the ticket card" aria-describedby="err-desc-early" data-validate="required" style="height:3.5rem;align-content:center">Limited early access</textarea>                                            <span class="field__error" id="err-desc-early" role="alert"></span>
                                         </div>
                                     </div>
                                     <span class="field__hint">
                                         Start a new line for each point &mdash; the buyer sees them as bullets
                                     </span>
-                                    <div class="descprev" data-desc-prev="free">
+                                    <div class="descprev" data-desc-prev="early">
                                         <span class="descprev__label">How the buyer sees it</span>
                                         <ul class="descprev__list" data-desc-list>
                                             <li>General admission</li>
@@ -2474,7 +2497,8 @@
                         'data-incl-body',
                         'data-incl-off',
                         'data-includes',
-                        'data-incl-group'
+                        'data-incl-group',
+                        'data-desc-prev'
                     ];
 
                     var scoped = node.querySelectorAll(
@@ -2482,7 +2506,7 @@
                         '[data-reveal],[data-upload],[data-upload-dropzone],' +
                         '[data-pick-owner],[data-segment-owner],[data-tier-repeat-add],' +
                         '[data-incl-switch],[data-incl-body],[data-incl-off],[data-includes],' +
-                        '[data-incl-group]'
+                        '[data-incl-group],[data-desc-prev]'
                     );
 
                     var all = [node].concat(Array.prototype.slice.call(scoped));
@@ -2669,11 +2693,104 @@
                     if (!form) return;
 
                     var pricingMode = form.querySelector('#PricingMode');
-                    var paidMode = document.querySelector('#paidmode');
-                    if (paidMode) {
-                        paidMode.addEventListener('click', function(e) {
+                    var pricingModeGroup = document.getElementById('paidmode');
+
+                    // ============================================================
+                    // Pricing mode
+                    // PUBLIC  event -> Free or Paid
+                    // PRIVATE event -> Paid only
+                    //
+                    // PricingMode is a real form field and is the value that is
+                    // posted to OnPost(). The selected pricing button is the
+                    // client-side source of truth for that hidden field.
+                    // ============================================================
+                    var isPrivateEvent = @(pageIsPrivateEvent ? "true" : "false");
+
+                    function normalizePricingMode(mode) {
+                        mode = (mode || '').toString().trim().toLowerCase();
+
+                        // Private events are paid-only.
+                        if (isPrivateEvent) {
+                            return 'paid';
+                        }
+
+                        // Public events support both modes.
+                        return mode === 'free' ? 'free' : 'paid';
+                    }
+
+                    function syncPricingMode(mode) {
+                        var normalizedMode = normalizePricingMode(mode);
+
+                        // Always update the actual hidden input that ASP.NET binds.
+                        var hiddenPricingMode = document.getElementById('PricingMode');
+                        if (hiddenPricingMode) {
+                            hiddenPricingMode.value = normalizedMode;
+                        }
+
+                        // Update the visual selected button.
+                        if (pricingModeGroup) {
+                            pricingModeGroup.querySelectorAll('[data-segment-value]').forEach(function(button) {
+                                var buttonMode = (button.getAttribute('data-segment-value') || '')
+                                    .toString()
+                                    .trim()
+                                    .toLowerCase();
+
+                                button.setAttribute(
+                                    'aria-pressed',
+                                    buttonMode === normalizedMode ? 'true' : 'false'
+                                );
+                            });
+                        }
+
+                        // Show only the sections belonging to the selected mode.
+                        document.querySelectorAll('[data-segment-owner="paidmode"]').forEach(function(panel) {
+                            var panelMode = (panel.getAttribute('data-segment-panel') || '')
+                                .toString()
+                                .trim()
+                                .toLowerCase();
+
+                            if (panelMode === normalizedMode &&
+                                !(isPrivateEvent && panelMode === 'free')) {
+                                panel.removeAttribute('hidden');
+                            } else {
+                                panel.setAttribute('hidden', '');
+                            }
+                        });
+
+                        return normalizedMode;
+                    }
+
+                    // ------------------------------------------------------------
+                    // Initial state.
+                    // Do not force a PUBLIC event to Paid when the server already
+                    // rendered PricingMode = free.
+                    // ------------------------------------------------------------
+                    syncPricingMode(
+                        pricingMode ? pricingMode.value : 'paid'
+                    );
+
+                    // ------------------------------------------------------------
+                    // Free / Paid button click.
+                    // This directly changes the hidden PricingMode field.
+                    // ------------------------------------------------------------
+                    if (pricingModeGroup) {
+                        pricingModeGroup.addEventListener('click', function(e) {
                             var button = e.target.closest('[data-segment-value]');
-                            if (button && pricingMode) pricingMode.value = button.getAttribute('data-segment-value') || 'paid';
+
+                            if (!button || !pricingModeGroup.contains(button)) {
+                                return;
+                            }
+
+                            var selectedMode = button.getAttribute('data-segment-value') || 'paid';
+
+                            syncPricingMode(selectedMode);
+
+                            console.log(
+                                '[TicketPricing] Selected pricing mode:',
+                                document.getElementById('PricingMode')
+                                    ? document.getElementById('PricingMode').value
+                                    : 'PricingMode field not found'
+                            );
                         });
                     }
 
@@ -3005,13 +3122,44 @@
 
                         e.preventDefault();
 
+                        // --------------------------------------------------------
+                        // FINAL PRICING MODE SYNC BEFORE POST
+                        // --------------------------------------------------------
+                        // Read the selected button first. This prevents an old/stale
+                        // hidden value such as "paid" from overriding a newly
+                        // selected "free" mode on a PUBLIC event.
+                        var selectedPricingButton = document.querySelector(
+                            '#paidmode [data-segment-value][aria-pressed="true"]'
+                        );
+
+                        var selectedPricingMode = selectedPricingButton
+                            ? selectedPricingButton.getAttribute('data-segment-value')
+                            : (pricingMode ? pricingMode.value : 'paid');
+
+                        var finalPricingMode = syncPricingMode(selectedPricingMode);
+
+                        console.log(
+                            '[TicketPricing] FINAL PricingMode before POST:',
+                            finalPricingMode
+                        );
+
                         // Block submission (and the async member-list upload step below)
                         // until every visible required field passes validation.
                         if (window.__ticketPricingValidateAll && !window.__ticketPricingValidateAll()) {
                             return;
                         }
 
-                        if (pricingMode && !pricingMode.value) pricingMode.value = 'paid';
+                        if (pricingMode && pricingMode.value === 'free') {
+                            // Free mode: the Ticket Tiers section isn't read server-side
+                            // (BuildFreeTier runs instead of BuildPaidTiers), but clear its
+                            // fields here too so nothing stale is actually sent in the POST.
+                            form.querySelectorAll(
+                                '#tier-list input[type="text"], #tier-list input[type="date"], ' +
+                                '#tier-list input[type="time"], #tier-list textarea'
+                            ).forEach(function(el) {
+                                el.value = '';
+                            });
+                        }
 
                         form.querySelectorAll('#tier-list > .tier').forEach(function(tier) {
                             var nameInput = tier.querySelector('.tier__name');
@@ -3069,7 +3217,6 @@
                                 if (form.requestSubmit) form.requestSubmit();
                                 else form.submit();
                             });
-                    });
                 });
             })();
     </script>
@@ -3565,5 +3712,128 @@
 
             return isValid;
         };
+    })();
+</script>
+<script>
+    (function() {
+        var displaySelect = document.getElementById('display-currency');
+        var settlementSelect = document.getElementById('settlement-currency');
+        if (!displaySelect || !settlementSelect) return;
+
+        function syncSettlement() {
+            settlementSelect.value = displaySelect.value;
+        }
+
+        function persistCurrency(currency) {
+            var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            var token = tokenInput ? tokenInput.value : '';
+
+            fetch(window.location.pathname + '?handler=SetCurrency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify({ currency: currency })
+            })
+                .then(function(resp) { return resp.json(); })
+                .then(function(data) {
+                    if (!data || data.status !== 1) {
+                        console.error('Currency update rejected', data);
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Currency update failed', err);
+                });
+        }
+
+        displaySelect.addEventListener('change', function() {
+            syncSettlement();
+            persistCurrency(displaySelect.value);
+        });
+
+        // Make sure settlement reflects display on initial render too.
+        syncSettlement();
+    })();
+    function initSaleDateRange(scope) {
+        scope = scope || document;
+
+        var starts = scope.querySelectorAll('[data-role="sale-start"]');
+        starts.forEach(function(startInput) {
+            var today = new Date().toISOString().split('T')[0];
+            startInput.min = today;
+
+            // Find the matching Sale End in the same tier block.
+            var field = startInput.closest('.formgrid') || startInput.closest('.form__field').parentElement;
+            var endInput = field ? field.querySelector('[data-role="sale-end"]') : null;
+            if (!endInput) return;
+
+            endInput.min = startInput.value || today;
+
+            startInput.addEventListener('change', function() {
+                endInput.min = startInput.value || today;
+                if (endInput.value && endInput.value < startInput.value) {
+                    endInput.value = startInput.value;
+                }
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initSaleDateRange();
+    });
+</script>
+<script>
+    (function() {
+        function renderDescPreview(textarea) {
+            var suffix = (textarea.getAttribute('name') || '').replace(/^(free-)?desc-?/, '') || 'free';
+            var preview = document.querySelector('.descprev[data-desc-prev="' + CSS.escape(suffix) + '"]');
+            if (!preview) return;
+
+            var list = preview.querySelector('[data-desc-list]');
+            var singleLine = preview.querySelector('[data-desc-line]');
+
+            var lines = (textarea.value || '')
+                .split(/\r?\n/)
+                .map(function(l) { return l.trim(); })
+                .filter(function(l) { return l.length > 0; });
+
+            if (lines.length === 0) {
+                if (list) { list.innerHTML = ''; list.hidden = true; }
+                if (singleLine) { singleLine.textContent = ''; singleLine.hidden = true; }
+                return;
+            }
+
+            if (lines.length === 1) {
+                if (list) { list.innerHTML = ''; list.hidden = true; }
+                if (singleLine) {
+                    singleLine.textContent = lines[0];
+                    singleLine.hidden = false;
+                }
+                return;
+            }
+
+            if (singleLine) { singleLine.textContent = ''; singleLine.hidden = true; }
+            if (list) {
+                list.hidden = false;
+                list.innerHTML = lines
+                    .map(function(l) {
+                        var li = document.createElement('li');
+                        li.textContent = l;
+                        return li.outerHTML;
+                    })
+                    .join('');
+            }
+        }
+
+        document.addEventListener('input', function(e) {
+            var el = e.target;
+            if (el.tagName === 'TEXTAREA' && /^(free-)?desc-/.test(el.id || '') || el.id === 'free-desc') {
+                renderDescPreview(el);
+            }
+        });
+
+        // Render once on load for any pre-filled description (existing/rehydrated tiers).
+        document.querySelectorAll('textarea[id^="desc-"], #free-desc').forEach(renderDescPreview);
     })();
 </script>

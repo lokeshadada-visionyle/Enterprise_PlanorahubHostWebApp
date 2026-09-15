@@ -17,9 +17,14 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public long UserId { get; set; }
 
         [BindProperty]
-        public string PricingMode { get; set; } = "paid";
+        public string EventType { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string PricingMode { get; set; }
 
         public string Currency { get; private set; } = "NGN";
+
+        public bool IsPrivateEvent { get; private set; }
 
         public List<EventDates> EventDates { get; private set; } = new List<EventDates>();
         [BindProperty]
@@ -44,6 +49,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
 
             ResolveIds();
+
+            EventType = ResolveEventType();
+            IsPrivateEvent = string.Equals(EventType, "private", StringComparison.OrdinalIgnoreCase);
 
             var helper = new CommonHelper();
             try
@@ -96,9 +104,66 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             {
                 ErrorMessage = "Unable to load existing ticket tiers: " + ex.Message;
             }
+
+            // Private events are never allowed to offer free tickets, regardless of
+            // what the previously saved ticket data says.
+            if (IsPrivateEvent && string.Equals(PricingMode, "free", StringComparison.OrdinalIgnoreCase))
+            {
+                PricingMode = "paid";
+            }
+
             return Page();
         }
+        public IActionResult OnPostSetCurrency([FromBody] SetCurrencyRequestDto req)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
+            if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) ||
+                !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                return new JsonResult(new { status = 0, message = "Not authenticated." });
+            }
+
+            if (!eventId.HasValue || eventId.Value <= 0)
+            {
+                return new JsonResult(new { status = 0, message = "No event in progress." });
+            }
+
+            if (req == null || string.IsNullOrWhiteSpace(req.Currency))
+            {
+                return new JsonResult(new { status = 0, message = "Currency is required." });
+            }
+
+            var helper = new CommonHelper();
+            try
+            {
+                var response = helper.AddEventCurrencyReq(new SetEventCurrencyReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    Currency = req.Currency.Trim()
+                });
+
+                // Same success convention used elsewhere in this file (0 / 1 / 200).
+                if (response != null && (response.Status == 0 || response.Status == 1 || response.Status == 200))
+                {
+                    return new JsonResult(new { status = 1, message = "Currency updated.", currency = req.Currency.Trim() });
+                }
+
+                return new JsonResult(new { status = 0, message = response?.Message ?? "Unable to update currency." });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { status = 0, message = "Unable to update currency: " + ex.Message });
+            }
+        }
+
+        public class SetCurrencyRequestDto
+        {
+            public string Currency { get; set; } = string.Empty;
+        }
         public IActionResult OnPost()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -114,6 +179,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
             ResolveIds();
 
+            EventType = ResolveEventType();
+            IsPrivateEvent = string.Equals(EventType, "private", StringComparison.OrdinalIgnoreCase);
+
             if (eventId <= 0)
             {
                 ErrorMessage = "A valid EventId is required.";
@@ -126,12 +194,23 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return Page();
             }
 
-            PricingMode = string.Equals(
-                PricingMode,
-                "free",
-                StringComparison.OrdinalIgnoreCase)
-                ? "free"
-                : "paid";
+            //PricingMode = string.Equals(
+            //    PricingMode,
+            //    "free",
+            //    StringComparison.OrdinalIgnoreCase)
+            //    ? "free"
+            //    : "paid";
+
+            // Public events may use either mode. Private events are paid-only.
+            if (!IsPrivateEvent && PricingMode == "free")
+            {
+                PricingMode = "free";
+            }
+            else
+            {
+                PricingMode = "paid";
+            }
+
 
 
             List<ParsedTier> parsedTiers = PricingMode == "free"
@@ -143,12 +222,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 ErrorMessage = "Please add at least one ticket tier.";
                 return Page();
             }
-
-            // TicketTypeId <= 0 means this tier didn't exist before this submit (new tier,
-            // or a plain Add flow with no existing data at all) -> goes through Ent_AddTicketTypeTiers.
-            // TicketTypeId > 0 means it was rehydrated from an existing tier -> goes through
-            // Ent_UpdateTicketTypeTiers so the downstream service updates it in place instead
-            // of creating a duplicate.
             var newTiers = parsedTiers.Where(t => t.TicketTypeId <= 0).ToList();
             var existingTiers = parsedTiers.Where(t => t.TicketTypeId > 0).ToList();
 
@@ -211,7 +284,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 6));
 
                 return RedirectToPage(
-                    HttpContext.Session.IsPrivateEvent()
+                    IsPrivateEvent
                         ? "/CreateEvent/AddonsCoupons"
                         : "/CreateEvent/PayoutAccount",
                     new
@@ -463,6 +536,38 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 ? storedUrl
                 : string.Empty;
         }
+
+        private string ResolveEventType()
+        {
+            // The explicit event type carried by the current wizard URL/form is the
+            // source of truth for this step. Only fall back to session state when no
+            // explicit type was supplied. This prevents a stale session value from
+            // forcing a public event into paid-only mode.
+            var eventType = string.Empty;
+
+            if (Request.HasFormContentType)
+            {
+                eventType = Request.Form["EventType"].FirstOrDefault() ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(eventType))
+            {
+                eventType = Request.Query["type"].FirstOrDefault() ?? string.Empty;
+            }
+
+            if (string.Equals(eventType, "private", StringComparison.OrdinalIgnoreCase))
+            {
+                return "private";
+            }
+
+            if (string.Equals(eventType, "public", StringComparison.OrdinalIgnoreCase))
+            {
+                return "public";
+            }
+
+            return HttpContext.Session.IsPrivateEvent() ? "private" : "public";
+        }
+
 
         private void ResolveIds()
         {
