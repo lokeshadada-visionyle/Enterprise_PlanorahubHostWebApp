@@ -412,131 +412,6 @@
                     </div>
                 </section>
 
-                <!-- Capacity now, and what it costs to add more later -->
-                @* <section class="panel" id="capacity-charges" aria-labelledby="capcharge-title">
-                    <div class="panel__head">
-                        <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg></span>
-                        <div>
-                            <h2 class="panel__title" id="capcharge-title">Capacity &amp; Charges</h2>
-                            <p class="panel__meta">
-                                What this event holds, and what it costs if you need more guests after
-                                publishing
-                            </p>
-                        </div>
-                    </div>
-                    <div class="panel__body">
-                        <div class="tablewrap">
-                            <table class="table table--narrow">
-                                <caption class="u-visually-hidden">
-                                    Configured sessions, slots and hall capacity for this event
-                                </caption>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Session</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Slot</th>
-                                        <th scope="col">Time</th>
-                                        <th scope="col">Hall</th>
-                                        <th scope="col">Capacity</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Model.EventDates != null && Model.EventDates.Count > 0)
-                                    {
-                                        @foreach (var eventDate in Model.EventDates)
-                                        {
-                                            if (eventDate.EventSlots != null && eventDate.EventSlots.Count > 0)
-                                            {
-                                                @foreach (var slot in eventDate.EventSlots)
-                                                {
-                                                    <tr>
-                                                        <th scope="row">@eventDate.SessionName</th>
-                                                        <td>@eventDate.EventDateValue</td>
-                                                        <td>@slot.SlotName</td>
-                                                        <td>@slot.StartTime &ndash; @slot.EndTime</td>
-                                                        <td>Hall @slot.HallId</td>
-                                                        <td>@slot.Capacity</td>
-                                                    </tr>
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td colspan="6">No dates/slots configured for this event yet.</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <p class="capsummary u-mt-5">
-                            <span class="capsummary__lead">
-                                <b>@eventTotalCapacity</b> seats across @eventHallCount hall@(eventHallCount == 1 ? "" : "s") &middot; seating is enabled, so
-                                added guests are turned into rows, tables or headroom automatically
-                            </span>
-                            <span class="capsummary__note">
-                                After publishing, Guests, Seating Layout and ticket management all offer
-                                <b>Add guests</b>. You enter a headcount; the layout above decides what
-                                gets built.
-                            </span>
-                        </p>
-
-                        <!-- Private: never commissioned, tickets or not -->
-                        <div data-type-only="private" hidden>
-                            <p class="notice notice--success notice--flat u-mt-5">
-                                <svg class="notice__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                <span>
-                                    <b>Private event &mdash; no charge, now or later.</b><br>
-                                    Adding guests after publishing costs nothing, and sending them tickets
-                                    or invitations costs nothing either. Only WhatsApp and email credits
-                                    are used to deliver the passes.
-                                </span>
-                            </p>
-                        </div>
-
-                        <!-- Public: the answer depends on whether tickets are sold -->
-                        <div data-type-hide="private">
-                            <div data-segment-panel="free" data-segment-owner="paidmode" hidden>
-                                <p class="notice notice--success notice--flat u-mt-5">
-                                    <svg class="notice__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                    <span>
-                                        <b>Public, non-ticketed &mdash; no charge.</b><br>
-                                        With no tickets on sale there is no gross to commission, so this is
-                                        enterprise capacity under your plan. Adding guests after publishing
-                                        is free as well.
-                                    </span>
-                                </p>
-                            </div>
-
-                            <div data-segment-panel="paid" data-segment-owner="paidmode">
-                                <p class="notice notice--alert notice--flat u-mt-5">
-                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.5" /><circle cx="16.5" cy="16.5" r="2.5" /></svg>
-                                    <span>
-                                        <b>Public, ticketed &mdash; 2% commission on gross ticket sales.</b><br>
-                                        The same 2% applies to any capacity you add after publishing, taken
-                                        only on the seats that actually sell, and settled through this same
-                                        ticketing flow. Nothing is owed for seats that go unsold.
-                                    </span>
-                                </p>
-
-                                <div class="invoice u-mt-5">
-                                    <p class="invoice__row">
-                                        <span>Gross if every seat sells at its tier price</span>
-                                        <span>&#8358;7,450,000</span>
-                                    </p>
-                                    <p class="invoice__row">
-                                        <span>Commission at 2%</span><span>&#8358;149,000</span>
-                                    </p>
-                                    <p class="invoice__row invoice__row--total">
-                                        <span>Due to publish</span><span>&#8358;0</span>
-                                    </p>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </section> *@
 
                 <!-- Free events: exactly one tier (public events only; private events are paid-only) -->
                 @if (!pageIsPrivateEvent)
@@ -631,13 +506,13 @@
                                 <div class="sizegrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-rows">Total Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="12" aria-describedby="err-free-rows" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="" aria-describedby="err-free-rows" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Rows are labelled A, B, C&hellip;</span>
                                         <span class="field__error" id="err-free-rows" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="free-seats-row">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="20" aria-describedby="err-free-seats-row" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="" aria-describedby="err-free-seats-row" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Numbered 1 upwards within each row</span>
                                         <span class="field__error" id="err-free-seats-row" role="alert"></span>
                                     </div>
@@ -652,13 +527,13 @@
                                 <div class="sizegrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-tables">Total Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="10" aria-describedby="err-free-tables" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="" aria-describedby="err-free-tables" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Tables are labelled T1, T2, T3&hellip;</span>
                                         <span class="field__error" id="err-free-tables" role="alert"></span>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="free-chairs">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="10" aria-describedby="err-free-chairs" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="" aria-describedby="err-free-chairs" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Seats are assigned per table</span>
                                         <span class="field__error" id="err-free-chairs" role="alert"></span>
                                     </div>
@@ -673,7 +548,7 @@
                                 <div class="formgrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-standing-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-standing-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="" aria-describedby="err-free-standing-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Registration closes at this number</span>
                                         <span class="field__error" id="err-free-standing-cap" role="alert"></span>
                                     </div>
@@ -688,7 +563,7 @@
                                 <div class="formgrid">
                                     <div class="form__field">
                                         <label class="field__label" for="free-open-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="300" aria-describedby="err-free-open-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="" aria-describedby="err-free-open-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
                                         <span class="field__hint">Registration closes at this number</span>
                                         <span class="field__error" id="err-free-open-cap" role="alert"></span>
                                     </div>
@@ -1013,149 +888,6 @@
                             </p>
                         </section>
 
-                        @* <section class="ticketaccess" aria-labelledby="restitle-free">
-                            <h3 class="ticketaccess__title" id="restitle-free">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg> Does the attendee need to reserve a session?
-                            </h3>
-                            <p class="ticketaccess__text">
-                                Access lets someone in. A reservation holds them a place in the room, which
-                                only matters where seats are limited.
-                            </p>
-
-                            <div class="radios radios--2">
-                                <label class="radio">
-                                    <input type="radio" name="res-mode-free" value="no" checked
-                                           data-reveal-inverse="accreserve-free">
-                                    <span class="radio__body">
-                                        <span class="radio__title">No reservation required</span>
-                                        <span class="radio__text">
-                                            The holder walks into any session this ticket covers, first come
-                                            first served
-                                        </span>
-                                    </span>
-                                </label>
-                                <label class="radio">
-                                    <input type="radio" name="res-mode-free" value="yes"
-                                           data-reveal="accreserve-free">
-                                    <span class="radio__body">
-                                        <span class="radio__title">Reservation required</span>
-                                        <span class="radio__text">
-                                            The holder books a place per session before the day, up to the room
-                                            capacity you set in the Schedule Builder
-                                        </span>
-                                    </span>
-                                </label>
-                            </div>
-
-                            <div class="reveal reveal--info u-mt-5" id="accreserve-free" hidden>
-                                <p class="reveal__title">Places per session</p>
-                                <div class="tablewrap">
-                                    <table class="table table--narrow">
-                                        <caption class="u-visually-hidden">
-                                            Capacity, reservations taken and places left for each session
-                                        </caption>
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Session</th>
-                                                <th scope="col">Capacity</th>
-                                                <th scope="col">Reserved</th>
-                                                <th scope="col">Left</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="cellstack__name">Morning Keynote</span>
-                                                    <span class="cellsub">Day 1 &middot; 09:00 &ndash; 10:30 &middot; Main Hall</span>
-                                                </th>
-                                                <td><span class="u-nowrap">500 places</span></td>
-                                                <td><span class="u-nowrap">412 reserved</span></td>
-                                                <td>
-                                                    <span class="badge badge--live">88 left</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="cellstack__name">Fintech Panel</span>
-                                                    <span class="cellsub">Day 1 &middot; 11:00 &ndash; 12:30 &middot; Hall B</span>
-                                                </th>
-                                                <td><span class="u-nowrap">180 places</span></td>
-                                                <td><span class="u-nowrap">180 reserved</span></td>
-                                                <td>
-                                                    <span class="badge badge--draft">Full &mdash; waitlist only</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="cellstack__name">Session 3</span>
-                                                    <span class="cellsub">Day 1 &middot; 11:00 &ndash; 12:30 &middot; Breakout Room 1</span>
-                                                </th>
-                                                <td><span class="u-nowrap">60 places</span></td>
-                                                <td><span class="u-nowrap">44 reserved</span></td>
-                                                <td>
-                                                    <span class="badge badge--paused">16 left</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="cellstack__name">Design Sprint</span>
-                                                    <span class="cellsub">Day 2 &middot; 09:30 &ndash; 11:00 &middot; Main Hall</span>
-                                                </th>
-                                                <td><span class="u-nowrap">500 places</span></td>
-                                                <td><span class="u-nowrap">260 reserved</span></td>
-                                                <td>
-                                                    <span class="badge badge--live">240 left</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="cellstack__name">Investor Clinic</span>
-                                                    <span class="cellsub">Day 2 &middot; 13:00 &ndash; 15:00 &middot; VIP Lounge</span>
-                                                </th>
-                                                <td><span class="u-nowrap">100 places</span></td>
-                                                <td><span class="u-nowrap">61 reserved</span></td>
-                                                <td>
-                                                    <span class="badge badge--live">39 left</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <p class="notice notice--info notice--flat u-mt-5">
-                                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                                    Capacity is read from the Schedule Builder, so a session can never be
-                                    booked past the number of places in its hall.
-                                </p>
-
-                                <div class="optin u-mt-5">
-                                    <input class="optin__box" id="wait-free" name="wait-free"
-                                           type="checkbox">
-                                    <label for="wait-free">
-                                        <span class="optin__title">
-                                            Keep a waitlist when a session is full
-                                            <span class="autotag autotag--muted">Coming soon</span>
-                                        </span>
-                                        <span class="optin__hint">
-                                            Holders join a queue and move up automatically as places are released
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <p class="flowline">
-                                <span class="flowline__step">Ticket purchase</span>
-                                <span class="flowline__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></span>
-                                <span class="flowline__step">Access</span>
-                                <span class="flowline__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></span>
-                                <span class="flowline__step flowline__step--soft">
-                                    Reservation <span class="flowline__if">if required</span>
-                                </span>
-                                <span class="flowline__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></span>
-                                <span class="flowline__step">Check-in</span>
-                            </p>
-                        </section> *@
-
                         <p class="notice notice--info notice--flat u-mt-5">
                             <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
                             Free events skip commission entirely &mdash; nothing is charged to you or
@@ -1405,12 +1137,12 @@
                                                 <div class="formgrid formgrid--2">
                                                     <div class="form__field">
                                                         <label class="field__label" for="rows-early">Number of Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                        <input class="field__input" id="rows-early" name="rows-early" type="text" value="12" aria-describedby="err-rows-early" data-validate="number">
+                                                        <input class="field__input" id="rows-early" name="rows-early" type="text" value="" aria-describedby="err-rows-early" data-validate="number">
                                                         <span class="field__error" id="err-rows-early" role="alert"></span>
                                                     </div>
                                                     <div class="form__field">
                                                         <label class="field__label" for="seats-early">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                        <input class="field__input" id="seats-early" name="seats-early" type="text" value="20" aria-describedby="err-seats-early" data-validate="number">
+                                                        <input class="field__input" id="seats-early" name="seats-early" type="text" value="" aria-describedby="err-seats-early" data-validate="number">
                                                         <span class="field__error" id="err-seats-early" role="alert"></span>
                                                     </div>
                                                 </div>
@@ -1464,12 +1196,12 @@
                                                 <div class="formgrid formgrid--2">
                                                     <div class="form__field">
                                                         <label class="field__label" for="tables-early">Number of Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                        <input class="field__input" id="tables-early" name="tables-early" type="text" value="10" aria-describedby="err-tables-early" data-validate="number">
+                                                        <input class="field__input" id="tables-early" name="tables-early" type="text" value="" aria-describedby="err-tables-early" data-validate="number">
                                                         <span class="field__error" id="err-tables-early" role="alert"></span>
                                                     </div>
                                                     <div class="form__field">
                                                         <label class="field__label" for="chairs-early">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                        <input class="field__input" id="chairs-early" name="chairs-early" type="text" value="10" aria-describedby="err-chairs-early" data-validate="number">
+                                                        <input class="field__input" id="chairs-early" name="chairs-early" type="text" value="" aria-describedby="err-chairs-early" data-validate="number">
                                                         <span class="field__error" id="err-chairs-early" role="alert"></span>
                                                     </div>
                                                 </div>
@@ -1527,7 +1259,7 @@
                                                 <div class="formgrid">
                                                     <div class="form__field">
                                                         <label class="field__label" for="standcap-early">Standing capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                        <input class="field__input" id="standcap-early" name="standcap-early" type="text" value="200" aria-describedby="err-standcap-early" data-validate="number">
+                                                        <input class="field__input" id="standcap-early" name="standcap-early" type="text" value="" aria-describedby="err-standcap-early" data-validate="number">
                                                         <span class="field__hint">Tickets are sold up to this number; no seat is assigned</span>
                                                         <span class="field__error" id="err-standcap-early" role="alert"></span>
                                                     </div>
@@ -1541,7 +1273,7 @@
                                                 <div class="formgrid">
                                                     <div class="form__field">
                                                         <label class="field__label" for="opencap-early">Seats available<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                        <input class="field__input" id="opencap-early" name="opencap-early" type="text" value="200" aria-describedby="err-opencap-early" data-validate="number">
+                                                        <input class="field__input" id="opencap-early" name="opencap-early" type="text" value="" aria-describedby="err-opencap-early" data-validate="number">
                                                         <span class="field__hint">Counted for capacity, but no seat numbers are printed on tickets</span>
                                                         <span class="field__error" id="err-opencap-early" role="alert"></span>
                                                     </div>
@@ -1629,54 +1361,6 @@
                                             <p class="scopepicker__head">
                                                 Pick individual sessions. Narrow the list first if your schedule is long.
                                             </p>
-                                            @* <div class="sessionfilter" data-session-scope="accsessions-early">
-                                                <div class="sessionfilter__field sessionfilter__field--wide">
-                                                    <label class="slotcard__label" for="sf-text-early">Search</label>
-                                                    <input class="field__input" id="sf-text-early" name="sf-text-early"
-                                                           type="search" placeholder="Session, speaker or hall"
-                                                           data-session-filter="text">
-                                                </div>
-                                                <div class="sessionfilter__field">
-                                                    <label class="slotcard__label" for="sf-date-early">Date</label>
-                                                    <select class="field__select" id="sf-date-early" name="sf-date-early"
-                                                            data-session-filter="date">
-                                                        <option value="">All</option>
-                                                        <option>2026-08-06</option>
-                                                        <option>2026-08-07</option>
-                                                    </select>
-                                                </div>
-                                                <div class="sessionfilter__field">
-                                                    <label class="slotcard__label" for="sf-venue-early">Venue</label>
-                                                    <select class="field__select" id="sf-venue-early" name="sf-venue-early"
-                                                            data-session-filter="venue">
-                                                        <option value="">All</option>
-                                                        <option>Eko Convention Centre</option>
-                                                        <option>Landmark Centre</option>
-                                                    </select>
-                                                </div>
-                                                <div class="sessionfilter__field">
-                                                    <label class="slotcard__label" for="sf-hall-early">Hall</label>
-                                                    <select class="field__select" id="sf-hall-early" name="sf-hall-early"
-                                                            data-session-filter="hall">
-                                                        <option value="">All</option>
-                                                        <option>Main Hall</option>
-                                                        <option>Hall B</option>
-                                                        <option>Breakout Room 1</option>
-                                                        <option>VIP Lounge</option>
-                                                    </select>
-                                                </div>
-                                                <div class="sessionfilter__field">
-                                                    <label class="slotcard__label" for="sf-track-early">Track</label>
-                                                    <select class="field__select" id="sf-track-early" name="sf-track-early"
-                                                            data-session-filter="track">
-                                                        <option value="">All</option>
-                                                        <option>Keynote</option>
-                                                        <option>Panel</option>
-                                                        <option>Workshop</option>
-                                                        <option>Clinic</option>
-                                                    </select>
-                                                </div>
-                                            </div> *@
                                             <div class="sessionlist">
                                                 @{
                                                     var earlyDaySeq = 0;
@@ -1914,148 +1598,6 @@
                                         </p>
                                     </section>
 
-                                    @* <section class="ticketaccess" aria-labelledby="restitle-early">
-                                        <h3 class="ticketaccess__title" id="restitle-early">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg> Does the attendee need to reserve a session?
-                                        </h3>
-                                        <p class="ticketaccess__text">
-                                            Access lets someone in. A reservation holds them a place in the room, which
-                                            only matters where seats are limited.
-                                        </p>
-
-                                        <div class="radios radios--2">
-                                            <label class="radio">
-                                                <input type="radio" name="res-mode-early" value="no" checked
-                                                       data-reveal-inverse="accreserve-early">
-                                                <span class="radio__body">
-                                                    <span class="radio__title">No reservation required</span>
-                                                    <span class="radio__text">
-                                                        The holder walks into any session this ticket covers, first come
-                                                        first served
-                                                    </span>
-                                                </span>
-                                            </label>
-                                            <label class="radio">
-                                                <input type="radio" name="res-mode-early" value="yes"
-                                                       data-reveal="accreserve-early">
-                                                <span class="radio__body">
-                                                    <span class="radio__title">Reservation required</span>
-                                                    <span class="radio__text">
-                                                        The holder books a place per session before the day, up to the room
-                                                        capacity you set in the Schedule Builder
-                                                    </span>
-                                                </span>
-                                            </label>
-                                        </div>
-
-                                        <div class="reveal reveal--info u-mt-5" id="accreserve-early" hidden>
-                                            <p class="reveal__title">Places per session</p>
-                                            <div class="tablewrap">
-                                                <table class="table table--narrow">
-                                                    <caption class="u-visually-hidden">
-                                                        Capacity, reservations taken and places left for each session
-                                                    </caption>
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Session</th>
-                                                            <th scope="col">Capacity</th>
-                                                            <th scope="col">Reserved</th>
-                                                            <th scope="col">Left</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                <span class="cellstack__name">Morning Keynote</span>
-                                                                <span class="cellsub">Day 1 &middot; 09:00 &ndash; 10:30 &middot; Main Hall</span>
-                                                            </th>
-                                                            <td><span class="u-nowrap">500 places</span></td>
-                                                            <td><span class="u-nowrap">412 reserved</span></td>
-                                                            <td>
-                                                                <span class="badge badge--live">88 left</span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                <span class="cellstack__name">Fintech Panel</span>
-                                                                <span class="cellsub">Day 1 &middot; 11:00 &ndash; 12:30 &middot; Hall B</span>
-                                                            </th>
-                                                            <td><span class="u-nowrap">180 places</span></td>
-                                                            <td><span class="u-nowrap">180 reserved</span></td>
-                                                            <td>
-                                                                <span class="badge badge--draft">Full &mdash; waitlist only</span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                <span class="cellstack__name">Session 3</span>
-                                                                <span class="cellsub">Day 1 &middot; 11:00 &ndash; 12:30 &middot; Breakout Room 1</span>
-                                                            </th>
-                                                            <td><span class="u-nowrap">60 places</span></td>
-                                                            <td><span class="u-nowrap">44 reserved</span></td>
-                                                            <td>
-                                                                <span class="badge badge--paused">16 left</span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                <span class="cellstack__name">Design Sprint</span>
-                                                                <span class="cellsub">Day 2 &middot; 09:30 &ndash; 11:00 &middot; Main Hall</span>
-                                                            </th>
-                                                            <td><span class="u-nowrap">500 places</span></td>
-                                                            <td><span class="u-nowrap">260 reserved</span></td>
-                                                            <td>
-                                                                <span class="badge badge--live">240 left</span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                <span class="cellstack__name">Investor Clinic</span>
-                                                                <span class="cellsub">Day 2 &middot; 13:00 &ndash; 15:00 &middot; VIP Lounge</span>
-                                                            </th>
-                                                            <td><span class="u-nowrap">100 places</span></td>
-                                                            <td><span class="u-nowrap">61 reserved</span></td>
-                                                            <td>
-                                                                <span class="badge badge--live">39 left</span>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                            <p class="notice notice--info notice--flat u-mt-5">
-                                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                                                Capacity is read from the Schedule Builder, so a session can never be
-                                                booked past the number of places in its hall.
-                                            </p>
-
-                                            <div class="optin u-mt-5">
-                                                <input class="optin__box" id="wait-early" name="wait-early"
-                                                       type="checkbox">
-                                                <label for="wait-early">
-                                                    <span class="optin__title">
-                                                        Keep a waitlist when a session is full
-                                                        <span class="autotag autotag--muted">Coming soon</span>
-                                                    </span>
-                                                    <span class="optin__hint">
-                                                        Holders join a queue and move up automatically as places are released
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <p class="flowline">
-                                            <span class="flowline__step">Ticket purchase</span>
-                                            <span class="flowline__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></span>
-                                            <span class="flowline__step">Access</span>
-                                            <span class="flowline__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></span>
-                                            <span class="flowline__step flowline__step--soft">
-                                                Reservation <span class="flowline__if">if required</span>
-                                            </span>
-                                            <span class="flowline__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16m0 0-6-6m6 6-6 6" /></svg></span>
-                                            <span class="flowline__step">Check-in</span>
-                                        </p>
-                                    </section> *@
                                 </div>
                             </div>
                         </div>
@@ -2335,51 +1877,6 @@
                     </div>
                 </section>
 
-                <!-- Payout account -->
-                @* <section class="panel" data-segment-panel="paid" data-segment-owner="paidmode"
-                         aria-labelledby="payout-title">
-                    <div class="panel__head">
-                        <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg></span>
-                        <h2 class="panel__title" id="payout-title">Payout Account</h2>
-                        <p class="panel__meta">Settled 3&ndash;5 business days after the event</p>
-                    </div>
-                    <div class="panel__body">
-                        <div class="formgrid formgrid--2">
-                            <div class="form__field">
-                                <label class="field__label" for="bank-name">Bank Name</label>
-                                <select class="field__select" id="bank-name" name="bank-name">
-                                    <option>Guarantee Trust Bank (GTBank)</option>
-                                    <option>Zenith Bank</option>
-                                    <option>Access Bank</option>
-                                    <option>First Bank of Nigeria</option>
-                                </select>
-                            </div>
-                            <div class="form__field">
-                                <label class="field__label" for="holder">Account Holder Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <input class="field__input" id="holder" name="holder" type="text" placeholder="Kofi Asante" required>
-                            </div>
-                        </div>
-                        <div class="formgrid formgrid--2 u-mt-5">
-                            <div class="form__field">
-                                <label class="field__label" for="acct-number">Account Number<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                <input class="field__input" id="acct-number" name="acct-number" type="text" placeholder="0123456789" value="10-digit NUBAN" required>
-                            </div>
-                            <div class="form__field">
-                                <label class="field__label" for="vat-status">VAT Status</label>
-                                <select class="field__select" id="vat-status" name="vat-status">
-                                    <option>VAT registered</option>
-                                    <option>Not VAT registered</option>
-                                    <option>VAT exempt</option>
-                                </select>
-                            </div>
-                        </div>
-                        <p class="notice notice--info notice--flat u-mt-5">
-                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                            Encrypted and verified via Paystack. A &#8358;50 test deposit confirms the
-                            account before your first payout.
-                        </p>
-                    </div>
-                </section> *@
                 <p class="notice notice--info notice--flat" data-segment-panel="paid" data-segment-owner="paidmode">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"></path></svg>
                     <span>
