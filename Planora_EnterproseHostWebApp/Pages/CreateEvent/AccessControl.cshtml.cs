@@ -9,27 +9,25 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
     {
         [BindProperty]
         public AddEventFieldsReq EventFields { get; set; } = new AddEventFieldsReq();
-
+        public int ExistingFormId { get; set; }
         public string ApiError { get; set; } = string.Empty;
-
+        public bool? RegistrationRequired { get; set; }
         public List<RegistrationFormSummary> DefaultTemplates { get; set; } = new();
-
+        public int? SelectedTemplateId { get; set; }
         public bool HasExistingForm { get; set; }
         public string SelectedDiscovery { get; set; }   // "listed" | "standalone"
         public string SelectedAccess { get; set; }
+
         public IActionResult OnGet()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
+            var formId = HttpContext.Session.GetInt32("registrationFormId");
             ViewData["StepIndex"] = 9;
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
-            {
-                var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
                 return RedirectToPage("/Login/Login");
-            }
 
             if (eventId is null)
             {
@@ -38,50 +36,59 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
 
             var helper = new CommonHelper();
-            //var existingAccess = helper.GetAccessRegistration(userId.Value, eventId.Value);
-            //if (existingAccess != null && existingAccess.Status == 1)
-            //{
-            //    SelectedDiscovery = existingAccess.IsUnListed ? "standalone" : "listed";
 
-            //    SelectedAccess = existingAccess.AccessGatewayMode?.Trim().ToLowerInvariant() switch
-            //    {
-            //        "open" => "open",
-            //        "invite" => "invite",
-            //        "rsvp" => "rsvp",
-            //        _ => null
-            //    };
-            //}
-
-            var existing = helper.GetRegistrationForm(userId.Value, eventId.Value);
-            if (existing != null && existing.Status == 1 && existing.Fields != null && existing.Fields.Any())
+            var accessResp = helper.GetAccessRegistration(new DummyRequest
             {
-                EventFields.UserId = userId.Value;
-                EventFields.EventId = eventId.Value;
-                EventFields.Fields = existing.Fields
-                    .OrderBy(f => f.SortOrder)
-                    .Select(f => new FieldItem
-                    {
-                        FieldId = f.FieldId,
-                        Label = f.Label,
-                        FieldType = f.FieldType,
-                        IsRequired = f.IsRequired
-                    })
-                    .ToList();
-                HasExistingForm = true;
+                UserId = userId.Value,
+                EventId = eventId.Value
+            });
+
+            if (accessResp != null && accessResp.Status == 1)
+            {
+                SelectedAccess = accessResp.AccessGatewayMode;
+                SelectedDiscovery = accessResp.IsUnListed ? "standalone" : "listed";
+
+                var tplId = HttpContext.Session.GetInt32("SelectedTemplateFormId");
+                if (tplId.HasValue) SelectedTemplateId = formId;
+            }
+
+            var regRequiredStr = HttpContext.Session.GetString("RegistrationRequired");
+            if (!string.IsNullOrEmpty(regRequiredStr))
+            {
+                RegistrationRequired = regRequiredStr.Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (formId.HasValue && formId.Value > 0)
+            {
+                var existing = helper.GetCustomRegistrationForm(userId.Value, formId.Value);
+                if (existing != null && existing.Status == 1 && existing.Form != null && existing.Form.Fields.Any())
+                {
+                    ExistingFormId = existing.Form.FormId;
+                    EventFields.UserId = userId.Value;
+                    EventFields.EventId = eventId.Value;
+                    EventFields.Fields = existing.Form.Fields
+                        .OrderBy(f => f.SortOrder)
+                        .Select(f => new FieldItem
+                        {
+                            FieldId = f.FieldId,
+                            Label = f.Label,
+                            FieldType = f.FieldType,
+                            IsRequired = f.IsRequired
+                        })
+                        .ToList();
+                    HasExistingForm = true;
+                }
             }
 
             var templates = helper.GetDefaultRegistrationForms(userId.Value, eventId.Value);
             if (templates != null && templates.Status == 1)
-            {
                 DefaultTemplates = templates.RegistrationForms ?? new();
-            }
             else
-            {
                 ApiError = templates?.Message ?? "Failed to load form templates.";
-            }
 
             return Page();
         }
+
         public IActionResult OnPostDeleteField([FromBody] DeleteEventFieldsReq body)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -103,6 +110,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
 
             return new JsonResult(new { success = response.Status == 1, message = response.Message });
         }
+
         // AJAX handler: GET /CreateEvent/AccessControl?handler=TemplateFields&formId=3
         public JsonResult OnGetTemplateFields(int formId)
         {
@@ -124,7 +132,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     message = resp?.Message ?? "Failed to load template fields."
                 });
             }
-
+            HttpContext.Session.SetInt32("SelectedTemplateFormId", formId);
             return new JsonResult(new
             {
                 success = true,
@@ -210,15 +218,61 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     ? RedirectToPage("/CreateEvent/RSVP")
                     : RedirectToPage("/CreateEvent/BrandingPage");
             }
-
             EventFields.UserId = userId.Value;
             EventFields.EventId = eventId.Value;
             EventFields.FormTitle = "Event Registration Form";
 
-            var response = helper.AddRegistrationFormReq(EventFields);
-
-            if (response != null && response.Status == 1)
+            int savedFormId;
+            bool success;
+            string? errMsg;
+            var existingFormId = HttpContext.Session.GetInt32("registrationFormId");
+            bool hasExistingForm = false;
+            int resolvedExistingFormId = 0;
+            if (existingFormId.HasValue && existingFormId.Value > 0)
             {
+                var existingCheck = helper.GetCustomRegistrationForm(userId.Value, existingFormId.Value);
+                if (existingCheck != null && existingCheck.Status == 1 && existingCheck.Form != null)
+                {
+                    hasExistingForm = true;
+                    resolvedExistingFormId = existingCheck.Form.FormId;
+                }
+            }
+            if (hasExistingForm && resolvedExistingFormId > 0)
+            {
+                var updateResp = helper.UpdateRegistrationFormRe(new UpdateEventFieldsReq
+                {
+                    UserId = userId.Value,
+                    EventId = eventId.Value,
+                    FormId = resolvedExistingFormId,
+                    FormTitle = "Event Registration Form",
+                    Fields = (EventFields.Fields ?? new List<FieldItem>()).Select(f => new UpdateFieldItem
+                    {
+                        FieldId = f.FieldId ?? 0,
+                        Label = f.Label,
+                        FieldType = f.FieldType,
+                        IsRequired = f.IsRequired
+                    }).ToList()
+                });
+                success = updateResp != null && updateResp.Status == 1;
+                errMsg = updateResp?.Message;
+                savedFormId = resolvedExistingFormId;
+            }
+            else
+            {
+                var addResp = helper.AddRegistrationFormReq(EventFields);
+                success = addResp != null && addResp.Status == 1;
+                errMsg = addResp?.Message;
+                savedFormId = addResp?.FormId ?? 0;
+            }
+
+            if (success)
+            {
+                HttpContext.Session.SetInt32("registrationFormId", savedFormId);
+
+                // Persist selections so OnGet can restore them on "Back"
+                HttpContext.Session.SetString("AccessGatewayMode", accessMode);
+                HttpContext.Session.SetString("DiscoveryMode", isUnListed ? "standalone" : "listed");
+
                 int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
                 HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 9));
                 return isPrivate
@@ -226,7 +280,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                     : RedirectToPage("/CreateEvent/BrandingPage");
             }
 
-            ApiError = response?.Message ?? "Failed to save registration fields.";
+            ApiError = errMsg ?? "Failed to save registration fields.";
             return Page();
         }
     }

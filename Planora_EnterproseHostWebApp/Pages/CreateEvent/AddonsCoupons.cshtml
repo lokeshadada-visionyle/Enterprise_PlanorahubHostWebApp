@@ -95,10 +95,10 @@
             box-shadow: 0 0 0 3px var(--color-danger-soft);
         }
 
-    .addonline.is-invalid,
+    /* .addonline.is-invalid,
     .promo.is-invalid {
         border-color: var(--color-danger);
-    }
+    } */
 </style>
 <div class="wizard__body">
 
@@ -144,9 +144,9 @@
                                                 <label class="u-visually-hidden" for="addon-name-@n">Add-on name (required)</label>
                                                 <input class="line__input @(row.Error != null ? "is-invalid" : "")" id="addon-name-@n" name="addon-name-@n" type="text" placeholder="e.g. Conference Tote Bag" value="@row.Name" data-role="addon-name">
                                                 <label class="u-visually-hidden" for="addon-price-@n">Price (required)</label>
-                                                <input class="line__input" id="addon-price-@n" name="addon-price-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Price" data-role="addon-price">
+                                                <input class="line__input" id="addon-price-@n" name="addon-price-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Price" data-role="addon-price" oninput="this.value = this.value.replace(/\D/g, '')">
                                                 <label class="u-visually-hidden" for="addon-stock-@n">Stock count (required)</label>
-                                                <input class="line__input" id="addon-stock-@n" name="addon-stock-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Stock" data-role="addon-stock">
+                                                <input class="line__input" id="addon-stock-@n" name="addon-stock-@n" type="text" inputmode="numeric" placeholder="0" value="@row.Stock" data-role="addon-stock" oninput="this.value = this.value.replace(/\D/g, '')">
                                             </span>
                                             <button class="line__remove" type="button" data-repeat-remove="">
                                                 <span class="u-visually-hidden">Remove add-on</span>
@@ -226,7 +226,7 @@
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="promovalue-@n">Value<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promovalue-@n" name="promovalue-@n" type="text" placeholder="0" value="@row.Value" data-role="promo-value">
+                                                <input class="field__input" id="promovalue-@n" name="promovalue-@n" type="text" placeholder="0" value="@row.Value" data-role="promo-value" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="4">
                                                 <span class="field__hint">Percent or amount off</span>
                                             </div>
                                         </div>
@@ -234,17 +234,17 @@
                                         <div class="formgrid formgrid--3 u-mt-5">
                                             <div class="form__field">
                                                 <label class="field__label" for="promomax-@n">Max Redemptions<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promomax-@n" name="promomax-@n" type="text" placeholder="Unlimited" value="@row.MaxUses" data-role="promo-max">
+                                                <input class="field__input" id="promomax-@n" name="promomax-@n" type="text" placeholder="Unlimited" value="@row.MaxUses" data-role="promo-max" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="4">
                                                 <span class="field__hint">Total uses across all buyers</span>
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="promouser-@n">Per-User Limit<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promouser-@n" name="promouser-@n" type="text" placeholder="1" value="@row.PerUserLimit" data-role="promo-user">
+                                                <input class="field__input" id="promouser-@n" name="promouser-@n" type="text" placeholder="1" value="@row.PerUserLimit" data-role="promo-user" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="4">
                                                 <span class="field__hint">Uses allowed per account</span>
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="promomin-@n">Minimum Order (&#8358;)<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promomin-@n" name="promomin-@n" type="text" placeholder="0" value="@row.MinOrder" data-role="promo-min">
+                                                <input class="field__input" id="promomin-@n" name="promomin-@n" type="text" placeholder="0" value="@row.MinOrder" data-role="promo-min" oninput="this.value = this.value.replace(/\D/g, '')">
                                                 <span class="field__hint">Order must reach this to qualify</span>
                                             </div>
                                         </div>
@@ -252,11 +252,11 @@
                                         <div class="formgrid formgrid--2 u-mt-5">
                                             <div class="form__field">
                                                 <label class="field__label" for="promofrom-@n">Valid From<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promofrom-@n" name="promofrom-@n" type="date" value="@row.ValidFrom" data-role="promo-from">
+                                                <input class="field__input" id="promofrom-@n" name="promofrom-@n" type="date" value="@row.ValidFrom" data-role="promo-from" min="@DateTime.Today.ToString("yyyy-MM-dd")">
                                             </div>
                                             <div class="form__field">
                                                 <label class="field__label" for="promountil-@n">Valid Until<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="field__input" id="promountil-@n" name="promountil-@n" type="date" value="@row.ValidTo" data-role="promo-until">
+                                                <input class="field__input" id="promountil-@n" name="promountil-@n" type="date" value="@row.ValidTo" data-role="promo-until" min="@DateTime.Today.ToString("yyyy-MM-dd")">
                                             </div>
                                         </div>
 
@@ -361,8 +361,16 @@
     <footer class="wizard__foot">
         <a class="btn btn--outline" asp-page="/CreateEvent/PayoutAccount" data-wizard-link data-type-only="public"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
         <a class="btn btn--outline" asp-page="/CreateEvent/TicketPricing" data-wizard-link data-type-only="private" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6" /></svg> Back</a>
-
         <!-- private → Food & Beverage -->
+        <div class="wizard__foot-end" data-type-only="private">
+            <button class="btn btn--primary" type="submit" form="addons-coupons-form">Continue<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+        </div>
+
+        <!-- public → skip Food, go to Access Control -->
+        <div class="wizard__foot-end" data-type-only="public" hidden>
+            <button class="btn btn--primary" type="submit" form="addons-coupons-form">Continue<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
+        </div>
+        @* <!-- private → Food & Beverage -->
         <div class="wizard__foot-end" data-type-only="private">
             <button class="btn btn--primary" type="submit" form="addons-coupons-form">@(Model.IsEditMode ? "Update & Continue" : "Continue")<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
         </div>
@@ -370,7 +378,7 @@
         <!-- public → skip Food, go to Access Control -->
         <div class="wizard__foot-end" data-type-only="public" hidden>
             <button class="btn btn--primary" type="submit" form="addons-coupons-form">@(Model.IsEditMode ? "Update & Continue" : "Continue")<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6" /></svg></button>
-        </div>
+        </div> *@
     </footer>
 </div>
 <script>
