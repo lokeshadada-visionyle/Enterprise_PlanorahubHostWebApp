@@ -13,46 +13,27 @@
             @Html.AntiForgeryToken()
             <form class="stack" id="scheduleForm" action="content-sections.html" method="post">
 
-                <!-- STEP 1: Speakers section: visible by default. Fill a speaker in once, then attach them to any session later. -->
+                <!-- STEP 1: Speakers section -->
                 <section class="panel" id="section-speakers" aria-labelledby="speakers-title">
                     <div class="panel__head panel__head--plain">
                         <div>
-                            <h2 class="panel__title panel__title--lg" id="speakers-title">
-                                Speakers
-                            </h2>
-                            <p class="panel__meta">
-                                Fill a speaker in once, then attach them to any session. Photo, title,
-                                organisation and bio all appear on the event page.
-                            </p>
+                            <h2 class="panel__title panel__title--lg" id="speakers-title">Speakers</h2>
+                            <p class="panel__meta">Fill a speaker in once, then attach them to any session. Photo, title, organisation and bio all appear on the event page.</p>
                         </div>
-                        <button class="btn btn--outline btn--sm" type="button" style="white-space: nowrap;"
-                                data-repeat-add="speaker-list">
+                        <button class="btn btn--outline btn--sm" type="button" style="white-space: nowrap;" data-repeat-add="speaker-list">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add speaker
                         </button>
                     </div>
                     <div class="panel__body">
                         <div class="speakers" id="speaker-list">
-                            <article class="speaker" data-speaker-row data-repeat-row
-                                     data-speaker-key="kofi">
+                            <article class="speaker" data-speaker-row data-repeat-row data-speaker-key="kofi">
                                 <div class="speaker__top">
                                     <span class="speakerav" data-speaker-avatar="kofi">
                                         <span class="speakerav__initials">KA</span>
                                     </span>
-                                    @* <span class="speaker__photoact">
-                                        <label class="btn btn--outline btn--sm" for="sp-1-photo">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg> Photo
-                                        </label>
-                                        <input class="u-visually-hidden" id="sp-1-photo" name="sp-1-photo"
-                                               type="file" accept="image/*"
-                                               data-speaker-photo="kofi">
-                                        <span class="speaker__photohint">Square, at least 400&times;400</span>
-                                    </span> *@
                                     <span class="speaker__tools">
-                                        <button class="iconbtn iconbtn--danger" type="button"
-                                                data-repeat-remove
-                                                data-action="Kofi Asante removed from the speaker directory"
-                                                data-action-tone="warn">
-                                            <span class="u-visually-hidden">Remove Kofi Asante</span>
+                                        <button class="iconbtn iconbtn--danger" type="button" data-repeat-remove data-action="Speaker removed from the speaker directory" data-action-tone="warn">
+                                            <span class="u-visually-hidden">Remove Speaker</span>
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
                                         </button>
                                     </span>
@@ -60,37 +41,24 @@
 
                                 <div class="formgrid formgrid--3">
                                     <div class="form__field">
-                                        <label class="field__label" for="sp-1-name">
-                                            Full name<span class="field__required" aria-hidden="true">*</span>
-                                            <span class="u-visually-hidden">(required)</span>
-                                        </label>
-                                        <input class="field__input" id="sp-1-name" name="sp-1-name"
-                                               type="text" value="" placeholder="Speaker name"
-                                               data-speaker-field="name" required>
+                                        <label class="field__label" for="sp-1-name">Full name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="sp-1-name" name="sp-1-name" type="text" value="" placeholder="Speaker name" data-speaker-field="name" required>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sp-1-title">Job title<span class="field__required" aria-hidden="true">*</span></label>
-                                        <input class="field__input" id="sp-1-title" name="sp-1-title"
-                                               type="text" value=""
-                                               placeholder="e.g. Chief Technology Officer"
-                                               data-speaker-field="title" required>
+                                        <input class="field__input" id="sp-1-title" name="sp-1-title" type="text" value="" placeholder="e.g. Chief Technology Officer" data-speaker-field="title" required>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sp-1-org">Organisation<span class="field__required" aria-hidden="true">*</span></label>
-                                        <input class="field__input" id="sp-1-org" name="sp-1-org"
-                                               type="text" value="" placeholder="Company or institution"
-                                               data-speaker-field="org" required>
+                                        <input class="field__input" id="sp-1-org" name="sp-1-org" type="text" value="" placeholder="Company or institution" data-speaker-field="org" required>
                                     </div>
                                 </div>
 
                                 <div class="form__field u-mt-5">
                                     <label class="field__label" for="sp-1-bio">Short bio</label>
-                                    <textarea class="field__input" id="sp-1-bio" name="sp-1-bio" rows="3"
-                                              placeholder="Two or three sentences. Shown on the event page and the session detail."
-                                              data-speaker-field="bio"></textarea>
+                                    <textarea class="field__input" id="sp-1-bio" name="sp-1-bio" rows="3" placeholder="Two or three sentences. Shown on the event page and the session detail." data-speaker-field="bio"></textarea>
                                     <span class="field__hint">
-                                        <span data-speaker-count="kofi">0</span> characters &middot; about 300
-                                        reads best on a session card
+                                        <span data-speaker-count="kofi">0</span> characters &middot; about 300 reads best on a session card
                                     </span>
                                 </div>
 
@@ -103,32 +71,24 @@
 
                         <p class="notice notice--info notice--flat u-mt-5">
                             <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                            A speaker with no title or organisation still works &mdash; the event page
-                            simply shows their name. Only the name is required.
+                            A speaker with no title or organisation still works &mdash; the event page simply shows their name. Only the name is required.
                         </p>
 
                         <div class="u-mt-5" style="text-align: right;">
-                            <button type="button" class="btn btn--primary btn--sm" id="btnSaveSpeakers">
-                                Save Speakers &amp; Continue to Venue
-                            </button>
+                            <button type="button" class="btn btn--primary btn--sm" id="btnSaveSpeakers">Save Speakers &amp; Continue to Venue</button>
                         </div>
                     </div>
                 </section>
 
-                <!-- STEP 2: Venues & halls: hidden until Speakers are saved. One venue by default, several on request -->
+                <!-- STEP 2: Venues & halls -->
                 <div id="section-venues" data-venue-section hidden>
                     <div class="dashbox" style="margin-bottom: 10px;">
                         <span class="dashbox__tag">Venue mode</span>
                         <div class="optin">
-                            <input class="optin__box" id="multivenue" name="multivenue" type="checkbox"
-                                   data-reveal="multi-venue" data-reveal-inverse="single-venue"
-                                   aria-controls="multi-venue">
+                            <input class="optin__box" id="multivenue" name="multivenue" type="checkbox" data-reveal="multi-venue" data-reveal-inverse="single-venue" aria-controls="multi-venue">
                             <label for="multivenue">
                                 <span class="optin__title">Multi-venue, multi-hall event</span>
-                                <span class="optin__hint">
-                                    On: add several venues, each with its own halls, and choose both per
-                                    time slot. Off: one venue &mdash; slots simply pick a hall.
-                                </span>
+                                <span class="optin__hint">On: add several venues, each with its own halls, and choose both per time slot. Off: one venue &mdash; slots simply pick a hall.</span>
                             </label>
                         </div>
                     </div>
@@ -144,7 +104,7 @@
                                 <div class="formgrid formgrid--2">
                                     <div class="form__field">
                                         <label class="field__label" for="sv-name">Venue Name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="" required oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
+                                        <input class="field__input" id="sv-name" name="sv-name" type="text" placeholder="e.g. Eko Hotel Convention Centre" value="" required>
                                     </div>
                                     <div class="form__field">
                                         <label class="field__label" for="sv-city">City<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
@@ -180,20 +140,16 @@
                                 <div class="halls">
                                     <p class="halls__head">
                                         Halls / Rooms &middot; max capacity
-                                        <button class="halls__add" type="button" data-repeat-add="sv-halls">
-                                            + Add Hall
-                                        </button>
+                                        <button class="halls__add" type="button" data-repeat-add="sv-halls">+ Add Hall</button>
                                     </p>
                                     <div id="sv-halls">
                                         <div class="hall" data-repeat-row>
                                             <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
                                             <label class="u-visually-hidden" for="sv-1-hall-name">Hall name</label>
-                                            <input class="hall__name" id="sv-1-hall-name" name="sv-1-hall-name"
-                                                   type="text" placeholder="e.g. Main Hall" value="" required>
+                                            <input class="hall__name" id="sv-1-hall-name" name="sv-1-hall-name" type="text" placeholder="e.g. Main Hall" value="" required>
                                             <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
                                             <label class="u-visually-hidden" for="sv-1-hall-cap">Maximum capacity</label>
-                                            <input class="hall__cap" id="sv-1-hall-cap" name="sv-1-hall-cap"
-                                                   type="text" inputmode="numeric" value="" placeholder="e.g. 200" required>
+                                            <input class="hall__cap" id="sv-1-hall-cap" name="sv-1-hall-cap" type="text" inputmode="numeric" value="" placeholder="e.g. 200" required>
                                             <button class="hall__remove" type="button" data-repeat-remove>
                                                 <span class="u-visually-hidden">Remove hall</span>
                                                 <span aria-hidden="true">&times;</span>
@@ -203,11 +159,8 @@
                                 </div>
                             </div>
 
-                            <!-- Single "home" for the Save Venue action, regardless of single/multi mode -->
                             <div class="u-mt-5" style="text-align: right;">
-                                <button type="button" class="btn btn--primary btn--sm" id="btnSaveVenues">
-                                    Save Venue &amp; Load Schedule
-                                </button>
+                                <button type="button" class="btn btn--primary btn--sm" id="btnSaveVenues">Save Venue &amp; Load Schedule</button>
                             </div>
                         </section>
 
@@ -215,8 +168,7 @@
                             <div class="panel__head">
                                 <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6 9 3zM9 3v15M15 6v15" /></svg></span>
                                 <h2 class="panel__title" id="multi-venue-title">Venues &amp; Halls</h2>
-                                <button class="btn btn--outline btn--sm panel__meta" type="button"
-                                        data-repeat-add="venue-list">
+                                <button class="btn btn--outline btn--sm panel__meta" type="button" data-repeat-add="venue-list">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add Venue
                                 </button>
                             </div>
@@ -270,20 +222,16 @@
                                         <div class="halls">
                                             <p class="halls__head">
                                                 Halls / Rooms &middot; max capacity
-                                                <button class="halls__add" type="button" data-repeat-add="venue-1-halls">
-                                                    + Add Hall
-                                                </button>
+                                                <button class="halls__add" type="button" data-repeat-add="venue-1-halls">+ Add Hall</button>
                                             </p>
                                             <div id="venue-1-halls">
                                                 <div class="hall" data-repeat-row>
                                                     <svg class="hall__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3" /></svg>
                                                     <label class="u-visually-hidden" for="v1-1-hall-name">Hall name</label>
-                                                    <input class="hall__name" id="v1-1-hall-name" name="v1-1-hall-name"
-                                                           type="text" placeholder="e.g. Main Hall" value="" required>
+                                                    <input class="hall__name" id="v1-1-hall-name" name="v1-1-hall-name" type="text" placeholder="e.g. Main Hall" value="" required>
                                                     <svg class="hall__people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
                                                     <label class="u-visually-hidden" for="v1-1-hall-cap">Maximum capacity</label>
-                                                    <input class="hall__cap" id="v1-1-hall-cap" name="v1-1-hall-cap"
-                                                           type="text" inputmode="numeric" value="" placeholder="e.g. 200" required>
+                                                    <input class="hall__cap" id="v1-1-hall-cap" name="v1-1-hall-cap" type="text" inputmode="numeric" value="" placeholder="e.g. 200" required>
                                                     <button class="hall__remove" type="button" data-repeat-remove>
                                                         <span class="u-visually-hidden">Remove hall</span>
                                                         <span aria-hidden="true">&times;</span>
@@ -296,10 +244,9 @@
                             </div>
                         </section>
                     </div>
-
                 </div>
 
-                <!-- STEP 3: Date & Schedule: hidden until venues/halls have been saved (or already exist) -->
+                <!-- STEP 3: Date & Schedule -->
                 <section class="panel" id="section-schedule" aria-labelledby="date-title" data-schedule-section hidden>
                     <div class="panel__head">
                         <span class="tile tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></span>
@@ -308,31 +255,26 @@
                     </div>
 
                     <div class="panel__body">
-                        <div class="options" role="radiogroup" aria-label="Schedule type"
-                             id="schedmode" data-pick-group>
-                            <button class="option option--selected" type="button" role="radio"
-                                    aria-checked="true" data-pick="single">
+                        <div class="options" role="radiogroup" aria-label="Schedule type" id="schedmode" data-pick-group>
+                            <button class="option option--selected" type="button" role="radio" aria-checked="true" data-pick="single">
                                 <span class="option__icon" aria-hidden="true">&#128197;</span>
                                 <span class="option__title">Single Day</span>
                                 <span class="option__text">One date with one or more time slots</span>
                                 <svg class="option__check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
                             </button>
-                            <button class="option" type="button" role="radio" aria-checked="false"
-                                    data-pick="range">
+                            <button class="option" type="button" role="radio" aria-checked="false" data-pick="range">
                                 <span class="option__icon" aria-hidden="true">&#128197;</span>
                                 <span class="option__title">Multi-Day Range</span>
                                 <span class="option__text">Consecutive days between two dates</span>
                             </button>
-                            <button class="option" type="button" role="radio" aria-checked="false"
-                                    data-pick="specific">
+                            <button class="option" type="button" role="radio" aria-checked="false" data-pick="specific">
                                 <span class="option__icon" aria-hidden="true">&#128198;</span>
                                 <span class="option__title">Specific Dates</span>
                                 <span class="option__text">Individual, non-consecutive dates</span>
                             </button>
                         </div>
 
-                        <div class="formgrid formgrid--2" data-pick-panel="range"
-                             data-pick-owner="schedmode" hidden>
+                        <div class="formgrid formgrid--2" data-pick-panel="range" data-pick-owner="schedmode" hidden>
                             <div class="form__field">
                                 <label class="field__label" for="range-start">Start Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                 <input class="field__input" id="range-start" name="range-start" type="date" value="" required>
@@ -340,7 +282,13 @@
                             <div class="form__field">
                                 <label class="field__label" for="range-end">End Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
                                 <input class="field__input" id="range-end" name="range-end" type="date" value="" required>
+                                <span class="field__hint">Up to 10 days from the start date</span>
                             </div>
+                        </div>
+
+                        <div id="schedule-day-tabs" class="scopebar" hidden>
+                            <span class="scopebar__label">Day</span>
+                            <div class="scopebar__row" role="group" aria-label="Choose a day" id="schedule-day-tabs-row"></div>
                         </div>
 
                         <div id="schedule-days" class="u-mt-5">
@@ -349,14 +297,16 @@
                                     <span class="day__no" aria-hidden="true">1</span>
                                     <span class="day__date">
                                         <label class="slotcard__label" for="day-1-name">Session name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="day-1-name" name="day-1-name"
-                                               type="text" value="" data-autoname="Session" placeholder="eg:- Session Name" required>
+                                        <input class="field__input" id="day-1-name" name="day-1-name" type="text" value="" data-autoname="Session" placeholder="eg:- Session Name" required>
                                     </span>
                                     <span class="day__date">
                                         <label class="slotcard__label" for="day-1-date">Date<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="day-1-date" name="day-1-date"
-                                               type="date" value="" data-day-date required>
+                                        <input class="field__input" id="day-1-date" name="day-1-date" type="date" value="" data-day-date required>
                                     </span>
+                                    <button class="hall__remove" type="button" data-day-remove title="Remove this day">
+                                        <span class="u-visually-hidden">Remove this day</span>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
 
                                 <div class="slots" id="day-1-slots">
@@ -364,8 +314,7 @@
                                         <div class="slotcard__top">
                                             <span class="slotcard__no" aria-hidden="true">1</span>
                                             <label class="u-visually-hidden" for="slot-1-1-name">Slot name<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                            <input class="slotcard__name" id="slot-1-1-name" name="slot-1-1-name"
-                                                   type="text" value="" placeholder="eg:-slotName" data-autoname="Slot" required>
+                                            <input class="slotcard__name" id="slot-1-1-name" name="slot-1-1-name" type="text" value="" placeholder="eg:-slotName" data-autoname="Slot" required>
                                             <button class="line__remove" type="button" data-repeat-remove>
                                                 <span class="u-visually-hidden">Remove this slot</span>
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
@@ -374,14 +323,12 @@
 
                                         <div class="slotcard__grid">
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-start">Start<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="slot__input" id="slot-1-1-start" name="slot-1-1-start"
-                                                       type="datetime-local" value="" data-slot-start required>
+                                                <label class="slotcard__label" for="slot-1-1-start">Start time<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="slot__input" id="slot-1-1-start" name="slot-1-1-start" type="time" value="" data-slot-start disabled required>
                                             </div>
                                             <div>
-                                                <label class="slotcard__label" for="slot-1-1-end">End<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="slot__input" id="slot-1-1-end" name="slot-1-1-end"
-                                                       type="datetime-local" value="" data-slot-end required>
+                                                <label class="slotcard__label" for="slot-1-1-end">End time<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                                <input class="slot__input" id="slot-1-1-end" name="slot-1-1-end" type="time" value="" data-slot-end disabled required>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-venue">Venues<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
@@ -391,26 +338,19 @@
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-hall">Halls<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <select class="slot__select" id="slot-1-1-hall" name="slot-1-1-hall"
-                                                        data-slot-hall disabled required>
+                                                <select class="slot__select" id="slot-1-1-hall" name="slot-1-1-hall" data-slot-hall disabled required>
                                                     <option value="">Select a venue first...</option>
                                                 </select>
                                             </div>
                                             <div>
                                                 <label class="slotcard__label" for="slot-1-1-cap">Max capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                                <input class="slot__input" id="slot-1-1-cap" name="slot-1-1-cap"
-                                                       type="text" inputmode="numeric" value=""
-                                                       placeholder="0" data-cap-input required>
+                                                <input class="slot__input" id="slot-1-1-cap" name="slot-1-1-cap" type="text" inputmode="numeric" value="" placeholder="0" data-cap-input required>
                                             </div>
                                             <div class="slotcard__speakers">
                                                 <span class="slotcard__label" id="slot-1-1-splabel">Speakers<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></span>
                                                 <div class="speakerchips" data-speaker-chips="slot-1-1"></div>
-                                                <label class="u-visually-hidden" for="slot-1-1-speakeradd">
-                                                    Add a speaker to this session
-                                                </label>
-                                                <select class="slot__select" id="slot-1-1-speakeradd"
-                                                        data-speaker-add="slot-1-1"
-                                                        aria-describedby="slot-1-1-splabel" required>
+                                                <label class="u-visually-hidden" for="slot-1-1-speakeradd">Add a speaker to this session</label>
+                                                <select class="slot__select" id="slot-1-1-speakeradd" data-speaker-add="slot-1-1" aria-describedby="slot-1-1-splabel" required>
                                                     <option value="">Add a speaker&hellip;</option>
                                                 </select>
                                             </div>
@@ -418,18 +358,13 @@
                                     </div>
                                 </div>
 
-                                <button class="addline" type="button" data-repeat-add="day-1-slots">
-                                    + Add time slot
-                                </button>
+                                <button class="addline" type="button" data-repeat-add="day-1-slots">+ Add time slot</button>
                             </div>
                         </div>
 
-                        <button class="addline" type="button" data-repeat-add="schedule-days">
-                            + Add day
-                        </button>
+                        <button class="addline" type="button" data-repeat-add="schedule-days">+ Add day</button>
 
-                        <p class="notice notice--warn notice--flat u-mt-5"
-                           role="status" data-schedule-conflict hidden>
+                        <p class="notice notice--warn notice--flat u-mt-5" role="status" data-schedule-conflict hidden>
                             <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 8v4.5M12 16h.01" /></svg>
                             <span data-schedule-conflict-text></span>
                         </p>
@@ -457,9 +392,7 @@
 
                 <section class="panel" aria-labelledby="halls-note-title">
                     <div class="panel__head panel__head--plain">
-                        <h2 class="panel__title panel__title--lg" id="halls-note-title">
-                            Hall allocation rules
-                        </h2>
+                        <h2 class="panel__title panel__title--lg" id="halls-note-title">Hall allocation rules</h2>
                     </div>
                     <div class="panel__body">
                         <ul class="choice__list">
@@ -505,27 +438,15 @@
         let globalVenuesCache = [];
         let globalSpeakersCache = [];
 
-        // Edit-mode tracking: once GetVenues/GetSpeakers/GetSchedule come back with
-        // existing records for this event, further "Save" clicks must go through the
-        // Update APIs (Ent_UpdateVenueAndHall / Ent_UpdateSpeaker / Ent_UpdateEventDateAndSlots)
-        // instead of re-adding (Ent_AddVenueAndHall / Ent_AddSpeaker / Ent_AddEventDateAndSlots),
-        // otherwise the host would end up with duplicate records every time they revisit this step.
         let hasSavedVenues = false;
         let hasSavedSpeakers = false;
         let hasSavedSchedule = false;
 
-        // FIX: every speaker row -- the template row, every row cloned in
-        // loadAndBindSpeakers, and every row cloned by "+ Add speaker" --
-        // starts out carrying the same hardcoded key ("kofi") on its
-        // data-speaker-key attribute and on its child data-speaker-avatar /
-        // data-speaker-photo / data-speaker-count / data-speaker-sessions
-        // attributes. script.js's speakerDirectory()/syncSpeakers() (see
-        // wwwroot/assets/js/script.js) index speakers by that key, so two
-        // rows sharing it collapse into a single directory entry: painting
-        // "every avatar for that key" then repaints BOTH rows' badges with
-        // whichever row's data happened to be processed last. That's why,
-        // with two speakers, both badges ended up showing the 2nd speaker's
-        // initials. Giving each row its own key keeps them independent.
+        const blankDayTemplate = document.querySelector("#schedule-days .day").cloneNode(true);
+        const blankSlotTemplate = blankDayTemplate.querySelector(".slotcard").cloneNode(true);
+
+        const scheduleDrafts = { single: null, range: null, specific: null };
+
         function assignSpeakerRowKey(row, key) {
             row.setAttribute("data-speaker-key", key);
             ["data-speaker-avatar", "data-speaker-photo", "data-speaker-count", "data-speaker-sessions"]
@@ -541,6 +462,751 @@
             speakerKeySeq += 1;
             return "speaker-new-" + Date.now() + "-" + speakerKeySeq;
         }
+
+        // ===================== SCHEDULE MODE (single / range / specific) =====================
+
+        let scheduleToastHost = null;
+        function scheduleToast(message, tone) {
+            if (!scheduleToastHost) {
+                scheduleToastHost = document.createElement('div');
+                scheduleToastHost.className = 'toasts';
+                scheduleToastHost.setAttribute('role', 'status');
+                scheduleToastHost.setAttribute('aria-live', 'polite');
+                document.body.appendChild(scheduleToastHost);
+            }
+            const note = document.createElement('p');
+            note.className = 'toast' + (tone ? ' toast--' + tone : '');
+            note.textContent = message;
+            scheduleToastHost.appendChild(note);
+            setTimeout(() => {
+                note.classList.add('toast--out');
+                setTimeout(() => note.parentNode && note.parentNode.removeChild(note), 300);
+            }, 3200);
+        }
+
+        const MAX_SLOTS_PER_DAY = 4;
+        const MAX_RANGE_DAYS = 10;
+        const MAX_BOOKING_WINDOW_DAYS = 30;
+
+        let previousScheduleMode = 'single';
+        let savedScheduleMode = null;
+
+        function getScheduleMode() {
+            const active = document.querySelector('#schedmode .option[aria-checked="true"]');
+            return active ? active.getAttribute('data-pick') : 'single';
+        }
+
+        function combineDateTime(dateStr, timeStr) {
+            if (!dateStr || !timeStr) return "";
+            return `${dateStr}T${timeStr}`;
+        }
+
+        function extractTimePart(value) {
+            if (!value) return "";
+            const match = value.match(/T(\d{2}:\d{2})/);
+            return match ? match[1] : "";
+        }
+
+        function updateDayNo(dayRow, index) {
+            const noEl = dayRow.querySelector(".day__no");
+            if (noEl) noEl.textContent = index + 1;
+        }
+
+        function renumberDays() {
+            document.querySelectorAll("#schedule-days .day").forEach((dayRow, idx) => updateDayNo(dayRow, idx));
+        }
+
+        let dayIdSeq = 0;
+        function reindexDayRow(dayRow, index) {
+            if (!dayRow) return;
+            const slotsContainer = dayRow.querySelector(".slots");
+            if (!slotsContainer) return;
+
+            dayIdSeq += 1;
+            const uid = `day-${index + 1}-${dayIdSeq}-slots`;
+            slotsContainer.id = uid;
+
+            const addBtn = dayRow.querySelector('.addline[data-repeat-add]');
+            if (addBtn) addBtn.setAttribute("data-repeat-add", uid);
+        }
+
+        function reindexAllDayRows() {
+            document.querySelectorAll("#schedule-days .day").forEach((row, idx) => {
+                reindexDayRow(row, idx);
+                renumberSlots(row);
+            });
+        }
+
+        function renumberSlots(dayRow) {
+            if (!dayRow) return;
+            dayRow.querySelectorAll(".slotcard").forEach((slot, idx) => {
+                const noEl = slot.querySelector(".slotcard__no");
+                if (noEl) noEl.textContent = idx + 1;
+            });
+        }
+
+        function blankSlotCard(slotCard) {
+            if (!slotCard) return;
+            delete slotCard.dataset.slotId;
+
+            slotCard.querySelectorAll("input").forEach(inp => { inp.value = ""; });
+
+            const venueSelect = slotCard.querySelector("[data-slot-venue-select]");
+            const hallSelect = slotCard.querySelector("[data-slot-hall]");
+            const speakerSelect = slotCard.querySelector("[data-speaker-add]");
+
+            if (venueSelect) venueSelect.value = "";
+            if (hallSelect) {
+                hallSelect.innerHTML = '<option value="">Select a venue first...</option>';
+                hallSelect.disabled = true;
+            }
+            if (speakerSelect) speakerSelect.value = "";
+
+            const chipsContainer = slotCard.querySelector("[data-speaker-chips]");
+            if (chipsContainer) chipsContainer.innerHTML = "";
+
+            markConflict(slotCard, false);
+
+            const startInput = slotCard.querySelector("[data-slot-start]");
+            const endInput = slotCard.querySelector("[data-slot-end]");
+            if (startInput) startInput.disabled = true;
+            if (endInput) endInput.disabled = true;
+        }
+
+        function syncSlotTimeAvailability(dayRow) {
+            const dateVal = dayRow.querySelector("[data-day-date]")?.value;
+            dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
+                const startInput = slotCard.querySelector("[data-slot-start]");
+                const endInput = slotCard.querySelector("[data-slot-end]");
+                [startInput, endInput].forEach(input => {
+                    if (!input) return;
+                    input.disabled = !dateVal;
+                });
+            });
+        }
+
+        function refreshSlotDropdowns() {
+            if (globalVenuesCache.length) populateVenueDropdowns(globalVenuesCache);
+            if (globalSpeakersCache.length) populateSpeakerDropdowns(globalSpeakersCache);
+        }
+
+        // ===================== NEW: hall-overlap + capacity-vs-hall validation =====================
+
+            function markConflict(slotCard, on) {
+        // Visual red highlight disabled — client-side validation handled separately.
+        return;
+    }
+
+        function timesOverlap(aStart, aEnd, bStart, bEnd) {
+            return aStart < bEnd && bStart < aEnd;
+        }
+
+        // A hall cannot host two overlapping slots on the same day.
+        function checkHallOverlaps() {
+            const messages = [];
+            document.querySelectorAll("#schedule-days .day").forEach(dayRow => {
+                const dateVal = dayRow.querySelector("[data-day-date]")?.value;
+                if (!dateVal) return;
+
+                const bookings = [];
+                dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
+                    const hallSelect = slotCard.querySelector("[data-slot-hall]");
+                    const hallId = hallSelect?.value;
+                    if (!hallId) return;
+                    const hallName = hallSelect.options[hallSelect.selectedIndex]?.text || "the same hall";
+
+                    const startTime = slotCard.querySelector("[data-slot-start]")?.value;
+                    const endTime = slotCard.querySelector("[data-slot-end]")?.value;
+                    if (!startTime || !endTime) return;
+
+                    const start = new Date(combineDateTime(dateVal, startTime)).getTime();
+                    const end = new Date(combineDateTime(dateVal, endTime)).getTime();
+                    if (isNaN(start) || isNaN(end) || end <= start) return;
+
+                    const slotName = slotCard.querySelector(".slotcard__name")?.value || "This slot";
+                    bookings.push({ hallId, hallName, start, end, slotName, slotCard });
+                });
+
+                for (let i = 0; i < bookings.length; i++) {
+                    for (let j = i + 1; j < bookings.length; j++) {
+                        const a = bookings[i], b = bookings[j];
+                        if (a.hallId === b.hallId && timesOverlap(a.start, a.end, b.start, b.end)) {
+                            messages.push(`"${a.slotName}" and "${b.slotName}" both use ${a.hallName} at overlapping times.`);
+                            markConflict(a.slotCard, true);
+                            markConflict(b.slotCard, true);
+                        }
+                    }
+                }
+            });
+            return messages;
+        }
+
+        // A slot cannot be allocated more seats than its hall holds.
+        function checkCapacityOverflows() {
+            const messages = [];
+            document.querySelectorAll("#schedule-days .day .slotcard").forEach(slotCard => {
+                const hallSelect = slotCard.querySelector("[data-slot-hall]");
+                const hallId = hallSelect?.value;
+                if (!hallId) return;
+
+                const capInput = slotCard.querySelector("[data-cap-input]");
+                const capacity = parseInt(capInput?.value, 10) || 0;
+                if (!capacity) return;
+
+                let hallMax = null;
+                const hallName = hallSelect.options[hallSelect.selectedIndex]?.text || "its hall";
+                for (const v of globalVenuesCache) {
+                    const halls = v.Halls ?? v.halls ?? [];
+                    const match = halls.find(h => String(h.HallId ?? h.hallId) === String(hallId));
+                    if (match) { hallMax = parseInt(match.Capacity ?? match.capacity, 10) || 0; break; }
+                }
+                if (hallMax === null) return;
+
+                if (capacity > hallMax) {
+                    const slotName = slotCard.querySelector(".slotcard__name")?.value || "This slot";
+                    messages.push(`"${slotName}" requests ${capacity} seats but ${hallName} only holds ${hallMax}.`);
+                    markConflict(slotCard, true);
+                }
+            });
+            return messages;
+        }
+
+        function validateScheduleAndRenderWarnings() {
+            document.querySelectorAll(".slotcard--conflict").forEach(el => markConflict(el, false));
+
+            const messages = [...checkHallOverlaps(), ...checkCapacityOverflows()];
+
+            const banner = document.querySelector("[data-schedule-conflict]");
+            const textEl = document.querySelector("[data-schedule-conflict-text]");
+            if (banner && textEl) {
+                if (messages.length) {
+                    banner.hidden = false;
+                    textEl.textContent = messages.join(" ");
+                } else {
+                    banner.hidden = true;
+                    textEl.textContent = "";
+                }
+            }
+            return messages.length === 0;
+        }
+
+        function refreshScheduleMetrics() {
+            recalculateCapacityBar();
+            validateScheduleAndRenderWarnings();
+        }
+
+        // ===================== END NEW VALIDATION =====================
+
+        function setScheduleMode(mode) {
+            document.querySelectorAll('#schedmode .option').forEach(b => {
+                const active = b.getAttribute('data-pick') === mode;
+                b.classList.toggle('option--selected', active);
+                b.setAttribute('aria-checked', active ? 'true' : 'false');
+            });
+            document.querySelectorAll('[data-pick-owner="schedmode"]').forEach(panel => {
+                panel.hidden = panel.getAttribute('data-pick-panel') !== mode;
+            });
+            previousScheduleMode = mode;
+            updateModeHintBanner(mode);
+        }
+
+        function modeLabel(m) {
+            return m === 'single' ? 'Single Day' : m === 'range' ? 'Multi-Day Range' : 'Specific Dates';
+        }
+
+        function updateModeHintBanner(mode) {
+            let hint = document.getElementById('schedule-mode-hint');
+            if (!hint) {
+                hint = document.createElement('p');
+                hint.id = 'schedule-mode-hint';
+                hint.className = 'notice notice--info notice--flat u-mt-5';
+                document.getElementById('schedmode')?.insertAdjacentElement('afterend', hint);
+            }
+            if (hasSavedSchedule && savedScheduleMode && mode !== savedScheduleMode) {
+                hint.hidden = false;
+                hint.textContent = `This event's schedule is currently saved as "${modeLabel(savedScheduleMode)}". `
+                    + `You're editing "${modeLabel(mode)}" now — saving here updates the same schedule, `
+                    + `but the days saved under "${modeLabel(savedScheduleMode)}" stay on the server unless you `
+                    + `switch back and remove them yourself.`;
+            } else if (hasSavedSchedule && savedScheduleMode) {
+                hint.hidden = false;
+                hint.textContent = `This event's schedule is saved as "${modeLabel(savedScheduleMode)}".`;
+            } else {
+                hint.hidden = true;
+            }
+        }
+
+        function inferScheduleModeFromDates(isoDates) {
+            const dates = [...new Set(isoDates.filter(Boolean))].sort();
+            if (dates.length <= 1) return 'single';
+            for (let i = 1; i < dates.length; i++) {
+                const prev = new Date(dates[i - 1] + 'T00:00:00');
+                const cur = new Date(dates[i] + 'T00:00:00');
+                if (Math.round((cur - prev) / 86400000) !== 1) return 'specific';
+            }
+            return 'range';
+        }
+
+        function buildDayTabsFromExistingDays() {
+            const tabsWrap = document.getElementById("schedule-day-tabs");
+            const tabsRow = document.getElementById("schedule-day-tabs-row");
+            const rows = document.querySelectorAll("#schedule-days .day");
+            if (!tabsRow) return;
+
+            tabsRow.innerHTML = "";
+            rows.forEach((row, i) => {
+                const dateInput = row.querySelector("[data-day-date]");
+                const iso = dateInput?.value || "";
+                if (dateInput) dateInput.disabled = true;
+                row.hidden = i !== 0;
+                updateDayNo(row, i);
+
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "scopetab";
+                btn.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+                btn.dataset.dayIndex = i;
+                btn.innerHTML = `Day ${i + 1} <span class="scopetab__date">${iso}</span>`;
+                tabsRow.appendChild(btn);
+            });
+            if (tabsWrap) tabsWrap.hidden = rows.length === 0;
+        }
+
+        // ---------- Per-mode draft capture / rebuild ----------
+        function captureDayData(dayRow) {
+            const sessionName = dayRow.querySelector("input[name*='name']")?.value || "";
+            const eventDate = dayRow.querySelector("[data-day-date]")?.value || "";
+            const eventDateId = parseInt(dayRow.dataset.eventDateId, 10) || 0;
+
+            const slots = [];
+            dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
+                const slotId = parseInt(slotCard.dataset.slotId, 10) || 0;
+                const slotName = slotCard.querySelector(".slotcard__name")?.value || "";
+                const start = slotCard.querySelector("[data-slot-start]")?.value || "";
+                const end = slotCard.querySelector("[data-slot-end]")?.value || "";
+                const venueId = slotCard.querySelector("[data-slot-venue-select]")?.value || "";
+                const hallId = slotCard.querySelector("[data-slot-hall]")?.value || "";
+                const capacity = slotCard.querySelector("[data-cap-input]")?.value || "";
+                const chips = [...slotCard.querySelectorAll("[data-speaker-chips] .chip")].map(chip => ({
+                    id: chip.dataset.chipSpeakerId || "",
+                    text: chip.querySelector("span")?.textContent || ""
+                }));
+                slots.push({ slotId, slotName, start, end, venueId, hallId, capacity, chips });
+            });
+
+            return { eventDateId, sessionName, eventDate, slots };
+        }
+
+        function captureScheduleDays() {
+            return [...document.querySelectorAll("#schedule-days .day")].map(captureDayData);
+        }
+
+        function captureCurrentDraft(mode) {
+            const draft = { days: captureScheduleDays() };
+            if (mode === 'range') {
+                draft.start = document.getElementById("range-start")?.value || "";
+                draft.end = document.getElementById("range-end")?.value || "";
+            }
+            return draft;
+        }
+
+        async function buildSlotCardFromData(slotData) {
+            const slotCard = blankSlotTemplate.cloneNode(true);
+            if (slotData.slotId) slotCard.dataset.slotId = slotData.slotId;
+
+            const nameInput = slotCard.querySelector(".slotcard__name");
+            const startInput = slotCard.querySelector("[data-slot-start]");
+            const endInput = slotCard.querySelector("[data-slot-end]");
+            const venueSelect = slotCard.querySelector("[data-slot-venue-select]");
+            const hallSelect = slotCard.querySelector("[data-slot-hall]");
+            const capInput = slotCard.querySelector("[data-cap-input]");
+            const speakerSelect = slotCard.querySelector("[data-speaker-add]");
+            const chipsContainer = slotCard.querySelector("[data-speaker-chips]");
+
+            if (nameInput) nameInput.value = slotData.slotName || "";
+            if (startInput) startInput.value = slotData.start || "";
+            if (endInput) endInput.value = slotData.end || "";
+            if (capInput) capInput.value = slotData.capacity || "";
+            if (speakerSelect) speakerSelect.value = "";
+
+            if (chipsContainer) {
+                chipsContainer.innerHTML = "";
+                (slotData.chips || []).forEach(c => {
+                    const chip = document.createElement("span");
+                    chip.className = "chip";
+                    chip.dataset.chipSpeakerId = c.id;
+                    chip.innerHTML = `<span>${c.text}</span><button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>`;
+                    chip.querySelector(".chip__remove").addEventListener("click", () => chip.remove());
+                    chipsContainer.appendChild(chip);
+                });
+            }
+
+                if (venueSelect && slotData.venueId) {
+        if (globalVenuesCache.length) {
+            venueSelect.innerHTML = '<option value="">Select Venues...</option>';
+            globalVenuesCache.forEach(v => {
+                const id = v.VenueId ?? v.venueId ?? v.Id;
+                const name = v.VenueName ?? v.venueName ?? "Unnamed Venue";
+                const option = document.createElement("option");
+                option.value = id;
+                option.textContent = name;
+                venueSelect.appendChild(option);
+            });
+        }
+        venueSelect.value = slotData.venueId;
+        await loadHallsForVenue(hallSelect, slotData.venueId);
+        if (hallSelect) hallSelect.value = slotData.hallId || "";
+    } else if (hallSelect) {
+        hallSelect.innerHTML = '<option value="">Select a venue first...</option>';
+        hallSelect.disabled = true;
+    }
+
+            return slotCard;
+        }
+
+        async function buildDayRowFromData(dayData, index) {
+            const dayRow = blankDayTemplate.cloneNode(true);
+            if (dayData.eventDateId) dayRow.dataset.eventDateId = dayData.eventDateId;
+            else delete dayRow.dataset.eventDateId;
+
+            const nameInput = dayRow.querySelector("input[name*='name']");
+            const dateInput = dayRow.querySelector("[data-day-date]");
+            if (nameInput) nameInput.value = dayData.sessionName || "";
+            if (dateInput) dateInput.value = dayData.eventDate || "";
+
+            const slotsContainer = dayRow.querySelector(".slots");
+            slotsContainer.innerHTML = "";
+            const slotsData = (dayData.slots && dayData.slots.length) ? dayData.slots : [{}];
+            for (const slotData of slotsData) {
+                slotsContainer.appendChild(await buildSlotCardFromData(slotData));
+            }
+
+            updateDayNo(dayRow, index);
+            syncSlotTimeAvailability(dayRow);
+            return dayRow;
+        }
+
+        async function renderScheduleDays(daysData) {
+            const daysContainer = document.getElementById("schedule-days");
+            daysContainer.innerHTML = "";
+            const data = (daysData && daysData.length) ? daysData : [{}];
+            for (let i = 0; i < data.length; i++) {
+                daysContainer.appendChild(await buildDayRowFromData(data[i], i));
+            }
+            reindexAllDayRows();
+            refreshSlotDropdowns();
+        }
+
+        async function renderDraftForMode(mode, draft) {
+            if (mode === 'range') {
+                const rs = document.getElementById("range-start");
+                const re = document.getElementById("range-end");
+                if (rs) rs.value = draft?.start || "";
+                if (re) re.value = draft?.end || "";
+            }
+
+            if (draft && draft.days && draft.days.length) {
+                await renderScheduleDays(draft.days);
+                await applyScheduleModeUI(mode, true);
+            } else {
+                await renderScheduleDays([{}]);
+                if (mode === 'range') {
+                    const tabsWrap = document.getElementById("schedule-day-tabs");
+                    if (tabsWrap) tabsWrap.hidden = true;
+                }
+                await applyScheduleModeUI(mode, false);
+            }
+            refreshScheduleMetrics();
+        }
+        // ---------- End per-mode draft helpers ----------
+
+        async function applyScheduleModeUI(mode, preserve) {
+            const addDayBtn = document.querySelector('[data-repeat-add="schedule-days"]');
+            const dayTabsWrap = document.getElementById("schedule-day-tabs");
+            const daysContainer = document.getElementById("schedule-days");
+
+            if (!preserve) {
+                document.querySelectorAll("[data-day-date]").forEach(applyDateBounds);
+            }
+
+            if (mode === "single") {
+                if (addDayBtn) addDayBtn.hidden = true;
+                if (dayTabsWrap) dayTabsWrap.hidden = true;
+                if (daysContainer) daysContainer.querySelectorAll(".day").forEach(d => d.hidden = false);
+                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = true);
+
+                document.querySelectorAll("#schedule-days .day").forEach((row, idx) => { if (idx > 0) row.remove(); });
+                renumberDays();
+            } else if (mode === "range") {
+                if (addDayBtn) addDayBtn.hidden = true;
+                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = true);
+                if (preserve) {
+                    buildDayTabsFromExistingDays();
+                } else {
+                    await regenerateRangeDays();
+                }
+            } else {
+                if (addDayBtn) addDayBtn.hidden = false;
+                if (dayTabsWrap) dayTabsWrap.hidden = true;
+                if (daysContainer) daysContainer.querySelectorAll(".day").forEach(d => d.hidden = false);
+                document.querySelectorAll("#schedule-days .day [data-day-remove]").forEach(btn => btn.hidden = false);
+            }
+
+            refreshSlotDropdowns();
+        }
+
+        function toISODate(d) {
+            return d.toISOString().slice(0, 10);
+        }
+        function getTomorrowISO() {
+            const d = new Date();
+            d.setDate(d.getDate() + 1);
+            return toISODate(d);
+        }
+
+        function getBookingWindowMaxISO() {
+            const d = new Date();
+            d.setDate(d.getDate() + MAX_BOOKING_WINDOW_DAYS);
+            return toISODate(d);
+        }
+
+        function applyDateBounds(input) {
+            if (!input) return;
+            const tomorrow = getTomorrowISO();
+            const maxDate = getBookingWindowMaxISO();
+            input.min = tomorrow;
+            input.max = maxDate;
+            if (input.value && (input.value < tomorrow || input.value > maxDate)) {
+                input.value = "";
+            }
+        }
+
+        function resetDayRow(dayRow) {
+            if (!dayRow) return;
+            delete dayRow.dataset.eventDateId;
+
+            const nameInput = dayRow.querySelector("input[name*='name']");
+            if (nameInput) nameInput.value = "";
+
+            const slotsContainer = dayRow.querySelector(".slots");
+            if (slotsContainer) {
+                const slotRows = slotsContainer.querySelectorAll(".slotcard");
+                slotRows.forEach((slot, idx) => { if (idx > 0) slot.remove(); });
+                blankSlotCard(slotsContainer.querySelector(".slotcard"));
+            }
+        }
+
+        function clampRangeDates() {
+            const startInput = document.getElementById("range-start");
+            const endInput = document.getElementById("range-end");
+            if (!startInput || !endInput) return;
+
+            const tomorrow = getTomorrowISO();
+            const windowMax = getBookingWindowMaxISO();
+
+            startInput.min = tomorrow;
+            startInput.max = windowMax;
+
+            if (startInput.value && (startInput.value < tomorrow || startInput.value > windowMax)) {
+                scheduleToast(`Please choose a start date within the next ${MAX_BOOKING_WINDOW_DAYS} days.`, "warn");
+                startInput.value = "";
+            }
+
+            if (startInput.value) {
+                const start = new Date(startInput.value + "T00:00:00");
+                const maxEnd = new Date(start);
+                maxEnd.setDate(maxEnd.getDate() + (MAX_RANGE_DAYS - 1));
+                const cappedMaxEnd = toISODate(maxEnd) > windowMax ? windowMax : toISODate(maxEnd);
+
+                endInput.min = startInput.value;
+                endInput.max = cappedMaxEnd;
+
+                if (endInput.value) {
+                    const end = new Date(endInput.value + "T00:00:00");
+                    if (end < start || toISODate(end) > cappedMaxEnd) {
+                        scheduleToast(`Please choose an end date within ${MAX_RANGE_DAYS} days of the start date.`, "warn");
+                        endInput.value = "";
+                    }
+                }
+            } else {
+                endInput.min = tomorrow;
+                endInput.max = windowMax;
+            }
+        }
+
+        // FIXED: previously wiped every day except Day 1 whenever the range
+        // dates changed at all. Now preserves any day (and its slots/hall/
+        // speaker selections, and real EventDateId/SlotId) that still falls
+        // inside the new range, matched by date, instead of rebuilding blind.
+        async function regenerateRangeDays() {
+            const startInput = document.getElementById("range-start");
+            const endInput = document.getElementById("range-end");
+            const daysContainer = document.getElementById("schedule-days");
+            const tabsWrap = document.getElementById("schedule-day-tabs");
+            const tabsRow = document.getElementById("schedule-day-tabs-row");
+            if (!startInput?.value || !endInput?.value || !daysContainer) {
+                if (tabsWrap) tabsWrap.hidden = true;
+                return;
+            }
+
+            const start = new Date(startInput.value + "T00:00:00");
+            const end = new Date(endInput.value + "T00:00:00");
+            const dayCount = Math.round((end - start) / 86400000) + 1;
+
+            if (dayCount < 1 || dayCount > MAX_RANGE_DAYS) {
+                scheduleToast(`A range can span at most ${MAX_RANGE_DAYS} days.`, "warn");
+                if (tabsWrap) tabsWrap.hidden = true;
+                return;
+            }
+
+            const existingByDate = new Map();
+            daysContainer.querySelectorAll(".day").forEach(dayRow => {
+                const iso = dayRow.querySelector("[data-day-date]")?.value;
+                if (iso) existingByDate.set(iso, captureDayData(dayRow));
+            });
+
+            daysContainer.innerHTML = "";
+            tabsRow.innerHTML = "";
+
+            for (let i = 0; i < dayCount; i++) {
+                const dayDate = new Date(start);
+                dayDate.setDate(dayDate.getDate() + i);
+                const iso = toISODate(dayDate);
+
+                const preserved = existingByDate.get(iso);
+                const dayData = preserved
+                    ? { ...preserved, sessionName: preserved.sessionName || `Day ${i + 1}`, eventDate: iso }
+                    : { sessionName: `Day ${i + 1}`, eventDate: iso, slots: [{}] };
+
+                const dayRow = await buildDayRowFromData(dayData, i);
+                const dateInput = dayRow.querySelector("[data-day-date]");
+                if (dateInput) dateInput.disabled = true;
+                dayRow.hidden = i !== 0;
+                syncSlotTimeAvailability(dayRow);
+
+                daysContainer.appendChild(dayRow);
+
+                const tabBtn = document.createElement("button");
+                tabBtn.type = "button";
+                tabBtn.className = "scopetab";
+                tabBtn.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+                tabBtn.dataset.dayIndex = i;
+                tabBtn.innerHTML = `Day ${i + 1} <span class="scopetab__date">${iso}</span>`;
+                tabsRow.appendChild(tabBtn);
+            }
+
+            if (tabsWrap) tabsWrap.hidden = false;
+
+            reindexAllDayRows();
+            refreshSlotDropdowns();
+            refreshScheduleMetrics();
+        }
+
+        document.getElementById("schedule-day-tabs-row")?.addEventListener("click", function(e) {
+            const btn = e.target.closest("[data-day-index]");
+            if (!btn) return;
+            const idx = parseInt(btn.dataset.dayIndex, 10);
+            document.querySelectorAll("#schedule-day-tabs-row .scopetab").forEach((b, i) => {
+                b.setAttribute("aria-pressed", i === idx ? "true" : "false");
+            });
+            document.querySelectorAll("#schedule-days .day").forEach((row, i) => {
+                row.hidden = i !== idx;
+            });
+        });
+
+        document.getElementById("range-start")?.addEventListener("change", async () => { clampRangeDates(); await regenerateRangeDays(); });
+        document.getElementById("range-end")?.addEventListener("change", async () => { clampRangeDates(); await regenerateRangeDays(); });
+
+        document.querySelectorAll('#schedmode .option[data-pick]').forEach(btn => {
+            btn.addEventListener("click", async function() {
+                const newMode = this.getAttribute('data-pick');
+                if (newMode === previousScheduleMode) return;
+
+                scheduleDrafts[previousScheduleMode] = captureCurrentDraft(previousScheduleMode);
+
+                setScheduleMode(newMode);
+                await renderDraftForMode(newMode, scheduleDrafts[newMode]);
+            });
+        });
+
+        document.addEventListener("change", function(e) {
+            if (e.target && e.target.matches("[data-day-date]")) {
+                const dayRow = e.target.closest(".day");
+                if (dayRow) syncSlotTimeAvailability(dayRow);
+                refreshScheduleMetrics();
+            }
+        });
+
+        document.addEventListener("click", function(e) {
+            const removeBtn = e.target.closest("[data-day-remove]");
+            if (!removeBtn) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const daysContainer = document.getElementById("schedule-days");
+            const rows = daysContainer?.querySelectorAll(".day");
+            if (!rows || rows.length <= 1) {
+                scheduleToast("At least one day is required.", "warn");
+                return;
+            }
+            removeBtn.closest(".day")?.remove();
+            renumberDays();
+            refreshScheduleMetrics();
+        }, true);
+
+        document.addEventListener("click", function(e) {
+            const addSlotBtn = e.target.closest(".addline[data-repeat-add]");
+            if (!addSlotBtn) return;
+
+            const dayRow = addSlotBtn.closest("#schedule-days .day");
+            if (!dayRow) return;
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const slotsContainer = dayRow.querySelector(".slots");
+            if (!slotsContainer) return;
+
+            const existingSlots = slotsContainer.querySelectorAll(".slotcard");
+            if (existingSlots.length >= MAX_SLOTS_PER_DAY) {
+                scheduleToast(`You can add up to ${MAX_SLOTS_PER_DAY} time slots per day.`, "warn");
+                return;
+            }
+            if (existingSlots.length === 0) return;
+
+            const newSlot = existingSlots[existingSlots.length - 1].cloneNode(true);
+            blankSlotCard(newSlot);
+            slotsContainer.appendChild(newSlot);
+
+            renumberSlots(dayRow);
+            refreshSlotDropdowns();
+            syncSlotTimeAvailability(dayRow);
+            refreshScheduleMetrics();
+        }, true);
+
+        const addDayBtn = document.querySelector('[data-repeat-add="schedule-days"]');
+        if (addDayBtn) {
+            addDayBtn.addEventListener("click", function() {
+                setTimeout(() => {
+                    const rows = document.querySelectorAll("#schedule-days .day");
+                    const newRow = rows[rows.length - 1];
+                    resetDayRow(newRow);
+                    const dateInput = newRow?.querySelector("[data-day-date]");
+                    if (dateInput) {
+                        dateInput.value = "";
+                        dateInput.disabled = false;
+                        applyDateBounds(dateInput);
+                    }
+                    renumberDays();
+                    reindexAllDayRows();
+                    refreshSlotDropdowns();
+                    syncSlotTimeAvailability(newRow);
+                    refreshScheduleMetrics();
+                }, 0);
+            });
+        }
+
+        // ===================== END SCHEDULE MODE =====================
 
         function revealVenueSection() {
             if (venueSection) {
@@ -631,18 +1297,7 @@
                             const row = templateRow.cloneNode(true);
                             const speakerId = sp.SpeakerId ?? sp.speakerId ?? "0";
                             row.dataset.speakerId = speakerId;
-                            // FIX: unique key per loaded speaker (see assignSpeakerRowKey
-                            // above) — without this every row keeps the template's
-                            // hardcoded "kofi" key and their badges collapse together.
-                            // Index is appended as a tiebreaker in the unlikely case
-                            // more than one loaded speaker comes back with SpeakerId 0.
                             assignSpeakerRowKey(row, "speaker-" + speakerId + "-" + idx);
-                            // FIX: mark this row as a real, previously-saved speaker.
-                            // Only rows carrying this flag are eligible to be sent to
-                            // the Update endpoint. Rows created later via "Add speaker"
-                            // (cloned from this one) must NOT keep this flag or the id,
-                            // otherwise they'll be mistaken for an existing speaker and
-                            // silently overwrite it instead of creating a new record.
                             row.dataset.loadedFromServer = "true";
 
                             const nameInput = row.querySelector("[data-speaker-field='name']");
@@ -694,7 +1349,7 @@
 
                     populateVenueDropdowns(result.data);
                     revealScheduleSection();
-                    recalculateCapacityBar();
+                    refreshScheduleMetrics();
                     return true;
                 }
             } catch (err) {
@@ -802,12 +1457,13 @@
                     if (!dayTemplate) return;
                     daysContainer.innerHTML = "";
 
-                    // The API returns times like "2026-09-14 07:06 AM" — datetime-local
-                    // inputs need "YYYY-MM-DDTHH:mm" (24-hour, no seconds), so convert.
                     function parseApiDateTime(value) {
                         if (!value) return "";
-                        if (value.includes("T")) return value.slice(0, 16); // already ISO-ish
-                        const match = value.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+                        if (value.includes("T")) return value.slice(0, 16);
+                        // FIXED: previously only matched "date time AM/PM" with no
+                        // seconds, so any backend timestamp like "... 09:00:00 AM"
+                        // silently failed to parse and left the time field blank.
+                        const match = value.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)$/i);
                         if (!match) return "";
                         let [, datePart, hourStr, minuteStr, meridiem] = match;
                         let hour = parseInt(hourStr, 10);
@@ -845,16 +1501,15 @@
                                 const hallSelect = slotRow.querySelector("[data-slot-hall]");
                                 const capInput = slotRow.querySelector("[data-cap-input]");
                                 const speakerSelect = slotRow.querySelector("[data-speaker-add]");
+                                const chipsContainer = slotRow.querySelector("[data-speaker-chips]");
 
                                 if (slotNameInput) slotNameInput.value = slot.SlotName ?? slot.slotName ?? "";
-                                if (startInput) startInput.value = parseApiDateTime(slot.StartTime ?? slot.startTime ?? "");
-                                if (endInput) endInput.value = parseApiDateTime(slot.EndTime ?? slot.endTime ?? "");
+                                if (startInput) startInput.value = extractTimePart(parseApiDateTime(slot.StartTime ?? slot.startTime ?? ""));
+                                if (endInput) endInput.value = extractTimePart(parseApiDateTime(slot.EndTime ?? slot.endTime ?? ""));
                                 if (capInput) capInput.value = slot.Capacity ?? slot.capacity ?? "";
 
                                 populateVenueDropdowns(globalVenuesCache);
 
-                                // The API only returns HallId, not VenueId, so find which
-                                // saved venue owns this hall to resolve the venue dropdown too.
                                 const targetHallId = slot.HallId ?? slot.hallId;
                                 let selectedVenueId = slot.VenueId ?? slot.venueId;
                                 if (!selectedVenueId && targetHallId != null) {
@@ -869,38 +1524,72 @@
                                     if (hallSelect) hallSelect.value = targetHallId ?? "";
                                 }
 
+                                // FIXED: previously only set the hidden <select>'s value,
+                                // never created the visible chip, so a loaded slot looked
+                                // like it had no speaker assigned even though it did.
                                 populateSpeakerDropdowns(globalSpeakersCache);
-                                if (speakerSelect) {
-                                    // NOTE (fix for API #8 naming mismatch): Ent_GetEventDateAndSlots
-                                    // returns the speaker on a slot as "Speakers" (a name string), not
-                                    // "SpeakersId" like the Add/Update request shapes use. Resolve the
-                                    // dropdown selection by matching that name back to a SpeakerId.
-                                    const rawSpeaker = slot.SpeakerId ?? slot.speakerId ?? slot.SpeakersId ?? slot.speakersId ?? slot.Speakers ?? slot.speakers ?? "";
-                                    let resolvedSpeakerId = rawSpeaker;
-                                    if (rawSpeaker && isNaN(rawSpeaker)) {
+                                if (speakerSelect) speakerSelect.value = "";
+                                if (chipsContainer) chipsContainer.innerHTML = "";
+
+                                    const speakerIdRaw = slot.SpeakerId ?? slot.speakerId ?? 0;
+    const rawSpeaker = speakerIdRaw > 0
+        ? speakerIdRaw
+        : (slot.SpeakersId ?? slot.speakersId ?? slot.Speakers ?? slot.speakers ?? "");
+                                if (rawSpeaker) {
+                                    let resolvedId = rawSpeaker;
+                                    let resolvedName = "";
+                                    if (isNaN(rawSpeaker)) {
                                         const match = globalSpeakersCache.find(sp => (sp.Name ?? sp.name ?? "").trim().toLowerCase() === String(rawSpeaker).trim().toLowerCase());
-                                        resolvedSpeakerId = match ? (match.SpeakerId ?? match.speakerId ?? "") : "";
+                                        resolvedId = match ? (match.SpeakerId ?? match.speakerId ?? "") : "";
+                                        resolvedName = match ? (match.Name ?? match.name ?? String(rawSpeaker)) : String(rawSpeaker);
+                                    } else {
+                                        const match = globalSpeakersCache.find(sp => String(sp.SpeakerId ?? sp.speakerId) === String(rawSpeaker));
+                                        resolvedName = match ? (match.Name ?? match.name ?? "") : "";
                                     }
-                                    speakerSelect.value = resolvedSpeakerId ?? "";
+                                    if (chipsContainer && (resolvedId || resolvedName)) {
+                                        const chip = document.createElement("span");
+                                        chip.className = "chip";
+                                        chip.dataset.chipSpeakerId = resolvedId || "";
+                                        chip.innerHTML = `<span>${resolvedName || "Unknown speaker"}</span><button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>`;
+                                        chip.querySelector(".chip__remove").addEventListener("click", () => chip.remove());
+                                        chipsContainer.appendChild(chip);
+                                    }
                                 }
 
                                 slotsContainer.appendChild(slotRow);
                             }
                         }
 
+                        syncSlotTimeAvailability(dayRow);
                         daysContainer.appendChild(dayRow);
                     }
 
-                    recalculateCapacityBar();
+                    reindexAllDayRows();
+
+                    const loadedDates = [...document.querySelectorAll("#schedule-days [data-day-date]")]
+                        .map(i => i.value);
+                    savedScheduleMode = inferScheduleModeFromDates(loadedDates);
+                    setScheduleMode(savedScheduleMode);
+
+                    if (savedScheduleMode === 'range') {
+                        const sorted = [...new Set(loadedDates.filter(Boolean))].sort();
+                        const rs = document.getElementById("range-start");
+                        const re = document.getElementById("range-end");
+                        if (rs) rs.value = sorted[0] ?? "";
+                        if (re) re.value = sorted[sorted.length - 1] ?? "";
+                    }
+
+                    await applyScheduleModeUI(savedScheduleMode, true);
+                    refreshScheduleMetrics();
+
+                    scheduleDrafts[savedScheduleMode] = captureCurrentDraft(savedScheduleMode);
                 }
             } catch (err) {
                 console.error("Failed to load schedule:", err);
             }
         }
 
-        // CAPACITY BAR (Total hall capacity / Peak concurrent / Headroom at peak)
-        // These three numbers were static "0"s in the markup with nothing computing
-        // them. This fills that in per the "Hall allocation rules" panel below it.
+        // CAPACITY BAR
         function recalculateCapacityBar() {
             const limitEl = document.querySelector("[data-cap-limit]");
             const totalEl = document.querySelector("[data-cap-total]");
@@ -909,39 +1598,29 @@
             const warningTextEl = document.querySelector("[data-cap-warning-text]");
             if (!limitEl || !totalEl || !remainingEl) return;
 
-            // Total hall capacity: sum of every saved hall's capacity for this event's venue(s).
             const totalHallCapacity = globalVenuesCache.reduce((sum, v) => {
                 const halls = v.Halls ?? v.halls ?? [];
                 return sum + halls.reduce((hSum, h) => hSum + (parseInt(h.Capacity ?? h.capacity, 10) || 0), 0);
             }, 0);
 
-            // Peak concurrent: at any instant, sum the capacity of every slot running
-            // then (parallel breakouts in different halls are additive — "counted once"
-            // per the rules panel, i.e. not multiplied by hall count), then take the
-            // highest such sum. Days don't overlap each other, so each ".day" block is
-            // swept independently and the overall max across all days is kept. Note:
-            // this does not check whether two overlapping slots share the same hall —
-            // that's the separate "hall can't host two overlapping slots" rule, not
-            // implemented here.
             let peakConcurrent = 0;
             document.querySelectorAll("#schedule-days .day").forEach(dayRow => {
+                const dateVal = dayRow.querySelector("[data-day-date]")?.value;
                 const events = [];
                 dayRow.querySelectorAll(".slotcard").forEach(slotCard => {
-                    const startVal = slotCard.querySelector("[data-slot-start]")?.value;
-                    const endVal = slotCard.querySelector("[data-slot-end]")?.value;
+                    const startTime = slotCard.querySelector("[data-slot-start]")?.value;
+                    const endTime = slotCard.querySelector("[data-slot-end]")?.value;
                     const capacity = parseInt(slotCard.querySelector("[data-cap-input]")?.value, 10) || 0;
-                    if (!startVal || !endVal || capacity <= 0) return;
+                    if (!dateVal || !startTime || !endTime || capacity <= 0) return;
 
-                    const start = new Date(startVal).getTime();
-                    const end = new Date(endVal).getTime();
+                    const start = new Date(combineDateTime(dateVal, startTime)).getTime();
+                    const end = new Date(combineDateTime(dateVal, endTime)).getTime();
                     if (isNaN(start) || isNaN(end) || end <= start) return;
 
                     events.push({ time: start, delta: capacity, isStart: true });
                     events.push({ time: end, delta: -capacity, isStart: false });
                 });
 
-                // Process end-events before start-events at the same timestamp so
-                // back-to-back (non-overlapping) slots aren't double-counted.
                 events.sort((a, b) => a.time - b.time || (a.isStart ? 1 : -1));
 
                 let running = 0;
@@ -977,36 +1656,29 @@
                 if (hallSelect) {
                     await loadHallsForVenue(hallSelect, venueId);
                 }
+                refreshScheduleMetrics();
             }
-            if (e.target && (e.target.matches("[data-slot-start]") || e.target.matches("[data-slot-end]") || e.target.matches("[data-cap-input]"))) {
-                recalculateCapacityBar();
+            // FIXED: hall selection changes previously triggered no recalculation
+            // at all, so the capacity bar and (now) conflict checks could go stale
+            // just by picking a different hall without touching times/capacity.
+            if (e.target && (e.target.matches("[data-slot-start]") || e.target.matches("[data-slot-end]")
+                || e.target.matches("[data-cap-input]") || e.target.matches("[data-slot-hall]"))) {
+                refreshScheduleMetrics();
             }
         });
         document.addEventListener("input", function(e) {
             if (e.target && e.target.matches("[data-cap-input]")) {
-                recalculateCapacityBar();
+                refreshScheduleMetrics();
             }
         });
-        // Adding/removing a day or slot changes which intervals exist, and removing
-        // a hall changes the total — recalculate after the generic repeat-add/remove
-        // handler (defined in the shared layout script) has done its DOM work.
         document.addEventListener("click", function(e) {
             const addBtn = e.target.closest("[data-repeat-add]");
             const removeBtn = e.target.closest("[data-repeat-remove]");
             if ((addBtn && addBtn.closest("#section-schedule")) || (removeBtn && removeBtn.closest("#section-schedule"))) {
-                setTimeout(recalculateCapacityBar, 0);
+                setTimeout(refreshScheduleMetrics, 0);
             }
         });
 
-        // FIX: cleanup for newly-cloned speaker rows added via the "Add speaker" button.
-        // The generic data-repeat-add handler (shared across speakers/venues/halls/slots,
-        // defined elsewhere) clones the last row in the container -- including whatever
-        // data-speaker-id / data-loaded-from-server attributes and input values that row
-        // already had. For speakers this is wrong: a freshly added row is a brand-new
-        // speaker, not a copy of an existing one, so its id/flag/values must be reset.
-        // This listener runs after the generic handler has appended the clone, and wipes
-        // those inherited values so btnSaveSpeakers below can tell new rows apart from
-        // real, previously-saved ones.
         const addSpeakerBtn = document.querySelector('[data-repeat-add="speaker-list"]');
         if (addSpeakerBtn) {
             addSpeakerBtn.addEventListener("click", function() {
@@ -1015,40 +1687,19 @@
                     const newRow = rows[rows.length - 1];
                     if (!newRow) return;
 
-                    // Only touch it if it isn't itself a genuine server-loaded row
-                    // (guards against this running before any row has ever loaded).
                     newRow.dataset.speakerId = "0";
                     newRow.removeAttribute("data-loaded-from-server");
                     newRow.querySelectorAll("input, textarea").forEach(el => el.value = "");
                     const countEl = newRow.querySelector("[data-speaker-count]");
                     if (countEl) countEl.textContent = "0";
 
-                    // FIX: give this brand-new row its own key instead of the
-                    // "kofi" (or previous speaker's) key it inherited from
-                    // cloning — see assignSpeakerRowKey above for why sharing
-                    // a key made every badge for that key repaint together.
                     assignSpeakerRowKey(newRow, nextSpeakerKey());
 
-                    // Re-sync now that the row has its own key and blank
-                    // fields, so its badge starts at "?" immediately rather
-                    // than showing whatever was painted onto the shared key
-                    // a moment ago.
                     document.dispatchEvent(new CustomEvent("planora:rowsChanged"));
                 }, 0);
             });
         }
 
-        // FIX: cleanup for newly-cloned HALL rows added via any "+ Add Hall" button
-        // (single-venue #sv-halls, and each multi-venue #venue-N-halls container).
-        // Same root cause as the speaker bug above: the generic data-repeat-add
-        // handler clones the *last* hall row in the container, which -- once halls
-        // have been loaded from the server -- carries a real data-hall-id and the
-        // data-loaded-from-server flag from that existing hall. Left alone, the new
-        // row silently impersonates the hall it was cloned from: btnSaveVenues below
-        // sees two rows claiming the same HallId, sends both to Ent_UpdateVenueAndHall,
-        // and the backend's upsert lets the second one clobber the first (the "adding
-        // a hall overwrites/removes the previous hall" bug). Resetting the id/flag/
-        // values on the fresh clone makes it a genuine "new hall" for save purposes.
         function resetClonedHallRow(container) {
             if (!container) return;
             const rows = container.querySelectorAll(".hall");
@@ -1072,8 +1723,6 @@
             });
         }
 
-        // Wire every "+ Add Hall" button present at load time (single-venue and
-        // each multi-venue hall list).
         document.querySelectorAll('.halls__add[data-repeat-add]').forEach(wireHallAddButton);
 
         document.addEventListener("click", function(e) {
@@ -1087,12 +1736,6 @@
             }
         }, true);
 
-        // Multi-venue mode also lets the host add whole new venues ("+ Add Venue"),
-        // each bringing its own "+ Add Hall" button that doesn't exist at load time.
-        // Wire those up as they're cloned in too, so a hall added inside a
-        // freshly-added venue gets the same id-reset treatment.
-        // Keeps the "Venue N" badge/title in sync with actual position in the list,
-        // after any add or remove.
         function renumberVenues() {
             document.querySelectorAll("#venue-list .venue").forEach((venueRow, idx) => {
                 const noEl = venueRow.querySelector(".venue__no");
@@ -1102,13 +1745,6 @@
             });
         }
 
-        // FIX: cleanup for a newly-cloned VENUE row added via "+ Add Venue". Same root
-        // cause as the speaker/hall bugs above: the generic data-repeat-add handler
-        // clones the *last* venue row, inheriting its data-venue-id / loaded-from-server
-        // flag and every typed value (name, city, address, map url, halls) if that row
-        // was ever bound from the server. Left alone, the new row would silently
-        // impersonate the venue it was cloned from on save. This resets it to a
-        // genuine blank "new venue" with exactly one blank, required hall.
         function resetClonedVenueRow(venueRow) {
             if (!venueRow) return;
             venueRow.dataset.venueId = "0";
@@ -1160,8 +1796,6 @@
             });
         }
 
-        // "Remove venue" — actually removes the row (functional, not just visual),
-        // requires at least one venue to remain, and renumbers what's left.
         document.addEventListener("click", function(e) {
             const removeBtn = e.target.closest(".venue .venue__remove[data-repeat-remove]");
             if (!removeBtn) return;
@@ -1186,11 +1820,6 @@
             saveSpeakersBtn.addEventListener("click", async function() {
                 const speakerRows = document.querySelectorAll("#speaker-list [data-speaker-row]");
 
-                // FIX: split rows into "existing" (really loaded from the server, has a
-                // real SpeakerId) vs "new" (added via the Add speaker button, no real id
-                // yet). Each group now goes to the endpoint that actually supports it --
-                // sending a brand-new row to UpdateSpeakers has no insert path on the
-                // backend and previously caused it to silently overwrite the first speaker.
                 const existingSpeakers = [];
                 const newSpeakers = [];
 
@@ -1218,7 +1847,6 @@
                 }
 
                 try {
-                    // Update speakers that already exist for this event.
                     if (existingSpeakers.length > 0) {
                         const updateResponse = await fetch(`?handler=UpdateSpeakers`, {
                             method: 'POST',
@@ -1232,7 +1860,6 @@
                         }
                     }
 
-                    // Add speakers that were newly typed in this visit.
                     if (newSpeakers.length > 0) {
                         const saveResponse = await fetch(`?handler=SaveSpeakers`, {
                             method: 'POST',
@@ -1341,138 +1968,216 @@
                 }
             });
         }
-        // HANDLER FOR CONTINUE BUTTON
-        // Inside document.addEventListener("DOMContentLoaded", async function() { ... })
 
+        function getSlotSpeaker(slotCard) {
+            const chips = slotCard.querySelectorAll("[data-speaker-chips] .chip");
+            if (chips.length) {
+                const last = chips[chips.length - 1];
+                return {
+                    id: last.dataset.chipSpeakerId || "",
+                    name: last.querySelector("span")?.textContent || ""
+                };
+            }
+            const select = slotCard.querySelector("[data-speaker-add]");
+            if (select && select.value) {
+                return { id: select.value, name: select.options[select.selectedIndex]?.text || "" };
+            }
+            return { id: "", name: "" };
+        }
+
+        function formatDateTimeForApi(dateString) {
+            if (!dateString) return "";
+            if (dateString.length === 16 && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dateString)) {
+                return dateString + ":00";
+            }
+            const d = new Date(dateString);
+            if (!isNaN(d.getTime())) {
+                const pad = (n) => n.toString().padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            }
+            return dateString;
+        }
+
+        // Single POST helper shared by both the Save (new days) and Update
+        // (existing days) calls below, so error handling/timeout logic isn't
+        // duplicated and one failing call doesn't silently swallow the other.
+        async function postScheduleHandler(handlerName, slots) {
+            console.log(`[Schedule] POST ?handler=${handlerName}`, slots);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
+            try {
+                const response = await fetch(`?handler=${handlerName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ Slots: slots }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    console.error(`[Schedule] HTTP ${response.status} from ${handlerName}`);
+                    alert(`The server rejected the request (HTTP ${response.status}). Nothing further was saved — check the browser console and the server log for details.`);
+                    return false;
+                }
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (parseErr) {
+                    console.error("[Schedule] Response wasn't valid JSON:", parseErr);
+                    alert("The server returned an unexpected response. Nothing was confirmed as saved — check the console for details.");
+                    return false;
+                }
+
+                if (!result || !result.success) {
+                    alert(result?.message || `Failed to save schedule (${handlerName}).`);
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                clearTimeout(timeoutId);
+                if (err.name === 'AbortError') {
+                    console.error(`[Schedule] ${handlerName} request timed out after 20s.`);
+                    alert("The request timed out waiting for a response. Nothing was confirmed as saved — please try again.");
+                } else {
+                    console.error(`Error calling ${handlerName}:`, err);
+                    alert("An error occurred while attempting to save and continue.");
+                }
+                return false;
+            }
+        }
+
+        // HANDLER FOR CONTINUE BUTTON
         const btnContinue = document.getElementById("btnContinue");
         if (btnContinue) {
             btnContinue.addEventListener("click", async function(e) {
                 e.preventDefault();
 
-                const dayRows = document.querySelectorAll("#schedule-days .day");
-                const slotsPayload = [];
-                let hasError = false;
+                const currentMode = getScheduleMode();
 
-                // Helper to format datetime-local value safely for C# backend
-                function formatDateTimeForApi(dateString) {
-                    if (!dateString) return "";
-                    // datetime-local inputs return "YYYY-MM-DDTHH:mm" (exactly 16 characters)
-                    if (dateString.length === 16 && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dateString)) {
-                        return dateString + ":00"; // Safely becomes "YYYY-MM-DDTHH:mm:ss"
-                    }
-                    // Fallback for any other valid date string
-                    const d = new Date(dateString);
-                    if (!isNaN(d.getTime())) {
-                        const pad = (n) => n.toString().padStart(2, '0');
-                        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-                    }
-                    return dateString;
-                }
+                // FIXED: previously routed the ENTIRE payload to either SaveSchedule
+                // or UpdateSchedule based on one global flag (hasSavedSchedule), so
+                // a brand-new day added alongside already-saved days was forced
+                // through UpdateSchedule with EventDateId: 0 — a shape the Add-side
+                // request model doesn't even define. Now split per day: a day with
+                // a real EventDateId goes to UpdateSchedule, a day with none goes
+                // to SaveSchedule. (A brand-new SLOT on an otherwise-existing day
+                // still travels inside that day's Update call with SlotId: 0 —
+                // there's no endpoint to attach a single new slot to an existing
+                // day, so this still relies on the Update handler upserting by
+                // SlotId. Worth confirming with backend if slots ever silently
+                // fail to appear.)
+                const dayRows = document.querySelectorAll("#schedule-days .day");
+                const existingDaysPayload = [];
+                const newDaysPayload = [];
+                let hasError = false;
 
                 dayRows.forEach(dayRow => {
                     const sessionName = dayRow.querySelector("input[name*='name']")?.value;
                     const eventDate = dayRow.querySelector("[data-day-date]")?.value;
                     const eventDateId = parseInt(dayRow.dataset.eventDateId, 10) || 0;
+                    const isExistingDay = eventDateId > 0;
                     const slotCards = dayRow.querySelectorAll(".slotcard");
 
                     const slots = [];
                     slotCards.forEach(slotCard => {
                         const nameInput = slotCard.querySelector(".slotcard__name") || slotCard.querySelector("input[name*='slot']");
                         const slotName = nameInput ? nameInput.value.trim() : "";
-                        const startTime = slotCard.querySelector("[data-slot-start]")?.value;
-                        const endTime = slotCard.querySelector("[data-slot-end]")?.value;
+
+                        const startTimeOnly = slotCard.querySelector("[data-slot-start]")?.value;
+                        const endTimeOnly = slotCard.querySelector("[data-slot-end]")?.value;
+
+                        if (!slotName && !startTimeOnly && !endTimeOnly) return;
+
+                        const startTime = combineDateTime(eventDate, startTimeOnly);
+                        const endTime = combineDateTime(eventDate, endTimeOnly);
+                        if (!startTime || !endTime) { hasError = true; return; }
+
                         const hallId = slotCard.querySelector("[data-slot-hall]")?.value;
                         const capacity = slotCard.querySelector("[data-cap-input]")?.value;
-                        const speakerId = slotCard.querySelector("[data-speaker-add]")?.value;
+                        const speaker = getSlotSpeaker(slotCard);
                         const slotId = parseInt(slotCard.dataset.slotId, 10) || 0;
 
-                        if (slotName || startTime || endTime) {
-                            // CRITICAL FIX: Prevent sending empty strings to the backend
-                            if (!startTime || !endTime) {
-                                hasError = true;
-                                return;
-                            }
-
-                            if (hasSavedSchedule) {
-                                const speakerMatch = globalSpeakersCache.find(sp => String(sp.SpeakerId ?? sp.speakerId) === String(speakerId));
-                                const speakerName = speakerMatch ? (speakerMatch.Name ?? speakerMatch.name ?? "") : "";
-                                slots.push({
-                                    SlotId: slotId,
-                                    SlotName: slotName || "Slot",
-                                    StartTime: formatDateTimeForApi(startTime),
-                                    EndTime: formatDateTimeForApi(endTime),
-                                    HallId: hallId ? parseInt(hallId) : 0,
-                                    Capacity: capacity ? parseInt(capacity) : 0,
-                                    Speakers: speakerName
-                                });
-                            } else {
-                                slots.push({
-                                    SlotName: slotName || "Slot",
-                                    StartTime: formatDateTimeForApi(startTime),
-                                    EndTime: formatDateTimeForApi(endTime),
-                                    HallId: hallId ? parseInt(hallId) : 0,
-                                    Capacity: capacity ? parseInt(capacity) : 0,
-                                    SpeakerId: speakerId ? parseInt(speakerId) : 0
-                                });
-                            }
+                        if (isExistingDay) {
+                            slots.push({
+                                SlotId: slotId,
+                                SlotName: slotName || "Slot",
+                                StartTime: formatDateTimeForApi(startTime),
+                                EndTime: formatDateTimeForApi(endTime),
+                                HallId: hallId ? parseInt(hallId) : 0,
+                                Capacity: capacity ? parseInt(capacity) : 0,
+                                Speakers: speaker.name
+                            });
+                        } else {
+                            slots.push({
+                                SlotName: slotName || "Slot",
+                                StartTime: formatDateTimeForApi(startTime),
+                                EndTime: formatDateTimeForApi(endTime),
+                                HallId: hallId ? parseInt(hallId) : 0,
+                                Capacity: capacity ? parseInt(capacity) : 0,
+                                SpeakerId: speaker.id ? parseInt(speaker.id) : 0
+                            });
                         }
                     });
 
-                    if (sessionName || eventDate) {
-                        if (hasSavedSchedule) {
-                            slotsPayload.push({
-                                EventDateId: eventDateId,
-                                SessionName: sessionName ?? "",
-                                EventDate: eventDate ?? "",
-                                EventSlots: slots
-                            });
-                        } else {
-                            slotsPayload.push({
-                                SessionName: sessionName ?? "",
-                                EventDate: eventDate ?? "",
-                                EventSlots: slots
-                            });
-                        }
+                    if (!sessionName && !eventDate) return;
+
+                    if (isExistingDay) {
+                        existingDaysPayload.push({ EventDateId: eventDateId, SessionName: sessionName ?? "", EventDate: eventDate ?? "", EventSlots: slots });
+                    } else {
+                        newDaysPayload.push({ SessionName: sessionName ?? "", EventDate: eventDate ?? "", EventSlots: slots });
                     }
                 });
 
-                // CRITICAL FIX: Alert the user if they missed filling out the time fields
                 if (hasError) {
                     alert("Please ensure all time slots have both a Start Time and an End Time filled in.");
                     return;
                 }
 
-                if (slotsPayload.length === 0) {
+                if (existingDaysPayload.length === 0 && newDaysPayload.length === 0) {
                     alert("Please complete the schedule details before continuing.");
                     return;
                 }
 
-                const scheduleHandlerName = hasSavedSchedule ? "UpdateSchedule" : "SaveSchedule";
+                // FIXED: hall overlap and hall-capacity-overflow are now actually
+                // checked and block Continue instead of only showing hints nobody
+                // ever populated.
+                if (!validateScheduleAndRenderWarnings()) {
+                    alert("Please resolve the highlighted hall conflicts or capacity issues before continuing.");
+                    return;
+                }
+
+                const originalLabel = btnContinue.innerHTML;
+                btnContinue.disabled = true;
+                btnContinue.innerHTML = "Saving…";
 
                 try {
-                    const response = await fetch(`?handler=${scheduleHandlerName}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': token
-                        },
-                        body: JSON.stringify({ Slots: slotsPayload })
-                    });
-
-                    const result = await response.json();
-                    if (result && result.success) {
-                        window.location.href = '/CreateEvent/ContentSection';
-                    } else {
-                        alert(result.message || "Failed to save schedule.");
+                    if (existingDaysPayload.length) {
+                        const ok = await postScheduleHandler("UpdateSchedule", existingDaysPayload);
+                        if (!ok) return;
                     }
-                } catch (err) {
-                    console.error("Error saving schedule on continue:", err);
-                    alert("An error occurred while attempting to save and continue.");
+                    if (newDaysPayload.length) {
+                        const ok = await postScheduleHandler("SaveSchedule", newDaysPayload);
+                        if (!ok) return;
+                    }
+
+                    hasSavedSchedule = true;
+                    savedScheduleMode = currentMode;
+                    window.location.href = '/CreateEvent/ContentSection';
+                } finally {
+                    btnContinue.disabled = false;
+                    btnContinue.innerHTML = originalLabel;
                 }
             });
         }
-        // INITIALIZATION
+
         async function init() {
+            document.querySelectorAll("[data-day-date]").forEach(applyDateBounds);
+            clampRangeDates();
+
             const hasSpeakers = await loadAndBindSpeakers();
             if (hasSpeakers) {
                 const hasVenues = await loadAndBindVenues();
@@ -1480,10 +2185,16 @@
                     await loadAndBindSchedule();
                 }
             }
+
+            if (!hasSavedSchedule) {
+                previousScheduleMode = getScheduleMode();
+                await applyScheduleModeUI(previousScheduleMode, false);
+            }
         }
 
         init();
     });
+
     document.addEventListener("change", function(e) {
         if (e.target && e.target.matches("[data-speaker-add]")) {
             const select = e.target;
@@ -1503,9 +2214,9 @@
                     chip.className = "chip";
                     chip.dataset.chipSpeakerId = selectedId;
                     chip.innerHTML = `
-                            <span>${selectedText}</span>
-                            <button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>
-                        `;
+                        <span>${selectedText}</span>
+                        <button type="button" class="chip__remove" aria-label="Remove speaker">&times;</button>
+                    `;
 
                     chip.querySelector(".chip__remove").addEventListener("click", function() {
                         chip.remove();
@@ -1515,11 +2226,7 @@
                 }
             }
 
-            // Reset dropdown back to default placeholder
             select.value = "";
-
-            // Remove the invalid class and clear validation error message
-            clearFieldError(select);
         }
     });
 </script>

@@ -560,6 +560,7 @@ namespace Planora_EnterproseHostWebApp.Models
         public string EndTime { get; set; } = string.Empty;
         public int HallId { get; set; }
         public int Capacity { get; set; }
+        public int SpeakerId { get; set; }
         public string Speakers { get; set; } = string.Empty;
     }
 
