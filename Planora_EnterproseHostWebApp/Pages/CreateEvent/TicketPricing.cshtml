@@ -416,485 +416,485 @@
                 <!-- Free events: exactly one tier (public events only; private events are paid-only) -->
                 @if (!pageIsPrivateEvent)
                 {
-                <section class="panel" data-segment-panel="free" data-segment-owner="paidmode"
-                         aria-labelledby="freetier-title" hidden>
-                    <div class="panel__head">
-                        <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg></span>
-                        <h2 class="panel__title" id="freetier-title">Free Ticket</h2>
-                        <p class="panel__meta">Quantity, description, seating &amp; capacity</p>
-                    </div>
-                    <div class="panel__body">
-                        <div class="freetier">
-                            <input type="hidden" id="free-tier-id" name="free-tier-id" value="0">
-                            <div class="freetier__head">
-                                <span class="freetier__badge">Free</span>
-                                <span>
-                                    <span class="switchcard__title">Single ticket tier</span>
-                                    <span class="freetier__note">
-                                        Free events use one tier named &ldquo;Free&rdquo; &mdash; no pricing,
-                                        promo codes or add-ons apply.
+                    <section class="panel" data-segment-panel="free" data-segment-owner="paidmode"
+                             aria-labelledby="freetier-title" hidden>
+                        <div class="panel__head">
+                            <span class="tile tile--success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg></span>
+                            <h2 class="panel__title" id="freetier-title">Free Ticket</h2>
+                            <p class="panel__meta">Quantity, description, seating &amp; capacity</p>
+                        </div>
+                        <div class="panel__body">
+                            <div class="freetier">
+                                <input type="hidden" id="free-tier-id" name="free-tier-id" value="0">
+                                <div class="freetier__head">
+                                    <span class="freetier__badge">Free</span>
+                                    <span>
+                                        <span class="switchcard__title">Single ticket tier</span>
+                                        <span class="freetier__note">
+                                            Free events use one tier named &ldquo;Free&rdquo; &mdash; no pricing,
+                                            promo codes or add-ons apply.
+                                        </span>
                                     </span>
-                                </span>
-                            </div>
-
-                            <div class="formgrid formgrid--2">
-                                <div class="form__field">
-                                    <label class="field__label" for="free-qty">Quantity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <input class="field__input" id="free-qty" name="free-qty" type="text" placeholder="0" value="" aria-describedby="err-free-qty" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                    <span class="field__hint">Total free tickets released</span>
-                                    <span class="field__error" id="err-free-qty" role="alert"></span>
                                 </div>
-                                <div class="form__field">
-                                    <label class="field__label" for="free-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <input class="field__input" id="free-cap" name="free-cap" type="text" placeholder="0" value="" aria-describedby="err-free-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                    <span class="field__hint">Hard ceiling across the event</span>
-                                    <span class="field__error" id="err-free-cap" role="alert"></span>
-                                </div>
-                            </div>
 
-                            <div class="formgrid u-mt-5">
-                                <div class="form__field">
-                                    <label class="field__label" for="free-desc">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                    <textarea class="field__input" id="free-desc" name="free-desc" type="text" placeholder="Shown on the ticket card" value="General admission" aria-describedby="err-free-desc" data-validate="required" style="height:3.5rem;align-content:center"></textarea>
-                                    <span class="field__error" id="err-free-desc" role="alert"></span>
-                                </div>
-                            </div>
-                            <div class="descprev" data-desc-prev="free">
-                                <span class="descprev__label">How the buyer sees it</span>
-                                <ul class="descprev__list" data-desc-list>
-                                    <li>General admission</li>
-                                    <li>Entry to every standard session</li>
-                                    <li>Lunch on both days</li>
-                                </ul>
-                                <p class="descprev__line" data-desc-line hidden></p>
-                            </div>
-
-                        </div>
-
-                        <div class="reveal reveal--info u-mt-5" data-seatplan>
-                            <span class="reveal__title">Seating layout for this event</span>
-
-                            <div class="seatplan__modes" role="group"
-                                 aria-label="Seating layout type" data-seatmode-group>
-                                <button class="seatplan__mode" type="button" aria-pressed="true"
-                                        data-seatmode="rows">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
-                                    <strong>Row / Seat</strong>
-                                    Numbered seats in rows
-                                </button>
-                                <button class="seatplan__mode" type="button" aria-pressed="false"
-                                        data-seatmode="tables">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
-                                    <strong>Table / Chair</strong>
-                                    Round or long tables
-                                </button>
-                                <button class="seatplan__mode" type="button" aria-pressed="false"
-                                        data-seatmode="standing">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg>
-                                    <strong>Standing</strong>
-                                    Capacity only, no seats
-                                </button>
-                                <button class="seatplan__mode" type="button" aria-pressed="false"
-                                        data-seatmode="open">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg>
-                                    <strong>Open seating</strong>
-                                    First come, no numbering
-                                </button>
-                            </div>
-
-                            <div data-seatmode-panel="rows">
-                                <div class="sizegrid">
+                                <div class="formgrid formgrid--2">
                                     <div class="form__field">
-                                        <label class="field__label" for="free-rows">Total Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="" aria-describedby="err-free-rows" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                        <span class="field__hint">Rows are labelled A, B, C&hellip;</span>
-                                        <span class="field__error" id="err-free-rows" role="alert"></span>
+                                        <label class="field__label" for="free-qty">Quantity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="free-qty" name="free-qty" type="text" placeholder="0" value="" aria-describedby="err-free-qty" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <span class="field__hint">Total free tickets released</span>
+                                        <span class="field__error" id="err-free-qty" role="alert"></span>
                                     </div>
                                     <div class="form__field">
-                                        <label class="field__label" for="free-seats-row">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="" aria-describedby="err-free-seats-row" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                        <span class="field__hint">Numbered 1 upwards within each row</span>
-                                        <span class="field__error" id="err-free-seats-row" role="alert"></span>
+                                        <label class="field__label" for="free-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <input class="field__input" id="free-cap" name="free-cap" type="text" placeholder="0" value="" aria-describedby="err-free-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        <span class="field__hint">Hard ceiling across the event</span>
+                                        <span class="field__error" id="err-free-cap" role="alert"></span>
                                     </div>
                                 </div>
-                                <p class="sizetotal">
-                                    <span>Total numbered seats &mdash; rows &times; seats per row</span>
-                                    <span class="sizetotal__value">240 seats</span>
+
+                                <div class="formgrid u-mt-5">
+                                    <div class="form__field">
+                                        <label class="field__label" for="free-desc">Description<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                        <textarea class="field__input" id="free-desc" name="free-desc" type="text" placeholder="Shown on the ticket card" value="General admission" aria-describedby="err-free-desc" data-validate="required" style="height:3.5rem;align-content:center"></textarea>
+                                        <span class="field__error" id="err-free-desc" role="alert"></span>
+                                    </div>
+                                </div>
+                                <div class="descprev" data-desc-prev="free">
+                                    <span class="descprev__label">How the buyer sees it</span>
+                                    <ul class="descprev__list" data-desc-list>
+                                        <li>General admission</li>
+                                        <li>Entry to every standard session</li>
+                                        <li>Lunch on both days</li>
+                                    </ul>
+                                    <p class="descprev__line" data-desc-line hidden></p>
+                                </div>
+
+                            </div>
+
+                            <div class="reveal reveal--info u-mt-5" data-seatplan>
+                                <span class="reveal__title">Seating layout for this event</span>
+
+                                <div class="seatplan__modes" role="group"
+                                     aria-label="Seating layout type" data-seatmode-group>
+                                    <button class="seatplan__mode" type="button" aria-pressed="true"
+                                            data-seatmode="rows">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                                        <strong>Row / Seat</strong>
+                                        Numbered seats in rows
+                                    </button>
+                                    <button class="seatplan__mode" type="button" aria-pressed="false"
+                                            data-seatmode="tables">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M17 20v-1a4 4 0 0 0-2.5-3.7M16 5.2a3 3 0 0 1 0 5.6" /></svg>
+                                        <strong>Table / Chair</strong>
+                                        Round or long tables
+                                    </button>
+                                    <button class="seatplan__mode" type="button" aria-pressed="false"
+                                            data-seatmode="standing">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9.5" cy="7.5" r="3.5" /><path d="M17 4.2a3.5 3.5 0 0 1 0 6.6M21 20v-1.5a4 4 0 0 0-3-3.8" /></svg>
+                                        <strong>Standing</strong>
+                                        Capacity only, no seats
+                                    </button>
+                                    <button class="seatplan__mode" type="button" aria-pressed="false"
+                                            data-seatmode="open">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg>
+                                        <strong>Open seating</strong>
+                                        First come, no numbering
+                                    </button>
+                                </div>
+
+                                <div data-seatmode-panel="rows">
+                                    <div class="sizegrid">
+                                        <div class="form__field">
+                                            <label class="field__label" for="free-rows">Total Rows<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="free-rows" name="free-rows" type="text" placeholder="0" value="" aria-describedby="err-free-rows" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                            <span class="field__hint">Rows are labelled A, B, C&hellip;</span>
+                                            <span class="field__error" id="err-free-rows" role="alert"></span>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="free-seats-row">Seats per Row<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="free-seats-row" name="free-seats-row" type="text" placeholder="0" value="" aria-describedby="err-free-seats-row" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                            <span class="field__hint">Numbered 1 upwards within each row</span>
+                                            <span class="field__error" id="err-free-seats-row" role="alert"></span>
+                                        </div>
+                                    </div>
+                                    <p class="sizetotal">
+                                        <span>Total numbered seats &mdash; rows &times; seats per row</span>
+                                        <span class="sizetotal__value">240 seats</span>
+                                    </p>
+                                </div>
+
+                                <div data-seatmode-panel="tables" hidden>
+                                    <div class="sizegrid">
+                                        <div class="form__field">
+                                            <label class="field__label" for="free-tables">Total Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="" aria-describedby="err-free-tables" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                            <span class="field__hint">Tables are labelled T1, T2, T3&hellip;</span>
+                                            <span class="field__error" id="err-free-tables" role="alert"></span>
+                                        </div>
+                                        <div class="form__field">
+                                            <label class="field__label" for="free-chairs">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="" aria-describedby="err-free-chairs" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                            <span class="field__hint">Seats are assigned per table</span>
+                                            <span class="field__error" id="err-free-chairs" role="alert"></span>
+                                        </div>
+                                    </div>
+                                    <p class="sizetotal">
+                                        <span>Total seats &mdash; tables &times; chairs per table</span>
+                                        <span class="sizetotal__value">100 seats</span>
+                                    </p>
+                                </div>
+
+                                <div data-seatmode-panel="standing" hidden>
+                                    <div class="formgrid">
+                                        <div class="form__field">
+                                            <label class="field__label" for="free-standing-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="" aria-describedby="err-free-standing-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                            <span class="field__hint">Registration closes at this number</span>
+                                            <span class="field__error" id="err-free-standing-cap" role="alert"></span>
+                                        </div>
+                                    </div>
+                                    <p class="sizetotal">
+                                        <span>Standing area &mdash; no seats issued, entry capped by capacity</span>
+                                        <span class="sizetotal__value">300 places</span>
+                                    </p>
+                                </div>
+
+                                <div data-seatmode-panel="open" hidden>
+                                    <div class="formgrid">
+                                        <div class="form__field">
+                                            <label class="field__label" for="free-open-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
+                                            <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="" aria-describedby="err-free-open-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
+                                            <span class="field__hint">Registration closes at this number</span>
+                                            <span class="field__error" id="err-free-open-cap" role="alert"></span>
+                                        </div>
+                                    </div>
+                                    <p class="sizetotal">
+                                        <span>Open seating &mdash; counted for capacity, no seat numbers printed</span>
+                                        <span class="sizetotal__value">300 seats</span>
+                                    </p>
+                                </div>
+                            </div>
+
+
+                            <section class="ticketaccess" aria-labelledby="acctitle-free">
+                                <h3 class="ticketaccess__title" id="acctitle-free">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> What does this ticket include?
+                                </h3>
+                                <p class="ticketaccess__text">
+                                    Choose the sessions the holder can attend, then anything extra that comes
+                                    with the ticket.
                                 </p>
-                            </div>
 
-                            <div data-seatmode-panel="tables" hidden>
-                                <div class="sizegrid">
-                                    <div class="form__field">
-                                        <label class="field__label" for="free-tables">Total Tables<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-tables" name="free-tables" type="text" placeholder="0" value="" aria-describedby="err-free-tables" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                        <span class="field__hint">Tables are labelled T1, T2, T3&hellip;</span>
-                                        <span class="field__error" id="err-free-tables" role="alert"></span>
-                                    </div>
-                                    <div class="form__field">
-                                        <label class="field__label" for="free-chairs">Chairs per Table<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-chairs" name="free-chairs" type="text" placeholder="0" value="" aria-describedby="err-free-chairs" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                        <span class="field__hint">Seats are assigned per table</span>
-                                        <span class="field__error" id="err-free-chairs" role="alert"></span>
-                                    </div>
-                                </div>
-                                <p class="sizetotal">
-                                    <span>Total seats &mdash; tables &times; chairs per table</span>
-                                    <span class="sizetotal__value">100 seats</span>
-                                </p>
-                            </div>
-
-                            <div data-seatmode-panel="standing" hidden>
-                                <div class="formgrid">
-                                    <div class="form__field">
-                                        <label class="field__label" for="free-standing-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-standing-cap" name="free-standing-cap" type="text" placeholder="0" value="" aria-describedby="err-free-standing-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                        <span class="field__hint">Registration closes at this number</span>
-                                        <span class="field__error" id="err-free-standing-cap" role="alert"></span>
-                                    </div>
-                                </div>
-                                <p class="sizetotal">
-                                    <span>Standing area &mdash; no seats issued, entry capped by capacity</span>
-                                    <span class="sizetotal__value">300 places</span>
-                                </p>
-                            </div>
-
-                            <div data-seatmode-panel="open" hidden>
-                                <div class="formgrid">
-                                    <div class="form__field">
-                                        <label class="field__label" for="free-open-cap">Maximum Capacity<span class="field__required" aria-hidden="true">*</span><span class="u-visually-hidden">(required)</span></label>
-                                        <input class="field__input" id="free-open-cap" name="free-open-cap" type="text" placeholder="0" value="" aria-describedby="err-free-open-cap" data-validate="number" oninput="this.value = this.value.replace(/\D/g, '')">
-                                        <span class="field__hint">Registration closes at this number</span>
-                                        <span class="field__error" id="err-free-open-cap" role="alert"></span>
-                                    </div>
-                                </div>
-                                <p class="sizetotal">
-                                    <span>Open seating &mdash; counted for capacity, no seat numbers printed</span>
-                                    <span class="sizetotal__value">300 seats</span>
-                                </p>
-                            </div>
-                        </div>
-
-
-                        <section class="ticketaccess" aria-labelledby="acctitle-free">
-                            <h3 class="ticketaccess__title" id="acctitle-free">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z" /><path d="M9 9v6" /></svg> What does this ticket include?
-                            </h3>
-                            <p class="ticketaccess__text">
-                                Choose the sessions the holder can attend, then anything extra that comes
-                                with the ticket.
-                            </p>
-
-                            <fieldset class="fieldset">
-                                <legend class="fieldset__legend">Session access</legend>
-                                <div class="radios radios--2">
-                                    <label class="radio">
-                                        <input type="radio" name="acc-mode-free" value="all" checked>
-                                        <span class="radio__body">
-                                            <span class="radio__title">All standard sessions</span>
-                                            <span class="radio__text">Every session on every day of the event</span>
-                                        </span>
-                                    </label>
-                                    <label class="radio">
-                                        <input type="radio" name="acc-mode-free" value="days" data-reveal="accdays-free">
-                                        <span class="radio__body">
-                                            <span class="radio__title">Sessions on selected days</span>
-                                            <span class="radio__text">All standard sessions, but only on the days you tick</span>
-                                        </span>
-                                    </label>
-                                    <label class="radio">
-                                        <input type="radio" name="acc-mode-free" value="sessions" data-reveal="accsessions-free">
-                                        <span class="radio__body">
-                                            <span class="radio__title">Selected sessions</span>
-                                            <span class="radio__text">Only the sessions you pick, one by one</span>
-                                        </span>
-                                    </label>
-                                    <label class="radio">
-                                        <input type="radio" name="acc-mode-free" value="none">
-                                        <span class="radio__body">
-                                            <span class="radio__title">No session access</span>
-                                            <span class="radio__text">The ticket is for the extras below only &mdash; an add-on, a dinner or a lounge pass</span>
-                                        </span>
-                                    </label>
-                                </div>
-                            </fieldset>
-
-                            <div class="scopepicker u-mt-5" id="accdays-free" hidden>
-                            <p class="scopepicker__head">
-                                Days come from your Schedule Builder &mdash; tick the ones this ticket covers.
-                            </p>
-                            <div class="scopeday__slots scopeday__slots--flush">
-                                @if (Model.EventDates != null && Model.EventDates.Any())
-                                {
-                                    var dayIndex = 1;
-                                    foreach (var date in Model.EventDates)
-                                    {
-                                        <label class="scopeslot">
-                                            <input type="checkbox" name="acc-free-day-@date.EventDateId" value="@date.EventDateId">
-                                            <span class="scopeslot__body">
-                                                <span class="scopeslot__name">Day @dayIndex &mdash; @date.SessionName</span>
-                                                <span class="scopeslot__meta">@date.EventDateValue &middot; @(date.EventSlots?.Count ?? 0) sessions</span>
+                                <fieldset class="fieldset">
+                                    <legend class="fieldset__legend">Session access</legend>
+                                    <div class="radios radios--2">
+                                        <label class="radio">
+                                            <input type="radio" name="acc-mode-free" value="all" checked>
+                                            <span class="radio__body">
+                                                <span class="radio__title">All standard sessions</span>
+                                                <span class="radio__text">Every session on every day of the event</span>
                                             </span>
                                         </label>
-                                        dayIndex++;
-                                    }
-                                }
-                                else
-                                {
-                                    <p class="field__hint">No event dates found.</p>
-                                }
-                            </div>
-                        </div>
+                                        <label class="radio">
+                                            <input type="radio" name="acc-mode-free" value="days" data-reveal="accdays-free">
+                                            <span class="radio__body">
+                                                <span class="radio__title">Sessions on selected days</span>
+                                                <span class="radio__text">All standard sessions, but only on the days you tick</span>
+                                            </span>
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" name="acc-mode-free" value="sessions" data-reveal="accsessions-free">
+                                            <span class="radio__body">
+                                                <span class="radio__title">Selected sessions</span>
+                                                <span class="radio__text">Only the sessions you pick, one by one</span>
+                                            </span>
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" name="acc-mode-free" value="none">
+                                            <span class="radio__body">
+                                                <span class="radio__title">No session access</span>
+                                                <span class="radio__text">The ticket is for the extras below only &mdash; an add-on, a dinner or a lounge pass</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </fieldset>
 
-                            <div class="scopepicker u-mt-5" id="accsessions-free" hidden>
-                                <p class="scopepicker__head">
-                                    Pick individual sessions. Narrow the list first if your schedule is long.
-                                </p>
-                                
-                                <div class="sessionlist">
-                                    @{
-                                        var freeDaySeq = 0;
-                                    }
-                                    @if (Model.EventDates != null && Model.EventDates.Any())
-                                    {
-                                        foreach (var eventDate in Model.EventDates)
+                                <div class="scopepicker u-mt-5" id="accdays-free" hidden>
+                                    <p class="scopepicker__head">
+                                        Days come from your Schedule Builder &mdash; tick the ones this ticket covers.
+                                    </p>
+                                    <div class="scopeday__slots scopeday__slots--flush">
+                                        @if (Model.EventDates != null && Model.EventDates.Any())
                                         {
-                                            freeDaySeq++;
-                                            var dayNumber = freeDaySeq;
-                                            if (eventDate.EventSlots != null)
+                                            var dayIndex = 1;
+                                            foreach (var date in Model.EventDates)
                                             {
-                                                foreach (var slot in eventDate.EventSlots)
+                                                <label class="scopeslot">
+                                                    <input type="checkbox" name="acc-free-day-@date.EventDateId" value="@date.EventDateId">
+                                                    <span class="scopeslot__body">
+                                                        <span class="scopeslot__name">Day @dayIndex &mdash; @date.SessionName</span>
+                                                        <span class="scopeslot__meta">@date.EventDateValue &middot; @(date.EventSlots?.Count ?? 0) sessions</span>
+                                                    </span>
+                                                </label>
+                                                dayIndex++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p class="field__hint">No event dates found.</p>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="scopepicker u-mt-5" id="accsessions-free" hidden>
+                                    <p class="scopepicker__head">
+                                        Pick individual sessions. Narrow the list first if your schedule is long.
+                                    </p>
+
+                                    <div class="sessionlist">
+                                        @{
+                                            var freeDaySeq = 0;
+                                        }
+                                        @if (Model.EventDates != null && Model.EventDates.Any())
+                                        {
+                                            foreach (var eventDate in Model.EventDates)
+                                            {
+                                                freeDaySeq++;
+                                                var dayNumber = freeDaySeq;
+                                                if (eventDate.EventSlots != null)
                                                 {
-                                                    var sessionText = $"{slot.SlotName} {slot.Speakers} Hall {slot.HallId}";
-                                                    <label class="sessionpick" data-session
-                                                           data-session-date="@eventDate.EventDateValue"
-                                                           data-session-hall="Hall @slot.HallId"
-                                                           data-session-text="@sessionText">
-                                                        <input type="checkbox" name="acc-free-slot-@slot.SlotId" value="@slot.SlotId">
-                                                        <span class="sessionpick__body">
-                                                            <span class="sessionpick__name">@slot.SlotName</span>
-                                                            <span class="sessionpick__meta">
-                                                                Day @dayNumber &middot; @eventDate.EventDateValue &middot; @slot.StartTime &ndash; @slot.EndTime
+                                                    foreach (var slot in eventDate.EventSlots)
+                                                    {
+                                                        var sessionText = $"{slot.SlotName} {slot.Speakers} Hall {slot.HallId}";
+                                                        <label class="sessionpick" data-session
+                                                               data-session-date="@eventDate.EventDateValue"
+                                                               data-session-hall="Hall @slot.HallId"
+                                                               data-session-text="@sessionText">
+                                                            <input type="checkbox" name="acc-free-slot-@slot.SlotId" value="@slot.SlotId">
+                                                            <span class="sessionpick__body">
+                                                                <span class="sessionpick__name">@slot.SlotName</span>
+                                                                <span class="sessionpick__meta">
+                                                                    Day @dayNumber &middot; @eventDate.EventDateValue &middot; @slot.StartTime &ndash; @slot.EndTime
+                                                                </span>
+                                                                <span class="sessionpick__meta">
+                                                                    Hall @slot.HallId@(string.IsNullOrWhiteSpace(slot.Speakers) ? "" : " &middot; " + slot.Speakers)
+                                                                </span>
                                                             </span>
-                                                            <span class="sessionpick__meta">
-                                                                Hall @slot.HallId@(string.IsNullOrWhiteSpace(slot.Speakers) ? "" : " &middot; " + slot.Speakers)
+                                                            <span class="sessionpick__tags">
+                                                                <span class="sessionpick__cap">@slot.Capacity places</span>
                                                             </span>
-                                                        </span>
-                                                        <span class="sessionpick__tags">
-                                                            <span class="sessionpick__cap">@slot.Capacity places</span>
-                                                        </span>
-                                                    </label>
+                                                        </label>
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    else
-                                    {
-                                        <p class="field__hint">No sessions available for this event yet. Add dates and slots in the Schedule Builder first.</p>
-                                    }
-                                </div>
-                                <p class="sessionlist__empty" data-session-empty hidden>
-                                    No session matches those filters.
-                                </p>
-                            </div>
-
-                            <fieldset class="fieldset" data-incl-group="free" style="border:none;padding:0;margin:0;">
-                                <legend style="display:block;width:100%;padding:0;margin:0 0 4px;">
-                                    <span class="switchcard">
-                                        <span class="switchcard__title" id="incllabel-free">Also included with this ticket</span>
-                                        <button class="switch" type="button" role="switch"
-                                                aria-checked="true" aria-labelledby="incllabel-free"
-                                                data-incl-switch="free"></button>
-                                    </span>
-                                </legend>
-
-                                <div data-incl-body="free">
-                                    <p class="inclhead">
-                                        What comes with this ticket beyond the sessions — your list, per ticket type.
-                                        Untick anything this tier does not get.
+                                        else
+                                        {
+                                            <p class="field__hint">No sessions available for this event yet. Add dates and slots in the Schedule Builder first.</p>
+                                        }
+                                    </div>
+                                    <p class="sessionlist__empty" data-session-empty hidden>
+                                        No session matches those filters.
                                     </p>
+                                </div>
 
-                                    <div class="inclrows" id="incl-free">
+                                <fieldset class="fieldset" data-incl-group="free" style="border:none;padding:0;margin:0;">
+                                    <legend style="display:block;width:100%;padding:0;margin:0 0 4px;">
+                                        <span class="switchcard">
+                                            <span class="switchcard__title" id="incllabel-free">Also included with this ticket</span>
+                                            <button class="switch" type="button" role="switch"
+                                                    aria-checked="true" aria-labelledby="incllabel-free"
+                                                    data-incl-switch="free"></button>
+                                        </span>
+                                    </legend>
 
-                                        <div class="inclrow" data-incl-row>
-                                            <label class="inclrow__pick">
-                                                <input type="checkbox" checked data-incl-box>
-                                                <span class="inclrow__body">
-                                                    <span class="inclrow__label" data-incl-label>VIP Lounge</span>
-                                                    <span class="inclrow__note" data-incl-note>Private lounge with concierge, both days</span>
+                                    <div data-incl-body="free">
+                                        <p class="inclhead">
+                                            What comes with this ticket beyond the sessions — your list, per ticket type.
+                                            Untick anything this tier does not get.
+                                        </p>
+
+                                        <div class="inclrows" id="incl-free">
+
+                                            <div class="inclrow" data-incl-row>
+                                                <label class="inclrow__pick">
+                                                    <input type="checkbox" checked data-incl-box>
+                                                    <span class="inclrow__body">
+                                                        <span class="inclrow__label" data-incl-label>VIP Lounge</span>
+                                                        <span class="inclrow__note" data-incl-note>Private lounge with concierge, both days</span>
+                                                    </span>
+                                                </label>
+                                                <span class="inclrow__edit">
+                                                    <input type="text" value="VIP Lounge" data-incl-labelfield placeholder="What is included">
+                                                    <input type="text" value="Private lounge with concierge, both days" data-incl-notefield placeholder="A line of detail">
                                                 </span>
-                                            </label>
-                                            <span class="inclrow__edit">
-                                                <input type="text" value="VIP Lounge" data-incl-labelfield placeholder="What is included">
-                                                <input type="text" value="Private lounge with concierge, both days" data-incl-notefield placeholder="A line of detail">
-                                            </span>
-                                            <span class="inclrow__acts">
-                                                <button class="iconbtn" type="button" data-incl-edit title="Edit">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-incl-save hidden title="Save">
-                                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-repeat-remove title="Remove">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                                </button>
-                                            </span>
+                                                <span class="inclrow__acts">
+                                                    <button class="iconbtn" type="button" data-incl-edit title="Edit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-incl-save hidden title="Save">
+                                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-repeat-remove title="Remove">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+
+                                            <div class="inclrow" data-incl-row>
+                                                <label class="inclrow__pick">
+                                                    <input type="checkbox" checked data-incl-box>
+                                                    <span class="inclrow__body">
+                                                        <span class="inclrow__label" data-incl-label>Gala Dinner</span>
+                                                        <span class="inclrow__note" data-incl-note>Seated dinner and awards, Day 2 evening</span>
+                                                    </span>
+                                                </label>
+                                                <span class="inclrow__edit">
+                                                    <input type="text" value="Gala Dinner" data-incl-labelfield placeholder="What is included">
+                                                    <input type="text" value="Seated dinner and awards, Day 2 evening" data-incl-notefield placeholder="A line of detail">
+                                                </span>
+                                                <span class="inclrow__acts">
+                                                    <button class="iconbtn" type="button" data-incl-edit title="Edit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-incl-save hidden title="Save">
+                                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-repeat-remove title="Remove">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+
+                                            <div class="inclrow" data-incl-row>
+                                                <label class="inclrow__pick">
+                                                    <input type="checkbox" checked data-incl-box>
+                                                    <span class="inclrow__body">
+                                                        <span class="inclrow__label" data-incl-label>VIP Networking Dinner</span>
+                                                        <span class="inclrow__note" data-incl-note>Invite-only dinner, Day 1 evening</span>
+                                                    </span>
+                                                </label>
+                                                <span class="inclrow__edit">
+                                                    <input type="text" value="VIP Networking Dinner" data-incl-labelfield placeholder="What is included">
+                                                    <input type="text" value="Invite-only dinner, Day 1 evening" data-incl-notefield placeholder="A line of detail">
+                                                </span>
+                                                <span class="inclrow__acts">
+                                                    <button class="iconbtn" type="button" data-incl-edit title="Edit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-incl-save hidden title="Save">
+                                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-repeat-remove title="Remove">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+
+                                            <div class="inclrow" data-incl-row>
+                                                <label class="inclrow__pick">
+                                                    <input type="checkbox" data-incl-box>
+                                                    <span class="inclrow__body">
+                                                        <span class="inclrow__label" data-incl-label>Expo Floor &amp; Experiences</span>
+                                                        <span class="inclrow__note" data-incl-note>Demo stands, product zones, VR bay</span>
+                                                    </span>
+                                                </label>
+                                                <span class="inclrow__edit">
+                                                    <input type="text" value="Expo Floor &amp; Experiences" data-incl-labelfield placeholder="What is included">
+                                                    <input type="text" value="Demo stands, product zones, VR bay" data-incl-notefield placeholder="A line of detail">
+                                                </span>
+                                                <span class="inclrow__acts">
+                                                    <button class="iconbtn" type="button" data-incl-edit title="Edit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-incl-save hidden title="Save">
+                                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-repeat-remove title="Remove">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+
+                                            <div class="inclrow" data-incl-row>
+                                                <label class="inclrow__pick">
+                                                    <input type="checkbox" checked data-incl-box>
+                                                    <span class="inclrow__body">
+                                                        <span class="inclrow__label" data-incl-label>Backstage &amp; Green Room</span>
+                                                        <span class="inclrow__note" data-incl-note>Speaker area behind the Main Hall</span>
+                                                    </span>
+                                                </label>
+                                                <span class="inclrow__edit">
+                                                    <input type="text" value="Backstage &amp; Green Room" data-incl-labelfield placeholder="What is included">
+                                                    <input type="text" value="Speaker area behind the Main Hall" data-incl-notefield placeholder="A line of detail">
+                                                </span>
+                                                <span class="inclrow__acts">
+                                                    <button class="iconbtn" type="button" data-incl-edit title="Edit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-incl-save hidden title="Save">
+                                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-repeat-remove title="Remove">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+
+                                            <div class="inclrow" data-incl-row>
+                                                <label class="inclrow__pick">
+                                                    <input type="checkbox" data-incl-box>
+                                                    <span class="inclrow__body">
+                                                        <span class="inclrow__label" data-incl-label>Airport Transfers</span>
+                                                        <span class="inclrow__note" data-incl-note>Shared shuttle on arrival and departure</span>
+                                                    </span>
+                                                </label>
+                                                <span class="inclrow__edit">
+                                                    <input type="text" value="Airport Transfers" data-incl-labelfield placeholder="What is included">
+                                                    <input type="text" value="Shared shuttle on arrival and departure" data-incl-notefield placeholder="A line of detail">
+                                                </span>
+                                                <span class="inclrow__acts">
+                                                    <button class="iconbtn" type="button" data-incl-edit title="Edit">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-incl-save hidden title="Save">
+                                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
+                                                    </button>
+                                                    <button class="iconbtn" type="button" data-repeat-remove title="Remove">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+
                                         </div>
 
-                                        <div class="inclrow" data-incl-row>
-                                            <label class="inclrow__pick">
-                                                <input type="checkbox" checked data-incl-box>
-                                                <span class="inclrow__body">
-                                                    <span class="inclrow__label" data-incl-label>Gala Dinner</span>
-                                                    <span class="inclrow__note" data-incl-note>Seated dinner and awards, Day 2 evening</span>
-                                                </span>
-                                            </label>
-                                            <span class="inclrow__edit">
-                                                <input type="text" value="Gala Dinner" data-incl-labelfield placeholder="What is included">
-                                                <input type="text" value="Seated dinner and awards, Day 2 evening" data-incl-notefield placeholder="A line of detail">
-                                            </span>
-                                            <span class="inclrow__acts">
-                                                <button class="iconbtn" type="button" data-incl-edit title="Edit">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-incl-save hidden title="Save">
-                                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-repeat-remove title="Remove">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                                </button>
-                                            </span>
-                                        </div>
-
-                                        <div class="inclrow" data-incl-row>
-                                            <label class="inclrow__pick">
-                                                <input type="checkbox" checked data-incl-box>
-                                                <span class="inclrow__body">
-                                                    <span class="inclrow__label" data-incl-label>VIP Networking Dinner</span>
-                                                    <span class="inclrow__note" data-incl-note>Invite-only dinner, Day 1 evening</span>
-                                                </span>
-                                            </label>
-                                            <span class="inclrow__edit">
-                                                <input type="text" value="VIP Networking Dinner" data-incl-labelfield placeholder="What is included">
-                                                <input type="text" value="Invite-only dinner, Day 1 evening" data-incl-notefield placeholder="A line of detail">
-                                            </span>
-                                            <span class="inclrow__acts">
-                                                <button class="iconbtn" type="button" data-incl-edit title="Edit">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-incl-save hidden title="Save">
-                                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-repeat-remove title="Remove">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                                </button>
-                                            </span>
-                                        </div>
-
-                                        <div class="inclrow" data-incl-row>
-                                            <label class="inclrow__pick">
-                                                <input type="checkbox" data-incl-box>
-                                                <span class="inclrow__body">
-                                                    <span class="inclrow__label" data-incl-label>Expo Floor &amp; Experiences</span>
-                                                    <span class="inclrow__note" data-incl-note>Demo stands, product zones, VR bay</span>
-                                                </span>
-                                            </label>
-                                            <span class="inclrow__edit">
-                                                <input type="text" value="Expo Floor &amp; Experiences" data-incl-labelfield placeholder="What is included">
-                                                <input type="text" value="Demo stands, product zones, VR bay" data-incl-notefield placeholder="A line of detail">
-                                            </span>
-                                            <span class="inclrow__acts">
-                                                <button class="iconbtn" type="button" data-incl-edit title="Edit">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-incl-save hidden title="Save">
-                                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-repeat-remove title="Remove">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                                </button>
-                                            </span>
-                                        </div>
-
-                                        <div class="inclrow" data-incl-row>
-                                            <label class="inclrow__pick">
-                                                <input type="checkbox" checked data-incl-box>
-                                                <span class="inclrow__body">
-                                                    <span class="inclrow__label" data-incl-label>Backstage &amp; Green Room</span>
-                                                    <span class="inclrow__note" data-incl-note>Speaker area behind the Main Hall</span>
-                                                </span>
-                                            </label>
-                                            <span class="inclrow__edit">
-                                                <input type="text" value="Backstage &amp; Green Room" data-incl-labelfield placeholder="What is included">
-                                                <input type="text" value="Speaker area behind the Main Hall" data-incl-notefield placeholder="A line of detail">
-                                            </span>
-                                            <span class="inclrow__acts">
-                                                <button class="iconbtn" type="button" data-incl-edit title="Edit">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-incl-save hidden title="Save">
-                                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-repeat-remove title="Remove">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                                </button>
-                                            </span>
-                                        </div>
-
-                                        <div class="inclrow" data-incl-row>
-                                            <label class="inclrow__pick">
-                                                <input type="checkbox" data-incl-box>
-                                                <span class="inclrow__body">
-                                                    <span class="inclrow__label" data-incl-label>Airport Transfers</span>
-                                                    <span class="inclrow__note" data-incl-note>Shared shuttle on arrival and departure</span>
-                                                </span>
-                                            </label>
-                                            <span class="inclrow__edit">
-                                                <input type="text" value="Airport Transfers" data-incl-labelfield placeholder="What is included">
-                                                <input type="text" value="Shared shuttle on arrival and departure" data-incl-notefield placeholder="A line of detail">
-                                            </span>
-                                            <span class="inclrow__acts">
-                                                <button class="iconbtn" type="button" data-incl-edit title="Edit">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-incl-save hidden title="Save">
-                                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 6 12l7.5-8" /></svg>
-                                                </button>
-                                                <button class="iconbtn" type="button" data-repeat-remove title="Remove">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
-                                                </button>
-                                            </span>
-                                        </div>
-
+                                        <p class="inclfoot">
+                                            <button class="btn--outline" type="button" data-tier-repeat-add="incl-free">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14" /></svg>
+                                                Add an item
+                                            </button>
+                                            <span class="field__hint">Added items start unticked, so nothing is promised by accident</span>
+                                        </p>
                                     </div>
 
-                                    <p class="inclfoot">
-                                        <button class="btn--outline" type="button" data-tier-repeat-add="incl-free">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14" /></svg>
-                                            Add an item
-                                        </button>
-                                        <span class="field__hint">Added items start unticked, so nothing is promised by accident</span>
+                                    <p class="notice--off" data-incl-off="free">
+                                        Nothing extra is included with this ticket. Guests see the sessions it covers and nothing else.
                                     </p>
-                                </div>
+                                </fieldset>
 
-                                <p class="notice--off" data-incl-off="free">
-                                    Nothing extra is included with this ticket. Guests see the sessions it covers and nothing else.
+                                <p class="includes" data-includes="free">
+                                    <span class="includes__label">This ticket includes</span>
+                                    <span class="includes__value" data-includes-value>&mdash;</span>
                                 </p>
-                            </fieldset>
+                            </section>
 
-                            <p class="includes" data-includes="free">
-                                <span class="includes__label">This ticket includes</span>
-                                <span class="includes__value" data-includes-value>&mdash;</span>
+                            <p class="notice notice--info notice--flat u-mt-5">
+                                <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
+                                Free events skip commission entirely &mdash; nothing is charged to you or
+                                your guests, and no bank account is needed to publish.
                             </p>
-                        </section>
-
-                        <p class="notice notice--info notice--flat u-mt-5">
-                            <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 12h.01" /></svg>
-                            Free events skip commission entirely &mdash; nothing is charged to you or
-                            your guests, and no bank account is needed to publish.
-                        </p>
-                    </div>
-                </section>
+                        </div>
+                    </section>
                 }
 
                 <!-- Paid events: full tier configuration -->
@@ -2254,6 +2254,7 @@
                     // ---- Rehydrate existing tiers (edit flow) ----------------------
                     // Runs before the Add Tier wiring below so tierCounter/tierList
                     // already reflect any tiers created here.
+                    try {
                     (function rehydrateExistingTiers() {
                         var dataEl = document.getElementById('existing-ticket-data');
                         if (!dataEl || !tierList) return;
@@ -2462,6 +2463,14 @@
                             });
                         }
                     })();
+                    } catch (err) {
+                        // Rebuilding tiers from existing saved data failed (unexpected
+                        // field shape, missing element, etc.). Log it instead of letting
+                        // it silently abort the rest of this setup - without this guard,
+                        // an error here previously prevented "Add Tier" (wired below)
+                        // from ever getting its click listener attached.
+                        console.error('Failed to rehydrate existing ticket tiers:', err);
+                    }
 
                     function renumberTiers() {
                         if (!tierList) return;
@@ -3237,114 +3246,114 @@
     });
 </script>
 <script>
-    (function() {
-        function renderDescPreview(textarea) {
-            var suffix = (textarea.getAttribute('name') || '').replace(/^(free-)?desc-?/, '') || 'free';
-            var preview = document.querySelector('.descprev[data-desc-prev="' + CSS.escape(suffix) + '"]');
-            if (!preview) return;
+        (function() {
+            function renderDescPreview(textarea) {
+                var suffix = (textarea.getAttribute('name') || '').replace(/^(free-)?desc-?/, '') || 'free';
+                var preview = document.querySelector('.descprev[data-desc-prev="' + CSS.escape(suffix) + '"]');
+                if (!preview) return;
 
-            var list = preview.querySelector('[data-desc-list]');
-            var singleLine = preview.querySelector('[data-desc-line]');
+                var list = preview.querySelector('[data-desc-list]');
+                var singleLine = preview.querySelector('[data-desc-line]');
 
-            var lines = (textarea.value || '')
-                .split(/\r?\n/)
-                .map(function(l) { return l.trim(); })
-                .filter(function(l) { return l.length > 0; });
+                var lines = (textarea.value || '')
+                    .split(/\r?\n/)
+                    .map(function(l) { return l.trim(); })
+                    .filter(function(l) { return l.length > 0; });
 
-            if (lines.length === 0) {
-                if (list) { list.innerHTML = ''; list.hidden = true; }
-                if (singleLine) { singleLine.textContent = ''; singleLine.hidden = true; }
-                return;
-            }
-
-            if (lines.length === 1) {
-                if (list) { list.innerHTML = ''; list.hidden = true; }
-                if (singleLine) {
-                    singleLine.textContent = lines[0];
-                    singleLine.hidden = false;
+                if (lines.length === 0) {
+                    if (list) { list.innerHTML = ''; list.hidden = true; }
+                    if (singleLine) { singleLine.textContent = ''; singleLine.hidden = true; }
+                    return;
                 }
-                return;
+
+                if (lines.length === 1) {
+                    if (list) { list.innerHTML = ''; list.hidden = true; }
+                    if (singleLine) {
+                        singleLine.textContent = lines[0];
+                        singleLine.hidden = false;
+                    }
+                    return;
+                }
+
+                if (singleLine) { singleLine.textContent = ''; singleLine.hidden = true; }
+                if (list) {
+                    list.hidden = false;
+                    list.innerHTML = lines
+                        .map(function(l) {
+                            var li = document.createElement('li');
+                            li.textContent = l;
+                            return li.outerHTML;
+                        })
+                        .join('');
+                }
             }
 
-            if (singleLine) { singleLine.textContent = ''; singleLine.hidden = true; }
-            if (list) {
-                list.hidden = false;
-                list.innerHTML = lines
-                    .map(function(l) {
-                        var li = document.createElement('li');
-                        li.textContent = l;
-                        return li.outerHTML;
-                    })
-                    .join('');
-            }
+            document.addEventListener('input', function(e) {
+                var el = e.target;
+                if (el.tagName === 'TEXTAREA' && /^(free-)?desc-/.test(el.id || '') || el.id === 'free-desc') {
+                    renderDescPreview(el);
+                }
+            });
+
+            // Render once on load for any pre-filled description (existing/rehydrated tiers).
+            document.querySelectorAll('textarea[id^="desc-"], #free-desc').forEach(renderDescPreview);
+        })();
+        document.addEventListener("DOMContentLoaded", function () {
+        const pricingModeInput = document.getElementById("PricingMode");
+        const segmentButtons = document.querySelectorAll("#paidmode [data-segment-value]");
+
+        segmentButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const selectedValue = this.getAttribute("data-segment-value");
+
+                // 1. Update hidden field value for POST request
+                if (pricingModeInput) {
+                    pricingModeInput.value = selectedValue;
+                }
+
+                // 2. Update button UI states
+                segmentButtons.forEach(btn => btn.setAttribute("aria-pressed", "false"));
+                this.setAttribute("aria-pressed", "true");
+
+                // 3. Toggle free/paid UI panels
+                const paidPanels = document.querySelectorAll('[data-segment-panel="paid"]');
+                const freePanels = document.querySelectorAll('[data-segment-panel="free"]');
+
+                if (selectedValue === "free") {
+                    paidPanels.forEach(panel => panel.hidden = true);
+                    freePanels.forEach(panel => panel.hidden = false);
+                } else {
+                    paidPanels.forEach(panel => panel.hidden = false);
+                    freePanels.forEach(panel => panel.hidden = true);
+                }
+            });
+        });
+    });
+    function syncUIWithPricingMode() {
+        const pricingModeInput = document.getElementById("PricingMode");
+        if (!pricingModeInput) return;
+
+        const currentMode = pricingModeInput.value.toLowerCase();
+        const segmentButtons = document.querySelectorAll("#paidmode [data-segment-value]");
+
+        segmentButtons.forEach(button => {
+            const isSelected = button.getAttribute("data-segment-value") === currentMode;
+            button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+            button.classList.toggle("active", isSelected);
+        });
+
+        const paidPanels = document.querySelectorAll('[data-segment-panel="paid"]');
+        const freePanels = document.querySelectorAll('[data-segment-panel="free"]');
+
+        if (currentMode === "free") {
+            paidPanels.forEach(panel => panel.hidden = true);
+            freePanels.forEach(panel => panel.hidden = false);
+        } else {
+            paidPanels.forEach(panel => panel.hidden = false);
+            freePanels.forEach(panel => panel.hidden = true);
         }
-
-        document.addEventListener('input', function(e) {
-            var el = e.target;
-            if (el.tagName === 'TEXTAREA' && /^(free-)?desc-/.test(el.id || '') || el.id === 'free-desc') {
-                renderDescPreview(el);
-            }
-        });
-
-        // Render once on load for any pre-filled description (existing/rehydrated tiers).
-        document.querySelectorAll('textarea[id^="desc-"], #free-desc').forEach(renderDescPreview);
-    })();
-    document.addEventListener("DOMContentLoaded", function () {
-    const pricingModeInput = document.getElementById("PricingMode");
-    const segmentButtons = document.querySelectorAll("#paidmode [data-segment-value]");
-
-    segmentButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            const selectedValue = this.getAttribute("data-segment-value");
-
-            // 1. Update hidden field value for POST request
-            if (pricingModeInput) {
-                pricingModeInput.value = selectedValue;
-            }
-
-            // 2. Update button UI states
-            segmentButtons.forEach(btn => btn.setAttribute("aria-pressed", "false"));
-            this.setAttribute("aria-pressed", "true");
-
-            // 3. Toggle free/paid UI panels
-            const paidPanels = document.querySelectorAll('[data-segment-panel="paid"]');
-            const freePanels = document.querySelectorAll('[data-segment-panel="free"]');
-
-            if (selectedValue === "free") {
-                paidPanels.forEach(panel => panel.hidden = true);
-                freePanels.forEach(panel => panel.hidden = false);
-            } else {
-                paidPanels.forEach(panel => panel.hidden = false);
-                freePanels.forEach(panel => panel.hidden = true);
-            }
-        });
-    });
-});
-function syncUIWithPricingMode() {
-    const pricingModeInput = document.getElementById("PricingMode");
-    if (!pricingModeInput) return;
-
-    const currentMode = pricingModeInput.value.toLowerCase();
-    const segmentButtons = document.querySelectorAll("#paidmode [data-segment-value]");
-
-    segmentButtons.forEach(button => {
-        const isSelected = button.getAttribute("data-segment-value") === currentMode;
-        button.setAttribute("aria-pressed", isSelected ? "true" : "false");
-        button.classList.toggle("active", isSelected);
-    });
-class="inclrow" data-incl-row
-    const paidPanels = document.querySelectorAll('[data-segment-panel="paid"]');
-    const freePanels = document.querySelectorAll('[data-segment-panel="free"]');
-
-    if (currentMode === "free") {
-        paidPanels.forEach(panel => panel.hidden = true);
-        freePanels.forEach(panel => panel.hidden = false);
-    } else {
-        paidPanels.forEach(panel => panel.hidden = false);
-        freePanels.forEach(panel => panel.hidden = true);
     }
-}
 
-// Ensures correct UI highlight when navigating back via browser cache
-window.addEventListener("pageshow", syncUIWithPricingMode);
+    // Ensures correct UI highlight when navigating back via browser cache
+    window.addEventListener("pageshow", syncUIWithPricingMode);
 </script>
