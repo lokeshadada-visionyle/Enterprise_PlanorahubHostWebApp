@@ -978,7 +978,7 @@ namespace Planora_EnterproseHostWebApp
             return response;
         }
 
-        public Response AddRegistrationFormReq(AddEventFieldsReq req)
+        public AddEventFieldResp AddRegistrationFormReq(AddEventFieldsReq req)
         {
             string hashValue = GetSHA265(req.UserId.ToString());
 
@@ -988,8 +988,6 @@ namespace Planora_EnterproseHostWebApp
                 for (int i = 0; i < req.Fields.Count; i++)
                 {
                     req.Fields[i].SortOrder = i + 1;
-                    req.Fields[i].Placeholder ??= string.Empty;
-                    req.Fields[i].Options ??= string.Empty;
                 }
             }
 
@@ -1008,7 +1006,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine("URL: " + url);
             Debug.WriteLine("Payload: " + jsonData);
 
-            var response = _serialized_json_data<Response>(url, jsonData);
+            var response = _serialized_json_data<AddEventFieldResp>(url, jsonData);
             Debug.WriteLine(JsonSerializer.Serialize(response));
 
             return response;
@@ -1023,8 +1021,6 @@ namespace Planora_EnterproseHostWebApp
                 for (int i = 0; i < req.Fields.Count; i++)
                 {
                     req.Fields[i].SortOrder = i + 1;
-                    req.Fields[i].Placeholder ??= string.Empty;
-                    req.Fields[i].Options ??= string.Empty;
                 }
             }
 
@@ -1104,19 +1100,23 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        //public GetEventAccessResp GetAccessRegistration(long userId, int eventId)
-        //{
-        //    string hashValue = GetSHA265(userId.ToString());
-        //    string query = BuildQuery(
-        //        ("UserId", userId.ToString()),
-        //        ("EventId", eventId.ToString()),
-        //        ("hashValue", hashValue));
-        //    string url = SERVICE_URL + "/Ent_GetAccessGateway?" + query;
-        //    Debug.WriteLine(url);
-        //    var response = _download_serialized_json_data<GetEventAccessResp>(url);
-        //    Debug.WriteLine(JsonSerializer.Serialize(response));
-        //    return response;
-        //}
+        public GetEventAccessResp GetAccessRegistration(DummyRequest req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new DummyRequest
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+            };
+            string url = SERVICE_URL + "/Ent_GetAccessGateway";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<GetEventAccessResp>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
 
         public Response AddRsvpCustoms(AddRsvpCustomsReq req)
         {

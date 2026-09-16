@@ -9,6 +9,10 @@
     ViewData["StepName"] = "Access Control";
     ViewData["StepHint"] = "Set who can register and how";
     ViewData["IsPrivate"] = isPrivate;
+
+    var discoveryVal = Model.SelectedDiscovery ?? (!isPrivate ? "listed" : "standalone");
+    var accessVal = Model.SelectedAccess ?? (isPrivate ? "invite" : "open");
+    var regRequiredVal = Model.RegistrationRequired ?? true;
 }
 <style>
     /* Inline validation styling for this page only — reuses existing design tokens. */
@@ -40,10 +44,6 @@
             box-shadow: 0 0 0 3px var(--color-danger-soft);
         }
 </style>
-@{
-    var discoveryVal = Model.SelectedDiscovery ?? (!isPrivate ? "listed" : "standalone");
-    var accessVal = Model.SelectedAccess ?? (isPrivate ? "invite" : "open");
-}
 
 <div class="wizard__body">
 
@@ -75,7 +75,7 @@
                     <div class="panel__body">
                         <div class="radios radios--2">
                             <label class="radio">
-                                <input type="radio" name="reg-required" value="yes" checked
+                                <input type="radio" name="reg-required" value="yes" @(regRequiredVal ? "checked" : "")
                                        data-reveal="reg-config" data-reveal-inverse="reg-off"
                                        data-reg-flag="on">
                                 <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
@@ -89,7 +89,7 @@
                                 </span>
                             </label>
                             <label class="radio">
-                                <input type="radio" name="reg-required" value="no"
+                                <input type="radio" name="reg-required" value="no" @(!regRequiredVal ? "checked" : "")
                                        data-reg-flag="off">
                                 <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-ticket"></i></span>
                                 <span class="radio__body">
@@ -185,7 +185,7 @@
                                     </span>
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="access" value="rsvp" data-type-lock="public" @(!isPrivate ? "disabled" : "")>
+                                    <input type="radio" name="access" value="rsvp" @(accessVal == "rsvp" ? "checked" : "") data-type-lock="public" @(!isPrivate ? "disabled" : "")>
                                     <span class="radio__icon" aria-hidden="true"><i class="fa-solid fa-clipboard-check"></i></span>
                                     <span class="radio__body">
                                         <span class="radio__title">
@@ -231,7 +231,10 @@
                                         {
                                             @foreach (var tpl in Model.DefaultTemplates)
                                             {
-                                                <option value="@tpl.FormId">@tpl.FormTitle &middot; @tpl.TotalFields fields</option>
+                                                <option value="@tpl.FormId"
+                                                        selected="@(Model.SelectedTemplateId.HasValue && Model.SelectedTemplateId.Value == tpl.FormId)">
+                                                    @tpl.FormTitle &middot; @tpl.TotalFields fields
+                                                </option>
                                             }
                                         }
                                     </select>
@@ -261,6 +264,7 @@
                                     {
                                         var f = Model.EventFields.Fields[i];
                                         <div class="fieldrow" data-repeat-row>
+                                            <input type="hidden" name="EventFields.Fields[@i].FieldId" value="@f.FieldId" />
                                             <span class="fieldrow__grip" aria-hidden="true">#</span>
                                             <span class="fieldrow__no" aria-hidden="true">@(i + 1)</span>
                                             <span>
@@ -294,6 +298,7 @@
                                 else
                                 {
                                     <div class="fieldrow" data-repeat-row>
+                                        <input type="hidden" name="EventFields.Fields[0].FieldId" value="" />
                                         <span class="fieldrow__grip" aria-hidden="true">#</span>
                                         <span class="fieldrow__no" aria-hidden="true">1</span>
                                         <span><input class="fieldrow__input" name="EventFields.Fields[0].Label" type="text" value="Phone Number" data-required-field="text"><span class="field__error" role="alert"></span></span>
@@ -316,6 +321,7 @@
                                         </button>
                                     </div>
                                     <div class="fieldrow" data-repeat-row>
+                                        <input type="hidden" name="EventFields.Fields[1].FieldId" value="" />
                                         <span class="fieldrow__grip" aria-hidden="true">#</span>
                                         <span class="fieldrow__no" aria-hidden="true">2</span>
                                         <span><input class="fieldrow__input" name="EventFields.Fields[1].Label" type="text" value="Organization" data-required-field="text"><span class="field__error" role="alert"></span></span>
@@ -629,6 +635,14 @@
             const numberSpan = row.querySelector('.fieldrow__no');
             if (numberSpan) numberSpan.textContent = index + 1;
 
+            // Keep the hidden FieldId input's name in sync with its new
+            // position. Its VALUE is left untouched — the value is what
+            // preserves the row's identity across reorders.
+            const fieldIdInput = row.querySelector('input[type="hidden"][name*="FieldId"]');
+            if (fieldIdInput) {
+                fieldIdInput.name = `EventFields.Fields[${index}].FieldId`;
+            }
+
             const labelInput = row.querySelector('.fieldrow__input');
             if (labelInput) {
                 labelInput.name = `EventFields.Fields[${index}].Label`;
@@ -685,7 +699,15 @@
             return `<option value="${t}"${isSelected ? " selected" : ""}>${t}</option>`;
         }).join("");
 
+        // fieldId is present when this row represents a field that
+        // already exists server-side (e.g. loaded from GetCustomForm).
+        // It's absent/empty for brand-new rows ("+ Add Field", or fields
+        // coming from a template, which are always new). An empty value
+        // binds to null server-side, which OnPost treats as "insert".
+        const fieldId = field.fieldId ?? field.FieldId ?? "";
+
         row.innerHTML = `
+                <input type="hidden" name="EventFields.Fields[${index}].FieldId" value="${fieldId}" />
                 <span class="fieldrow__grip" aria-hidden="true">#</span>
                 <span class="fieldrow__no" aria-hidden="true">${index + 1}</span>
                 <span>
@@ -755,6 +777,10 @@
                 if (list) {
                     list.innerHTML = "";
                     data.fields.forEach((field, i) => {
+                        // Fields returned by the template endpoint have no
+                        // fieldId — they always become new rows, which is
+                        // correct: loading a template should never reuse
+                        // FieldIds from a different form.
                         list.appendChild(renderFieldRow(i, field));
                     });
                     reindexFields();
@@ -769,6 +795,30 @@
                 console.error(err);
                 alert("Failed to load template.");
             });
+    }
+
+    function getAntiForgeryToken() {
+        const el = document.querySelector('input[name="__RequestVerificationToken"]');
+        return el ? el.value : null;
+    }
+
+    function deleteFieldOnServer(fieldId) {
+        const token = getAntiForgeryToken();
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["RequestVerificationToken"] = token;
+
+        fetch("?handler=DeleteField", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({ fieldId: parseInt(fieldId, 10) })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success && typeof showToast === "function") {
+                showToast(data.message || "Failed to delete field.", "warning");
+            }
+        })
+        .catch(err => console.error("Delete field failed", err));
     }
 
     // Delegated click handler
@@ -787,6 +837,17 @@
         if (e.target.closest('[data-repeat-remove]')) {
             const row = e.target.closest('[data-repeat-row]');
             if (row && !row.classList.contains('fieldrow--locked')) {
+                const fieldIdInput = row.querySelector('input[type="hidden"][name*="FieldId"]');
+                const fieldId = fieldIdInput ? fieldIdInput.value : "";
+
+                // Only call the delete endpoint for rows that represent a
+                // field that already exists server-side. Brand-new rows
+                // (no fieldId yet) just need to be dropped from the DOM —
+                // they were never saved, so there's nothing to delete.
+                if (fieldId) {
+                    deleteFieldOnServer(fieldId);
+                }
+
                 row.remove();
                 reindexFields();
             }

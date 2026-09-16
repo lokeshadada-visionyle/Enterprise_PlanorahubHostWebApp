@@ -8,6 +8,12 @@ namespace Planora_EnterproseHostWebApp.Models
         public string Message { get; set; } = "";
         public int EventId { get; set; }
     }
+    public class DummyRequest
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+    }
 
     public class GetEventTypeResp
     {
@@ -924,10 +930,16 @@ namespace Planora_EnterproseHostWebApp.Models
         public int? FieldId { get; set; }
         public string FieldType { get; set; }
         public string Label { get; set; }
-        public string Placeholder { get; set; } = string.Empty;
-        public string Options { get; set; } = string.Empty;
+        public string? Placeholder { get; set; }
+        public string? Options { get; set; }
         public bool IsRequired { get; set; }
         public int SortOrder { get; set; }
+    }
+    public class AddEventFieldResp
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int FormId { get; set; }
     }
     public class UpdateEventFieldsReq
     {
@@ -943,8 +955,8 @@ namespace Planora_EnterproseHostWebApp.Models
         public int FieldId { get; set; }
         public string FieldType { get; set; }
         public string Label { get; set; }
-        public string Placeholder { get; set; } = string.Empty;
-        public string Options { get; set; } = string.Empty;
+        public string? Placeholder { get; set; }
+        public string? Options { get; set; }
         public bool IsRequired { get; set; }
         public int SortOrder { get; set; }
     }
@@ -974,8 +986,6 @@ namespace Planora_EnterproseHostWebApp.Models
         public int EventId { get; set; }
         public string FormTitle { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
         public List<CustomFormFieldData> Fields { get; set; } = new();
     }
     public class CustomFormFieldData
@@ -989,13 +999,11 @@ namespace Planora_EnterproseHostWebApp.Models
         public bool IsRequired { get; set; }
         public int SortOrder { get; set; }
         public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
     public class GetEventAccessResp
     {
         public int Status { get; set; }
         public string Message { get; set; }
-        public int EventId { get; set; }
         public string AccessGatewayMode { get; set; }
         public bool IsUnListed { get; set; }
     }
