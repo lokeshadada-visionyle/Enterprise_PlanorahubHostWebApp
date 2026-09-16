@@ -85,7 +85,7 @@
 
             <ol class="wizard__steps">
                 <li>
-                    <a class="@StepClass(1)" asp-page="/CreateEvent/SalesRules" data-wizard-link aria-current="@(currentStep == 1 ? "step" : null)" aria-disabled="@(IsStepDisabled(1) ? "true" : "false")" tabindex="@(IsStepDisabled(1) ? "-1" : "0")">
+                    <a class="@StepClass(1)" asp-page="/CreateEvent/EventType" data-wizard-link aria-current="@(currentStep == 1 ? "step" : null)" aria-disabled="@(IsStepDisabled(1) ? "true" : "false")" tabindex="@(IsStepDisabled(1) ? "-1" : "0")">
                         <span class="tile tile--muted" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12.5 12 17l9-4.5M3 17 12 21.5 21 17" /></svg></span>
                         <span>Event Type</span>
                     </a>

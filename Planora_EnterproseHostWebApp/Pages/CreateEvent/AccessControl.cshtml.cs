@@ -49,7 +49,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 SelectedDiscovery = accessResp.IsUnListed ? "standalone" : "listed";
 
                 var tplId = HttpContext.Session.GetInt32("SelectedTemplateFormId");
-                if (tplId.HasValue) SelectedTemplateId = formId;
+                if (tplId.HasValue) SelectedTemplateId = tplId.Value;
             }
 
             var regRequiredStr = HttpContext.Session.GetString("RegistrationRequired");

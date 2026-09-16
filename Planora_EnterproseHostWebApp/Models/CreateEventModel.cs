@@ -1179,7 +1179,20 @@ namespace Planora_EnterproseHostWebApp.Models
     }
     public class CustomFields
     {
-        public int CustomId { get; set; }
+        public int CustomId { get; set; } 
+        public string CustomName { get; set; }
+        public bool IsRequired { get; set; }
+    }
+    public class UpdateRsvpCustomsReq
+    {
+        public int UserId { get; set; }
+        public string hashValue { get; set; }
+        public int EventId { get; set; }
+        public bool IsRsvpEnabled { get; set; }
+        public List<UpdateCustomFields> Custom { get; set; }
+    }
+    public class UpdateCustomFields
+    {
         public string CustomName { get; set; }
         public bool IsRequired { get; set; }
     }
