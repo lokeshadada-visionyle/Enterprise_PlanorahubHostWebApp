@@ -1117,39 +1117,6 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-
-        public Response AddRsvpCustoms(AddRsvpCustomsReq req)
-        {
-            string hashValue = GetSHA265(req.UserId.ToString());
-            var request = new AddRsvpCustomsReq
-            {
-                UserId = req.UserId,
-                hashValue = hashValue,
-                EventId = req.EventId,
-                Custom = req.Custom,
-                IsRsvpEnabled = req.IsRsvpEnabled,
-            };
-            string url = SERVICE_URL + "/AddRsvpCustoms";
-            string jsonData = JsonSerializer.Serialize(request);
-            Debug.WriteLine(url);
-            Debug.WriteLine(jsonData);
-            var response = _serialized_json_data<Response>(url, jsonData);
-            Debug.WriteLine(JsonSerializer.Serialize(response));
-            return response;
-        }
-        public GetRsvpCustomsResp GetRsvpCustoms(long userId, int eventId)
-        {
-            string hashValue = GetSHA265(userId.ToString());
-            string query = BuildQuery(
-                ("UserId", userId.ToString()),
-                ("EventId", eventId.ToString()),
-                ("hashValue", hashValue));
-            string url = SERVICE_URL + "/HostGetRsvpCustoms?" + query;
-            Debug.WriteLine(url);
-            var response = _download_serialized_json_data<GetRsvpCustomsResp>(url);
-            Debug.WriteLine(JsonSerializer.Serialize(response));
-            return response;
-        }
         public GetDefaultRegistrationFormsResp GetDefaultRegistrationForms(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
@@ -1176,19 +1143,71 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetRegistrationFormResp GetRegistrationForm(long userId, int eventId)
+
+        public Response AddRsvpCustoms(AddRsvpCustomsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new AddRsvpCustomsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                Custom = req.Custom,
+                IsRsvpEnabled = req.IsRsvpEnabled,
+            };
+            string url = SERVICE_URL + "/AddRsvpCustoms";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public Response updateRsvpCustoms(UpdateRsvpCustomsReq req)
+        {
+            string hashValue = GetSHA265(req.UserId.ToString());
+            var request = new UpdateRsvpCustomsReq
+            {
+                UserId = req.UserId,
+                hashValue = hashValue,
+                EventId = req.EventId,
+                Custom = req.Custom,
+                IsRsvpEnabled = req.IsRsvpEnabled,
+            };
+            string url = SERVICE_URL + "/HostUpdateRsvpCustoms";
+            string jsonData = JsonSerializer.Serialize(request);
+            Debug.WriteLine(url);
+            Debug.WriteLine(jsonData);
+            var response = _serialized_json_data<Response>(url, jsonData);
+            Debug.WriteLine(JsonSerializer.Serialize(response));
+            return response;
+        }
+        public GetRsvpCustomsResp GetRsvpCustoms(long userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(
                 ("UserId", userId.ToString()),
                 ("EventId", eventId.ToString()),
                 ("hashValue", hashValue));
-            string url = SERVICE_URL + "/Ent_GetRegistrationForm?" + query;
+            string url = SERVICE_URL + "/HostGetRsvpCustoms?" + query;
             Debug.WriteLine(url);
-            var response = _download_serialized_json_data<GetRegistrationFormResp>(url);
+            var response = _download_serialized_json_data<GetRsvpCustomsResp>(url);
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
+        //public GetRegistrationFormResp GetRegistrationForm(long userId, int eventId)
+        //{
+        //    string hashValue = GetSHA265(userId.ToString());
+        //    string query = BuildQuery(
+        //        ("UserId", userId.ToString()),
+        //        ("EventId", eventId.ToString()),
+        //        ("hashValue", hashValue));
+        //    string url = SERVICE_URL + "/Ent_GetRegistrationForm?" + query;
+        //    Debug.WriteLine(url);
+        //    var response = _download_serialized_json_data<GetRegistrationFormResp>(url);
+        //    Debug.WriteLine(JsonSerializer.Serialize(response));
+        //    return response;
+        //}
         public GetRsvpTemplatesResp GetRsvpDefaultCustomForms(int userId, int eventId)
         {
             string hashValue = GetSHA265(userId.ToString());
@@ -1202,7 +1221,7 @@ namespace Planora_EnterproseHostWebApp
             Debug.WriteLine(JsonSerializer.Serialize(response));
             return response;
         }
-        public GetRsvpTemplateFieldsResp GetDefaultRsvpFormsByTitle(int userId, int eventId, string formTitle)
+        public GetRsvpTemplateFieldsResp GetDefaultRsvpFormsByTitle(int userId, string formTitle)
         {
             string hashValue = GetSHA265(userId.ToString());
             string query = BuildQuery(

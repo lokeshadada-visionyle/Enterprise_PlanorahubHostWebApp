@@ -1,0 +1,2889 @@
+﻿@page
+@model Planora_EnterproseHostWebApp.Pages.CreateEvent.SalesRulesModel
+@{
+    Layout = "_CreateEventLayout";
+    ViewData["StepIndex"] = 6;
+    ViewData["StepTotal"] = 12;
+    ViewData["StepName"] = "Sale Rules & Pricing";
+    ViewData["StepHint"] = "Set prices, allocations, audiences and sale windows for each rule";
+}
+<div class="wizard__body">
+      <main class="wizard__content" data-page-roles="admin manager">
+        <div class="wizard__inner">
+         <form class="stack" action="sales-rules.html" method="get">
+
+            <section class="panel" aria-labelledby="rulesintro-title">
+              <div class="panel__head">
+                <span class="tile tile--brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 5 5 19"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg></span>
+                <div class="panel__headbody">
+                  <h2 class="panel__title panel__title--lg" id="rulesintro-title">
+                    Sale rules
+                  </h2>
+                  <p class="panel__meta">
+                    A sale rule is how a ticket gets a price. Each one sets its own
+                    allocation, the tiers it covers and what each of those costs, who
+                    may buy and when it is live. Tickets with no rule covering them
+                    cannot be sold.
+                  </p>
+                </div>
+              </div>
+              <div class="panel__body">
+                <p class="rulesbar">
+                  <span class="rulesbar__figures">
+                    <span class="rulesbar__figure">
+                      <b data-rules-count>0</b><span>Sale rules</span>
+                    </span>
+                    <span class="rulesbar__figure">
+                      <b data-rules-alloc>0</b><span>Tickets across all rules</span>
+                    </span>
+                    <span class="rulesbar__figure rulesbar__figure--warn">
+                      <b data-rules-uncovered>0</b><span>Tiers with no rule</span>
+                    </span>
+                  </span>
+                  <span class="rulesbar__body" data-rules-summary>&mdash;</span>
+                  <button class="btn btn--primary btn--sm" type="button" data-rule-add>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg> Add sale rule
+                  </button>
+                </p>
+
+                <p class="notice notice--warn notice--flat u-mt-5" data-rules-none hidden>
+                  <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M12 12h.01"/></svg>
+                  <span>
+                    There are no sale rules, so none of these tickets can be sold. Add
+                    at least one rule covering the tiers you intend to sell.
+                  </span>
+                </p>
+              </div>
+            </section>
+
+            <div class="salerules u-mt-6" id="rule-list" data-rulelist
+                 data-repeat-min="0">
+            <article class="salerule" data-salerule="r1" data-repeat-row>
+              <div class="salerule__head">
+                <span class="salerule__no" aria-hidden="true">1</span>
+                <span class="salerule__title">
+                  <label class="u-visually-hidden" for="rn-r1">Sale rule name</label>
+                  <input class="salerule__name field__input" id="rn-r1"
+                         name="rn-r1" type="text" value="Early Bird"
+                         placeholder="Name this rule">
+                  <span class="salerule__recap" data-rule-recap>&mdash;</span>
+                </span>
+                <span class="salerule__tools">
+                  <button class="iconbtn" type="button" data-rule-duplicate="r1">
+                    <span class="u-visually-hidden">Duplicate this sale rule</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  </button>
+                  <button class="iconbtn iconbtn--danger" type="button"
+                          data-repeat-remove>
+                    <span class="u-visually-hidden">Delete this sale rule</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                  </button>
+                </span>
+              </div>
+
+              <div class="salerule__body">
+
+                <!-- ---- how many this rule may sell ---- -->
+                <div class="rulefield">
+                  <label class="field__label" for="ra-r1">
+                    Total allocation<span class="field__required" aria-hidden="true">*</span>
+                    <span class="u-visually-hidden">(required)</span>
+                  </label>
+                  <input class="field__input field__input--short" id="ra-r1"
+                         name="ra-r1" type="text" inputmode="numeric"
+                         value="100" data-rule-alloc>
+                  <span class="field__hint">
+                    Tickets this rule may sell in total, across every tier it covers.
+                    This is not the tier&rsquo;s own capacity.
+                  </span>
+                  <span class="field__error" data-error="alloc" hidden></span>
+                </div>
+  <fieldset class="fieldset">
+                  <legend class="fieldset__legend">
+                    Sale period
+                    <span class="fieldset__note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg> All times in WAT (UTC+1)</span>
+                  </legend>
+                  <div class="formgrid formgrid--4">
+                    <p class="field">
+                      <label class="field__label" for="rsd-__NEW__">Sale start date</label>
+                      <input class="field__input" id="rsd-__NEW__" name="rsd-__NEW__"
+                             type="date" value="" data-rule-start>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="rst-__NEW__">Sale start time</label>
+                      <input class="field__input" id="rst-__NEW__" name="rst-__NEW__"
+                             type="time" value="09:00" data-rule-starttime>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="red-__NEW__">Sale end date</label>
+                      <input class="field__input" id="red-__NEW__" name="red-__NEW__"
+                             type="date" value="" data-rule-end>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="ret-__NEW__">Sale end time</label>
+                      <input class="field__input" id="ret-__NEW__" name="ret-__NEW__"
+                             type="time" value="23:59" data-rule-endtime>
+                    </p>
+                  </div>
+                  <span class="field__error" data-error="period" hidden></span>
+                  <p class="field__hint" data-period-recap></p>
+                </fieldset>
+                <!-- ---- which tiers, and what each costs ---- -->
+                <div class="rulefield">
+                  <p class="rulefield__head">
+                    <span class="field__label">
+                      Ticket tiers<span class="field__required" aria-hidden="true">*</span>
+                      <span class="u-visually-hidden">(required)</span>
+                    </span>
+                    <span class="rulefield__count" data-tier-count>&mdash;</span>
+                  </p>
+
+                  <div class="tierpick" data-tierpick-scope>
+                    <div class="searchbox searchbox--sm">
+                      <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                      <label class="u-visually-hidden" for="rts-r1">
+                        Search ticket tiers
+                      </label>
+                      <input class="searchbox__input" id="rts-r1" name="rts-r1"
+                             type="search" placeholder="Search tiers"
+                             data-tierpick-filter>
+                    </div>
+                    <div class="tierpick__opts">
+                      <label class="tierpick__opt" data-tierpick-opt="general"
+                             data-tierpick-search="general 500">
+                        <input type="checkbox" name="rt-r1-general" value="general"
+                               data-tierpick="general" checked>
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">General</span>
+                          <span class="tierpick__cap">
+                            500 configured
+                          </span>
+                        </span>
+                      </label>
+                      <label class="tierpick__opt" data-tierpick-opt="premium"
+                             data-tierpick-search="premium 100">
+                        <input type="checkbox" name="rt-r1-premium" value="premium"
+                               data-tierpick="premium">
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">Premium</span>
+                          <span class="tierpick__cap">
+                            100 configured
+                          </span>
+                        </span>
+                      </label>
+                      <label class="tierpick__opt" data-tierpick-opt="vip"
+                             data-tierpick-search="vip 50">
+                        <input type="checkbox" name="rt-r1-vip" value="vip"
+                               data-tierpick="vip" checked>
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">VIP</span>
+                          <span class="tierpick__cap">
+                            50 configured
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                    <p class="tierpick__none" data-tierpick-none hidden>
+                      No tier matches that search.
+                    </p>
+                  </div>
+                  <span class="field__error" data-error="tiers" hidden></span>
+                </div>
+
+                <div class="rulefield" data-pricing-block>
+                  <p class="rulefield__head">
+                    <span class="field__label">Pricing</span>
+                    <span class="rulefield__count">
+                      A price for each tier you ticked
+                    </span>
+                  </p>
+                  <div class="tablewrap">
+                    <table class="table table--narrow pricetable">
+                      <caption class="u-visually-hidden">
+                        The sale price of each ticket tier under this rule
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Ticket tier</th>
+                          <th scope="col">Tier capacity</th>
+                          <th scope="col">Sale price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                    <tr data-pricerow="general">
+                      <th scope="row">General</th>
+                      <td class="u-muted">500 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-r1-general">
+                            Sale price for General
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-r1-general" name="rp-r1-general"
+                                 type="text" inputmode="numeric" value="10000"
+                                 data-tierprice="general">
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-pricerow="premium" hidden>
+                      <th scope="row">Premium</th>
+                      <td class="u-muted">100 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-r1-premium">
+                            Sale price for Premium
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-r1-premium" name="rp-r1-premium"
+                                 type="text" inputmode="numeric" value=""
+                                 data-tierprice="premium">
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-pricerow="vip">
+                      <th scope="row">VIP</th>
+                      <td class="u-muted">50 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-r1-vip">
+                            Sale price for VIP
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-r1-vip" name="rp-r1-vip"
+                                 type="text" inputmode="numeric" value="40000"
+                                 data-tierprice="vip">
+                        </span>
+                      </td>
+                    </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="pricetable__empty" data-pricing-empty hidden>
+                    Tick a ticket tier above and it appears here for pricing.
+                  </p>
+                  <span class="field__error" data-error="prices" hidden></span>
+                </div>
+
+              <section class="ticketaccess" aria-labelledby="acctitle-free">
+                <h3 class="ticketaccess__title" id="acctitle-free">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z"/><path d="M9 9v6"/></svg> Applies to
+                </h3>
+                <!-- <p class="ticketaccess__text">
+                  Choose the sessions the holder can attend, then anything extra that comes
+                  with the ticket.
+                </p> -->
+
+                <fieldset class="fieldset">
+                  <legend class="fieldset__legend">Session access</legend>
+                  <div class="radios radios--2">
+                    <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="all" checked>
+                      <span class="radio__body">
+                        <span class="radio__title">All standard sessions</span>
+                        <span class="radio__text">Every session on every day of the event</span>
+                      </span>
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="days" data-reveal="accdays-free">
+                      <span class="radio__body">
+                        <span class="radio__title">Sessions on selected days</span>
+                        <span class="radio__text">All standard sessions, but only on the days you tick</span>
+                      </span>
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="sessions" data-reveal="accsessions-free">
+                      <span class="radio__body">
+                        <span class="radio__title">Selected sessions</span>
+                        <span class="radio__text">Only the sessions you pick, one by one</span>
+                      </span>
+                    </label>
+                    <!-- <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="none">
+                      <span class="radio__body">
+                        <span class="radio__title">No session access</span>
+                        <span class="radio__text">The ticket is for the extras below only &mdash; an add-on, a dinner or a lounge pass</span>
+                      </span>
+                    </label> -->
+                  </div>
+                </fieldset>
+
+                <div class="scopepicker u-mt-5" id="accdays-free" hidden>
+                  <p class="scopepicker__head">
+                    Days come from your Schedule Builder &mdash; tick the ones this ticket
+                    covers. All standard sessions on a ticked day are included.
+                  </p>
+                  <div class="scopeday__slots scopeday__slots--flush">
+                    <label class="scopeslot">
+                      <input type="checkbox" name="acc-free-day-1">
+                      <span class="scopeslot__body">
+                        <span class="scopeslot__name">Day 1 &mdash; Opening Day</span>
+                        <span class="scopeslot__meta">2026-08-06 &middot; 3 sessions</span>
+                      </span>
+                    </label>
+                    <label class="scopeslot">
+                      <input type="checkbox" name="acc-free-day-2">
+                      <span class="scopeslot__body">
+                        <span class="scopeslot__name">Day 2 &mdash; Session 2</span>
+                        <span class="scopeslot__meta">2026-08-07 &middot; 2 sessions</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="scopepicker u-mt-5" id="accsessions-free" hidden>
+                  <p class="scopepicker__head">
+                    Pick individual sessions. Narrow the list first if your schedule is long.
+                  </p>
+                  <div class="sessionfilter" data-session-scope="accsessions-free">
+                        <div class="sessionfilter__field sessionfilter__field--wide">
+                          <label class="slotcard__label" for="sf-text-free">Search</label>
+                          <input class="field__input" id="sf-text-free" name="sf-text-free"
+                                 type="search" placeholder="Session, speaker or hall"
+                                 data-session-filter="text">
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-date-free">Date</label>
+                          <select class="field__select" id="sf-date-free" name="sf-date-free"
+                                  data-session-filter="date">
+                            <option value="">All</option>
+                            <option>2026-08-06</option>
+                            <option>2026-08-07</option>
+                          </select>
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-venue-free">Venue</label>
+                          <select class="field__select" id="sf-venue-free" name="sf-venue-free"
+                                  data-session-filter="venue">
+                            <option value="">All</option>
+                            <option>Eko Convention Centre</option>
+                            <option>Landmark Centre</option>
+                          </select>
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-hall-free">Hall</label>
+                          <select class="field__select" id="sf-hall-free" name="sf-hall-free"
+                                  data-session-filter="hall">
+                            <option value="">All</option>
+                            <option>Main Hall</option>
+                            <option>Hall B</option>
+                            <option>Breakout Room 1</option>
+                            <option>VIP Lounge</option>
+                          </select>
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-track-free">Track</label>
+                          <select class="field__select" id="sf-track-free" name="sf-track-free"
+                                  data-session-filter="track">
+                            <option value="">All</option>
+                            <option>Keynote</option>
+                            <option>Panel</option>
+                            <option>Workshop</option>
+                            <option>Clinic</option>
+                          </select>
+                        </div>
+                  </div>
+                  <div class="sessionlist">
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-06" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Main Hall" data-session-track="Keynote"
+                             data-session-text="Morning Keynote Kofi Asante, Amara Osei Main Hall">
+                        <input type="checkbox" name="acc-free-s-1-1">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Morning Keynote</span>
+                          <span class="sessionpick__meta">
+                            Day 1 &middot; 2026-08-06 &middot; 09:00 &ndash; 10:30
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Main Hall &middot; Kofi Asante, Amara Osei
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Keynote</span>
+                          <span class="sessionpick__cap">500 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-06" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Hall B" data-session-track="Panel"
+                             data-session-text="Fintech Panel Dr. Ngozi Eze Hall B">
+                        <input type="checkbox" name="acc-free-s-1-2">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Fintech Panel</span>
+                          <span class="sessionpick__meta">
+                            Day 1 &middot; 2026-08-06 &middot; 11:00 &ndash; 12:30
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Hall B &middot; Dr. Ngozi Eze
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Panel</span>
+                          <span class="sessionpick__cap">180 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-06" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Breakout Room 1" data-session-track="Workshop"
+                             data-session-text="Session 3 Femi Bello Breakout Room 1">
+                        <input type="checkbox" name="acc-free-s-1-3">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Session 3</span>
+                          <span class="sessionpick__meta">
+                            Day 1 &middot; 2026-08-06 &middot; 11:00 &ndash; 12:30
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Breakout Room 1 &middot; Femi Bello
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Workshop</span>
+                          <span class="sessionpick__cap">60 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-07" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Main Hall" data-session-track="Workshop"
+                             data-session-text="Design Sprint Amara Osei Main Hall">
+                        <input type="checkbox" name="acc-free-s-2-1">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Design Sprint</span>
+                          <span class="sessionpick__meta">
+                            Day 2 &middot; 2026-08-07 &middot; 09:30 &ndash; 11:00
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Main Hall &middot; Amara Osei
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Workshop</span>
+                          <span class="sessionpick__cap">500 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-07" data-session-venue="Landmark Centre"
+                             data-session-hall="VIP Lounge" data-session-track="Clinic"
+                             data-session-text="Investor Clinic Panel &mdash; 4 speakers VIP Lounge">
+                        <input type="checkbox" name="acc-free-s-2-2">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Investor Clinic</span>
+                          <span class="sessionpick__meta">
+                            Day 2 &middot; 2026-08-07 &middot; 13:00 &ndash; 15:00
+                          </span>
+                          <span class="sessionpick__meta">
+                            Landmark Centre &middot; VIP Lounge &middot; Panel &mdash; 4 speakers
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Clinic</span>
+                          <span class="sessionpick__cap">100 places</span>
+                        </span>
+                      </label>
+                  </div>
+                  <p class="sessionlist__empty" data-session-empty hidden>
+                    No session matches those filters.
+                  </p>
+                </div>
+
+                <!-- <fieldset class="fieldset u-mt-5" data-incl-group="free">
+                  <legend class="fieldset__legend">
+                    <span class="switchcard switchcard--bare">
+                      <span class="switchcard__title" id="incllabel-free">
+                        Also included with this ticket
+                      </span>
+                      <button class="switch switch--brand" type="button" role="switch"
+                              aria-checked="true" aria-labelledby="incllabel-free"
+                              data-switch data-incl-switch="free"></button>
+                    </span>
+                  </legend>
+
+                  <div data-incl-body="free">
+                    <p class="inclhead">
+                      What comes with this ticket beyond the sessions &mdash; your list, per
+                      ticket type. Untick anything this tier does not get.
+                    </p>
+
+                    <div class="inclrows" id="incl-free">
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-vip-lounge" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>VIP Lounge</span>
+                          <span class="inclrow__note" data-incl-note>Private lounge with concierge, both days</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-vip-lounge-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-vip-lounge-l"
+                               name="incl-free-vip-lounge-l" type="text" value="VIP Lounge"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-vip-lounge-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-vip-lounge-n"
+                               name="incl-free-vip-lounge-n" type="text" value="Private lounge with concierge, both days"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit VIP Lounge</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save VIP Lounge</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove VIP Lounge</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-gala" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Gala Dinner</span>
+                          <span class="inclrow__note" data-incl-note>Seated dinner and awards, Day 2 evening</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-gala-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-gala-l"
+                               name="incl-free-gala-l" type="text" value="Gala Dinner"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-gala-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-gala-n"
+                               name="incl-free-gala-n" type="text" value="Seated dinner and awards, Day 2 evening"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Gala Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Gala Dinner</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Gala Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-networking" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>VIP Networking Dinner</span>
+                          <span class="inclrow__note" data-incl-note>Invite-only dinner, Day 1 evening</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-networking-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-networking-l"
+                               name="incl-free-networking-l" type="text" value="VIP Networking Dinner"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-networking-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-networking-n"
+                               name="incl-free-networking-n" type="text" value="Invite-only dinner, Day 1 evening"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit VIP Networking Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save VIP Networking Dinner</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove VIP Networking Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-expo" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Expo Floor &amp; Experiences</span>
+                          <span class="inclrow__note" data-incl-note>Demo stands, product zones, VR bay</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-expo-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-expo-l"
+                               name="incl-free-expo-l" type="text" value="Expo Floor &amp; Experiences"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-expo-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-expo-n"
+                               name="incl-free-expo-n" type="text" value="Demo stands, product zones, VR bay"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Expo Floor &amp; Experiences</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Expo Floor &amp; Experiences</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Expo Floor &amp; Experiences</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-backstage" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Backstage &amp; Green Room</span>
+                          <span class="inclrow__note" data-incl-note>Speaker area behind the Main Hall</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-backstage-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-backstage-l"
+                               name="incl-free-backstage-l" type="text" value="Backstage &amp; Green Room"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-backstage-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-backstage-n"
+                               name="incl-free-backstage-n" type="text" value="Speaker area behind the Main Hall"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Backstage &amp; Green Room</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Backstage &amp; Green Room</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Backstage &amp; Green Room</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-transfers" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Airport Transfers</span>
+                          <span class="inclrow__note" data-incl-note>Shared shuttle on arrival and departure</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-transfers-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-transfers-l"
+                               name="incl-free-transfers-l" type="text" value="Airport Transfers"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-transfers-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-transfers-n"
+                               name="incl-free-transfers-n" type="text" value="Shared shuttle on arrival and departure"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Airport Transfers</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Airport Transfers</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Airport Transfers</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    </div>
+
+                    <p class="inclfoot">
+                      <button class="btn btn--outline btn--sm" type="button"
+                              data-repeat-add="incl-free">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg> Add an item
+                      </button>
+                      <span class="field__hint">
+                        Added items start unticked, so nothing is promised by accident
+                      </span>
+                    </p>
+                  </div>
+
+                  <p class="notice notice--info notice--flat u-mt-5"
+                     data-incl-off="free" hidden>
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M12 12h.01"/></svg>
+                    Nothing extra is included with this ticket. Guests see the sessions it
+                    covers and nothing else.
+                  </p>
+                </fieldset> -->
+
+                <p class="includes" data-includes="free">
+                  <span class="includes__label">This ticket includes</span>
+                  <span class="includes__value" data-includes-value>&mdash;</span>
+                </p>
+              </section>
+     <!-- ---- who, and when ---- -->
+                <div class="formgrid formgrid--2">
+                  <div class="rulefield">
+                    <label class="field__label" for="rau-r1">Audience</label>
+                    <select class="field__select" id="rau-r1" name="rau-r1"
+                            data-rule-audience>
+                      <option value="everyone" selected>Everyone</option>
+                      <option value="members">Members</option>
+                    </select>
+                    <span class="field__hint" data-audience-hint></span>
+                  </div>
+                </div>
+
+
+
+                <div class="rulewarn" data-rule-problems hidden></div>
+              </div>
+
+              <div class="salerule__foot">
+                <span class="salerule__state" data-rule-state></span>
+                <button class="btn btn--quiet btn--sm" type="button" data-rule-cancel>
+                  Cancel
+                </button>
+                <button class="btn btn--primary btn--sm" type="button" data-rule-save>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg> Save sale rule
+                </button>
+              </div>
+            </article>
+
+            <article class="salerule" data-salerule="r2" data-repeat-row>
+              <div class="salerule__head">
+                <span class="salerule__no" aria-hidden="true">2</span>
+                <span class="salerule__title">
+                  <label class="u-visually-hidden" for="rn-r2">Sale rule name</label>
+                  <input class="salerule__name field__input" id="rn-r2"
+                         name="rn-r2" type="text" value="Member Discount"
+                         placeholder="Name this rule">
+                  <span class="salerule__recap" data-rule-recap>&mdash;</span>
+                </span>
+                <span class="salerule__tools">
+                  <button class="iconbtn" type="button" data-rule-duplicate="r2">
+                    <span class="u-visually-hidden">Duplicate this sale rule</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  </button>
+                  <button class="iconbtn iconbtn--danger" type="button"
+                          data-repeat-remove>
+                    <span class="u-visually-hidden">Delete this sale rule</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                  </button>
+                </span>
+              </div>
+
+              <div class="salerule__body">
+
+                <!-- ---- how many this rule may sell ---- -->
+                <div class="rulefield">
+                  <label class="field__label" for="ra-r2">
+                    Total allocation<span class="field__required" aria-hidden="true">*</span>
+                    <span class="u-visually-hidden">(required)</span>
+                  </label>
+                  <input class="field__input field__input--short" id="ra-r2"
+                         name="ra-r2" type="text" inputmode="numeric"
+                         value="50" data-rule-alloc>
+                  <span class="field__hint">
+                    Tickets this rule may sell in total, across every tier it covers.
+                    This is not the tier&rsquo;s own capacity.
+                  </span>
+                  <span class="field__error" data-error="alloc" hidden></span>
+                </div>
+
+                <fieldset class="fieldset">
+                  <legend class="fieldset__legend">
+                    Sale period
+                    <span class="fieldset__note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg> All times in WAT (UTC+1)</span>
+                  </legend>
+                  <div class="formgrid formgrid--4">
+                    <p class="field">
+                      <label class="field__label" for="rsd-r2">Sale start date</label>
+                      <input class="field__input" id="rsd-r2" name="rsd-r2"
+                             type="date" value="2026-09-17" data-rule-start>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="rst-r2">Sale start time</label>
+                      <input class="field__input" id="rst-r2" name="rst-r2"
+                             type="time" value="10:00" data-rule-starttime>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="red-r2">Sale end date</label>
+                      <input class="field__input" id="red-r2" name="red-r2"
+                             type="date" value="2026-09-22" data-rule-end>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="ret-r2">Sale end time</label>
+                      <input class="field__input" id="ret-r2" name="ret-r2"
+                             type="time" value="23:59" data-rule-endtime>
+                    </p>
+                  </div>
+                  <span class="field__error" data-error="period" hidden></span>
+                  <p class="field__hint" data-period-recap></p>
+                </fieldset>
+                <!-- ---- which tiers, and what each costs ---- -->
+                <div class="rulefield">
+                  <p class="rulefield__head">
+                    <span class="field__label">
+                      Ticket tiers<span class="field__required" aria-hidden="true">*</span>
+                      <span class="u-visually-hidden">(required)</span>
+                    </span>
+                    <span class="rulefield__count" data-tier-count>&mdash;</span>
+                  </p>
+
+                  <div class="tierpick" data-tierpick-scope>
+                    <div class="searchbox searchbox--sm">
+                      <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                      <label class="u-visually-hidden" for="rts-r2">
+                        Search ticket tiers
+                      </label>
+                      <input class="searchbox__input" id="rts-r2" name="rts-r2"
+                             type="search" placeholder="Search tiers"
+                             data-tierpick-filter>
+                    </div>
+                    <div class="tierpick__opts">
+                      <label class="tierpick__opt" data-tierpick-opt="general"
+                             data-tierpick-search="general 500">
+                        <input type="checkbox" name="rt-r2-general" value="general"
+                               data-tierpick="general">
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">General</span>
+                          <span class="tierpick__cap">
+                            500 configured
+                          </span>
+                        </span>
+                      </label>
+                      <label class="tierpick__opt" data-tierpick-opt="premium"
+                             data-tierpick-search="premium 100">
+                        <input type="checkbox" name="rt-r2-premium" value="premium"
+                               data-tierpick="premium" checked>
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">Premium</span>
+                          <span class="tierpick__cap">
+                            100 configured
+                          </span>
+                        </span>
+                      </label>
+                      <label class="tierpick__opt" data-tierpick-opt="vip"
+                             data-tierpick-search="vip 50">
+                        <input type="checkbox" name="rt-r2-vip" value="vip"
+                               data-tierpick="vip" checked>
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">VIP</span>
+                          <span class="tierpick__cap">
+                            50 configured
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                    <p class="tierpick__none" data-tierpick-none hidden>
+                      No tier matches that search.
+                    </p>
+                  </div>
+                  <span class="field__error" data-error="tiers" hidden></span>
+                </div>
+
+                <div class="rulefield" data-pricing-block>
+                  <p class="rulefield__head">
+                    <span class="field__label">Pricing</span>
+                    <span class="rulefield__count">
+                      A price for each tier you ticked
+                    </span>
+                  </p>
+                  <div class="tablewrap">
+                    <table class="table table--narrow pricetable">
+                      <caption class="u-visually-hidden">
+                        The sale price of each ticket tier under this rule
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Ticket tier</th>
+                          <th scope="col">Tier capacity</th>
+                          <th scope="col">Sale price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                    <tr data-pricerow="general" hidden>
+                      <th scope="row">General</th>
+                      <td class="u-muted">500 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-r2-general">
+                            Sale price for General
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-r2-general" name="rp-r2-general"
+                                 type="text" inputmode="numeric" value=""
+                                 data-tierprice="general">
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-pricerow="premium">
+                      <th scope="row">Premium</th>
+                      <td class="u-muted">100 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-r2-premium">
+                            Sale price for Premium
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-r2-premium" name="rp-r2-premium"
+                                 type="text" inputmode="numeric" value="25000"
+                                 data-tierprice="premium">
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-pricerow="vip">
+                      <th scope="row">VIP</th>
+                      <td class="u-muted">50 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-r2-vip">
+                            Sale price for VIP
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-r2-vip" name="rp-r2-vip"
+                                 type="text" inputmode="numeric" value="35000"
+                                 data-tierprice="vip">
+                        </span>
+                      </td>
+                    </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="pricetable__empty" data-pricing-empty hidden>
+                    Tick a ticket tier above and it appears here for pricing.
+                  </p>
+                  <span class="field__error" data-error="prices" hidden></span>
+                </div>
+
+                <!-- ---- where it applies ---- -->
+                <!-- <div class="rulefield">
+                  <p class="rulefield__head">
+                    <span class="field__label">Applies to</span>
+                    <span class="rulefield__count" data-scope-count>&mdash;</span>
+                  </p>
+
+                  <div class="segment" role="radiogroup" aria-label="What this rule applies to">
+                    <button class="segment__opt" type="button" role="radio"
+                            aria-checked="false" data-applies="dates">
+                      Dates
+                    </button>
+                    <button class="segment__opt" type="button" role="radio"
+                            aria-checked="true" data-applies="slots">
+                      Slots
+                    </button>
+                  </div>
+
+                  <div class="rulescope u-mt-4" data-applies-panel="dates" hidden>
+                    <p class="rulescope__label">Select dates</p>
+                    <div class="pickchips">
+                      <label class="pickchip">
+                        <input type="checkbox" name="rd-r2-d1" value="d1"
+                               data-ruledate="d1">
+                        <span class="pickchip__body">Thu 6 Aug 2026</span>
+                      </label>
+                      <label class="pickchip">
+                        <input type="checkbox" name="rd-r2-d2" value="d2"
+                               data-ruledate="d2">
+                        <span class="pickchip__body">Fri 7 Aug 2026</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="rulescope u-mt-4" data-applies-panel="slots">
+                    <p class="rulescope__label">Select slots</p>
+                    <div class="slotpicks">
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-r2-s1" value="s1"
+                               data-ruleslot="s1" checked>
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Morning Keynote</span>
+                          <span class="slotpick__when">6 Aug 2026 &middot; 9:00 AM – 10:30 AM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-r2-s2" value="s2"
+                               data-ruleslot="s2">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Fintech Panel</span>
+                          <span class="slotpick__when">6 Aug 2026 &middot; 11:00 AM – 12:30 PM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-r2-s3" value="s3"
+                               data-ruleslot="s3">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Afternoon Workshop</span>
+                          <span class="slotpick__when">6 Aug 2026 &middot; 2:00 PM – 4:00 PM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-r2-s4" value="s4"
+                               data-ruleslot="s4" checked>
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Design Sprint</span>
+                          <span class="slotpick__when">7 Aug 2026 &middot; 9:30 AM – 11:00 AM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-r2-s5" value="s5"
+                               data-ruleslot="s5">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Investor Clinic</span>
+                          <span class="slotpick__when">7 Aug 2026 &middot; 1:00 PM – 3:00 PM</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <span class="field__error" data-error="scope" hidden></span>
+                </div> -->
+
+              <section class="ticketaccess" aria-labelledby="acctitle-free">
+                <h3 class="ticketaccess__title" id="acctitle-free">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-6z"/><path d="M9 9v6"/></svg> Applies to
+                </h3>
+                <!-- <p class="ticketaccess__text">
+                  Choose the sessions the holder can attend, then anything extra that comes
+                  with the ticket.
+                </p> -->
+
+                <fieldset class="fieldset">
+                  <legend class="fieldset__legend">Session access</legend>
+                  <div class="radios radios--2">
+                    <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="all" checked>
+                      <span class="radio__body">
+                        <span class="radio__title">All standard sessions</span>
+                        <span class="radio__text">Every session on every day of the event</span>
+                      </span>
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="days" data-reveal="accdays-free">
+                      <span class="radio__body">
+                        <span class="radio__title">Sessions on selected days</span>
+                        <span class="radio__text">All standard sessions, but only on the days you tick</span>
+                      </span>
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="sessions" data-reveal="accsessions-free">
+                      <span class="radio__body">
+                        <span class="radio__title">Selected sessions</span>
+                        <span class="radio__text">Only the sessions you pick, one by one</span>
+                      </span>
+                    </label>
+                    <!-- <label class="radio">
+                      <input type="radio" name="acc-mode-free" value="none">
+                      <span class="radio__body">
+                        <span class="radio__title">No session access</span>
+                        <span class="radio__text">The ticket is for the extras below only &mdash; an add-on, a dinner or a lounge pass</span>
+                      </span>
+                    </label> -->
+                  </div>
+                </fieldset>
+
+                <div class="scopepicker u-mt-5" id="accdays-free" hidden>
+                  <p class="scopepicker__head">
+                    Days come from your Schedule Builder &mdash; tick the ones this ticket
+                    covers. All standard sessions on a ticked day are included.
+                  </p>
+                  <div class="scopeday__slots scopeday__slots--flush">
+                    <label class="scopeslot">
+                      <input type="checkbox" name="acc-free-day-1">
+                      <span class="scopeslot__body">
+                        <span class="scopeslot__name">Day 1 &mdash; Opening Day</span>
+                        <span class="scopeslot__meta">2026-08-06 &middot; 3 sessions</span>
+                      </span>
+                    </label>
+                    <label class="scopeslot">
+                      <input type="checkbox" name="acc-free-day-2">
+                      <span class="scopeslot__body">
+                        <span class="scopeslot__name">Day 2 &mdash; Session 2</span>
+                        <span class="scopeslot__meta">2026-08-07 &middot; 2 sessions</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="scopepicker u-mt-5" id="accsessions-free" hidden>
+                  <p class="scopepicker__head">
+                    Pick individual sessions. Narrow the list first if your schedule is long.
+                  </p>
+                  <div class="sessionfilter" data-session-scope="accsessions-free">
+                        <div class="sessionfilter__field sessionfilter__field--wide">
+                          <label class="slotcard__label" for="sf-text-free">Search</label>
+                          <input class="field__input" id="sf-text-free" name="sf-text-free"
+                                 type="search" placeholder="Session, speaker or hall"
+                                 data-session-filter="text">
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-date-free">Date</label>
+                          <select class="field__select" id="sf-date-free" name="sf-date-free"
+                                  data-session-filter="date">
+                            <option value="">All</option>
+                            <option>2026-08-06</option>
+                            <option>2026-08-07</option>
+                          </select>
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-venue-free">Venue</label>
+                          <select class="field__select" id="sf-venue-free" name="sf-venue-free"
+                                  data-session-filter="venue">
+                            <option value="">All</option>
+                            <option>Eko Convention Centre</option>
+                            <option>Landmark Centre</option>
+                          </select>
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-hall-free">Hall</label>
+                          <select class="field__select" id="sf-hall-free" name="sf-hall-free"
+                                  data-session-filter="hall">
+                            <option value="">All</option>
+                            <option>Main Hall</option>
+                            <option>Hall B</option>
+                            <option>Breakout Room 1</option>
+                            <option>VIP Lounge</option>
+                          </select>
+                        </div>
+                        <div class="sessionfilter__field">
+                          <label class="slotcard__label" for="sf-track-free">Track</label>
+                          <select class="field__select" id="sf-track-free" name="sf-track-free"
+                                  data-session-filter="track">
+                            <option value="">All</option>
+                            <option>Keynote</option>
+                            <option>Panel</option>
+                            <option>Workshop</option>
+                            <option>Clinic</option>
+                          </select>
+                        </div>
+                  </div>
+                  <div class="sessionlist">
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-06" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Main Hall" data-session-track="Keynote"
+                             data-session-text="Morning Keynote Kofi Asante, Amara Osei Main Hall">
+                        <input type="checkbox" name="acc-free-s-1-1">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Morning Keynote</span>
+                          <span class="sessionpick__meta">
+                            Day 1 &middot; 2026-08-06 &middot; 09:00 &ndash; 10:30
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Main Hall &middot; Kofi Asante, Amara Osei
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Keynote</span>
+                          <span class="sessionpick__cap">500 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-06" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Hall B" data-session-track="Panel"
+                             data-session-text="Fintech Panel Dr. Ngozi Eze Hall B">
+                        <input type="checkbox" name="acc-free-s-1-2">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Fintech Panel</span>
+                          <span class="sessionpick__meta">
+                            Day 1 &middot; 2026-08-06 &middot; 11:00 &ndash; 12:30
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Hall B &middot; Dr. Ngozi Eze
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Panel</span>
+                          <span class="sessionpick__cap">180 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-06" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Breakout Room 1" data-session-track="Workshop"
+                             data-session-text="Session 3 Femi Bello Breakout Room 1">
+                        <input type="checkbox" name="acc-free-s-1-3">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Session 3</span>
+                          <span class="sessionpick__meta">
+                            Day 1 &middot; 2026-08-06 &middot; 11:00 &ndash; 12:30
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Breakout Room 1 &middot; Femi Bello
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Workshop</span>
+                          <span class="sessionpick__cap">60 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-07" data-session-venue="Eko Convention Centre"
+                             data-session-hall="Main Hall" data-session-track="Workshop"
+                             data-session-text="Design Sprint Amara Osei Main Hall">
+                        <input type="checkbox" name="acc-free-s-2-1">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Design Sprint</span>
+                          <span class="sessionpick__meta">
+                            Day 2 &middot; 2026-08-07 &middot; 09:30 &ndash; 11:00
+                          </span>
+                          <span class="sessionpick__meta">
+                            Eko Convention Centre &middot; Main Hall &middot; Amara Osei
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Workshop</span>
+                          <span class="sessionpick__cap">500 places</span>
+                        </span>
+                      </label>
+                      <label class="sessionpick" data-session
+                             data-session-date="2026-08-07" data-session-venue="Landmark Centre"
+                             data-session-hall="VIP Lounge" data-session-track="Clinic"
+                             data-session-text="Investor Clinic Panel &mdash; 4 speakers VIP Lounge">
+                        <input type="checkbox" name="acc-free-s-2-2">
+                        <span class="sessionpick__body">
+                          <span class="sessionpick__name">Investor Clinic</span>
+                          <span class="sessionpick__meta">
+                            Day 2 &middot; 2026-08-07 &middot; 13:00 &ndash; 15:00
+                          </span>
+                          <span class="sessionpick__meta">
+                            Landmark Centre &middot; VIP Lounge &middot; Panel &mdash; 4 speakers
+                          </span>
+                        </span>
+                        <span class="sessionpick__tags">
+                          <span class="badge badge--nodot badge--role">Clinic</span>
+                          <span class="sessionpick__cap">100 places</span>
+                        </span>
+                      </label>
+                  </div>
+                  <p class="sessionlist__empty" data-session-empty hidden>
+                    No session matches those filters.
+                  </p>
+                </div>
+
+                <!-- <fieldset class="fieldset u-mt-5" data-incl-group="free">
+                  <legend class="fieldset__legend">
+                    <span class="switchcard switchcard--bare">
+                      <span class="switchcard__title" id="incllabel-free">
+                        Also included with this ticket
+                      </span>
+                      <button class="switch switch--brand" type="button" role="switch"
+                              aria-checked="true" aria-labelledby="incllabel-free"
+                              data-switch data-incl-switch="free"></button>
+                    </span>
+                  </legend>
+
+                  <div data-incl-body="free">
+                    <p class="inclhead">
+                      What comes with this ticket beyond the sessions &mdash; your list, per
+                      ticket type. Untick anything this tier does not get.
+                    </p>
+
+                    <div class="inclrows" id="incl-free">
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-vip-lounge" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>VIP Lounge</span>
+                          <span class="inclrow__note" data-incl-note>Private lounge with concierge, both days</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-vip-lounge-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-vip-lounge-l"
+                               name="incl-free-vip-lounge-l" type="text" value="VIP Lounge"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-vip-lounge-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-vip-lounge-n"
+                               name="incl-free-vip-lounge-n" type="text" value="Private lounge with concierge, both days"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit VIP Lounge</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save VIP Lounge</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove VIP Lounge</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-gala" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Gala Dinner</span>
+                          <span class="inclrow__note" data-incl-note>Seated dinner and awards, Day 2 evening</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-gala-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-gala-l"
+                               name="incl-free-gala-l" type="text" value="Gala Dinner"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-gala-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-gala-n"
+                               name="incl-free-gala-n" type="text" value="Seated dinner and awards, Day 2 evening"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Gala Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Gala Dinner</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Gala Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-networking" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>VIP Networking Dinner</span>
+                          <span class="inclrow__note" data-incl-note>Invite-only dinner, Day 1 evening</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-networking-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-networking-l"
+                               name="incl-free-networking-l" type="text" value="VIP Networking Dinner"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-networking-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-networking-n"
+                               name="incl-free-networking-n" type="text" value="Invite-only dinner, Day 1 evening"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit VIP Networking Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save VIP Networking Dinner</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove VIP Networking Dinner</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-expo" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Expo Floor &amp; Experiences</span>
+                          <span class="inclrow__note" data-incl-note>Demo stands, product zones, VR bay</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-expo-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-expo-l"
+                               name="incl-free-expo-l" type="text" value="Expo Floor &amp; Experiences"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-expo-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-expo-n"
+                               name="incl-free-expo-n" type="text" value="Demo stands, product zones, VR bay"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Expo Floor &amp; Experiences</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Expo Floor &amp; Experiences</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Expo Floor &amp; Experiences</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-backstage" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Backstage &amp; Green Room</span>
+                          <span class="inclrow__note" data-incl-note>Speaker area behind the Main Hall</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-backstage-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-backstage-l"
+                               name="incl-free-backstage-l" type="text" value="Backstage &amp; Green Room"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-backstage-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-backstage-n"
+                               name="incl-free-backstage-n" type="text" value="Speaker area behind the Main Hall"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Backstage &amp; Green Room</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Backstage &amp; Green Room</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Backstage &amp; Green Room</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    <div class="inclrow" data-repeat-row data-incl-row>
+                      <label class="inclrow__pick">
+                        <input type="checkbox" name="acc-free-transfers" data-incl-box>
+                        <span class="inclrow__body">
+                          <span class="inclrow__label" data-incl-label>Airport Transfers</span>
+                          <span class="inclrow__note" data-incl-note>Shared shuttle on arrival and departure</span>
+                        </span>
+                      </label>
+                      <span class="inclrow__edit">
+                        <label class="u-visually-hidden" for="incl-free-transfers-l">
+                          What is included
+                        </label>
+                        <input class="field__input" id="incl-free-transfers-l"
+                               name="incl-free-transfers-l" type="text" value="Airport Transfers"
+                               data-incl-labelfield>
+                        <label class="u-visually-hidden" for="incl-free-transfers-n">
+                          A line of detail
+                        </label>
+                        <input class="field__input" id="incl-free-transfers-n"
+                               name="incl-free-transfers-n" type="text" value="Shared shuttle on arrival and departure"
+                               data-incl-notefield>
+                      </span>
+                      <span class="inclrow__acts">
+                        <button class="iconbtn" type="button" data-incl-edit>
+                          <span class="u-visually-hidden">Edit Airport Transfers</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-incl-save hidden>
+                          <span class="u-visually-hidden">Save Airport Transfers</span>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg>
+                        </button>
+                        <button class="iconbtn" type="button" data-repeat-remove>
+                          <span class="u-visually-hidden">Remove Airport Transfers</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                        </button>
+                      </span>
+                    </div>
+                    </div>
+
+                    <p class="inclfoot">
+                      <button class="btn btn--outline btn--sm" type="button"
+                              data-repeat-add="incl-free">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg> Add an item
+                      </button>
+                      <span class="field__hint">
+                        Added items start unticked, so nothing is promised by accident
+                      </span>
+                    </p>
+                  </div>
+
+                  <p class="notice notice--info notice--flat u-mt-5"
+                     data-incl-off="free" hidden>
+                    <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M12 12h.01"/></svg>
+                    Nothing extra is included with this ticket. Guests see the sessions it
+                    covers and nothing else.
+                  </p>
+                </fieldset> -->
+
+                <p class="includes" data-includes="free">
+                  <span class="includes__label">This ticket includes</span>
+                  <span class="includes__value" data-includes-value>&mdash;</span>
+                </p>
+              </section>
+                <!-- ---- who, and when ---- -->
+                <div class="formgrid formgrid--2">
+                  <div class="rulefield">
+                    <label class="field__label" for="rau-r2">Audience</label>
+                    <select class="field__select" id="rau-r2" name="rau-r2"
+                            data-rule-audience>
+                      <option value="everyone">Everyone</option>
+                      <option value="members" selected>Members</option>
+                    </select>
+                    <span class="field__hint" data-audience-hint></span>
+                  </div>
+                </div>
+
+
+                <div class="rulewarn" data-rule-problems hidden></div>
+              </div>
+
+              <div class="salerule__foot">
+                <span class="salerule__state" data-rule-state></span>
+                <button class="btn btn--quiet btn--sm" type="button" data-rule-cancel>
+                  Cancel
+                </button>
+                <button class="btn btn--primary btn--sm" type="button" data-rule-save>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg> Save sale rule
+                </button>
+              </div>
+            </article>
+            </div>
+
+            <p class="addrulefoot">
+              <button class="btn btn--outline" type="button" data-rule-add>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg> Add sale rule
+              </button>
+            </p>
+
+            <section class="panel u-mt-6" aria-labelledby="coverage-title">
+              <div class="panel__head">
+                <div class="panel__headbody">
+                  <h2 class="panel__title panel__title--lg" id="coverage-title">
+                    Coverage by ticket tier
+                  </h2>
+                  <p class="panel__meta">
+                    A tier&rsquo;s capacity is how many seats exist. A rule&rsquo;s
+                    allocation is how many it may sell. They are different numbers, and
+                    this is where they meet.
+                  </p>
+                </div>
+              </div>
+              <div class="panel__body">
+                <div class="tablewrap">
+                  <table class="table table--narrow">
+                    <caption class="u-visually-hidden">
+                      Each ticket tier, the rules that price it, and what they could sell
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Ticket tier</th>
+                        <th scope="col">Tier capacity</th>
+                        <th scope="col">Priced by</th>
+                        <th scope="col">Rule allocation</th>
+                        <th scope="col">Price range</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-tiersummary="general">
+                        <th scope="row">General</th>
+                        <td>500</td>
+                        <td data-tiersummary-rules>&mdash;</td>
+                        <td data-tiersummary-alloc>&mdash;</td>
+                        <td data-tiersummary-price>&mdash;</td>
+                      </tr>
+                      <tr data-tiersummary="premium">
+                        <th scope="row">Premium</th>
+                        <td>100</td>
+                        <td data-tiersummary-rules>&mdash;</td>
+                        <td data-tiersummary-alloc>&mdash;</td>
+                        <td data-tiersummary-price>&mdash;</td>
+                      </tr>
+                      <tr data-tiersummary="vip">
+                        <th scope="row">VIP</th>
+                        <td>50</td>
+                        <td data-tiersummary-rules>&mdash;</td>
+                        <td data-tiersummary-alloc>&mdash;</td>
+                        <td data-tiersummary-price>&mdash;</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p class="notice notice--info notice--flat u-mt-5">
+                  <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M12 12h.01"/></svg>
+                  <span>
+                    A rule&rsquo;s allocation is shared across every tier it covers, so
+                    &ldquo;up to&rdquo; is a ceiling rather than a promise: a rule of 100
+                    covering General and VIP can sell 100 of either, not 100 of each.
+                  </span>
+                </p>
+              </div>
+            </section>
+
+            <section class="panel u-mt-6" aria-labelledby="preview-title">
+              <div class="panel__head">
+                <div class="panel__headbody">
+                  <h2 class="panel__title panel__title--lg" id="preview-title">
+                    Pricing preview
+                  </h2>
+                  <p class="panel__meta">
+                    Every price a buyer could be offered, and the conditions that offer
+                    it.
+                  </p>
+                </div>
+                <div class="panel__acts">
+                  <button class="btn btn--outline btn--sm" type="button"
+                          data-action="Pricing table exported as CSV">
+                    Export table
+                  </button>
+                </div>
+              </div>
+              <div class="panel__body">
+                <div class="tablewrap">
+                  <table class="table table--narrow" id="pricing-preview">
+                    <caption class="u-visually-hidden">
+                      Every sale rule, the tiers it prices, and the conditions
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Sale rule</th>
+                        <th scope="col">Ticket tier</th>
+                        <th scope="col">Sale price</th>
+                        <th scope="col">Audience</th>
+                        <th scope="col">Applies to</th>
+                        <th scope="col">Sale period</th>
+                        <th scope="col">Allocation</th>
+                      </tr>
+                    </thead>
+                    <tbody data-preview-body></tbody>
+                  </table>
+                </div>
+
+                <div class="rulewarnings u-mt-5" data-rule-warnings></div>
+
+                <p class="notice notice--success notice--flat u-mt-5" data-rules-ok hidden>
+                  <svg class="notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M12 12h.01"/></svg>
+                  <span>
+                    Every rule checks out: allocations are positive, each has at least
+                    one tier with a price, each covers at least one date or slot, every
+                    sale period runs the right way round, and no two rules offer the
+                    same tier to the same audience at the same time.
+                  </span>
+                </p>
+              </div>
+            </section>
+
+            <template data-rule-template>
+            <article class="salerule" data-salerule="__NEW__" data-repeat-row>
+              <div class="salerule__head">
+                <span class="salerule__no" aria-hidden="true">0</span>
+                <span class="salerule__title">
+                  <label class="u-visually-hidden" for="rn-__NEW__">Sale rule name</label>
+                  <input class="salerule__name field__input" id="rn-__NEW__"
+                         name="rn-__NEW__" type="text" value="Sale Rule"
+                         placeholder="Name this rule">
+                  <span class="salerule__recap" data-rule-recap>&mdash;</span>
+                </span>
+                <span class="salerule__tools">
+                  <button class="iconbtn" type="button" data-rule-duplicate="__NEW__">
+                    <span class="u-visually-hidden">Duplicate this sale rule</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  </button>
+                  <button class="iconbtn iconbtn--danger" type="button"
+                          data-repeat-remove>
+                    <span class="u-visually-hidden">Delete this sale rule</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+                  </button>
+                </span>
+              </div>
+
+              <div class="salerule__body">
+
+                <!-- ---- how many this rule may sell ---- -->
+                <div class="rulefield">
+                  <label class="field__label" for="ra-__NEW__">
+                    Total allocation<span class="field__required" aria-hidden="true">*</span>
+                    <span class="u-visually-hidden">(required)</span>
+                  </label>
+                  <input class="field__input field__input--short" id="ra-__NEW__"
+                         name="ra-__NEW__" type="text" inputmode="numeric"
+                         value="" data-rule-alloc>
+                  <span class="field__hint">
+                    Tickets this rule may sell in total, across every tier it covers.
+                    This is not the tier&rsquo;s own capacity.
+                  </span>
+                  <span class="field__error" data-error="alloc" hidden></span>
+                </div>
+
+                <fieldset class="fieldset">
+                  <legend class="fieldset__legend">
+                    Sale period
+                    <span class="fieldset__note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg> All times in WAT (UTC+1)</span>
+                  </legend>
+                  <div class="formgrid formgrid--4">
+                    <p class="field">
+                      <label class="field__label" for="rsd-__NEW__">Sale start date</label>
+                      <input class="field__input" id="rsd-__NEW__" name="rsd-__NEW__"
+                             type="date" value="" data-rule-start>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="rst-__NEW__">Sale start time</label>
+                      <input class="field__input" id="rst-__NEW__" name="rst-__NEW__"
+                             type="time" value="09:00" data-rule-starttime>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="red-__NEW__">Sale end date</label>
+                      <input class="field__input" id="red-__NEW__" name="red-__NEW__"
+                             type="date" value="" data-rule-end>
+                    </p>
+                    <p class="field">
+                      <label class="field__label" for="ret-__NEW__">Sale end time</label>
+                      <input class="field__input" id="ret-__NEW__" name="ret-__NEW__"
+                             type="time" value="23:59" data-rule-endtime>
+                    </p>
+                  </div>
+                  <span class="field__error" data-error="period" hidden></span>
+                  <p class="field__hint" data-period-recap></p>
+                </fieldset>
+                <!-- ---- which tiers, and what each costs ---- -->
+                <div class="rulefield">
+                  <p class="rulefield__head">
+                    <span class="field__label">
+                      Ticket tiers<span class="field__required" aria-hidden="true">*</span>
+                      <span class="u-visually-hidden">(required)</span>
+                    </span>
+                    <span class="rulefield__count" data-tier-count>&mdash;</span>
+                  </p>
+
+                  <div class="tierpick" data-tierpick-scope>
+                    <div class="searchbox searchbox--sm">
+                      <svg class="searchbox__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                      <label class="u-visually-hidden" for="rts-__NEW__">
+                        Search ticket tiers
+                      </label>
+                      <input class="searchbox__input" id="rts-__NEW__" name="rts-__NEW__"
+                             type="search" placeholder="Search tiers"
+                             data-tierpick-filter>
+                    </div>
+                    <div class="tierpick__opts">
+                      <label class="tierpick__opt" data-tierpick-opt="general"
+                             data-tierpick-search="general 500">
+                        <input type="checkbox" name="rt-__NEW__-general" value="general"
+                               data-tierpick="general">
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">General</span>
+                          <span class="tierpick__cap">
+                            500 configured
+                          </span>
+                        </span>
+                      </label>
+                      <label class="tierpick__opt" data-tierpick-opt="premium"
+                             data-tierpick-search="premium 100">
+                        <input type="checkbox" name="rt-__NEW__-premium" value="premium"
+                               data-tierpick="premium">
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">Premium</span>
+                          <span class="tierpick__cap">
+                            100 configured
+                          </span>
+                        </span>
+                      </label>
+                      <label class="tierpick__opt" data-tierpick-opt="vip"
+                             data-tierpick-search="vip 50">
+                        <input type="checkbox" name="rt-__NEW__-vip" value="vip"
+                               data-tierpick="vip">
+                        <span class="tierpick__body">
+                          <span class="tierpick__name">VIP</span>
+                          <span class="tierpick__cap">
+                            50 configured
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                    <p class="tierpick__none" data-tierpick-none hidden>
+                      No tier matches that search.
+                    </p>
+                  </div>
+                  <span class="field__error" data-error="tiers" hidden></span>
+                </div>
+
+                <div class="rulefield" data-pricing-block>
+                  <p class="rulefield__head">
+                    <span class="field__label">Pricing</span>
+                    <span class="rulefield__count">
+                      A price for each tier you ticked
+                    </span>
+                  </p>
+                  <div class="tablewrap">
+                    <table class="table table--narrow pricetable">
+                      <caption class="u-visually-hidden">
+                        The sale price of each ticket tier under this rule
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Ticket tier</th>
+                          <th scope="col">Tier capacity</th>
+                          <th scope="col">Sale price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                    <tr data-pricerow="general" hidden>
+                      <th scope="row">General</th>
+                      <td class="u-muted">500 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-__NEW__-general">
+                            Sale price for General
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-__NEW__-general" name="rp-__NEW__-general"
+                                 type="text" inputmode="numeric" value=""
+                                 data-tierprice="general">
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-pricerow="premium" hidden>
+                      <th scope="row">Premium</th>
+                      <td class="u-muted">100 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-__NEW__-premium">
+                            Sale price for Premium
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-__NEW__-premium" name="rp-__NEW__-premium"
+                                 type="text" inputmode="numeric" value=""
+                                 data-tierprice="premium">
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-pricerow="vip" hidden>
+                      <th scope="row">VIP</th>
+                      <td class="u-muted">50 configured</td>
+                      <td>
+                        <span class="pricefield">
+                          <span class="pricefield__unit" aria-hidden="true">&#8358;</span>
+                          <label class="u-visually-hidden" for="rp-__NEW__-vip">
+                            Sale price for VIP
+                          </label>
+                          <input class="field__input pricefield__input"
+                                 id="rp-__NEW__-vip" name="rp-__NEW__-vip"
+                                 type="text" inputmode="numeric" value=""
+                                 data-tierprice="vip">
+                        </span>
+                      </td>
+                    </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="pricetable__empty" data-pricing-empty hidden>
+                    Tick a ticket tier above and it appears here for pricing.
+                  </p>
+                  <span class="field__error" data-error="prices" hidden></span>
+                </div>
+
+                <!-- ---- where it applies ---- -->
+                <div class="rulefield">
+                  <p class="rulefield__head">
+                    <span class="field__label">Applies to</span>
+                    <span class="rulefield__count" data-scope-count>&mdash;</span>
+                  </p>
+
+                  <div class="segment" role="radiogroup" aria-label="What this rule applies to">
+                    <button class="segment__opt" type="button" role="radio"
+                            aria-checked="true" data-applies="dates">
+                      Dates
+                    </button>
+                    <button class="segment__opt" type="button" role="radio"
+                            aria-checked="false" data-applies="slots">
+                      Slots
+                    </button>
+                  </div>
+
+                  <div class="rulescope u-mt-4" data-applies-panel="dates">
+                    <p class="rulescope__label">Select dates</p>
+                    <div class="pickchips">
+                      <label class="pickchip">
+                        <input type="checkbox" name="rd-__NEW__-d1" value="d1"
+                               data-ruledate="d1">
+                        <span class="pickchip__body">Thu 6 Aug 2026</span>
+                      </label>
+                      <label class="pickchip">
+                        <input type="checkbox" name="rd-__NEW__-d2" value="d2"
+                               data-ruledate="d2">
+                        <span class="pickchip__body">Fri 7 Aug 2026</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="rulescope u-mt-4" data-applies-panel="slots" hidden>
+                    <p class="rulescope__label">Select slots</p>
+                    <div class="slotpicks">
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-__NEW__-s1" value="s1"
+                               data-ruleslot="s1">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Morning Keynote</span>
+                          <span class="slotpick__when">6 Aug 2026 &middot; 9:00 AM – 10:30 AM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-__NEW__-s2" value="s2"
+                               data-ruleslot="s2">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Fintech Panel</span>
+                          <span class="slotpick__when">6 Aug 2026 &middot; 11:00 AM – 12:30 PM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-__NEW__-s3" value="s3"
+                               data-ruleslot="s3">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Afternoon Workshop</span>
+                          <span class="slotpick__when">6 Aug 2026 &middot; 2:00 PM – 4:00 PM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-__NEW__-s4" value="s4"
+                               data-ruleslot="s4">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Design Sprint</span>
+                          <span class="slotpick__when">7 Aug 2026 &middot; 9:30 AM – 11:00 AM</span>
+                        </span>
+                      </label>
+                      <label class="slotpick">
+                        <input type="checkbox" name="rs-__NEW__-s5" value="s5"
+                               data-ruleslot="s5">
+                        <span class="slotpick__body">
+                          <span class="slotpick__name">Investor Clinic</span>
+                          <span class="slotpick__when">7 Aug 2026 &middot; 1:00 PM – 3:00 PM</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <span class="field__error" data-error="scope" hidden></span>
+                </div>
+
+                <!-- ---- who, and when ---- -->
+                <div class="formgrid formgrid--2">
+                  <div class="rulefield">
+                    <label class="field__label" for="rau-__NEW__">Audience</label>
+                    <select class="field__select" id="rau-__NEW__" name="rau-__NEW__"
+                            data-rule-audience>
+                      <option value="everyone" selected>Everyone</option>
+                      <option value="members">Members</option>
+                    </select>
+                    <span class="field__hint" data-audience-hint></span>
+                  </div>
+                </div>
+
+
+                <div class="rulewarn" data-rule-problems hidden></div>
+              </div>
+
+              <div class="salerule__foot">
+                <span class="salerule__state" data-rule-state></span>
+                <button class="btn btn--quiet btn--sm" type="button" data-rule-cancel>
+                  Cancel
+                </button>
+                <button class="btn btn--primary btn--sm" type="button" data-rule-save>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8"/></svg> Save sale rule
+                </button>
+              </div>
+            </article>
+            </template>
+
+         </form>
+        </div>
+      </main>
+      <footer class="wizard__foot">
+        <a class="btn btn--outline" href="tickets-pricing.html" data-wizard-link>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 6l-6 6 6 6"/></svg> Back
+        </a>
+        <div class="wizard__foot-end">
+          <a class="btn btn--quiet" href="payout-account.html" data-wizard-link>Skip</a>
+          <a class="btn btn--primary" href="payout-account.html" data-wizard-link>Continue
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </footer>
+    </div>
+<script>
+  (function () {
+    'use strict';
+    function all(sel, root) {
+      return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+    }
+    function toast(msg, tone) {
+      var el = document.createElement('div');
+      el.setAttribute('role', 'status');
+      el.style.cssText = 'position:fixed;bottom:1.25rem;right:1.25rem;z-index:2000;padding:.75rem 1.1rem;border-radius:10px;font:600 13px/1.4 Inter,system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:22rem;';
+      if (tone === 'warn') { el.style.background = '#fef3c7'; el.style.color = '#92400e'; }
+      else if (tone === 'danger') { el.style.background = '#fee2e2'; el.style.color = '#991b1b'; }
+      else { el.style.background = '#ecfdf5'; el.style.color = '#065f46'; }
+      el.innerHTML = String(msg);
+      document.body.appendChild(el);
+      setTimeout(function () { el.remove(); }, 3200);
+    }
+
+  'use strict';
+  function all(sel, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+  }
+  function one(sel, root) {
+    return (root || document).querySelector(sel);
+  }
+  function toast(msg, tone) {
+    var el = document.createElement('div');
+    el.setAttribute('role', 'status');
+    el.style.cssText = 'position:fixed;bottom:1.25rem;right:1.25rem;z-index:2000;padding:.75rem 1.1rem;border-radius:10px;font:600 13px/1.4 Inter,system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:22rem;';
+    if (tone === 'warn') { el.style.background = '#fef3c7'; el.style.color = '#92400e'; }
+    else if (tone === 'danger') { el.style.background = '#fee2e2'; el.style.color = '#991b1b'; }
+    else { el.style.background = '#ecfdf5'; el.style.color = '#065f46'; }
+    el.innerHTML = String(msg);
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 3200);
+  }
+
+  document.addEventListener('click', function (e) {
+    var open = e.target.closest && e.target.closest('[data-modal-open]');
+    if (open) {
+      var id = open.getAttribute('data-modal-open');
+      var m = document.getElementById(id);
+      if (m) { m.hidden = false; document.body.style.overflow = 'hidden'; }
+      return;
+    }
+    var close = e.target.closest && e.target.closest('[data-modal-close]');
+    if (close) {
+      var modal = close.closest('[data-modal]');
+      if (modal) { modal.hidden = true; document.body.style.overflow = ''; }
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    var opt = e.target.closest && e.target.closest('[data-applies]');
+    if (!opt) return;
+    var group = opt.closest('[role="radiogroup"]') || opt.parentElement;
+    all('[data-applies]', group).forEach(function (b) {
+      b.setAttribute('aria-checked', b === opt ? 'true' : 'false');
+    });
+    var card = opt.closest('[data-salerule]');
+    if (card) {
+      var val = opt.getAttribute('data-applies');
+      all('[data-applies-panel]', card).forEach(function (p) {
+        p.hidden = p.getAttribute('data-applies-panel') !== val;
+      });
+    }
+  });
+
+  var sidebar = one('[data-sidebar]');
+  var burger = one('[data-sidebar-open]');
+  if (burger && sidebar) {
+    burger.addEventListener('click', function () { sidebar.classList.add('is-open'); });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('[data-backdrop]')) {
+      if (sidebar) sidebar.classList.remove('is-open');
+    }
+  });
+
+  /* ------------------------------------------------------------------------
+     94. Sale rules & pricing
+     --------------------------------------------------------------------------
+     A sale rule is the only way a ticket gets a price. There is no regular or
+     default price and no implicit fallback: a tier with no rule covering it
+     cannot be sold, and the screen says so rather than quietly inventing a
+     price.
+
+     A rule spans tiers rather than belonging to one, which is what makes a
+     single Early Bird rule able to price VIP and General out of one pool of
+     100 tickets instead of being written twice. Its allocation is therefore a
+     total across every tier it covers, and is deliberately a different number
+     from any tier's own capacity — the coverage table exists to keep those two
+     apart in the host's head.
+
+     Validation is inline, next to the field that is wrong, and gathered again
+     in one list under the preview.
+     ------------------------------------------------------------------------ */
+
+  var SR_TIERS = {
+    general: { name: 'General', capacity: 500 },
+    premium: { name: 'Premium', capacity: 100 },
+    vip: { name: 'VIP', capacity: 50 }
+  };
+
+  var SR_DATES = {
+    d1: 'Thu 6 Aug 2026',
+    d2: 'Fri 7 Aug 2026'
+  };
+
+  var SR_SLOTS = {
+    s1: '6 Aug · Morning Keynote',
+    s2: '6 Aug · Fintech Panel',
+    s3: '6 Aug · Afternoon Workshop',
+    s4: '7 Aug · Design Sprint',
+    s5: '7 Aug · Investor Clinic'
+  };
+
+  var SR_SLOT_DATE = { s1: 'd1', s2: 'd1', s3: 'd1', s4: 'd2', s5: 'd2' };
+
+  var SR_AUDIENCE = { everyone: 'Everyone', members: 'Members' };
+
+  var SR_TZ = 'WAT';
+
+  function initSaleRules() {
+    var list = document.querySelector('[data-rulelist]');
+    if (!list) return;
+
+    var template = document.querySelector('[data-rule-template]');
+    var seq = 0;
+
+    function money(n) {
+      return '₦' + (n || 0).toLocaleString('en-US');
+    }
+
+    function num(el) {
+      if (!el) return 0;
+      var digits = String(el.value).replace(/[^\d]/g, '');
+      return digits === '' ? 0 : parseInt(digits, 10);
+    }
+
+    function blank(el) {
+      return !el || String(el.value).trim() === '';
+    }
+
+    function cards() {
+      return all('[data-salerule]', list);
+    }
+
+    /* ---- reading one card ---- */
+    function read(card) {
+      var pick = function (hook) { return card.querySelector('[' + hook + ']'); };
+
+      var tiers = all('[data-tierpick]', card)
+        .filter(function (box) { return box.checked; })
+        .map(function (box) { return box.getAttribute('data-tierpick'); });
+
+      var prices = {};
+      tiers.forEach(function (key) {
+        var field = card.querySelector('[data-tierprice="' + key + '"]');
+        prices[key] = { value: num(field), blank: blank(field), el: field };
+      });
+
+      var applies = (card.querySelector('[data-applies][aria-checked="true"]')
+        || {}).getAttribute
+        ? card.querySelector('[data-applies][aria-checked="true"]')
+          .getAttribute('data-applies')
+        : 'dates';
+
+      return {
+        el: card,
+        id: card.getAttribute('data-salerule'),
+        name: (card.querySelector('.salerule__name') || {}).value || 'Sale rule',
+        allocEl: pick('data-rule-alloc'),
+        alloc: num(pick('data-rule-alloc')),
+        allocBlank: blank(pick('data-rule-alloc')),
+        tiers: tiers,
+        prices: prices,
+        applies: applies,
+        dates: all('[data-ruledate]', card).filter(function (b) { return b.checked; })
+          .map(function (b) { return b.getAttribute('data-ruledate'); }),
+        slots: all('[data-ruleslot]', card).filter(function (b) { return b.checked; })
+          .map(function (b) { return b.getAttribute('data-ruleslot'); }),
+        audience: (pick('data-rule-audience') || {}).value || 'everyone',
+        start: (pick('data-rule-start') || {}).value || '',
+        startTime: (pick('data-rule-starttime') || {}).value || '',
+        end: (pick('data-rule-end') || {}).value || '',
+        endTime: (pick('data-rule-endtime') || {}).value || ''
+      };
+    }
+
+    function stamp(date, time) {
+      if (!date) return null;
+      var made = new Date(date + 'T' + (time || '00:00'));
+      return isNaN(made.getTime()) ? null : made;
+    }
+
+    function shortDate(value) {
+      var made = new Date(value + 'T00:00');
+      if (isNaN(made.getTime())) return value;
+      return made.toLocaleDateString('en-GB',
+        { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function when(rule) {
+      if (!rule.start || !rule.end) return 'Period not set';
+      return shortDate(rule.start) + ', ' + rule.startTime + ' – '
+        + shortDate(rule.end) + ', ' + rule.endTime + ' ' + SR_TZ;
+    }
+
+    /* The dates a rule touches, whether it was written as dates or as slots —
+       two rules clash only if they can be bought on the same day. */
+    function coveredDates(rule) {
+      if (rule.applies === 'dates') return rule.dates.slice();
+
+      var out = [];
+      rule.slots.forEach(function (slot) {
+        var date = SR_SLOT_DATE[slot];
+        if (date && out.indexOf(date) === -1) out.push(date);
+      });
+      return out;
+    }
+
+    function scopeWords(rule) {
+      if (rule.applies === 'dates') {
+        if (!rule.dates.length) return 'No date chosen';
+        return rule.dates.map(function (d) { return SR_DATES[d] || d; }).join(', ');
+      }
+      if (!rule.slots.length) return 'No slot chosen';
+      return rule.slots.map(function (s) { return SR_SLOTS[s] || s; }).join(', ');
+    }
+
+    /* ---- what is wrong with one rule ---- */
+    function problems(rule, others) {
+      var found = [];
+
+      if (rule.allocBlank || rule.alloc <= 0) {
+        found.push(['alloc', 'Total allocation must be a positive number',
+          rule.name + ' has no allocation, so it could never sell a ticket.']);
+      }
+
+      if (!rule.tiers.length) {
+        found.push(['tiers', 'Choose at least one ticket tier',
+          rule.name + ' covers no tier, so it prices nothing.']);
+      }
+
+      rule.tiers.forEach(function (key) {
+        var price = rule.prices[key];
+        if (price.blank) {
+          found.push(['prices', 'Every selected tier needs a price',
+            rule.name + ' has no price for ' + SR_TIERS[key].name + '.']);
+        } else if (price.value <= 0) {
+          found.push(['prices', 'A sale price must be more than zero',
+            rule.name + ' prices ' + SR_TIERS[key].name + ' at nothing. Use a '
+            + 'complimentary ticket tier for free entry.']);
+        }
+      });
+
+      if (rule.applies === 'dates' && !rule.dates.length) {
+        found.push(['scope', 'Select at least one date',
+          rule.name + ' applies to dates but none are ticked.']);
+      }
+      if (rule.applies === 'slots' && !rule.slots.length) {
+        found.push(['scope', 'Select at least one slot',
+          rule.name + ' applies to slots but none are ticked.']);
+      }
+      rule.dates.forEach(function (d) {
+        if (SR_DATES[d]) return;
+        found.push(['scope', 'Selected date is not on this event',
+          rule.name + ' points at a date the schedule no longer has.']);
+      });
+      rule.slots.forEach(function (sl) {
+        if (SR_SLOTS[sl]) return;
+        found.push(['scope', 'Selected slot is not on this event',
+          rule.name + ' points at a slot the schedule no longer has.']);
+      });
+
+      var from = stamp(rule.start, rule.startTime);
+      var to = stamp(rule.end, rule.endTime);
+
+      if (!from || !to) {
+        found.push(['period', 'Set a sale start and a sale end',
+          rule.name + ' has no complete sale period, so it would never open.']);
+      } else if (to <= from) {
+        found.push(['period', 'Sale end must be later than sale start',
+          rule.name + ' ends ' + (to < from ? 'before' : 'at')
+          + ' the moment it starts. All times are ' + SR_TZ + '.']);
+      }
+
+      /* Two rules clash when a buyer could qualify for both at once: the same
+         tier, the same audience, an overlapping period and an overlapping day.
+         Any one of those differing is a legitimate configuration. */
+      others.forEach(function (other) {
+        if (other.id === rule.id) return;
+        if (other.audience !== rule.audience) return;
+
+        var shared = rule.tiers.filter(function (key) {
+          return other.tiers.indexOf(key) !== -1;
+        });
+        if (!shared.length) return;
+
+        var aFrom = from;
+        var aTo = to;
+        var bFrom = stamp(other.start, other.startTime);
+        var bTo = stamp(other.end, other.endTime);
+        if (!aFrom || !aTo || !bFrom || !bTo) return;
+        if (aFrom >= bTo || bFrom >= aTo) return;
+
+        var mine = coveredDates(rule);
+        var theirs = coveredDates(other);
+        var days = mine.filter(function (d) { return theirs.indexOf(d) !== -1; });
+        if (!days.length) return;
+
+        found.push(['period', 'Overlapping sale rule',
+          rule.name + ' and ' + other.name + ' both offer '
+          + shared.map(function (k) { return SR_TIERS[k].name; }).join(' and ')
+          + ' to ' + SR_AUDIENCE[rule.audience].toLowerCase()
+          + ' at the same time on ' + days.map(function (d) {
+            return SR_DATES[d];
+          }).join(' and ') + '.']);
+      });
+
+      return found;
+    }
+
+    /* ---- painting one card ---- */
+    function paintCard(card, rule, found) {
+      // inline errors, beside the field they belong to
+      all('[data-error]', card).forEach(function (slot) {
+        var key = slot.getAttribute('data-error');
+        var mine = found.filter(function (p) { return p[0] === key; });
+        slot.hidden = mine.length === 0;
+        if (mine.length) slot.textContent = mine[0][1];
+      });
+
+      var count = card.querySelector('[data-tier-count]');
+      if (count) {
+        count.textContent = rule.tiers.length
+          ? rule.tiers.length + ' of ' + Object.keys(SR_TIERS).length + ' selected'
+          : 'None selected';
+      }
+
+      var scope = card.querySelector('[data-scope-count]');
+      if (scope) {
+        var n = rule.applies === 'dates' ? rule.dates.length : rule.slots.length;
+        scope.textContent = n
+          ? n + (rule.applies === 'dates'
+            ? (n === 1 ? ' date selected' : ' dates selected')
+            : (n === 1 ? ' slot selected' : ' slots selected'))
+          : 'None selected';
+      }
+
+      var hint = card.querySelector('[data-audience-hint]');
+      if (hint) {
+        hint.textContent = rule.audience === 'members'
+          ? 'Only verified members see this price at checkout.'
+          : 'Anyone buying a ticket can use this price.';
+      }
+
+      var period = card.querySelector('[data-period-recap]');
+      if (period) period.textContent = when(rule);
+
+      var recap = card.querySelector('[data-rule-recap]');
+      if (recap) {
+        recap.textContent = rule.tiers.length
+          ? rule.tiers.map(function (k) {
+            return SR_TIERS[k].name + ' ' + money(rule.prices[k].value);
+          }).join(' · ') + ' — ' + (rule.alloc || 0) + ' tickets, '
+            + SR_AUDIENCE[rule.audience].toLowerCase()
+          : 'No tier selected yet';
+      }
+
+      // the pricing table shows exactly the tiers that were ticked
+      var priced = 0;
+      all('[data-pricerow]', card).forEach(function (row) {
+        var on = rule.tiers.indexOf(row.getAttribute('data-pricerow')) !== -1;
+        row.hidden = !on;
+        if (on) priced += 1;
+      });
+      var empty = card.querySelector('[data-pricing-empty]');
+      var table = card.querySelector('[data-pricing-block] .tablewrap');
+      if (empty) empty.hidden = priced > 0;
+      if (table) table.hidden = priced === 0;
+
+      var bad = found.filter(function (p) { return p[0] !== 'overlap'; });
+      card.classList.toggle('is-bad', bad.length > 0);
+      if (bad.length) card.classList.remove('is-saved');
+
+      var box = card.querySelector('[data-rule-problems]');
+      if (box) {
+        box.hidden = found.length === 0;
+        box.innerHTML = '';
+        found.forEach(function (p) {
+          var line = document.createElement('span');
+          line.textContent = p[2];
+          box.appendChild(line);
+        });
+      }
+
+      var state = card.querySelector('[data-rule-state]');
+      if (state && !card.classList.contains('is-saved')) {
+        state.className = 'salerule__state' + (found.length ? ' is-bad' : '');
+        state.textContent = found.length
+          ? found.length + (found.length === 1 ? ' thing to fix' : ' things to fix')
+          : 'Ready to save';
+      }
+    }
+
+    /* ---- the whole screen ---- */
+    function check() {
+      var rules = cards().map(read);
+
+      rules.forEach(function (rule) {
+        paintCard(rule.el, rule, problems(rule, rules));
+      });
+
+      renumber();
+      paintSummary(rules);
+      paintCoverage(rules);
+      paintPreview(rules);
+      paintWarnings(rules);
+    }
+
+    function renumber() {
+      cards().forEach(function (card, i) {
+        var no = card.querySelector('.salerule__no');
+        if (no) no.textContent = i + 1;
+      });
+    }
+
+    function paintSummary(rules) {
+      var covered = {};
+      var total = 0;
+
+      rules.forEach(function (rule) {
+        total += rule.alloc;
+        rule.tiers.forEach(function (key) { covered[key] = true; });
+      });
+
+      var uncovered = Object.keys(SR_TIERS).filter(function (key) {
+        return !covered[key];
+      });
+
+      var countEl = document.querySelector('[data-rules-count]');
+      var allocEl = document.querySelector('[data-rules-alloc]');
+      var uncoveredEl = document.querySelector('[data-rules-uncovered]');
+      var summary = document.querySelector('[data-rules-summary]');
+      var none = document.querySelector('[data-rules-none]');
+
+      if (countEl) countEl.textContent = rules.length;
+      if (allocEl) allocEl.textContent = total.toLocaleString('en-US');
+      if (uncoveredEl) {
+        uncoveredEl.textContent = uncovered.length;
+        var figure = uncoveredEl.closest('.rulesbar__figure');
+        if (figure) figure.classList.toggle('is-clear', uncovered.length === 0);
+      }
+      if (none) none.hidden = rules.length > 0;
+
+      if (summary) {
+        summary.innerHTML = !rules.length
+          ? 'Nothing can be sold until a rule exists.'
+          : uncovered.length
+            ? '<b>' + uncovered.map(function (k) { return SR_TIERS[k].name; })
+              .join(' and ') + '</b> '
+              + (uncovered.length === 1 ? 'has' : 'have')
+              + ' no rule, so ' + (uncovered.length === 1 ? 'it' : 'they')
+              + ' cannot be sold. Every other tier has a price.'
+            : 'Every tier is priced by at least one rule.';
+      }
+    }
+
+    /* A tier's capacity and a rule's allocation are different numbers, and the
+       host has to be able to see both without doing the arithmetic. */
+    function paintCoverage(rules) {
+      Object.keys(SR_TIERS).forEach(function (key) {
+        var row = document.querySelector('[data-tiersummary="' + key + '"]');
+        if (!row) return;
+
+        var mine = rules.filter(function (rule) {
+          return rule.tiers.indexOf(key) !== -1;
+        });
+        var alloc = mine.reduce(function (sum, rule) { return sum + rule.alloc; }, 0);
+        var prices = mine.map(function (rule) { return rule.prices[key].value; })
+          .filter(function (v) { return v > 0; });
+
+        var rulesCell = row.querySelector('[data-tiersummary-rules]');
+        var allocCell = row.querySelector('[data-tiersummary-alloc]');
+        var priceCell = row.querySelector('[data-tiersummary-price]');
+
+        if (rulesCell) {
+          rulesCell.textContent = mine.length
+            ? mine.map(function (r) { return r.name; }).join(', ')
+            : 'No rule — cannot be sold';
+          rulesCell.className = mine.length ? '' : 'u-muted';
+        }
+        if (allocCell) {
+          allocCell.textContent = mine.length
+            ? 'up to ' + alloc.toLocaleString('en-US')
+            : '—';
+          // The allocation is shared across the tiers a rule covers, so it is
+          // a ceiling rather than a promise — and saying "up to" is the
+          // difference between informing and misleading.
+          allocCell.className = alloc > SR_TIERS[key].capacity ? 'u-nowrap' : '';
+        }
+        if (priceCell) {
+          if (!prices.length) {
+            priceCell.textContent = '—';
+          } else {
+            var low = Math.min.apply(null, prices);
+            var high = Math.max.apply(null, prices);
+            priceCell.textContent = low === high
+              ? money(low)
+              : money(low) + ' – ' + money(high);
+          }
+        }
+      });
+    }
+
+    function paintPreview(rules) {
+      var host = document.querySelector('[data-preview-body]');
+      if (!host) return;
+
+      host.innerHTML = '';
+
+      if (!rules.length) {
+        var empty = document.createElement('tr');
+        var cell = document.createElement('td');
+        cell.colSpan = 7;
+        cell.className = 'u-muted';
+        cell.textContent = 'No sale rules yet — nothing can be sold.';
+        empty.appendChild(cell);
+        host.appendChild(empty);
+        return;
+      }
+
+      rules.forEach(function (rule) {
+        if (!rule.tiers.length) {
+          host.appendChild(row(rule.name, '—', '—',
+            SR_AUDIENCE[rule.audience], scopeWords(rule), when(rule),
+            rule.alloc.toLocaleString('en-US'), true));
+          return;
+        }
+
+        rule.tiers.forEach(function (key, i) {
+          host.appendChild(row(
+            i === 0 ? rule.name : '',
+            SR_TIERS[key].name,
+            rule.prices[key].blank ? 'Not set' : money(rule.prices[key].value),
+            SR_AUDIENCE[rule.audience],
+            scopeWords(rule),
+            when(rule),
+            i === 0 ? rule.alloc.toLocaleString('en-US') + ' shared' : '↳',
+            rule.prices[key].blank));
+        });
+      });
+    }
+
+    function row(rule, tier, price, audience, scope, period, alloc, bad) {
+      var tr = document.createElement('tr');
+      if (bad) tr.className = 'is-bad';
+
+      var th = document.createElement('th');
+      th.setAttribute('scope', 'row');
+      th.textContent = rule;
+      tr.appendChild(th);
+
+      [tier, price, audience, scope, period, alloc].forEach(function (value, i) {
+        var td = document.createElement('td');
+        td.textContent = value;
+        if (i === 1 || i === 5) td.className = 'u-nowrap';
+        tr.appendChild(td);
+      });
+
+      return tr;
+    }
+
+    function paintWarnings(rules) {
+      var host = document.querySelector('[data-rule-warnings]');
+      var ok = document.querySelector('[data-rules-ok]');
+      if (!host) return;
+
+      host.innerHTML = '';
+      var seen = {};
+
+      rules.forEach(function (rule) {
+        problems(rule, rules).forEach(function (p) {
+          var fingerprint = p[1] + '|' + p[2];
+          if (seen[fingerprint]) return;
+          seen[fingerprint] = true;
+
+          var line = document.createElement('p');
+          line.className = 'rulewarning'
+            + (p[0] === 'alloc' || p[0] === 'period' ? ' rulewarning--bad' : '');
+          line.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+            + ' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'
+            + ' aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/>'
+            + '<path d="M12 8v4.5M12 16h.01"/></svg><span><b></b><span></span></span>';
+          line.querySelector('b').textContent = p[1];
+          line.querySelector('span span').textContent = p[2];
+          host.appendChild(line);
+        });
+      });
+
+      if (ok) ok.hidden = host.children.length > 0 || !rules.length;
+    }
+
+    /* ---- wiring one card ---- */
+    function wire(card) {
+      // searchable tier picker
+      var filter = card.querySelector('[data-tierpick-filter]');
+      if (filter) {
+        filter.addEventListener('input', function () {
+          var want = filter.value.trim().toLowerCase();
+          var shown = 0;
+
+          all('[data-tierpick-opt]', card).forEach(function (opt) {
+            var hay = opt.getAttribute('data-tierpick-search') || '';
+            var match = !want || hay.indexOf(want) !== -1;
+            opt.hidden = !match;
+            if (match) shown += 1;
+          });
+
+          var none = card.querySelector('[data-tierpick-none]');
+          if (none) none.hidden = shown > 0;
+        });
+      }
+
+      // Applies to: dates or slots, never both
+      all('[data-applies]', card).forEach(function (button) {
+        button.addEventListener('click', function () {
+          var want = button.getAttribute('data-applies');
+
+          all('[data-applies]', card).forEach(function (other) {
+            other.setAttribute('aria-checked',
+              String(other.getAttribute('data-applies') === want));
+          });
+          all('[data-applies-panel]', card).forEach(function (panel) {
+            panel.hidden = panel.getAttribute('data-applies-panel') !== want;
+          });
+
+          check();
+        });
+      });
+
+      all('input, select', card).forEach(function (field) {
+        field.addEventListener('input', check);
+        field.addEventListener('change', check);
+      });
+
+      var save = card.querySelector('[data-rule-save]');
+      if (save) {
+        save.addEventListener('click', function () {
+          var rule = read(card);
+          var found = problems(rule, cards().map(read));
+
+          if (found.length) {
+            card.classList.add('is-bad');
+            toast('<b>' + rule.name + '</b> is not ready — '
+              + found[0][1].toLowerCase(), 'warn');
+
+            var firstBad = card.querySelector('[data-error]:not([hidden])');
+            if (firstBad) firstBad.scrollIntoView({ block: 'center' });
+            return;
+          }
+
+          card.classList.add('is-saved');
+          snapshot(card);
+
+          var state = card.querySelector('[data-rule-state]');
+          if (state) {
+            state.className = 'salerule__state is-saved';
+            state.textContent = 'Saved';
+          }
+
+          toast('<b>' + rule.name + '</b> saved — '
+            + rule.tiers.length + (rule.tiers.length === 1 ? ' tier' : ' tiers')
+            + ', ' + rule.alloc + ' tickets, ' + SR_AUDIENCE[rule.audience]
+            .toLowerCase(), 'success');
+        });
+      }
+
+      // Cancel puts the card back to the last saved state rather than clearing
+      // it — a host who mistypes a price wants the old price back.
+      var cancel = card.querySelector('[data-rule-cancel]');
+      if (cancel) {
+        cancel.addEventListener('click', function () {
+          restore(card);
+          check();
+          toast('Changes to <b>' + read(card).name + '</b> discarded', 'warn');
+        });
+      }
+
+      var duplicate = card.querySelector('[data-rule-duplicate]');
+      if (duplicate) {
+        duplicate.addEventListener('click', function () { clone(card); });
+      }
+
+      snapshot(card);
+    }
+
+    /* ---- save / restore, so Cancel has something to go back to ---- */
+    function snapshot(card) {
+      var state = { text: {}, checked: {}, applies: '' };
+
+      all('input, select', card).forEach(function (field, i) {
+        if (field.type === 'checkbox' || field.type === 'radio') {
+          state.checked[i] = field.checked;
+        } else {
+          state.text[i] = field.value;
+        }
+      });
+
+      var on = card.querySelector('[data-applies][aria-checked="true"]');
+      state.applies = on ? on.getAttribute('data-applies') : 'dates';
+      card.__saved = state;
+    }
+
+    function restore(card) {
+      var state = card.__saved;
+      if (!state) return;
+
+      all('input, select', card).forEach(function (field, i) {
+        if (field.type === 'checkbox' || field.type === 'radio') {
+          if (state.checked[i] !== undefined) field.checked = state.checked[i];
+        } else if (state.text[i] !== undefined) {
+          field.value = state.text[i];
+        }
+      });
+
+      all('[data-applies]', card).forEach(function (button) {
+        button.setAttribute('aria-checked',
+          String(button.getAttribute('data-applies') === state.applies));
+      });
+      all('[data-applies-panel]', card).forEach(function (panel) {
+        panel.hidden = panel.getAttribute('data-applies-panel') !== state.applies;
+      });
+    }
+
+    /* ---- adding, cloning and removing ---- */
+    function freshId() {
+      seq += 1;
+      return 'r' + (cards().length + 1) + 'n' + seq;
+    }
+
+    /* Every id, name and label inside a copied card has to become its own, or
+       the new card's labels point back at the one it came from. */
+    function rekeyCard(card, oldId, newId) {
+      card.setAttribute('data-salerule', newId);
+
+      all('[id]', card).forEach(function (el) {
+        var was = el.id;
+        var now = was.split(oldId).join(newId);
+        if (was === now) return;
+
+        all('label[for="' + was + '"]', card).forEach(function (label) {
+          label.setAttribute('for', now);
+        });
+        ['data-upload', 'data-upload-dropzone'].forEach(function (hook) {
+          all('[' + hook + '="' + was + '"]', card).forEach(function (other) {
+            other.setAttribute(hook, now);
+          });
+        });
+        el.id = now;
+      });
+
+      all('[name]', card).forEach(function (el) {
+        el.name = el.name.split(oldId).join(newId);
+      });
+
+      var dup = card.querySelector('[data-rule-duplicate]');
+      if (dup) dup.setAttribute('data-rule-duplicate', newId);
+    }
+
+    function add(source, oldId, named) {
+      var id = freshId();
+      var card = source.cloneNode(true);
+
+      card.classList.remove('is-saved', 'is-bad');
+      rekeyCard(card, oldId, id);
+
+      var name = card.querySelector('.salerule__name');
+      if (name) name.value = named;
+
+      list.appendChild(card);
+      wire(card);
+      check();
+
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var alloc = card.querySelector('[data-rule-alloc]');
+      if (alloc) alloc.focus();
+
+      return card;
+    }
+
+    function clone(card) {
+      var rule = read(card);
+      add(card, rule.id, rule.name + ' (copy)');
+      toast('<b>' + rule.name + '</b> duplicated — change what differs and save',
+        'success');
+    }
+
+    all('[data-rule-add]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        if (!template) return;
+
+        var blankCard = template.content.firstElementChild.cloneNode(true);
+        var wrapper = document.createElement('div');
+        wrapper.appendChild(blankCard);
+
+        add(blankCard, '__NEW__', 'Sale Rule ' + (cards().length + 1));
+        toast('New sale rule added — set its allocation, tiers and prices',
+          'success');
+      });
+    });
+
+    // Removing a rule is delegated, so cloned cards need no extra binding.
+    document.addEventListener('click', function (event) {
+      var kill = event.target.closest && event.target.closest('[data-repeat-remove]');
+      if (!kill || !kill.closest('[data-salerule]')) return;
+
+      window.setTimeout(check, 0);
+    });
+    document.addEventListener('planora:rowsChanged', check);
+
+    cards().forEach(wire);
+    check();
+  }
+
+
+
+  
+    function boot() { if (typeof initSaleRules === 'function') initSaleRules(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else setTimeout(boot, 0);
+  })();
+  </script>

@@ -130,7 +130,7 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg> Preview form
                             </button>
                             <button class="btn btn--outline btn--sm" type="button"
-                                    data-repeat-add="rq-list">
+                                    id="addQuestionBtn">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg> Add question
                             </button>
                         </div>
@@ -161,85 +161,57 @@
                                     </button>
                                 </div>
                                 <p class="tplbar__note" data-tplnote="rq-list">
-                                    Loading a template replaces the RSVP questions below. Name and email always stay.
+                                    Loading a template replaces the RSVP questions below. All fields returned by the template are editable.
                                 </p>
                             </div>
 
                             <div class="fields" id="rq-list">
-                                <div class="fieldrow fieldrow--locked" data-repeat-row>
-                                    <span class="fieldrow__grip" aria-hidden="true">#</span>
-                                    <span class="fieldrow__no" aria-hidden="true">1</span>
-                                    <span>
-                                        <label class="u-visually-hidden" for="rq-1-label">Question</label>
-                                        <input class="fieldrow__input" id="rq-1-label" name="rq-1-label"
-                                               type="text" value="Full Name" placeholder="What do you want to ask?" readonly>
-                                    </span>
-                                    <span>
-                                        <label class="u-visually-hidden" for="rq-1-type">Answer type</label>
-                                        <select class="fieldrow__select" id="rq-1-type" name="rq-1-type" disabled>
-                                            <option selected>Short Text</option>
-                                            <option>Email</option>
-                                            <option>Phone</option>
-                                            <option>Long Text</option>
-                                            <option>Dropdown</option>
-                                            <option>Checkbox</option>
-                                            <option>Date</option>
-                                            <option>Number</option>
-                                            <option>File Upload</option>
-                                        </select>
-                                    </span>
-                                    <label class="fieldrow__req" for="rq-1-req">
-                                        <input id="rq-1-req" name="rq-1-req" type="checkbox" checked>
-                                        Req
-                                    </label>
-                                    <button class="fieldrow__icon" type="button"
-                                            data-action="Answer options for &ldquo;Full Name&rdquo; open here">
-                                        <span class="u-visually-hidden">Answer options for Full Name</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
-                                    </button>
-                                    <button class="fieldrow__icon fieldrow__icon--danger" type="button"
-                                            data-repeat-remove disabled>
-                                        <span class="u-visually-hidden">Remove Full Name</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
-                                    </button>
-                                </div>
-                                <div class="fieldrow fieldrow--locked" data-repeat-row>
-                                    <span class="fieldrow__grip" aria-hidden="true">#</span>
-                                    <span class="fieldrow__no" aria-hidden="true">2</span>
-                                    <span>
-                                        <label class="u-visually-hidden" for="rq-2-label">Question</label>
-                                        <input class="fieldrow__input" id="rq-2-label" name="rq-2-label"
-                                               type="text" value="Email Address" placeholder="What do you want to ask?" readonly>
-                                    </span>
-                                    <span>
-                                        <label class="u-visually-hidden" for="rq-2-type">Answer type</label>
-                                        <select class="fieldrow__select" id="rq-2-type" name="rq-2-type">
-                                            <option>Short Text</option>
-                                            <option selected>Email</option>
-                                            <option>Phone</option>
-                                            <option>Long Text</option>
-                                            <option>Dropdown</option>
-                                            <option>Checkbox</option>
-                                            <option>Date</option>
-                                            <option>Number</option>
-                                            <option>File Upload</option>
-                                        </select>
-                                    </span>
-                                    <label class="fieldrow__req" for="rq-2-req">
-                                        <input id="rq-2-req" name="rq-2-req" type="checkbox" checked>
-                                        Req
-                                    </label>
-                                    <button class="fieldrow__icon" type="button"
-                                            data-action="Answer options for &ldquo;Email Address&rdquo; open here">
-                                        <span class="u-visually-hidden">Answer options for Email Address</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
-                                    </button>
-                                    <button class="fieldrow__icon fieldrow__icon--danger" type="button"
-                                            data-repeat-remove disabled>
-                                        <span class="u-visually-hidden">Remove Email Address</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
-                                    </button>
-                                </div>
+                                @if (Model.Existing?.Custom != null && Model.Existing.Custom.Any())
+                                {
+                                    var fieldIndex = 1;
+
+                                    foreach (var field in Model.Existing.Custom)
+                                    {
+                                        <div class="fieldrow" data-repeat-row>
+                                            <span class="fieldrow__grip" aria-hidden="true">#</span>
+                                            <span class="fieldrow__no" aria-hidden="true">@fieldIndex</span>
+                                            <span>
+                                                <label class="u-visually-hidden" for="rq-@fieldIndex-label">Question</label>
+                                                <input class="fieldrow__input" id="rq-@fieldIndex-label" name="rq-@fieldIndex-label"
+                                                       type="text" value="@field.CustomName" placeholder="What do you want to ask?">
+                                                <span class="field__error" role="alert"></span>
+                                            </span>
+                                            <span>
+                                                <label class="u-visually-hidden" for="rq-@fieldIndex-type">Answer type</label>
+                                                <select class="fieldrow__select" id="rq-@fieldIndex-type" name="rq-@fieldIndex-type">
+                                                    <option selected>Short Text</option>
+                                                    <option>Email</option>
+                                                    <option>Phone</option>
+                                                    <option>Long Text</option>
+                                                    <option>Dropdown</option>
+                                                    <option>Checkbox</option>
+                                                    <option>Date</option>
+                                                    <option>Number</option>
+                                                    <option>File Upload</option>
+                                                </select>
+                                            </span>
+                                            <label class="fieldrow__req" for="rq-@fieldIndex-req">
+                                                <input id="rq-@fieldIndex-req" name="rq-@fieldIndex-req" type="checkbox" @(field.IsRequired ? "checked" : "")>
+                                                Req
+                                            </label>
+                                            <button class="fieldrow__icon" type="button" data-action="Answer options">
+                                                <span class="u-visually-hidden">Answer options for @field.CustomName</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 10l6 6 6-6" /></svg>
+                                            </button>
+                                            <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                                                <span class="u-visually-hidden">Remove @field.CustomName</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                            </button>
+                                        </div>
+
+                                        fieldIndex++;
+                                    }
+                                }
                             </div>
 
                             <p class="notice notice--info notice--flat u-mt-5">
@@ -641,32 +613,22 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-        const yesRadio = document.querySelector(
-            'input[name="rsvp-required"][value="yes"]'
-        );
-
-        const noRadio = document.querySelector(
-            'input[name="rsvp-required"][value="no"]'
-        );
-
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("RsvpForm");
+        const yesRadio = document.querySelector('input[name="rsvp-required"][value="yes"]');
+        const noRadio = document.querySelector('input[name="rsvp-required"][value="no"]');
         const rsvpForm = document.getElementById("rsvp-form");
         const rsvpOff = document.getElementById("rsvp-off");
         const continueBtn = document.getElementById("rsvpContinueBtn");
+        const container = document.getElementById("rq-list");
+        const addQuestionBtn = document.getElementById("addQuestionBtn");
+        const loadBtn = document.getElementById("btnLoadTemplate");
+        const templateSelect = document.getElementById("tplpick-rq-list");
 
-        /* ------------------------------------------------------------
-           Field validation — every custom RSVP question needs a label.
-           The locked Full Name / Email Address rows are readonly and
-           always filled, so they're excluded. Validated via class +
-           :not([readonly]) rather than a data attribute, since new
-           rows can be added by the generic "+ Add question" button,
-           the preset chips, or loadTemplateByTitle()/renderFields()
-           below — none of which this file fully controls — so this
-           works no matter which path added the row.
-           ------------------------------------------------------------ */
         function getErrorEl(field) {
-            return field.parentElement ? field.parentElement.querySelector(".field__error") : null;
+            return field.parentElement
+                ? field.parentElement.querySelector(".field__error")
+                : null;
         }
 
         function showFieldError(field, message) {
@@ -689,30 +651,38 @@
 
         function runValidator(field) {
             const value = (field.value || "").trim();
+
             if (!value) {
                 showFieldError(field, "This field is required.");
                 return false;
             }
+
             clearFieldError(field);
             return true;
         }
 
-        document.addEventListener("input", function(e) {
-            if (e.target.matches("#rq-list .fieldrow__input:not([readonly])")) runValidator(e.target);
+        document.addEventListener("input", function (e) {
+            if (e.target.matches && e.target.matches("#rq-list .fieldrow__input")) {
+                runValidator(e.target);
+            }
         });
-        // 'blur' doesn't bubble, so delegate using the capture phase.
-        document.addEventListener("blur", function(e) {
-            if (e.target.matches && e.target.matches("#rq-list .fieldrow__input:not([readonly])")) runValidator(e.target);
+
+        document.addEventListener("blur", function (e) {
+            if (e.target.matches && e.target.matches("#rq-list .fieldrow__input")) {
+                runValidator(e.target);
+            }
         }, true);
 
         function validateRsvpQuestions() {
             let isValid = true;
             let firstInvalid = null;
 
-            document.querySelectorAll("#rq-list .fieldrow__input:not([readonly])").forEach((field) => {
+            container.querySelectorAll(".fieldrow__input").forEach(function (field) {
                 if (!runValidator(field)) {
                     isValid = false;
-                    if (!firstInvalid) firstInvalid = field;
+                    if (!firstInvalid) {
+                        firstInvalid = field;
+                    }
                 }
             });
 
@@ -725,27 +695,209 @@
         }
 
         function updateRsvpVisibility() {
+            const disabled = noRadio && noRadio.checked;
 
-            if (noRadio && noRadio.checked) {
-
-                if (rsvpForm) {
-                    rsvpForm.hidden = true;
-                }
-
-                if (rsvpOff) {
-                    rsvpOff.hidden = false;
-                }
-
-            } else {
-
-                if (rsvpForm) {
-                    rsvpForm.hidden = false;
-                }
-
-                if (rsvpOff) {
-                    rsvpOff.hidden = true;
-                }
+            if (rsvpForm) {
+                rsvpForm.hidden = !!disabled;
             }
+
+            if (rsvpOff) {
+                rsvpOff.hidden = !disabled;
+            }
+        }
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = value == null ? "" : String(value);
+            return div.innerHTML;
+        }
+
+        function escapeAttribute(value) {
+            return escapeHtml(value)
+                .replace(/'/g, "&#039;");
+        }
+
+        function getFieldLabel(field) {
+            return field?.label ?? field?.Label ?? field?.customName ?? field?.CustomName ?? "";
+        }
+
+        function getFieldType(field) {
+            return field?.fieldType ?? field?.FieldType ?? "Short Text";
+        }
+
+        function getFieldRequired(field) {
+            return !!(field?.isRequired ?? field?.IsRequired);
+        }
+
+        function getNextIndex() {
+            let max = 0;
+
+            container.querySelectorAll(".fieldrow").forEach(function (row) {
+                const input = row.querySelector(".fieldrow__input");
+                if (!input) return;
+
+                const match = input.name.match(/^rq-(\d+)-label$/);
+                if (match) {
+                    max = Math.max(max, parseInt(match[1], 10));
+                }
+            });
+
+            return max + 1;
+        }
+
+        function renumberRows() {
+            container.querySelectorAll(".fieldrow").forEach(function (row, index) {
+                const number = index + 1;
+                const input = row.querySelector(".fieldrow__input");
+                const select = row.querySelector(".fieldrow__select");
+                const checkbox = row.querySelector(".fieldrow__req input[type='checkbox']");
+                const numberElement = row.querySelector(".fieldrow__no");
+                const label = row.querySelector("label[for^='rq-']");
+
+                if (numberElement) {
+                    numberElement.textContent = number;
+                }
+
+                if (input) {
+                    input.id = `rq-${number}-label`;
+                    input.name = `rq-${number}-label`;
+                }
+
+                if (select) {
+                    select.id = `rq-${number}-type`;
+                    select.name = `rq-${number}-type`;
+                }
+
+                if (checkbox) {
+                    checkbox.id = `rq-${number}-req`;
+                    checkbox.name = `rq-${number}-req`;
+                }
+
+                if (label && checkbox) {
+                    label.setAttribute("for", checkbox.id);
+                }
+            });
+        }
+
+        function createFieldRow(label = "", type = "Short Text", isRequired = false) {
+            const idx = getNextIndex();
+            const safeLabel = escapeAttribute(label);
+            const checked = isRequired ? "checked" : "";
+
+            const row = document.createElement("div");
+            row.className = "fieldrow";
+            row.setAttribute("data-repeat-row", "");
+
+            row.innerHTML = `
+                <span class="fieldrow__grip" aria-hidden="true">#</span>
+                <span class="fieldrow__no" aria-hidden="true">${idx}</span>
+                <span>
+                    <label class="u-visually-hidden" for="rq-${idx}-label">Question</label>
+                    <input class="fieldrow__input"
+                           id="rq-${idx}-label"
+                           name="rq-${idx}-label"
+                           type="text"
+                           value="${safeLabel}"
+                           placeholder="What do you want to ask?">
+                    <span class="field__error" role="alert"></span>
+                </span>
+                <span>
+                    <label class="u-visually-hidden" for="rq-${idx}-type">Answer type</label>
+                    <select class="fieldrow__select" id="rq-${idx}-type" name="rq-${idx}-type">
+                        <option ${type === "Short Text" ? "selected" : ""}>Short Text</option>
+                        <option ${type === "Email" ? "selected" : ""}>Email</option>
+                        <option ${type === "Phone" ? "selected" : ""}>Phone</option>
+                        <option ${type === "Long Text" ? "selected" : ""}>Long Text</option>
+                        <option ${type === "Dropdown" ? "selected" : ""}>Dropdown</option>
+                        <option ${type === "Checkbox" ? "selected" : ""}>Checkbox</option>
+                        <option ${type === "Date" ? "selected" : ""}>Date</option>
+                        <option ${type === "Number" ? "selected" : ""}>Number</option>
+                        <option ${type === "File Upload" ? "selected" : ""}>File Upload</option>
+                    </select>
+                </span>
+                <label class="fieldrow__req" for="rq-${idx}-req">
+                    <input id="rq-${idx}-req" name="rq-${idx}-req" type="checkbox" ${checked}>
+                    Req
+                </label>
+                <button class="fieldrow__icon" type="button" data-action="Answer options">
+                    <span class="u-visually-hidden">Answer options for ${safeLabel}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M6 10l6 6 6-6" />
+                    </svg>
+                </button>
+                <button class="fieldrow__icon fieldrow__icon--danger" type="button" data-repeat-remove>
+                    <span class="u-visually-hidden">Remove ${safeLabel || "question"}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                </button>
+            `;
+
+            return row;
+        }
+
+        function addField(label = "", type = "Short Text", isRequired = false) {
+            const row = createFieldRow(label, type, isRequired);
+            container.appendChild(row);
+            renumberRows();
+
+            const input = row.querySelector(".fieldrow__input");
+            if (input && !label) {
+                input.focus();
+            }
+
+            return row;
+        }
+
+        function renderFields(fields) {
+            container.innerHTML = "";
+
+            if (!Array.isArray(fields)) {
+                return;
+            }
+
+            fields.forEach(function (field) {
+                addField(
+                    getFieldLabel(field),
+                    getFieldType(field),
+                    getFieldRequired(field)
+                );
+            });
+
+            renumberRows();
+        }
+
+        function loadTemplateByTitle(title) {
+            if (!title) return;
+
+            const cleanTitle = String(title).trim();
+            if (!cleanTitle) return;
+
+            const encodedTitle = encodeURIComponent(cleanTitle);
+            const url = `?handler=LoadTemplate&formTitle=${encodedTitle}`;
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(function (res) {
+                    if (!res.ok) {
+                        throw new Error("Failed to load template.");
+                    }
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (data.status === 1 && Array.isArray(data.fields)) {
+                        renderFields(data.fields);
+                    } else {
+                        alert(data.message || "Failed to load template.");
+                    }
+                })
+                .catch(function () {
+                    alert("An error occurred while loading the template.");
+                });
         }
 
         if (yesRadio) {
@@ -756,179 +908,120 @@
             noRadio.addEventListener("change", updateRsvpVisibility);
         }
 
-        if (continueBtn) {
-            continueBtn.addEventListener("click", function() {
-
-                if (noRadio && noRadio.checked) {
-
-                    window.location.href = '@Url.Page("/CreateEvent/BrandingPage")';
-
-                    return;
-                }
-
-                if (!validateRsvpQuestions()) {
-                    if (typeof showToast === "function") {
-                        showToast("Please fix the highlighted fields below.", "warning");
-                    }
-                    return;
-                }
-
-                document.getElementById("RsvpForm").submit();
+        if (addQuestionBtn) {
+            addQuestionBtn.addEventListener("click", function () {
+                addField();
             });
         }
 
-        updateRsvpVisibility();
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const loadBtn = document.getElementById("btnLoadTemplate");
-        const templateSelect = document.getElementById("tplpick-rq-list");
-        const container = document.getElementById("rq-list");
+        container.addEventListener("click", function (e) {
+            const removeButton = e.target.closest("[data-repeat-remove]");
 
-        function renderFields(fields) {
-            // Keep the first 2 default locked rows (Full Name & Email) and remove custom rows
-            const rows = container.querySelectorAll('.fieldrow');
-            rows.forEach((row, idx) => {
-                if (idx >= 2) row.remove();
-            });
-
-            // Filter out Full Name and Email from the server response so they aren't duplicated
-            const customFields = fields.filter(field => {
-                const name = (field.label || field.Label || field.CustomName || '').trim().toLowerCase();
-                return name !== 'full name' && name !== 'email' && name !== 'email address';
-            });
-
-            // Render only the remaining custom fields
-            customFields.forEach((field, i) => {
-                const idx = i + 3;
-                const label = field.label || field.Label || field.CustomName || '';
-                const type = field.fieldType || field.FieldType || 'Short Text';
-                const isReq = (field.isRequired || field.IsRequired) ? 'checked' : '';
-
-                const rowHtml = `
-                    <div class="fieldrow" data-repeat-row>
-                        <span class="fieldrow__grip" aria-hidden="true">#</span>
-                        <span class="fieldrow__no" aria-hidden="true">${idx}</span>
-                        <span>
-                            <input class="fieldrow__input" id="rq-${idx}-label" name="rq-${idx}-label"
-                                   type="text" value="${label}" placeholder="What do you want to ask?">
-                            <span class="field__error" role="alert"></span>
-                        </span>
-                        <span>
-                            <select class="fieldrow__select" id="rq-${idx}-type" name="rq-${idx}-type">
-                                <option ${type === 'Short Text' ? 'selected' : ''}>Short Text</option>
-                                <option ${type === 'Email' ? 'selected' : ''}>Email</option>
-                                <option ${type === 'Phone' ? 'selected' : ''}>Phone</option>
-                                <option ${type === 'Long Text' ? 'selected' : ''}>Long Text</option>
-                                <option ${type === 'Dropdown' ? 'selected' : ''}>Dropdown</option>
-                                <option ${type === 'Checkbox' ? 'selected' : ''}>Checkbox</option>
-                                <option ${type === 'Date' ? 'selected' : ''}>Date</option>
-                                <option ${type === 'Number' ? 'selected' : ''}>Number</option>
-                                <option ${type === 'File Upload' ? 'selected' : ''}>File Upload</option>
-                            </select>
-                        </span>
-                        <label class="fieldrow__req" for="rq-${idx}-req">
-                            <input id="rq-${idx}-req" name="rq-${idx}-req" type="checkbox" ${isReq}>
-                            Req
-                        </label>
-                        <button class="fieldrow__icon fieldrow__icon--danger" type="button" onclick="this.closest('.fieldrow').remove()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-                        </button>
-                    </div>`;
-                container.insertAdjacentHTML('beforeend', rowHtml);
-            });
-        }
-
-        function loadTemplateByTitle(title) {
-            if (!title) return;
-
-            // Decode HTML entities if any were picked up from DOM values
-            const txt = document.createElement("textarea");
-            txt.innerHTML = title;
-            const cleanTitle = txt.value.trim();
-
-            if (!cleanTitle) return;
-
-            const encodedTitle = encodeURIComponent(cleanTitle);
-
-            // Pass both formTitle and FormTitle to satisfy both Razor Page Handler and internal API model binder
-            fetch(`?handler=LoadTemplate&formTitle=${encodedTitle}&FormTitle=${encodedTitle}`, {
-                method: "GET",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
+            if (removeButton && container.contains(removeButton)) {
+                const row = removeButton.closest(".fieldrow");
+                if (row) {
+                    row.remove();
+                    renumberRows();
                 }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 1 && data.fields) {
-                        renderFields(data.fields);
-                    } else {
-                        // Display exact error message returned by server or fallback
-                        alert(data.message || "Failed to load template.");
-                    }
-                })
-                .catch(() => alert("An error occurred while loading the template."));
-        }
+            }
+        });
 
         if (templateSelect) {
-            templateSelect.addEventListener("change", function() {
+            templateSelect.addEventListener("change", function () {
                 if (this.value) {
                     loadTemplateByTitle(this.value);
                 }
             });
         }
 
-        // 2. Load button fallback trigger
         if (loadBtn) {
-            loadBtn.addEventListener("click", function() {
-                if (!templateSelect.value) {
+            loadBtn.addEventListener("click", function () {
+                if (!templateSelect || !templateSelect.value) {
                     alert("Please select a template first.");
                     return;
                 }
+
                 loadTemplateByTitle(templateSelect.value);
             });
         }
 
-        // 3. Handle "Use this template" button inside modal
-        document.querySelectorAll("[data-tpluse]").forEach(button => {
-            button.addEventListener("click", function() {
+        document.querySelectorAll("[data-tpluse]").forEach(function (button) {
+            button.addEventListener("click", function () {
                 const templateKey = this.getAttribute("data-tpluse");
-                const templateEl = document.querySelector(`template[data-formtemplate="${templateKey}"]`);
+                const templateEl = document.querySelector(
+                    `template[data-formtemplate="${templateKey}"]`
+                );
 
-                if (templateEl) {
-                    const fields = [];
-                    templateEl.content.querySelectorAll("[data-tplfield]").forEach(item => {
+                if (!templateEl) return;
+
+                const fields = [];
+
+                templateEl.content
+                    .querySelectorAll("[data-tplfield]")
+                    .forEach(function (item) {
                         fields.push({
-                            Label: item.getAttribute("data-label"),
+                            Label: item.getAttribute("data-label") || "",
                             FieldType: item.getAttribute("data-type") || "Short Text",
                             IsRequired: item.getAttribute("data-required") === "true"
                         });
                     });
 
-                    renderFields(fields);
-                }
+                renderFields(fields);
 
-                // Close the modal
                 const modal = document.getElementById("tpllibrary-modal");
-                if (modal) modal.hidden = true;
+                if (modal) {
+                    modal.hidden = true;
+                }
             });
         });
 
-        // 4. Modal Open/Close handling for Manage Modal
-        document.querySelectorAll("[data-modal-open]").forEach(btn => {
-            btn.addEventListener("click", function() {
+        document.querySelectorAll("[data-modal-open]").forEach(function (button) {
+            button.addEventListener("click", function () {
                 const targetId = this.getAttribute("data-modal-open");
                 const targetModal = document.getElementById(targetId);
-                if (targetModal) targetModal.hidden = false;
+
+                if (targetModal) {
+                    targetModal.hidden = false;
+                }
             });
         });
 
-        document.querySelectorAll("[data-modal-close]").forEach(btn => {
-            btn.addEventListener("click", function() {
+        document.querySelectorAll("[data-modal-close]").forEach(function (button) {
+            button.addEventListener("click", function () {
                 const modal = this.closest(".modal");
-                if (modal) modal.hidden = true;
+
+                if (modal) {
+                    modal.hidden = true;
+                }
             });
         });
+
+        if (continueBtn) {
+            continueBtn.addEventListener("click", function () {
+                /*
+                 * Always submit the form.
+                 * When RSVP = No, OnPost receives IsRsvpEnabled = false.
+                 */
+                if (noRadio && noRadio.checked) {
+                    form.submit();
+                    return;
+                }
+
+                if (!validateRsvpQuestions()) {
+                    if (typeof showToast === "function") {
+                        showToast(
+                            "Please fix the highlighted fields below.",
+                            "warning"
+                        );
+                    }
+                    return;
+                }
+
+                form.submit();
+            });
+        }
+
+        updateRsvpVisibility();
+        renumberRows();
     });
 </script>

@@ -18785,3 +18785,1105 @@ tr[data-history-of][hidden] {
         transform: translateX(100%);
     }
 }
+.rulesbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.rulesbar__figures {
+    display: flex;
+    gap: var(--space-5);
+    flex: 0 0 auto;
+}
+
+.rulesbar__figure {
+    display: flex;
+    flex-direction: column;
+}
+
+    .rulesbar__figure b {
+        font-size: 1.125rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .rulesbar__figure span {
+        font-size: 0.5625rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+.rulesbar__figure--warn b {
+    color: var(--color-danger);
+}
+
+.rulesbar__figure--warn.is-clear b {
+    color: var(--color-success);
+}
+
+.rulesbar__body {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+.addrulefoot {
+    margin: var(--space-5) 0 0;
+    text-align: center;
+}
+
+/* ---- One rule ----------------------------------------------------------- */
+
+.salerules {
+    display: grid;
+    gap: var(--space-5);
+}
+
+.salerule {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 2px rgba(20, 22, 26, 0.04);
+    overflow: hidden;
+}
+
+    .salerule.is-bad {
+        border-color: var(--color-danger);
+    }
+
+    .salerule.is-saved {
+        border-color: var(--color-success);
+    }
+
+.salerule__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--color-surface-alt);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.salerule__no {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    color: var(--color-brand-600);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+}
+
+.salerule__title {
+    flex: 1 1 10rem;
+    min-width: 0;
+}
+
+.salerule__name {
+    width: 100%;
+    font-weight: 700;
+    background-color: transparent;
+    border-color: transparent;
+    padding-left: 0;
+}
+
+    .salerule__name:focus {
+        background-color: var(--color-white);
+        padding-left: var(--space-3);
+    }
+
+.salerule__recap {
+    display: block;
+    margin-top: 0.125rem;
+    padding-left: 0.0625rem;
+    font-size: 0.625rem;
+    color: var(--color-text-muted);
+}
+
+.salerule__tools {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    flex: 0 0 auto;
+}
+
+.salerule__body {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-5);
+}
+
+.salerule__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--color-surface-alt);
+    border-top: 1px solid var(--color-border);
+}
+
+.salerule__state {
+    flex: 1 1 10rem;
+    min-width: 0;
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+    .salerule__state.is-bad {
+        color: var(--color-danger);
+        font-weight: 600;
+    }
+
+    .salerule__state.is-saved {
+        color: var(--color-success);
+        font-weight: 600;
+    }
+
+/* ---- A labelled group inside a rule ------------------------------------- */
+
+.rulefield {
+    min-width: 0;
+}
+
+.rulefield__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin: 0 0 var(--space-2);
+}
+
+.rulefield__count {
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--color-brand-600);
+}
+
+/* ---- Picking tiers ------------------------------------------------------ */
+
+.tierpick {
+    padding: var(--space-3);
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.searchbox--sm .searchbox__input {
+    height: 2rem;
+    font-size: var(--fs-2xs);
+}
+
+.searchbox--sm .searchbox__icon {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+.tierpick__opts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+.tierpick__opt {
+    min-width: 0;
+    cursor: pointer;
+}
+
+    .tierpick__opt input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+.tierpick__body {
+    display: block;
+    padding: var(--space-3);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.tierpick__opt input:checked + .tierpick__body {
+    border-color: var(--color-brand-500);
+    box-shadow: inset 0 0 0 1px var(--color-brand-500);
+}
+
+.tierpick__opt input:focus-visible + .tierpick__body {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+}
+
+.tierpick__name {
+    display: block;
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+}
+
+.tierpick__cap {
+    display: block;
+    margin-top: 0.0625rem;
+    font-size: 0.5625rem;
+    color: var(--color-text-muted);
+}
+
+.tierpick__none {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+/* ---- Pricing the tiers that were picked --------------------------------- */
+
+.pricetable th[scope="row"] {
+    font-weight: 700;
+    text-transform: none;
+}
+
+.pricefield {
+    display: inline-flex;
+    align-items: stretch;
+}
+
+.pricefield__unit {
+    display: flex;
+    align-items: center;
+    padding: 0 0.375rem 0 0.5rem;
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-right: 0;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.pricefield__input {
+    width: 7rem;
+    height: 2rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.pricetable__empty {
+    margin: var(--space-3) 0 0;
+    padding: var(--space-4);
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-alt);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+/* ---- Where a rule applies ----------------------------------------------- */
+
+.rulescope {
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.rulescope__label {
+    margin: 0 0 var(--space-2);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.pickchips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.pickchip {
+    cursor: pointer;
+}
+
+    .pickchip input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+.pickchip__body {
+    display: block;
+    padding: 0.3125rem var(--space-3);
+    font-size: var(--fs-2xs);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+}
+
+.pickchip input:checked + .pickchip__body {
+    color: var(--color-brand-600);
+    background-color: #f7eef5;
+    border-color: var(--color-brand-500);
+}
+
+.pickchip input:focus-visible + .pickchip__body {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+}
+
+.slotpicks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-2);
+}
+
+.slotpick {
+    min-width: 0;
+    cursor: pointer;
+}
+
+    .slotpick input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+.slotpick__body {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.slotpick input:checked + .slotpick__body {
+    border-color: var(--color-brand-500);
+    box-shadow: inset 0 0 0 1px var(--color-brand-500);
+}
+
+.slotpick input:focus-visible + .slotpick__body {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+}
+
+.slotpick__name {
+    display: block;
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+}
+
+.slotpick__when {
+    display: block;
+    margin-top: 0.0625rem;
+    font-size: 0.5625rem;
+    color: var(--color-text-muted);
+}
+
+/* ---- What is wrong: beside the rule, and again in one list --------------- */
+
+.rulewarn {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-danger-soft);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    color: var(--color-danger);
+}
+
+.rulewarnings {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.rulewarning {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-2xs);
+    background-color: var(--color-accent-soft);
+    border: 1px solid #d69e2e;
+    border-radius: var(--radius-sm);
+    color: #7c3a05;
+}
+
+.rulewarning--bad {
+    color: var(--color-danger);
+    background-color: var(--color-danger-soft);
+    border-color: var(--color-danger);
+}
+
+.rulewarning svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin-top: 0.0625rem;
+}
+
+.rulewarning b {
+    display: block;
+}
+
+@media (max-width: 1024px) {
+    .formgrid--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .formgrid--4 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .rulesbar__figures {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    .rulesbar .btn {
+        width: 100%;
+    }
+
+    .tier__save .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .salerule__foot {
+        flex-wrap: wrap;
+    }
+
+        .salerule__foot .btn {
+            flex: 1 1 8rem;
+            justify-content: center;
+        }
+
+    .pricefield__input {
+        width: 5.5rem;
+    }
+}
+
+.scopepicker {
+    padding: var(--space-5);
+    background-color: var(--color-surface-alt);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.scopepicker__head {
+    margin-bottom: var(--space-4);
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+.scopeday {
+    padding: var(--space-4);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+}
+
+    .scopeday + .scopeday {
+        margin-top: var(--space-4);
+    }
+
+.scopeday__head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    cursor: pointer;
+}
+
+    .scopeday__head input {
+        margin-top: 0.1875rem;
+        accent-color: var(--color-brand-600);
+    }
+
+.scopeday__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.scopeday__name {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.scopeday__meta {
+    display: block;
+    font-size: var(--fs-3xs);
+    color: var(--color-text-muted);
+}
+
+.scopeday__slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-soft);
+}
+
+    .scopeday__slots > * {
+        min-width: 0;
+    }
+
+.scopeslot {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+    .scopeslot:has(input:checked) {
+        border-color: var(--color-brand-600);
+        background-color: #fdf7fb;
+    }
+
+    .scopeslot input {
+        margin-top: 0.125rem;
+        accent-color: var(--color-brand-600);
+    }
+
+.scopeslot__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.scopeslot__name {
+    display: block;
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+}
+
+.scopeday {
+    padding: var(--space-4);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+}
+
+    .scopeday + .scopeday {
+        margin-top: var(--space-4);
+    }
+
+.scopeday__head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    cursor: pointer;
+}
+
+    .scopeday__head input {
+        margin-top: 0.1875rem;
+        accent-color: var(--color-brand-600);
+    }
+
+.scopeday__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.scopeday__name {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.scopeday__meta {
+    display: block;
+    font-size: var(--fs-3xs);
+    color: var(--color-text-muted);
+}
+
+.scopeday__slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-soft);
+}
+
+    .scopeday__slots > * {
+        min-width: 0;
+    }
+
+.scopeslot {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.inclrows {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.inclrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.inclrow__pick {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    flex: 1 1 auto;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.inclrow__body {
+    min-width: 0;
+}
+
+.inclrow__label {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.inclrow__note {
+    display: block;
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+.inclrow__edit {
+    display: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: var(--space-2);
+}
+
+.inclrow__acts {
+    display: flex;
+    gap: 0.125rem;
+    flex: 0 0 auto;
+}
+
+.inclrow.is-editing {
+    border-color: var(--color-brand-600);
+}
+
+    .inclrow.is-editing .inclrow__pick {
+        display: none;
+    }
+
+    .inclrow.is-editing .inclrow__edit {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+.inclrow__edit .field__input {
+    flex: 1 1 9rem;
+    min-width: 0;
+    height: 2.125rem;
+}
+
+.inclfoot {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+}
+
+    .inclfoot .field__hint {
+        margin: 0;
+    }
+
+/* ---- The buyer's view of a description --------------------------------- */
+
+.descprev {
+    margin-top: var(--space-3);
+    padding: var(--space-3) 0.875rem;
+    background-color: var(--color-surface-alt);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.descprev__label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.descprev__list {
+    margin: 0 0 0 1rem;
+    font-size: var(--fs-2xs);
+    color: var(--color-text-label);
+}
+
+.rulewarn {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-danger-soft);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    color: var(--color-danger);
+}
+
+.rulewarnings {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.rulewarning {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-2xs);
+    background-color: var(--color-accent-soft);
+    border: 1px solid #d69e2e;
+    border-radius: var(--radius-sm);
+    color: #7c3a05;
+}
+
+.rulewarning--bad {
+    color: var(--color-danger);
+    background-color: var(--color-danger-soft);
+    border-color: var(--color-danger);
+}
+
+.rulewarning svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin-top: 0.0625rem;
+}
+
+.rulewarning b {
+    display: block;
+}
+
+@media (max-width: 1024px) {
+    .formgrid--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .formgrid--4 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .rulesbar__figures {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    .rulesbar .btn {
+        width: 100%;
+    }
+
+    .tier__save .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .salerule__foot {
+        flex-wrap: wrap;
+    }
+
+        .salerule__foot .btn {
+            flex: 1 1 8rem;
+            justify-content: center;
+        }
+
+    .pricefield__input {
+        width: 5.5rem;
+    }
+}
+
+/* The seat whose detail dialog is open. Distinct from aria-pressed, which
+   means selected — the two used to share an attribute and a seat the host had
+   only opened to read counted as selected. */
+.seatbtn.is-open,
+.chairbtn.is-open {
+    outline: 2px dashed var(--color-text-muted);
+    outline-offset: 1px;
+}
+
+.rulewarnings {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.rulewarning {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-2xs);
+    background-color: var(--color-accent-soft);
+    border: 1px solid #d69e2e;
+    border-radius: var(--radius-sm);
+    color: #7c3a05;
+}
+
+.rulewarning--bad {
+    color: var(--color-danger);
+    background-color: var(--color-danger-soft);
+    border-color: var(--color-danger);
+}
+
+.rulewarning svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin-top: 0.0625rem;
+}
+
+.rulewarning b {
+    display: block;
+}
+
+@media (max-width: 1024px) {
+    .formgrid--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .formgrid--4 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .rulesbar__figures {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    .rulesbar .btn {
+        width: 100%;
+    }
+
+    .tier__save .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .salerule__foot {
+        flex-wrap: wrap;
+    }
+
+        .salerule__foot .btn {
+            flex: 1 1 8rem;
+            justify-content: center;
+        }
+
+    .pricefield__input {
+        width: 5.5rem;
+    }
+}
+
+.addrulefoot {
+    margin: var(--space-5) 0 0;
+    text-align: center;
+}
+
+
+/* ========== Ticket access / "What does this ticket include" ========== */
+.ticketaccess {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border-soft);
+}
+
+.ticketaccess__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+}
+
+.ticketaccess__text {
+    margin-top: 0.25rem;
+    margin-bottom: var(--space-5);
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+.fieldset {
+    border: 0;
+}
+
+.fieldset__legend {
+    padding: 0;
+    margin-bottom: var(--space-3);
+    font-size: var(--fs-3xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-subtle);
+}
+
+.scopeday__slots--flush {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+/* ---- Session filter bar ------------------------------------------------- */
+
+.sessionfilter {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+    .sessionfilter > * {
+        min-width: 0;
+    }
+
+.sessionfilter__field--wide {
+    grid-column: span 1;
+}
+
+.sessionfilter .field__input,
+.sessionfilter .field__select {
+    margin-top: 0.25rem;
+}
+
+/* ---- Session picker rows ----------------------------------------------- */
+
+.sessionlist {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.sessionpick {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+    .sessionpick:has(input:checked) {
+        border-color: var(--color-brand-600);
+        background-color: #fdf7fb;
+    }
+
+    .sessionpick input {
+        margin-top: 0.1875rem;
+        accent-color: var(--color-brand-600);
+    }
+
+.sessionpick__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.sessionpick__name {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.sessionpick__meta {
+    display: block;
+    font-size: var(--fs-3xs);
+    color: var(--color-text-muted);
+}
+
+.sessionpick__tags {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.sessionpick__cap {
+    font-size: var(--fs-3xs);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.sessionlist__empty {
+    margin-top: var(--space-4);
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+}
+
+/* ---- "This ticket includes" summary ------------------------------------ */
+
+.includes {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-5);
+    padding: var(--space-4);
+    background-color: #f2fbf6;
+    border: 1px solid #bbf0d0;
+    border-radius: var(--radius-md);
+}
+
+.includes__label {
+    flex: 0 0 auto;
+    font-size: var(--fs-3xs);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-success);
+}
+
+.includes__value {
+    flex: 1 1 12rem;
+    min-width: 0;
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    color: var(--color-text-label);
+}
