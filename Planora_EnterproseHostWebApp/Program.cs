@@ -27,13 +27,12 @@ app.UseSession();
 
 app.UseAuthorization();
 
-app.MapStaticAssets();
+app.UseStaticFiles();
 app.MapGet("/", context =>
 {
     context.Response.Redirect(context.Request.PathBase + "/Login/Login");
     return Task.CompletedTask;
 });
-app.MapRazorPages()
-   .WithStaticAssets();
+app.MapRazorPages();
 
 app.Run();
