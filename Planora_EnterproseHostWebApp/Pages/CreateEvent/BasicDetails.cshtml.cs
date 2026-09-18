@@ -26,12 +26,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         public string Washrooms { get; set; }
 
         [BindProperty]
-        public string Accessibility { get; set; }
-
-        [BindProperty]
-        public string Catering { get; set; }
-
-        [BindProperty]
         public IFormFile CoverUpload { get; set; }
 
         public string EventType { get; set; }
@@ -90,8 +84,6 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                         AgeRestriction = GetValue("AgeRestriction");
                         Parking = GetValue("Parking");
                         Washrooms = GetValue("Washrooms");
-                        Accessibility = GetValue("Accessibility");
-                        Catering = GetValue("Catering");
                     }
                 }
                 catch (Exception ex)
@@ -317,15 +309,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 things.Add(new ThingToKnow { Category = "Washrooms", Value = Washrooms });
             }
 
-            if (!string.IsNullOrWhiteSpace(Accessibility))
-            {
-                things.Add(new ThingToKnow { Category = "Accessibility", Value = Accessibility });
-            }
 
-            if (!string.IsNullOrWhiteSpace(Catering))
-            {
-                things.Add(new ThingToKnow { Category = "Catering", Value = Catering });
-            }
 
             if (IsEditMode)
             {

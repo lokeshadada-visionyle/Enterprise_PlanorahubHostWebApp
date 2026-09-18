@@ -57,10 +57,10 @@
                             </span>
                         </span>
                     </button>
-                    <button class="choice choice--private @(Model.EventType == "private" ? "choice--selected" : "")" type="button" role="radio"
+                    <button class="choice @(Model.EventType == "private" ? "choice--selected" : "")" type="button" role="radio"
                             aria-checked="@(Model.EventType == "private" ? "true" : "false")" data-choice="private">
                         <span class="choice__flag" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 8.5 6 12l7.5-8" /></svg></span>
-                        <span class="choice__head choice__head--private">
+                        <span class="choice__head">
                             <span class="tile tile--lg tile--info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20" /><circle cx="9" cy="7.5" r="3.5" /><path d="M16.5 11.5l2 2 3.5-3.5" /></svg></span>
                             <span class="choice__title">Private Event</span>
                             <span class="choice__subtitle">Invite-only access</span>

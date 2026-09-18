@@ -19,7 +19,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
-            ViewData["StepIndex"] = 11;
+            bool isPrivate = HttpContext.Session.IsPrivateEvent();
+            ViewData["StepIndex"] = isPrivate ? 12 : 11;
+            ViewData["StepTotal"] = isPrivate ? 13 : 11;
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
                 var returnUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;

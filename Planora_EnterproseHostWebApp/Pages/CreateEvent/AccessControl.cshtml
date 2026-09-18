@@ -4,8 +4,6 @@
 @{
     Layout = "_CreateEventLayout";
     bool isPrivate = HttpContext.Session.IsPrivateEvent();
-    ViewData["StepIndex"] = 9;
-    ViewData["StepTotal"] = isPrivate ? 12 : 10;
     ViewData["StepName"] = "Access Control";
     ViewData["StepHint"] = "Set who can register and how";
     ViewData["IsPrivate"] = isPrivate;

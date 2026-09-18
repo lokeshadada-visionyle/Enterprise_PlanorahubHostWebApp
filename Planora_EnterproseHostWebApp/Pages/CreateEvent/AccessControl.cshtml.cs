@@ -23,7 +23,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             var userId = HttpContext.Session.GetInt32("UserId");
             var eventId = HttpContext.Session.GetInt32("createdEventId");
             var formId = HttpContext.Session.GetInt32("registrationFormId");
-            ViewData["StepIndex"] = 9;
+
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
@@ -34,7 +34,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 ApiError = "We couldn't find your event in progress. Please start again.";
                 return RedirectToPage("/CreateEvent/EventType");
             }
-
+            bool isPrivate = HttpContext.Session.IsPrivateEvent();
+            int currentStep = isPrivate ? 10 : 8; // Access Control is Step 10 for Private, Step 8 for Public
+            ViewData["StepIndex"] = currentStep;
             var helper = new CommonHelper();
 
             var accessResp = helper.GetAccessRegistration(new DummyRequest
@@ -163,16 +165,20 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
 
             bool isPrivate = HttpContext.Session.IsPrivateEvent();
+            int currentStep = isPrivate ? 10 : 8; // Access Control is Step 10 for Private, Step 8 for Public
+            ViewData["StepIndex"] = currentStep;
 
             if (actionType == "back")
             {
                 return isPrivate
-                    ? RedirectToPage("/CreateEvent/FoodBeverage")
-                    : RedirectToPage("/CreateEvent/AddonsCoupons");
+                    ? RedirectToPage("/CreateEvent/FoodBeverage", new { @readonly = "1" })
+                    : RedirectToPage("/CreateEvent/AddonsCoupons", new { @readonly = "1" });
             }
 
             if (actionType == "skip" && isPrivate)
             {
+                int currentProg = HttpContext.Session.GetInt32("StepProgress") ?? 0;
+                HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProg, currentStep + 1));
                 return RedirectToPage("/CreateEvent/RSVP");
             }
 
@@ -274,7 +280,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 HttpContext.Session.SetString("DiscoveryMode", isUnListed ? "standalone" : "listed");
 
                 int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
-                HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 9));
+                HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, currentStep + 1));
                 return isPrivate
                     ? RedirectToPage("/CreateEvent/RSVP")
                     : RedirectToPage("/CreateEvent/BrandingPage");
