@@ -18785,6 +18785,7 @@ tr[data-history-of][hidden] {
         transform: translateX(100%);
     }
 }
+
 .rulesbar {
     display: flex;
     align-items: center;
