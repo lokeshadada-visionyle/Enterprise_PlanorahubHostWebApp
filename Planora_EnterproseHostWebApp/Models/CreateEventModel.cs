@@ -789,7 +789,32 @@ namespace Planora_EnterproseHostWebApp.Models
     public class TicketType
     {
         public int TicketTypeId { get; set; }
-        public string TypeName { get; set; }
+        public string TypeName { get; set; } = string.Empty;
+        public bool IsVisible { get; set; } = true;
+        public string Price { get; set; } = "0";
+        public int Quantity { get; set; }
+        public string SaleStart { get; set; } = string.Empty;
+        public string SaleEnd { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool AutoExpireEnabled { get; set; }
+        public string AutoExpireMode { get; set; } = string.Empty;
+        public string ExpiryDate { get; set; } = string.Empty;
+        public string ExpiryTime { get; set; } = string.Empty;
+        public int AllocationLimit { get; set; }
+        public bool MemberOnly { get; set; }
+        public string MemberListUrl { get; set; } = string.Empty;
+        public int StandingCapacity { get; set; }
+        public int OpenSeatingCapacity { get; set; }
+        public int NumberOfTables { get; set; }
+        public int ChairsPerTable { get; set; }
+        public bool IsSeating { get; set; }
+        public int Rows { get; set; }
+        public int Columns { get; set; }
+        public int Coulmns { get; set; }
+        public string AccessMode { get; set; } = string.Empty;
+        public List<int> SelectedDateIds { get; set; } = new List<int>();
+        public List<int> SelectedSlotIds { get; set; } = new List<int>();
+        public List<Inclusions> Inclusions { get; set; } = new List<Inclusions>();
     }
 
     public class AddFoodDetailsReq

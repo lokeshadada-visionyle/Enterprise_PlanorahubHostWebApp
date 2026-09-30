@@ -3890,20 +3890,24 @@ h3 {
     background-color: #f7eef5;
     border-radius: var(--radius-md);
     overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.stage {
+.seatmap > .stage {
     display: block;
     width: 9rem;
     margin: 0 auto var(--space-4);
-    padding: 0.25rem;
+    padding: 0.375rem 0.5rem;
     text-align: center;
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-white);
-    background-color: var(--color-brand-600);
+    color: #ffffff;
+    background-color: #3b0a36;
+    border: none;
     border-radius: var(--radius-sm);
 }
 
@@ -3974,7 +3978,7 @@ h3 {
     margin-top: var(--space-2);
     text-align: center;
     font-size: 0.6875rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: #4a2148;
 }
 
 .tablemap {
@@ -4008,7 +4012,7 @@ h3 {
     padding: var(--space-6);
     text-align: center;
     font-size: var(--fs-2xs);
-    color: rgba(255, 255, 255, 0.7);
+    color: #4a2148;
 }
 
 /* ---- 11.5 Line-item editors -------------------------------------------- */
@@ -18023,14 +18027,14 @@ body:has(#faq-list) .featurerow__ico {
 
 .inclrows {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .inclrow {
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     background-color: var(--color-white);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -18065,7 +18069,7 @@ body:has(#faq-list) .featurerow__ico {
     display: none;
     flex: 1 1 auto;
     min-width: 0;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .inclrow__acts {
@@ -18076,6 +18080,7 @@ body:has(#faq-list) .featurerow__ico {
 
 .inclrow.is-editing {
     border-color: var(--color-brand-600);
+    padding: var(--space-4);
 }
 
     .inclrow.is-editing .inclrow__pick {
@@ -19447,14 +19452,14 @@ tr[data-history-of][hidden] {
 
 .inclrows {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .inclrow {
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     background-color: var(--color-white);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -19489,7 +19494,7 @@ tr[data-history-of][hidden] {
     display: none;
     flex: 1 1 auto;
     min-width: 0;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .inclrow__acts {
@@ -19500,6 +19505,7 @@ tr[data-history-of][hidden] {
 
 .inclrow.is-editing {
     border-color: var(--color-brand-600);
+    padding: var(--space-4);
 }
 
     .inclrow.is-editing .inclrow__pick {

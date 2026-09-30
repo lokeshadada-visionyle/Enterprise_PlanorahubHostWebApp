@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /mnt/d/Visionyle/EMEnterprize/Planora_EnterproseHostWebApp/Pages/CreateEvent/*.cshtml | head -15)",
+      "Bash(dotnet build:*)",
+      "Bash(export PATH=\"$PATH:/usr/share/dotnet:/usr/local/share/dotnet:$HOME/.dotnet\" && dotnet --version 2>&1 || echo \"dotnet not found in common paths\")",
+      "Bash(\"/mnt/c/Program Files/dotnet/dotnet.exe\" build /mnt/d/Visionyle/EMEnterprize/Planora_EnterproseHostWebApp/Planora_EnterproseHostWebApp.csproj 2>&1)",
+      "Bash(\"/mnt/c/Program Files/dotnet/dotnet.exe\" build \"D:\\\\\\\\Visionyle\\\\\\\\EMEnterprize\\\\\\\\Planora_EnterproseHostWebApp\\\\\\\\Planora_EnterproseHostWebApp.csproj\" 2>&1)",
+      "Bash(\"/mnt/c/Program Files/dotnet/dotnet.exe\" build \"D:\\\\\\\\Visionyle\\\\\\\\EMEnterprize\\\\\\\\Planora_EnterproseHostWebApp\\\\\\\\Planora_EnterproseHostWebApp.csproj\" 2>&1 | tail -5)"
+    ]
+  }
+}

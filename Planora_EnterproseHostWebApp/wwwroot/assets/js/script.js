@@ -1879,13 +1879,15 @@
 
     var HOOKS = [
         'data-modal-open', 'data-modal-close', 'data-repeat-add', 'data-repeat-remove',
+        'data-tier-repeat-add',
         'data-view', 'data-switch', 'data-segment-value', 'data-seatmode', 'data-pick',
         'data-accordion', 'data-edit-toggle', 'data-edit-save', 'data-scope-value',
         'data-availability', 'data-form-preview', 'data-step', 'data-filter',
         'data-settings-nav', 'data-publish-confirm', 'data-seat', 'data-sidebar-open',
         'data-sidebar-collapse', 'data-password-toggle', 'data-upload-remove',
         'data-image-act', 'data-action', 'data-tier-hide', 'data-preset',
-        'data-broadcast-template', 'data-editor-tool', 'data-color', 'data-role-view'
+        'data-broadcast-template', 'data-editor-tool', 'data-color', 'data-role-view',
+        'data-incl-switch', 'data-incl-edit', 'data-incl-save'
     ];
 
     var toastHost = null;
