@@ -139,7 +139,7 @@
                             <div class="formgrid formgrid--2 u-mt-5">
                                 <div class="form__field">
                                     <label class="field__label" for="event-city">Primary City<span class="field__required" aria-hidden="true">*</span></label>
-                                    <select class="field__select" id="event-city" name="CityId" data-city="event-timezone" aria-describedby="err-city">
+                                    <select class="field__select" id="event-city" name="CityId" data-city="event-timezone" data-city-search="true" aria-describedby="err-city">
                                         <option value="">Select City...</option>
                                         @if (hasCities)
                                         {
@@ -237,29 +237,6 @@
                                 </div>
                             </div>
 
-                            <div class="formgrid formgrid--2 u-mt-5">
-                                <div class="form__field">
-                                    <label class="field__label" for="accessibility">Accessibility</label>
-                                    <select class="field__select" id="accessibility" asp-for="Accessibility">
-                                        <option value="">Select accessibility option...</option>
-                                        <option value="Step-free access &amp; accessible washrooms">Step-free access &amp; accessible washrooms</option>
-                                        <option value="Step-free access only">Step-free access only</option>
-                                        <option value="Sign-language interpretation on request">Sign-language interpretation on request</option>
-                                        <option value="Not accessible &mdash; stairs only">Not accessible &mdash; stairs only</option>
-                                    </select>
-                                </div>
-                                <div class="form__field">
-                                    <label class="field__label" for="catering">Catering</label>
-                                    <select class="field__select" id="catering" asp-for="Catering">
-                                        <option value="">Select catering option...</option>
-                                        <option value="Full catering included">Full catering included</option>
-                                        <option value="Refreshments only">Refreshments only</option>
-                                        <option value="Food available for purchase">Food available for purchase</option>
-                                        <option value="No catering">No catering</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <section class="panel" aria-labelledby="cover-title" style="margin-bottom : 5px; margin-top:5px;">
@@ -404,6 +381,32 @@
             } catch (e) {
                 return ianaZone;
             }
+        }
+
+
+        function enhanceCitySearch(select) {
+            if (!select || select.dataset.citySearchBound === "true") return;
+            const search = document.getElementById("event-city-search");
+            if (!search) return;
+            select.dataset.citySearchBound = "true";
+            const allOptions = Array.from(select.options).map(o => ({
+                value: o.value, text: o.text, country: o.dataset.country || "", selected: o.selected
+            }));
+            function filterCities() {
+                const q = search.value.trim().toLowerCase();
+                const current = select.value;
+                select.innerHTML = "";
+                allOptions.forEach(o => {
+                    if (!q || o.text.toLowerCase().includes(q) || o.country.toLowerCase().includes(q)) {
+                        const opt = new Option(o.text, o.value);
+                        if (o.country) opt.dataset.country = o.country;
+                        select.appendChild(opt);
+                    }
+                });
+                select.value = current;
+                if (select.value !== current) select.value = "";
+            }
+            search.addEventListener("input", filterCities);
         }
 
         function applyTimezone(citySelect, timezoneInput) {
@@ -687,6 +690,7 @@
             }
 
             document.querySelectorAll("[data-city]").forEach((citySelect) => {
+                enhanceCitySearch(citySelect);
                 const timezoneInput = document.getElementById(citySelect.dataset.city);
                 if (!timezoneInput) return;
 

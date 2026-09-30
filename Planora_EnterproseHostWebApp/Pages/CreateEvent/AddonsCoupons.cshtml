@@ -2,12 +2,14 @@
 @model Planora_EnterproseHostWebApp.Pages.CreateEvent.AddonsCouponsModel
 @{
     Layout = "_CreateEventLayout";
-    ViewData["StepIndex"] = 7;
-    ViewData["StepTotal"] = Model.IsPrivateEvent ? 12 : 10;
+    ViewData["StepIndex"] = Model.IsPrivateEvent ? 7 : 8;
+    ViewData["StepTotal"] = Model.IsPrivateEvent ? 12 : 11;
     ViewData["StepName"] = "Add-ons & Coupons";
     ViewData["StepHint"] = "Add optional extras and discount codes for paid tickets";
 }
 <style>
+    .addonline .formgrid, .promo .formgrid { align-items: start; }
+    .addonline .field__error, .promo .field__error { min-height: 1.2em; }
     .addonline + .addonline {
         margin-top: var(--space-3);
     }
@@ -789,7 +791,6 @@
                 if (row.dataset.validationBound === '1') return;
                 row.dataset.validationBound = '1';
                 row.querySelectorAll('input, textarea').forEach(function(input) {
-                    input.addEventListener('input', function() { validateAddonRow(row); });
                     input.addEventListener('blur', function() { validateAddonRow(row); });
                 });
             });
@@ -799,7 +800,6 @@
                 row.dataset.validationBound = '1';
                 row.querySelectorAll('input, select').forEach(function(input) {
                     var evt = input.tagName === 'SELECT' ? 'change' : 'input';
-                    input.addEventListener(evt, function() { validatePromoRow(row); });
                     input.addEventListener('blur', function() { validatePromoRow(row); });
                 });
             });

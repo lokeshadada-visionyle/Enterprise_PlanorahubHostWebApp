@@ -57,7 +57,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var isLoggedIn = HttpContext.Session.GetString("IsLoggedIn");
-            ViewData["StepIndex"] = 6;
+
 
             if (!userId.HasValue || userId.Value <= 0 || string.IsNullOrEmpty(isLoggedIn) || !isLoggedIn.Equals("true", StringComparison.OrdinalIgnoreCase))
             {
@@ -65,7 +65,7 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
             }
 
             IsPrivateEvent = HttpContext.Session.IsPrivateEvent();
-
+            ViewData["StepIndex"] = IsPrivateEvent ? 8 : 7;
             var eventId = HttpContext.Session.GetInt32("createdEventId");
             IsEditMode = eventId.HasValue && eventId.Value > 0;
             var helper = new CommonHelper();
@@ -199,8 +199,9 @@ namespace Planora_EnterproseHostWebApp.Pages.CreateEvent
                 return Page();
             }
 
+            int targetStep = IsPrivateEvent ? 8 : 9;
             int currentProgress = HttpContext.Session.GetInt32("StepProgress") ?? 0;
-            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, 7));
+            HttpContext.Session.SetInt32("StepProgress", Math.Max(currentProgress, targetStep));
 
             return IsPrivateEvent
                 ? RedirectToPage("/CreateEvent/FoodBeverage")

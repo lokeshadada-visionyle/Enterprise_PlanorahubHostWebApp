@@ -4,8 +4,8 @@
 @{
     Layout = "_CreateEventLayout";
     bool isPrivate = HttpContext.Session.IsPrivateEvent();
-    ViewData["StepIndex"] = 11;
-    ViewData["StepTotal"] = isPrivate ? 12 : 10;
+    ViewData["StepIndex"] = isPrivate ? 12 : 11;
+    ViewData["StepTotal"] = isPrivate ? 13 : 11;
     ViewData["StepName"] = "Branding & Page";
     ViewData["StepHint"] = "Customise how your event page looks to guests";
 
